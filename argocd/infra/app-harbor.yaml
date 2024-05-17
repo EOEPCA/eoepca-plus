@@ -50,7 +50,7 @@ spec:
             trivy:
               storageClass: standard
 
-        externalURL: https://harbor-argo.guide.svc.rconway.uk
+        externalURL: https://harbor-zzz.guide.svc.rconway.uk
         # initial password for logging in with user "admin"
         harborAdminPassword: "changeme"
 

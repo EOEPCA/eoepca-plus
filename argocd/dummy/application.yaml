@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
-  project: default
+  project: eoepca
   source:
     repoURL: 'https://eoepca.github.io/helm-charts'
     chart: dummy

@@ -29,11 +29,11 @@ spec:
 
             hosts:
               core: harbor-zzz.guide.svc.rconway.uk
-            tls:
-              enabled: true
-              certSource: secret
-              secret:
-                secretName: "harbor-ingress"
+          tls:
+            enabled: true
+            certSource: secret
+            secret:
+              secretName: "harbor-tls"
 
         persistence:
           persistentVolumeClaim:

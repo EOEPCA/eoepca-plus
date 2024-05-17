@@ -11,7 +11,7 @@ spec:
     chart: dummy
     targetRevision: 1.0.2
     helm:
-      releaseName: dummy-service
+      releaseName: dummy
       # parameters:
       #   - name: ingress.enabled
       #     value: 'true'

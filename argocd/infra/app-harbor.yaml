@@ -28,12 +28,12 @@ spec:
               nginx.ingress.kubernetes.io/proxy-body-size: "0"
 
             hosts:
-              core: harbor-argo.guide.svc.rconway.uk
+              core: harbor-zzz.guide.svc.rconway.uk
             tls:
               enabled: true
               certSource: secret
               secret:
-                secretName: "harbor-tls"
+                secretName: "harbor-ingress"
 
         persistence:
           persistentVolumeClaim:

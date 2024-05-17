@@ -37,5 +37,6 @@ argocd app create eoepca \
   --revision develop \
   --sync-policy automated \
   --auto-prune \
-  --self-heal
+  --self-heal \
+  --allow-empty
 ```

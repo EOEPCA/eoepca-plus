@@ -34,7 +34,7 @@ spec:
               secretName: dummy-argo-tls
   destination:
     name: in-cluster
-    namespace: dummy
+    namespace: test
   syncPolicy:
     automated:
       prune: true

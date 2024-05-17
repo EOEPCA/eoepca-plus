@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dummy
+  namespace: argocd
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: default
+  source:
+    repoURL: 'https://eoepca.github.io/helm-charts'
+    chart: dummy
+    targetRevision: 1.0.2
+    helm:
+      releaseName: dummy-service
+      # parameters:
+      #   - name: ingress.enabled
+      #     value: 'true'
+      valuesObject:
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: nginx
+            ingress.kubernetes.io/ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            cert-manager.io/cluster-issuer: letsencrypt-production
+          hosts:
+            - host: dummy-argo.guide.svc.rconway.uk
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls:
+            - hosts:
+                - dummy-argo.guide.svc.rconway.uk
+              secretName: dummy-argo-tls
+  destination:
+    name: in-cluster
+    namespace: dummy
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

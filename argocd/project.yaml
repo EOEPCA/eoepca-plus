@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: eoepca
+  namespace: argocd
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#projects
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  destinations:
+    - namespace: "*"
+      server: "*"
+  sourceRepos:
+    - "*"

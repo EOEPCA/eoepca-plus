@@ -52,6 +52,9 @@ spec:
         persistence:
           storageClass: standard
           size: 50Gi
+        buckets:
+          - name: eoepca
+          - name: cache-bucket
 
   destination:
     name: in-cluster

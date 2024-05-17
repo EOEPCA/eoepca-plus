@@ -28,7 +28,7 @@ spec:
               nginx.ingress.kubernetes.io/proxy-body-size: "0"
 
             hosts:
-              core: harbor.guide.svc.rconway.uk
+              core: harbor-argo.guide.svc.rconway.uk
             tls:
               enabled: true
               certSource: secret
@@ -50,7 +50,7 @@ spec:
             trivy:
               storageClass: standard
 
-        externalURL: https://harbor.guide.svc.rconway.uk
+        externalURL: https://harbor-argo.guide.svc.rconway.uk
         # initial password for logging in with user "admin"
         harborAdminPassword: "changeme"
 

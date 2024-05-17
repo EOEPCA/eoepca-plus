@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: harbor
+  namespace: argocd
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://helm.goharbor.io'
+    chart: harbor
+    targetRevision: 1.7.3
+
+    helm:
+      releaseName: harbor
+      valuesObject:
+        expose:
+          ingress:
+            annotations:
+              kubernetes.io/ingress.class: nginx
+              cert-manager.io/cluster-issuer: "letsencrypt-production"
+              nginx.ingress.kubernetes.io/proxy-read-timeout: '600'
+
+              # from chart:
+              ingress.kubernetes.io/ssl-redirect: "true"
+              ingress.kubernetes.io/proxy-body-size: "0"
+              nginx.ingress.kubernetes.io/ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/proxy-body-size: "0"
+
+            hosts:
+              core: harbor.guide.svc.rconway.uk
+            tls:
+              enabled: true
+              certSource: secret
+              secret:
+                secretName: "harbor-tls"
+
+        persistence:
+          persistentVolumeClaim:
+            registry:
+              storageClass: standard
+            chartmuseum:
+              storageClass: standard
+            jobservice:
+              storageClass: standard
+            database:
+              storageClass: standard
+            redis:
+              storageClass: standard
+            trivy:
+              storageClass: standard
+
+        externalURL: https://harbor.guide.svc.rconway.uk
+        # initial password for logging in with user "admin"
+        harborAdminPassword: "changeme"
+
+        chartmuseum:
+          enabled: false
+        trivy:
+          enabled: false
+        notary:
+          enabled: false
+
+  destination:
+    name: in-cluster
+    namespace: infra
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

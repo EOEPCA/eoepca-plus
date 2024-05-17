@@ -7,7 +7,9 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: ./app-minio
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: develop
+    path: argocd/infra/minio-as-chart/app-minio
 
     helm:
       releaseName: minio

@@ -8,3 +8,7 @@ dependencies:
   - name: "minio"
     version: 5.0.7
     repository: "https://charts.min.io/"
+  - name: "rm-minio-bucket-api"
+    alias: "minio-bucket-api"
+    version: 0.0.4
+    repository: "https://eoepca.github.io/helm-charts"

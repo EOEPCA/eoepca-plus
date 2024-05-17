@@ -56,6 +56,11 @@ spec:
           buckets:
             - name: eoepca
             - name: cache-bucket
+        minio-bucket-api:
+          fullnameOverride: minio-bucket-api
+          minIOServerEndpoint: https://minio.guide.svc.rconway.uk
+          accessCredentials:
+            secretName: minio-auth
 
   destination:
     name: in-cluster

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: app-minio
+description: Wrapper chart for deployment of minio plus additional manifests
+type: application
+version: 0.1.0
+appVersion: "minio"
+dependencies:
+  - name: "minio"
+    version: 5.0.7
+    repository: "https://charts.min.io/"

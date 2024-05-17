@@ -3,4 +3,5 @@ resources:
   - namespace.yaml
   - app-sealed-secrets.yaml
   # - minio
+  - minio-as-chart
   - app-harbor.yaml

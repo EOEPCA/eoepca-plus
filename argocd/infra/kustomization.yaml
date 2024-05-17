@@ -2,5 +2,5 @@
 resources:
   - namespace.yaml
   - app-sealed-secrets.yaml
-  # - minio
+  - minio
   - app-harbor.yaml

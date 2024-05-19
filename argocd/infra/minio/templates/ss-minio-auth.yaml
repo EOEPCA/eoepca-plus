@@ -4,9 +4,6 @@ metadata:
   creationTimestamp: null
   name: minio-auth
   namespace: infra
-  annotations:
-    fred: "bob"
-    burt: "larry"
 spec:
   encryptedData:
     rootPassword: AgDADuImD91of41vfDwp0tBTfE5HNt/UPpjsOWOTOXTrr/YGWwi9l1xzVyS/E/JsX0bhwtqk2JOdoBG/b1Y5093Cc2weHQexZr1soJdVgo4SSOFDTelHTCTZd+BaxjjNK/hTMcTSqsGsCBiyHKNpJukGUJ7JTpk+PBH8qmBh/syp0WPH2vGbwW50zeZ6q/NL4EIAsYDd7bZtHak/vBF3MeQBeeDaswet7L4nx9UHEgJdCF6u6yI+E4ZFmJDxq9/d8fr1xHyNxA3xuL1k8mX1sAfG8yu/ko7lhQHIFPsK/HJyJ0Dt7iwIpsgZSAgUbLUqfxZOrVCWk8CXAqXDrhxDGdoMu8JctuAACa6FEyHl020wtxjVlPw4YCK/g1c1qQbv3UBJbpPDVDmpWpr1xP+PFoklFjfK6DEOz36cCx/w/FIUcjiZZ90AWrTi5nh1mMd4ikGDWSVGowZPJfG7lhtXIPPooVupC4ogX7vUmcsTAkVbUG0vV/uoKaHGxQrSNO7KfjOkCL7vB/pA7Q6t0vWg0UdbkQmpcpVzUelmPKp7Lak5vM1f7n+y1c02CIJk3lrBt3YWbicr2xh6mNYY9H0BUO7jRL2DuXvD6kSfa0VrUzP3HaortvDoAllZwWt1+Cb/kCBRTao9areqzVPtRaMSEFZvYOYvjbalgTZSbhaRlerTvj8ye0YK9/NNhWCAcXki/oWF3qU6iaDWbw==

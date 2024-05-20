@@ -4,7 +4,7 @@
 
 Login to argocd...
 
-```
+```bash
 argocd login argocd.guide.svc.rconway.uk
 ```
 
@@ -19,15 +19,17 @@ Supply credentials of an admin user...
 
 Create `eoepca` argocd project...
 
-```
+```bash
 argocd proj create eoepca -f https://raw.githubusercontent.com/EOEPCA/eoepca-plus/develop/argocd/project.yaml
 ```
 
 ## App-of-apps
 
-Create app-of-apps...
+The deployment is bootstrapped from the `eoepca` app-of-apps, which is defined as a `Kustomization` in the `argocd/` directory. The `kustomization.yaml` in turn brings in the various components of the full system deployment - each of which is defined as an ArgoCD `Application` - comprising building blocks and infrastructure components on which they depend.
 
-```
+The app--of-apps deployment is triggered using...
+
+```bash
 argocd app create eoepca \
   --project eoepca \
   --dest-namespace argocd \
@@ -40,3 +42,47 @@ argocd app create eoepca \
   --self-heal \
   --allow-empty
 ```
+
+Which results in the following `Application` CRD in the `argocd` namespace...
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: eoepca
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: eoepca
+  source:
+    path: argocd
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: develop
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
+```
+
+## Organisation of Applications
+
+The `Applications` are organised under broad groupings...
+
+* `eoepca`<br>
+  _EOEPCA+ building blocks_<br>
+  Can be organised into subdirectories, as required, for convenience.
+* `infra`<br>
+  Services that support the building blocks, including...
+  * Sealed Secrets<br>
+    _Secure management of k8s secrets in git_
+  * Minio<br>
+    _S3-compatible Object Storage_<br>
+    See [minio deployment README](infra/minio/README.md) for details of the deployment of this composite `Application`. This provides an example of an approach to wrap a more complex service deployment into a self-contained ArgoCD `Application`.
+  * Harbor<br>
+    _Container registry_
+* `test`<br>
+  _Resources used for testing/debugging - such as the `dummy` service_
+

@@ -13,11 +13,9 @@ spec:
 
     helm:
       releaseName: minio
+      valuesFiles:
+        - admin-credentials.yaml
       valuesObject:
-        adminCredentials:
-          encryptedData:
-            rootPassword: AgDADuImD91of41vfDwp0tBTfE5HNt/UPpjsOWOTOXTrr/YGWwi9l1xzVyS/E/JsX0bhwtqk2JOdoBG/b1Y5093Cc2weHQexZr1soJdVgo4SSOFDTelHTCTZd+BaxjjNK/hTMcTSqsGsCBiyHKNpJukGUJ7JTpk+PBH8qmBh/syp0WPH2vGbwW50zeZ6q/NL4EIAsYDd7bZtHak/vBF3MeQBeeDaswet7L4nx9UHEgJdCF6u6yI+E4ZFmJDxq9/d8fr1xHyNxA3xuL1k8mX1sAfG8yu/ko7lhQHIFPsK/HJyJ0Dt7iwIpsgZSAgUbLUqfxZOrVCWk8CXAqXDrhxDGdoMu8JctuAACa6FEyHl020wtxjVlPw4YCK/g1c1qQbv3UBJbpPDVDmpWpr1xP+PFoklFjfK6DEOz36cCx/w/FIUcjiZZ90AWrTi5nh1mMd4ikGDWSVGowZPJfG7lhtXIPPooVupC4ogX7vUmcsTAkVbUG0vV/uoKaHGxQrSNO7KfjOkCL7vB/pA7Q6t0vWg0UdbkQmpcpVzUelmPKp7Lak5vM1f7n+y1c02CIJk3lrBt3YWbicr2xh6mNYY9H0BUO7jRL2DuXvD6kSfa0VrUzP3HaortvDoAllZwWt1+Cb/kCBRTao9areqzVPtRaMSEFZvYOYvjbalgTZSbhaRlerTvj8ye0YK9/NNhWCAcXki/oWF3qU6iaDWbw==
-            rootUser: AgALCB2A5LS+3TtHYnwDlH1WzmUJXUzS+2bLASU4oPAl/+Xk+kg0pk463j72tSDFIS13Dbv1Qxmfu9VNweLuP+fkc5+mXRlxBxHrJyJpc8gHt2WUTvw+HPFipzuTW2jWQPVz06kkgJUrjYhPuxJRfZ+IPrebaF2/SbDLR7mfVXHqdP2CQSiRp6i76wEkAw/0iUsIOD8GjRBpWmR7CjDFV1Wtvf0U04g6tEr0nkja7MXgm7QKAB9Q83wR/+3ZclLXoLGcIiBvYH5R6h034tHVjyB2NPIgiPGFjef/k5FXiiBHOvVS8HeGDBgxLdxkn1IjV4UAN9DuDsZu6YgtgUBwoGgRka1MFCpiMDZTG0Xj7wjfbeQYQGIzMC4XAt3gJcF6aAMuih+ZtHOuQ3EHIjm50weBLSLchNpWR9002dIbqZTq1isN3Oqaj0fwfvu0xGqKF9jwpB/L1uyKUdcAIC9uYROtl4CPR1+R+dcLvdljP46kIXa0EjIe5o0LRlN1W+hN90+yj848ax+XZNDU8ckvRF2Zjov2IxA2ZxV8/LiaZ9MSCB7xIVhmxcE9O1ZxXIGb/OXZOSXqsIRB19hkYjvEybsfM1TCBn92ZABisFyW64wfyPBs+Ewt6+vQDa9xZ5oRqIyex5g2O+SBWGmp/n37nAddxYUH6+scAWB7GO/qWOj2Jxm4TeO5lWum23OKgB7QlFh3CcGBpco=
         minio:
           existingSecret: minio-auth
           replicas: 2

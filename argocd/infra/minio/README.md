@@ -30,3 +30,12 @@ spec:
         minio:
           # minio helm values...
 ```
+
+## Admin Credentials Sealed Secret
+
+The minio admin credentials are provided via a `Secret` that is maintained securely in git as a `SealedSecret`. This is deined as a template in the ad-hoc helm chart - ref. [ss-minio-auth.yaml](templates/ss-minio-auth.yaml).
+
+The `encryptedData` for the `minio-auth` SealedSecret is provided through helm values that are configured in the file `admin-credentials.yaml` that is presented via the ArgoCD `Application` through the `valueFiles` directive.
+
+The script `ss-minio-auth.sh` is used the generate this encrypted data via the `sealed-secrets-controller` that is running in the live cluster.<br>
+The `<rootUser>` and `<rootPassword>` are supplied as positional cmdline arguments (with built-in defaults).

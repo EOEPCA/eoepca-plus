@@ -13,7 +13,7 @@ spec:
 
     helm:
       releaseName: minio
-      valuesFiles:
+      valueFiles:
         - admin-credentials.yaml
       valuesObject:
         minio:

@@ -11,12 +11,13 @@ onExit() {
 trap onExit EXIT
 
 SECRET_NAME="minio-auth"
+NAMESPACE="infra"
 
 ROOT_USER="${1:-eoepca}"
 ROOT_PASSWORD="${2:-changeme}"
 
 secretYaml() {
-  kubectl create secret generic "${SECRET_NAME}" \
+  kubectl -n "${NAMESPACE}" create secret generic "${SECRET_NAME}" \
     --from-literal="rootUser=${ROOT_USER}" \
     --from-literal="rootPassword=${ROOT_PASSWORD}" \
     --dry-run=client -o yaml

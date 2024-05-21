@@ -1,0 +1,64 @@
+cookiecutter:
+  templateUrl: https://github.com/EOEPCA/eoepca-proc-service-template.git
+  templateBranch: master
+zoofpm:
+  image:
+    tag: eoepca-092ea7a2c6823dba9c6d52c383a73f5ff92d0762
+zookernel:
+  image:
+    tag: eoepca-092ea7a2c6823dba9c6d52c383a73f5ff92d0762
+customConfig:
+  main:
+    eoepca: |-
+      domain=guide.svc.rconway.uk
+      workspace_url=https://workspace-api.guide.svc.rconway.uk
+      workspace_prefix=ws
+workflow:
+  defaultMaxRam: 1024
+  defaultMaxCores: 2
+  inputs:
+    STAGEIN_AWS_SERVICEURL: http://data.cloudferro.com
+    STAGEIN_AWS_ACCESS_KEY_ID: test
+    STAGEIN_AWS_SECRET_ACCESS_KEY: test
+    STAGEIN_AWS_REGION: RegionOne
+    STAGEOUT_AWS_SERVICEURL: https://minio.guide.svc.rconway.uk
+    STAGEOUT_AWS_ACCESS_KEY_ID: eoepca
+    STAGEOUT_AWS_SECRET_ACCESS_KEY: changeme
+    STAGEOUT_AWS_REGION: RegionOne
+    STAGEOUT_OUTPUT: eoepca
+  nodeSelector:
+    minikube.k8s.io/primary: "true"
+  storageClass: standard
+ingress:
+  enabled: false
+  hosturl: https://zoo.guide.svc.rconway.uk
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-production
+  hosts:
+  - host: zoo.guide.svc.rconway.uk
+    paths:
+    - path: /
+      pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - zoo.guide.svc.rconway.uk
+    secretName: zoo-tls
+persistence:
+  procServicesStorageClass: standard
+  storageClass: standard
+  tmpStorageClass: standard
+postgresql:
+  primary:
+    persistence:
+      storageClass: standard
+  readReplicas:
+    persistence:
+      storageClass: standard
+rabbitmq:
+  persistence:
+    storageClass: standard
+iam:
+  enabled: false

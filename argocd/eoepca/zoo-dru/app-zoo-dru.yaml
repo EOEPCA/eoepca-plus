@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zoo-project-dru
+  namespace: argocd
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://zoo-project.github.io/charts/'
+    chart: zoo-project-dru
+    targetRevision: 0.2.6
+
+    helm:
+      releaseName: zoo-project-dru
+      valueFiles:
+        - values-zoo.yaml
+        - values-stageout.yaml
+        - values-cwlwrapper.yaml
+
+  destination:
+    name: in-cluster
+    namespace: zoo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

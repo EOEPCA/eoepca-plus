@@ -1,0 +1,7 @@
+files:
+  # Directory 'files/cwlwrapper-assets' - assets for ConfigMap 'XXX-cwlwrapper-config'
+  cwlwrapperAssets:
+    # main.yaml: ""
+    # rules.yaml: ""
+    # stagein.yaml: ""
+    # stageout.yaml: ""

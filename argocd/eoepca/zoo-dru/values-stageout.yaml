@@ -1,4 +1,4 @@
-files.cwlwrapperAssets.stageout.yaml: |-
+files.cwlwrapperAssets."stageout.yaml": |-
   cwlVersion: v1.0
   class: CommandLineTool
   id: stage-out

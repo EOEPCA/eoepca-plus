@@ -73,7 +73,8 @@ The `Applications` are organised under broad groupings...
 
 * `eoepca`<br>
   _EOEPCA+ building blocks_<br>
-  Can be organised into subdirectories, as required, for convenience.
+  Can be organised into subdirectories, as required, for convenience.<br>
+  The deploy of `zoo-dru` as an ArgoCD `Application` provides an example of a helm chart deployment with the values being provided through multiple dedicated values files. See the [Zoo-DRU deployment README](eoepca/zoo-dru/README.md).
 * `infra`<br>
   Services that support the building blocks, including...
   * Sealed Secrets<br>

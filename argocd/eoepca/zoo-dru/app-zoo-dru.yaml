@@ -10,13 +10,17 @@ spec:
     repoURL: 'https://zoo-project.github.io/charts/'
     chart: zoo-project-dru
     targetRevision: 0.2.6
-
     helm:
       releaseName: zoo-project-dru
       valueFiles:
-        - values-zoo.yaml
-        - values-stageout.yaml
-        - values-cwlwrapper.yaml
+        - $app-zoo/values-zoo.yaml
+        - $app-zoo/values-stageout.yaml
+        - $app-zoo/values-cwlwrapper.yaml
+  sources:
+    - ref: app-zoo
+      repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: develop
+      path: argocd/eoepca/zoo-dru
 
   destination:
     name: in-cluster

@@ -15,7 +15,6 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/zoo-dru/values-zoo.yaml
           - $values/argocd/eoepca/zoo-dru/values-stageout.yaml
-          - $values/argocd/eoepca/zoo-dru/values-cwlwrapper.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: develop
       ref: values

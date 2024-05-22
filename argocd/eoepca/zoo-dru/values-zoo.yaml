@@ -13,13 +13,6 @@ customConfig:
       domain=guide.svc.rconway.uk
       workspace_url=https://workspace-api.guide.svc.rconway.uk
       workspace_prefix=ws
-files:
-  # Directory 'files/cwlwrapper-assets' - assets for ConfigMap 'XXX-cwlwrapper-config'
-  cwlwrapperAssets:
-    # main.yaml: ""
-    # rules.yaml: ""
-    # stagein.yaml: ""
-    # stageout.yaml: ""
 workflow:
   defaultMaxRam: 1024
   defaultMaxCores: 2

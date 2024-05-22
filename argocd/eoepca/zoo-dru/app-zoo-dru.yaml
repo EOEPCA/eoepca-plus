@@ -6,21 +6,19 @@ metadata:
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
-  source:
-    repoURL: 'https://zoo-project.github.io/charts/'
-    chart: zoo-project-dru
-    targetRevision: 0.2.6
-    helm:
-      releaseName: zoo-project-dru
-      valueFiles:
-        - $app-zoo/values-zoo.yaml
-        - $app-zoo/values-stageout.yaml
-        - $app-zoo/values-cwlwrapper.yaml
   sources:
-    - ref: app-zoo
-      repoURL: https://github.com/EOEPCA/eoepca-plus
+    - repoURL: https://zoo-project.github.io/charts/
+      chart: zoo-project-dru
+      targetRevision: 0.2.6
+      helm:
+        releaseName: zoo-project-dru
+        valueFiles:
+          - $values/argocd/eoepca/zoo-dru/values-zoo.yaml
+          - $values/argocd/eoepca/zoo-dru/values-stageout.yaml
+          - $values/argocd/eoepca/zoo-dru/values-cwlwrapper.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: develop
-      path: argocd/eoepca/zoo-dru
+      ref: app-zoo
 
   destination:
     name: in-cluster

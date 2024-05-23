@@ -8,7 +8,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: develop
+    targetRevision: deploy-rconway
     path: argocd/infra/minio
 
     helm:

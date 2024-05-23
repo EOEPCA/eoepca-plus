@@ -20,7 +20,7 @@ Supply credentials of an admin user...
 Create `eoepca` argocd project...
 
 ```bash
-argocd proj create eoepca -f https://raw.githubusercontent.com/EOEPCA/eoepca-plus/develop/argocd/project.yaml
+argocd proj create eoepca -f https://raw.githubusercontent.com/EOEPCA/eoepca-plus/deploy-rconway/argocd/project.yaml
 ```
 
 ## App-of-apps
@@ -36,7 +36,7 @@ argocd app create eoepca \
   --dest-server https://kubernetes.default.svc \
   --repo https://github.com/EOEPCA/eoepca-plus \
   --path argocd \
-  --revision develop \
+  --revision deploy-rconway \
   --sync-policy automated \
   --auto-prune \
   --self-heal \
@@ -59,7 +59,7 @@ spec:
   source:
     path: argocd
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: develop
+    targetRevision: deploy-rconway
   syncPolicy:
     automated:
       allowEmpty: true

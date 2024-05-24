@@ -53,7 +53,7 @@ spec:
             requests:
               memory: 1Gi
           persistence:
-            storageClass: standard
+            storageClass: managed-nfs-storage-retain
             size: 50Gi
           buckets:
             - name: eoepca

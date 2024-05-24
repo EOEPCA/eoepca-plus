@@ -32,7 +32,7 @@ argocd admin initial-password -n argocd
 Login as `admin`...
 
 ```bash
-argocd login argocd.guide.svc.rconway.uk
+argocd login argocd.<domain>
   # Username: admin
   # Password: <initial-password>
 ```
@@ -48,7 +48,7 @@ argocd account update-password  # pattern ^.{8,32}$
 Login to argocd...
 
 ```bash
-argocd login argocd.guide.svc.rconway.uk
+argocd login argocd.<domain>
 ```
 
 Supply credentials of an admin user...

@@ -1,5 +1,48 @@
 # EOEPCA ArgoCD App-of-apps
 
+## Initial ArgoCD Provisioning (manual)
+
+_Note that this should not be needed, assuming that ArgoCD is installed directly via pulumi._
+
+Create `argocd` namespace...
+
+```bash
+kubectl create namespace argocd
+```
+
+Install ArgoCD from latest stable release...
+
+```bash
+curl -JLs -o argocd.yaml https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml \
+  && kubectl apply -n argocd -f argocd.yaml
+```
+
+Deploy `Ingress` for ArgoCD...
+
+```bash
+kubectl apply -f argocd-ingress.yaml
+```
+
+Retrieve intial `admin` password...
+
+```
+argocd admin initial-password -n argocd
+```
+
+Login as `admin`...
+
+```bash
+argocd login argocd.guide.svc.rconway.uk
+  # Username: admin
+  # Password: <initial-password>
+```
+
+Update `admin` password...
+
+```bash
+argocd account update-password  # pattern ^.{8,32}$
+```
+
 ## Login
 
 Login to argocd...

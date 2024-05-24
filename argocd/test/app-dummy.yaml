@@ -24,14 +24,14 @@ spec:
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
             cert-manager.io/cluster-issuer: letsencrypt-production
           hosts:
-            - host: dummy-argo.guide.svc.rconway.uk
+            - host: dummy-service.guide.svc.rconway.uk
               paths:
                 - path: /
                   pathType: ImplementationSpecific
           tls:
             - hosts:
-                - dummy-argo.guide.svc.rconway.uk
-              secretName: dummy-argo-tls
+                - dummy-service.guide.svc.rconway.uk
+              secretName: dummy-service-tls
   destination:
     name: in-cluster
     namespace: test

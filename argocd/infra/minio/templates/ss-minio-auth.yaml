@@ -1,13 +1,13 @@
-# apiVersion: bitnami.com/v1alpha1
-# kind: SealedSecret
-# metadata:
-#   name: minio-auth
-#   namespace: {{ .Release.Namespace }}
-# spec:
-#   encryptedData:
-#     rootPassword: {{ .Values.adminCredentials.encryptedData.rootPassword }}
-#     rootUser: {{ .Values.adminCredentials.encryptedData.rootUser }}
-#   template:
-#     metadata:
-#       name: minio-auth
-#       namespace: {{ .Release.Namespace }}
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: minio-auth
+  namespace: {{ .Release.Namespace }}
+spec:
+  encryptedData:
+    rootPassword: {{ .Values.adminCredentials.encryptedData.rootPassword }}
+    rootUser: {{ .Values.adminCredentials.encryptedData.rootUser }}
+  template:
+    metadata:
+      name: minio-auth
+      namespace: {{ .Release.Namespace }}

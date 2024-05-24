@@ -7,14 +7,16 @@ BIN_DIR="$(pwd)"
 onExit() {
   cd "${ORIG_DIR}"
 }
-
 trap onExit EXIT
+
+# Optional local .env file for secret values as env vars
+source .env 2>/dev/null
 
 SECRET_NAME="minio-auth"
 NAMESPACE="infra"
 
-ROOT_USER="${1:-eoepca}"
-ROOT_PASSWORD="${2:-changeme}"
+ROOT_USER="${1:-${ROOT_USER:-eoepca}}"
+ROOT_PASSWORD="${2:-${ROOT_PASSWORD:-changeme}}"
 
 secretYaml() {
   kubectl -n "${NAMESPACE}" create secret generic "${SECRET_NAME}" \

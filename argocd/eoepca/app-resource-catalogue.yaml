@@ -19,8 +19,8 @@ spec:
         ingress:
           enabled: true
           name: resource-catalogue
-          host: resource-catalogue.guide.svc.rconway.uk
-          tls_host: resource-catalogue.guide.svc.rconway.uk
+          host: resource-catalogue.develop.eoepca.org
+          tls_host: resource-catalogue.develop.eoepca.org
           tls_secret_name: resource-catalogue-tls
           annotations:
             kubernetes.io/ingress.class: nginx
@@ -36,7 +36,7 @@ spec:
           #   pullPolicy: Always
           config:
             server:
-              url: https://resource-catalogue.guide.svc.rconway.uk/
+              url: https://resource-catalogue.develop.eoepca.org/
             manager:
               transactions: "true"
               allowed_ips: "*"

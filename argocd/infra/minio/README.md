@@ -21,7 +21,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: develop
+    targetRevision: deploy-develop
     path: argocd/infra/minio
 
     helm:

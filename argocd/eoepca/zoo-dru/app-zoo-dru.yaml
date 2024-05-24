@@ -16,7 +16,7 @@ spec:
           - $values/argocd/eoepca/zoo-dru/values-zoo.yaml
           - $values/argocd/eoepca/zoo-dru/values-stageout.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: develop
+      targetRevision: deploy-develop
       ref: values
 
   destination:

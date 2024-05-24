@@ -9,7 +9,7 @@ The values files are referenced using the approach described in the ArgoCD docum
 * The git repo is defined as a `source` for the values...
   ```
   - repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: develop
+    targetRevision: deploy-develop
     ref: values
   ```
 * The values files are then referenced from this source...

@@ -24,13 +24,13 @@ spec:
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
             cert-manager.io/cluster-issuer: letsencrypt-production
           hosts:
-            - host: dummy-service.guide.svc.rconway.uk
+            - host: dummy-service.develop.eoepca.org
               paths:
                 - path: /
                   pathType: ImplementationSpecific
           tls:
             - hosts:
-                - dummy-service.guide.svc.rconway.uk
+                - dummy-service.develop.eoepca.org
               secretName: dummy-service-tls
   destination:
     name: in-cluster

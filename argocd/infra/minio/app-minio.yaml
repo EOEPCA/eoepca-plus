@@ -8,7 +8,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: develop
+    targetRevision: deploy-develop
     path: argocd/infra/minio
 
     helm:
@@ -29,11 +29,11 @@ spec:
               nginx.ingress.kubernetes.io/proxy-read-timeout: '600'
             path: /
             hosts:
-              - minio.guide.svc.rconway.uk
+              - minio.develop.eoepca.org
             tls:
               - secretName: minio-tls
                 hosts:
-                  - minio.guide.svc.rconway.uk
+                  - minio.develop.eoepca.org
           consoleIngress:
             enabled: true
             ingressClassName: nginx
@@ -44,11 +44,11 @@ spec:
               nginx.ingress.kubernetes.io/proxy-read-timeout: '600'
             path: /
             hosts:
-              - console.minio.guide.svc.rconway.uk
+              - console.minio.develop.eoepca.org
             tls:
             - secretName: minio-console-tls
               hosts:
-                - console.minio.guide.svc.rconway.uk
+                - console.minio.develop.eoepca.org
           resources:
             requests:
               memory: 1Gi
@@ -60,7 +60,7 @@ spec:
             - name: cache-bucket
         minio-bucket-api:
           fullnameOverride: minio-bucket-api
-          minIOServerEndpoint: https://minio.guide.svc.rconway.uk
+          minIOServerEndpoint: https://minio.develop.eoepca.org
           accessCredentials:
             secretName: minio-auth
 

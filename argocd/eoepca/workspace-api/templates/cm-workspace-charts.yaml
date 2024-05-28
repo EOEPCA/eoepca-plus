@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workspace-charts
+data:
+{{- $globPattern := "files/zoo-project/*" }}
+{{- $values := .Values }}
+{{- $files := .Files }}
+{{- range $path, $_ := $files.Glob $globPattern }}
+  {{- $filename := $path | base }}
+  {{ $filename }}: |-
+    {{- toString ($files.Get $path) | nindent 4 }}
+{{- end }}

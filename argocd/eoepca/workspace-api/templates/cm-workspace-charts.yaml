@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: workspace-charts
 data:
-{{- $globPattern := "files/zoo-project/*" }}
+{{- $globPattern := "workspace-templates/*" }}
 {{- $values := .Values }}
 {{- $files := .Files }}
 {{- range $path, $_ := $files.Glob $globPattern }}

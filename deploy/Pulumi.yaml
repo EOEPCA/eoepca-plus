@@ -1,0 +1,10 @@
+name: eoepca-pulumi
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: EOEPCA Plus
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: python

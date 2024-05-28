@@ -1,0 +1,50 @@
+encryptionsalt: xxxxxxxxxxxxxxxxxxxxxxxxxx  # Used for encrypting secrets within Pulumi
+
+config:
+  # Key pair configuration for SSH access
+  eoepca-pulumi:keyPairName: eoepca-dev-keypair
+
+  # Virtual machine image to be used for nodes
+  eoepca-pulumi:nodeImage: Ubuntu 22.04 LTS
+
+  # Username for SSH access
+  eoepca-pulumi:sshUser: xxxxxxxxx
+
+  # Maintainer email address
+  eoepca-pulumi:maintainerEmail: example@example.com
+
+  # Networking Configuration
+  eoepca-pulumi:domainName: develop.eoepca.org
+  eoepca-pulumi:networkCIDR: 192.168.x.0/24  # CIDR block for the network
+  eoepca-pulumi:loadBalancerFloatingIP: "x.x.x.x"  # Static IP for the load balancer
+  eoepca-pulumi:networkName: eoepca-dev-network  # Name of the network
+  eoepca-pulumi:subnetName: eoepca-dev-subnet  # Subnet name within the network
+  eoepca-pulumi:routerName: eoepca-dev-router  # Router name
+  eoepca-pulumi:externalNetworkID: 22d18510-faec-4d77-974b-ce4f16825b20  # External network ID
+  eoepca-pulumi:lbMethod: ROUND_ROBIN  # Load balancing method
+
+  # Control plane nodes configuration
+  eoepca-pulumi:controlPlaneNodeFlavour: eo2a.xlarge  # Flavor for control plane nodes
+
+  # Workers configuration
+  eoepca-pulumi:workerNodeCount: "1"  # Number of worker nodes
+  eoepca-pulumi:workerNodeFlavour: eo2a.3xlarge  # Flavor for worker nodes
+
+  # NFS configuration
+  eoepca-pulumi:nfsFlavour: eo2a.large  # Flavor for NFS server nodes
+
+  # Bastion host configuration
+  eoepca-pulumi:bastionFlavour: eo1.xsmall  # Flavor for bastion host
+
+  # ArgoCD Configuration with SSO integration
+  eoepca-pulumi:SSOClientID: xxxxxxxxxxx  # SSO client ID for ArgoCD
+  eoepca-pulumi:SSOClientSecret: xxxxxxxxxxxxxxxxxxxxxxxxxxx  # SSO client secret for ArgoCD
+  eoepca-pulumi:SSOOrg: EOEPCA  # SSO organization name
+  eoepca-pulumi:SSOTeam: Developers  # SSO team name
+  eoepca-pulumi:RBACPolicyDefault: role:admin  # Default RBAC policy
+
+  # Software versions
+  eoepca-pulumi:kubernetesVersion: "v1.25.16-rancher2-3"  # Kubernetes version
+  eoepca-pulumi:argoCDVersion: "6.9.2"  # ArgoCD version
+  eoepca-pulumi:ingressNginxVersion: "4.7.3"  # Ingress NGINX controller version
+  eoepca-pulumi:nfsProvisionerVersion: "4.0.12"  # NFS Provisioner version

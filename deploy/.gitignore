@@ -1,0 +1,16 @@
+*.pyc
+venv/
+.pulumi/*
+.pulumi
+*.pem
+*.pub
+__pycache__/
+Pulumi.*.yaml
+!Pulumi.example.yaml
+generated_key
+kubeconfig*
+cluster.yml
+kube_config_cluster.yml
+terraform-*
+k8s/argocd/dex.yaml
+k8s/argocd/argocd-cm.yaml

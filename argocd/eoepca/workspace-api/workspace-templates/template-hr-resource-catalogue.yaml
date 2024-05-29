@@ -23,6 +23,8 @@ spec:
       host: resource-catalogue.{{ workspace_name }}.develop.eoepca.org
       tls_host: resource-catalogue.{{ workspace_name }}.develop.eoepca.org
       tls_secret_name: resource-catalogue-{{ workspace_name }}-tls
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
     pycsw:
       # image:
       #   # repository: geopython/pycsw

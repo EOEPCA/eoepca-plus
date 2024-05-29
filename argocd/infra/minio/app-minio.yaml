@@ -70,7 +70,7 @@ spec:
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+      selfHeal: false  # seems to cause a problem with unsealing of SealedSecrets
       allowEmpty: true
     syncOptions:
       - Validate=true

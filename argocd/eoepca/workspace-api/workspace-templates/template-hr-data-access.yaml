@@ -195,7 +195,7 @@ spec:
       client:
         replicaCount: 1
         ingress:
-          enabled: false
+          enabled: true
         config:
           serviceUrl: "//data-access.{{ workspace_name }}.develop.eoepca.org/"
           eoxserverDownloadEnabled: true

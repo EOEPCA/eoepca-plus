@@ -1,6 +1,6 @@
 cookiecutter:
   templateUrl: https://github.com/EOEPCA/eoepca-proc-service-template.git
-  templateBranch: master
+  templateBranch: develop
 zoofpm:
   image:
     tag: eoepca-092ea7a2c6823dba9c6d52c383a73f5ff92d0762

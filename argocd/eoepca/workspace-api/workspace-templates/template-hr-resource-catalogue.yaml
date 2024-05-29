@@ -16,9 +16,9 @@ spec:
     global:
       namespace: "{{ workspace_name }}"
     db:
-      volume_storage_type: ${RESOURCE_CATALOGUE_STORAGE}
+      volume_storage_type: managed-nfs-storage-retain
     ingress:
-      enabled: ${OPEN_INGRESS}
+      enabled: true
       name: resource-catalogue
       host: resource-catalogue.{{ workspace_name }}.develop.eoepca.org
       tls_host: resource-catalogue.{{ workspace_name }}.develop.eoepca.org

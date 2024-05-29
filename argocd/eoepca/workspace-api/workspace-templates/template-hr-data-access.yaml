@@ -22,13 +22,13 @@ spec:
 
       # the tls host is still needed to provide the hostname for the view server client
       ingress:
-        enabled: ${OPEN_INGRESS}
+        enabled: true
         annotations:
           kubernetes.io/ingress.class: nginx
-          kubernetes.io/tls-acme: "${USE_TLS}"
+          kubernetes.io/tls-acme: "true"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
           nginx.ingress.kubernetes.io/enable-cors: "true"
-          cert-manager.io/cluster-issuer: "${TLS_CLUSTER_ISSUER}"
+          cert-manager.io/cluster-issuer: "letsencrypt-prod"
         hosts:
           - host: data-access.{{ workspace_name }}.develop.eoepca.org
         tls:
@@ -217,7 +217,7 @@ spec:
         persistence:
           enabled: true
           existingClaim: "" # we want the claim to be generated
-          storageClass: ${DATA_ACCESS_STORAGE}
+          storageClass: managed-nfs-storage-retain
           size: "100Gi"
         # postgresqlTcpKeepalivesInterval: "30"
         # postgresqlTcpKeepalivesIdle: "600"
@@ -231,7 +231,7 @@ spec:
         master:
           persistence:
             existingClaim: "" # we want the claim to be generated
-            storageClass: ${DATA_ACCESS_STORAGE}
+            storageClass: managed-nfs-storage-retain
             size: "1Gi"
 
       scheduler:

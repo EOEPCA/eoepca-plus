@@ -1,0 +1,10 @@
+apiVersion: v2
+name: app-identity-service
+description: Wrapper chart for deployment of identity-service plus additional manifests
+type: application
+version: 0.1.0
+appVersion: "identity-service"
+dependencies:
+  - name: "identity-service"
+    version: 1.0.98
+    repository: "https://eoepca.github.io/helm-charts"

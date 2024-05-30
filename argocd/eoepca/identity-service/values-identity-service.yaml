@@ -1,0 +1,70 @@
+persistence:
+  storageClassName: managed-nfs-storage-retain
+
+identity-service:
+  identity-keycloak:
+    secrets:
+      # Values for secret 'identity-keycloak'
+      # Note - if ommitted, these can instead be set by creating the secret independently.
+      kcDbPassword: "changeme"
+      keycloakAdminPassword: "changeme"
+    ingress:
+      enabled: true
+      className: nginx
+      annotations:
+        ingress.kubernetes.io/ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      hosts:
+        - host: keycloak.develop.eoepca.org
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: identity-keycloak-tls
+          hosts:
+            - keycloak.develop.eoepca.org
+  identity-postgres:
+    secrets:
+      # Values for secret 'identity-postgres'
+      # Note - if ommitted, these can instead be set by creating the secret independently.
+      postgresPassword: "changeme"
+      pgPassword: "changeme"
+    volumeClaim:
+      name: identity-service
+  identity-api:
+    secrets:
+      # Values for secret 'identity-api'
+      # Note - if ommitted, these can instead be set by creating the secret independently
+      # e.g. as a SealedSecret via GitOps.
+      adminPassword: "changeme"
+    deployment:
+      # Config values that can be passed via env vars
+      extraEnv:
+        - name: AUTH_SERVER_URL  # see configMap.authServerUrl instead
+          value: https://keycloak.develop.eoepca.org
+        - name: ADMIN_USERNAME
+          value: "admin"
+        - name: REALM
+          value: "master"
+        # - name: VERSION
+        #   value: v1.0.0
+        - name: LOG_LEVEL
+          value: DEBUG
+  identity-api-gatekeeper:
+    config:
+      client-id: identity-api
+      discovery-url: https://keycloak.develop.eoepca.org/realms/master
+      cookie-domain: develop.eoepca.org
+    targetService:
+      host: identity-api.develop.eoepca.org
+    secrets:
+      # Values for secret 'identity-api-protection'
+      # Note - if ommitted, these can instead be set by creating the secret independently.
+      clientSecret: "changeme"
+      encryptionKey: "changemechangeme"
+    ingress:
+      annotations:
+        ingress.kubernetes.io/ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        cert-manager.io/cluster-issuer: letsencrypt-prod

@@ -61,20 +61,6 @@ data-access:
 
     renderer:
       replicaCount: 4
-      ingress:
-        enabled: false
-        # annotations:
-        #   kubernetes.io/ingress.class: nginx
-        #   kubernetes.io/tls-acme: "true"
-        #   nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-        #   nginx.ingress.kubernetes.io/enable-cors: "true"
-        #   cert-manager.io/cluster-issuer: "letsencrypt-prod"
-        # hosts:
-        #   - host: data-access.develop.eoepca.org
-        # tls:
-        #   - hosts:
-        #       - data-access.develop.eoepca.org
-        #     secretName: data-access-tls
       resources:
         requests:
           cpu: 100m
@@ -161,20 +147,6 @@ data-access:
 
     client:
       replicaCount: 1
-      ingress:
-        enabled: true
-        annotations:
-          kubernetes.io/ingress.class: nginx
-          kubernetes.io/tls-acme: "true"
-          nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-          nginx.ingress.kubernetes.io/enable-cors: "true"
-          cert-manager.io/cluster-issuer: "letsencrypt-prod"
-        hosts:
-          - host: data-access.develop.eoepca.org
-        tls:
-          - hosts:
-              - data-access.develop.eoepca.org
-            secretName: data-access-tls
       config:
         eoxserverDownloadEnabled: true
         timeDomain:
@@ -194,19 +166,6 @@ data-access:
       master:
         persistence:
           storageClass: managed-nfs-storage-retain
-
-    ingestor:
-      ingress:
-        enabled: false
-
-    # seeder:
-    #   image:
-    #     repository: registry.gitlab.eox.at/vs/vs/seeder
-    #     tag: release-4.1.3
-
-    cache:
-      ingress:
-        enabled: false
 
     scheduler:
       resources:

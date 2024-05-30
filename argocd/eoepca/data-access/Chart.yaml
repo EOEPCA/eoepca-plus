@@ -1,0 +1,10 @@
+apiVersion: v2
+name: app-data-access
+description: Wrapper chart for deployment of data-access plus additional manifests
+type: application
+version: 0.1.0
+appVersion: "data-access"
+dependencies:
+  - name: "data-access"
+    version: 1.4.1
+    repository: "https://eoepca.github.io/helm-charts"

@@ -1,0 +1,6 @@
+dependencies:
+- name: data-access
+  repository: https://eoepca.github.io/helm-charts
+  version: 1.4.1
+digest: sha256:133b0c9b071fc732206261a74f3fcade0e79973462f83769ce84c0363406a33e
+generated: "2024-05-30T09:09:39.204230657+01:00"

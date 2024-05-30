@@ -1,0 +1,14 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: data-access-redis
+  labels:
+    k8s-app: data-access
+    name: data-access
+spec:
+  storageClassName: {{ .Values.persistence.storageClassName }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,5 +1,6 @@
 
 resources:
   - app-resource-catalogue.yaml
+  - data-access
   - zoo-dru
   - workspace-api

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+ORIG_DIR="$(pwd)"
+cd "$(dirname "$0")"
+BIN_DIR="$(pwd)"
+
+onExit() {
+  rm -rf tmp
+  cd "${ORIG_DIR}"
+}
+trap onExit EXIT
+
+user="${1}"
+if [ -z "${user}" ]; then echo "ERROR: Missing username" >&2; exit 1; fi
+
+# Get helper scripts
+mkdir -p tmp/bin
+mkdir -p tmp/cluster
+curl -JLs -o tmp/bin/create-workspace https://raw.githubusercontent.com/EOEPCA/deployment-guide/main/deploy/bin/create-workspace
+curl -JLs -o tmp/cluster/functions https://raw.githubusercontent.com/EOEPCA/deployment-guide/main/deploy/cluster/functions
+chmod +x tmp/bin/create-workspace
+
+tmp/bin/create-workspace -w https://workspace-api.develop.eoepca.org -a https://keycloak.develop.eoepca.org -O "${user}"

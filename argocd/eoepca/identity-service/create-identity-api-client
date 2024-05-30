@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+ORIG_DIR="$(pwd)"
+cd "$(dirname "$0")"
+BIN_DIR="$(pwd)"
+
+onExit() {
+  rm -rf tmp
+  cd "${ORIG_DIR}"
+}
+trap onExit EXIT
+
+# Get helper scripts
+mkdir -p tmp/bin
+mkdir -p tmp/cluster
+curl -JLs -o tmp/bin/create-client https://raw.githubusercontent.com/EOEPCA/deployment-guide/main/deploy/bin/create-client
+curl -JLs -o tmp/cluster/functions https://raw.githubusercontent.com/EOEPCA/deployment-guide/main/deploy/cluster/functions
+chmod +x tmp/bin/create-client
+
+# Wait for services to be ready..
+echo "Waiting for Identity Postgres service to be ready..."
+kubectl -n "um" rollout status deploy/identity-postgres --watch
+echo "Waiting for Identity Keycloak service to be ready..."
+kubectl -n "um" rollout status deploy/identity-keycloak --watch
+echo "Waiting for Identity API service to be ready..."
+kubectl -n "um" rollout status deploy/identity-api --watch
+
+# Use port-forwarding to go directly to the identity-api service
+echo "Establish port-forwarding to Identity API service on port 9876..."
+kubectl -n "um" port-forward svc/identity-api "9876":http >/dev/null &
+portForwardPid=$!
+sleep 1
+
+# Create the client
+tmp/bin/create-client \
+  -a https://keycloak.develop.eoepca.org \
+  -i http://localhost:9876 \
+  -r "master" \
+  -u "admin" \
+  -p "changeme" \
+  -c "admin-cli" \
+  --id=identity-api \
+  --name="Identity API Gatekeeper" \
+  --secret="changeme" \
+  --description="Client to be used by Identity API Gatekeeper" \
+  --resource="admin" \
+    --uris='/*' \
+    --scopes=view \
+    --users="admin"
+
+# Stop the port-forwarding
+echo "Stop port-forwarding to Identity API service on port 9876..."
+kill -TERM $portForwardPid
+
+# Wait for services to be ready..
+echo "Waiting for Identity API Protection service to be ready..."
+kubectl -n "um" rollout status deploy/identity-api-protection --watch

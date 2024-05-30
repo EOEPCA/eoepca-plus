@@ -40,7 +40,10 @@ source eoepca-openrc-2f.sh
 pulumi stack init dev
 ```
 
-6. **Deploy the stack**:
+6. **Configure environment variables**
+Use the `pulumi.example.yaml` file to update your environment variables to match your OpenStack configuration.
+
+7. **Deploy the stack**:
 ```
 pulumi up
 ```

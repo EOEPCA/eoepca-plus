@@ -61,6 +61,8 @@ data-access:
 
     renderer:
       replicaCount: 4
+      ingress:
+        enabled: true
       resources:
         requests:
           cpu: 100m
@@ -147,6 +149,8 @@ data-access:
 
     client:
       replicaCount: 1
+      ingress:
+        enabled: true
       config:
         eoxserverDownloadEnabled: true
         timeDomain:
@@ -161,6 +165,10 @@ data-access:
         customClientDaysPast1: 90
         customClientDaysPast2: 1
         customClientDaysFuture1: 7
+
+    cache:
+      ingress:
+        enabled: true
 
     redis:
       master:

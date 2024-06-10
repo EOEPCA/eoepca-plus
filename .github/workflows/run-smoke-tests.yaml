@@ -9,24 +9,30 @@ on:
   workflow_dispatch:
 
 env:
-  TARGET: ${{ github.ref#refs/heads/deploy- }}
+  BRANCH: ${{ github.ref_name }}
 
 jobs:
   run-tests:
     name: Run Smoke Tests
     runs-on: ubuntu-latest
     steps:
+      - name: Deduce TARGET from branch name
+        run: |
+          TARGET=${BRANCH#deploy-}
+          echo "TARGET is ${TARGET}"
       - name: Prepare test environment
         run: |
-          cat - <<EOF > .env.${{ env.TARGET }}
-          DOMAIN=${{ env.TARGET }}.eoepca.org
+          echo "TARGET is ${TARGET}"
+          cat - <<EOF > .env.${TARGET}
+          DOMAIN=${TARGET}.eoepca.org
           KEYCLOAK=keycloak.\${DOMAIN}
           EOF
       - name: Invoke pytest
         run: |
+          echo "TARGET is ${TARGET}"
           docker run --rm -t \
-            -e target=${{ env.TARGET }} \
-            -v ./.env.${{ env.TARGET }}:/work/test/.env.${{ env.TARGET }} \
+            -e target=${TARGET} \
+            -v ./.env.${TARGET}:/work/test/.env.${TARGET} \
             -v ./out:/work/out \
             eoepca/system-test \
             pytest test -m smoketest -v --junit-xml=out/report.xml

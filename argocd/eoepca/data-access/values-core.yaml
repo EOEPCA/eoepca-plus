@@ -44,8 +44,16 @@ data-access:
         data:
           type: S3
           endpoint_url: "http://eodata.cloudferro.com"
-          access_key_id: "4SMIGZNCR8LM1LSUY1HU"
-          secret_access_key: "MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV"
+          access_key_id:
+            valueFrom:
+              secretKeyRef:
+                name: data-access-secrets
+                key: CREODIAS_EODATA_S3_ACCESS_KEY
+          secret_access_key:
+            valueFrom:
+              secretKeyRef:
+                name: data-access-secrets
+                key: CREODIAS_EODATA_S3_ACCESS_SECRET
           region_name: "WAW3-2"  # Cloudferro S3 doesn't seem to care about region
           validate_bucket_name: false
       cache:

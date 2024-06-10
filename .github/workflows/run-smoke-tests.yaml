@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  TARGET: ${{ github.ref_name#deploy- }}
+  TARGET: ${{ github.ref#refs/heads/deploy- }}
 
 jobs:
   run-tests:

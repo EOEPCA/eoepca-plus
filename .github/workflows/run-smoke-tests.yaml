@@ -1,0 +1,35 @@
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
+name: Run Smoke Tests
+
+on:
+  # via github UI
+  workflow_dispatch:
+
+jobs:
+  run-tests:
+    name: Run Smoke Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare test environment
+        run: |
+          cat - <<EOF > env-develop
+          DOMAIN=develop.eoepca.org
+          KEYCLOAK=keycloak.\${DOMAIN}
+          EOF
+      - name: Invoke pytest
+        run: |
+          docker run --rm -t \
+            -e target=develop \
+            -v ./env-develop:/work/test/.env.develop \
+            -v ./out:/work/out \
+            eoepca/system-test \
+            pytest test -m smoketest -v --junit-xml=out/report.xml
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            out/**/*.xml

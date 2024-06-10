@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Deduce TARGET from branch name
         run: |
-          echo "TARGET=${BRANCH#deploy-}" >>$GITHUB_OUTPUT
+          echo "TARGET=${BRANCH#deploy-}" >>$GITHUB_ENV
       - name: Prepare test environment
         run: |
           echo "TARGET is ${{ env.TARGET }}"

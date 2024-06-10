@@ -8,13 +8,20 @@ data-access:
       CPL_VSIL_CURL_ALLOWED_EXTENSIONS: .TIF,.TIFF,.tif,.tiff,.xml,.jp2,.jpg,.jpeg,.png,.nc
       AWS_ENDPOINT_URL_S3: https://minio.develop.eoepca.org
       AWS_HTTPS: "FALSE"
+      CREODIAS_EODATA_S3_ENDPOINT: "http://eodata.cloudferro.com"
+      CREODIAS_EODATA_S3_REGION: "WAW3-2"
+      CREODIAS_EODATA_S3_ACCESS_KEY:
+        valueFrom:
+          secretKeyRef:
+            name: data-access-secrets
+            key: CREODIAS_EODATA_S3_ACCESS_KEY
+      CREODIAS_EODATA_S3_ACCESS_SECRET:
+        valueFrom:
+          secretKeyRef:
+            name: data-access-secrets
+            key: CREODIAS_EODATA_S3_ACCESS_SECRET
       startup_scripts:
         - /registrar_pycsw/registrar_pycsw/initialize-collections.sh
-      CREODIAS_EODATA_S3_ENDPOINT: "http://eodata.cloudferro.com"
-      CREODIAS_EODATA_S3_ACCESS_KEY: "4SMIGZNCR8LM1LSUY1HU"
-      CREODIAS_EODATA_S3_ACCESS_SECRET: "MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV"
-      CREODIAS_EODATA_S3_REGION: "WAW3-2"  # Cloudferro S3 doesn't seem to care about region
-
     # The data-access relies on the value 'ingress.tls.hosts[0]' to specify the service
     # hostname. So this must be supplied even if the ingress is disabled.
     ingress:

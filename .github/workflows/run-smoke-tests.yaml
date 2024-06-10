@@ -8,6 +8,9 @@ on:
   # via github UI
   workflow_dispatch:
 
+env:
+  BRANCH: ${{ github.ref_name }}
+
 jobs:
   run-tests:
     name: Run Smoke Tests
@@ -15,15 +18,15 @@ jobs:
     steps:
       - name: Prepare test environment
         run: |
-          cat - <<EOF > env-develop
-          DOMAIN=develop.eoepca.org
+          cat - <<EOF > .env.${{ env.BRANCH }}
+          DOMAIN=${{ env.BRANCH }}.eoepca.org
           KEYCLOAK=keycloak.\${DOMAIN}
           EOF
       - name: Invoke pytest
         run: |
           docker run --rm -t \
-            -e target=develop \
-            -v ./env-develop:/work/test/.env.develop \
+            -e target=${{ env.BRANCH }} \
+            -v ./.env.${{ env.BRANCH }}:/work/test/.env.${{ env.BRANCH }} \
             -v ./out:/work/out \
             eoepca/system-test \
             pytest test -m smoketest -v --junit-xml=out/report.xml

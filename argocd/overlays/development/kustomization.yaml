@@ -1,20 +1,78 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 resources:
   - ../../base
 
 configMapGenerator:
-  - name: base-domain
+  - name: domains
     literals:
-      - BASE_DOMAIN=develop.eoepca.org
+      - BASE_DOMAIN=https://vcluster-test.develop.eoepca.org
 
-vars:
-  - name: BASE_DOMAIN
-    objref:
+      - WORKSPACE_API_URL=https://workspace-api.vcluster-test.develop.eoepca.org
+      - S3_ENDPOINT=https://minio.vcluster-test.develop.eoepca.org
+      - HARBOR_URL=https://harbor.vcluster-test.develop.eoepca.org
+      - KEYCLOAK_URL=https://keycloak.vcluster-test.develop.eoepca.org
+      - IDENTITY_API_URL=https://identity-api.vcluster-test.develop.eoepca.org
+
+replacements:
+  - source:
       kind: ConfigMap
-      name: base-domain
-      apiVersion: v1
-    fieldref:
-      fieldpath: data.BASE_DOMAIN
-
-patchesStrategicMerge:
-  - workspace-api-patch.yaml
-  - resource-catalogue-patch.yaml
+      name: domains
+      namespace: default
+      fieldPath: data.WORKSPACE_API_URL
+    targets:
+      - select:
+          kind: Application
+          name: workspace-api
+          namespace: argocd
+        fieldPaths:
+          - spec.source.helm.valuesObject.workspace-api.ingress.hosts.0.host
+          - spec.source.helm.valuesObject.workspace-api.ingress.tls.0.hosts.0
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.S3_ENDPOINT
+    targets:
+      - select:
+          kind: Application
+          name: workspace-api
+          namespace: argocd
+        fieldPaths:
+          - spec.source.helm.valuesObject.workspace-api.s3Endpoint
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.IDENTITY_API_URL
+    targets:
+      - select:
+          kind: Application
+          name: workspace-api
+          namespace: argocd
+        fieldPaths:
+          - spec.source.helm.valuesObject.workspace-api.keycloakIntegration.identityApiUrl
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.KEYCLOAK_URL
+    targets:
+      - select:
+          kind: Application
+          name: workspace-api
+          namespace: argocd
+        fieldPaths:
+          - spec.source.helm.valuesObject.workspace-api.keycloakIntegration.keycloakUrl
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.HARBOR_URL
+    targets:
+      - select:
+          kind: Application
+          name: workspace-api
+          namespace: argocd
+        fieldPaths:
+          - spec.source.helm.valuesObject.workspace-api.harborUrl

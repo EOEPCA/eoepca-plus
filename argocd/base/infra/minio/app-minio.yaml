@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-james
-    path: argocd/infra/minio
+    path: argocd/base/infra/minio
 
     helm:
       releaseName: minio

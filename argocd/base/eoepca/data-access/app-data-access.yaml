@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-james
-    path: argocd/eoepca/data-access
+    path: argocd/base/eoepca/data-access
 
     helm:
       releaseName: data-access

@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-james
-    path: argocd/eoepca/workspace-api
+    path: argocd/base/eoepca/workspace-api
 
     helm:
       releaseName: workspace-api

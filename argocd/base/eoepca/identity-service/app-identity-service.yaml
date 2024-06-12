@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-james
-    path: argocd/eoepca/identity-service
+    path: argocd/base/eoepca/identity-service
 
     helm:
       releaseName: identity-service

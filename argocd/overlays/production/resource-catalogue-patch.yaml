@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: resource-catalogue
+spec:
+  source:
+    helm:
+      valuesObject:
+        resource-catalogue:
+          ingress:
+            hosts:
+              - host: "resource-catalogue.$(BASE_DOMAIN)"
+                paths: ["/"]

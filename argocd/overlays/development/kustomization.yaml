@@ -1,0 +1,20 @@
+resources:
+  - ../../base
+
+configMapGenerator:
+  - name: base-domain
+    literals:
+      - BASE_DOMAIN=develop.eoepca.org
+
+vars:
+  - name: BASE_DOMAIN
+    objref:
+      kind: ConfigMap
+      name: base-domain
+      apiVersion: v1
+    fieldref:
+      fieldpath: data.BASE_DOMAIN
+
+patchesStrategicMerge:
+  - workspace-api-patch.yaml
+  - resource-catalogue-patch.yaml

@@ -1,3 +1,10 @@
 .vscode/
 kubeconfig
 argocd.yaml
+deploy/vcluster/all.yaml
+deploy/vcluster/nginx-ingress.yaml
+deploy/vcluster/values.yaml
+vcluster
+argocd/eoepca/data-access/current-cluster-sealing-key.pem
+argocd/eoepca/data-access/kubeseal
+argocd/eoepca/data-access/pub-key-cert.pem

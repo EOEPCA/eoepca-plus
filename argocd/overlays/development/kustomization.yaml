@@ -8,7 +8,7 @@ configMapGenerator:
     literals:
       - BASE_DOMAIN=https://vcluster-test.develop.eoepca.org
 
-      - WORKSPACE_API_URL=https://workspace-api.vcluster-test.develop.eoepca.org
+      - WORKSPACE_API_URL=workspace-api.vcluster-test.develop.eoepca.org
       - S3_ENDPOINT=https://minio.vcluster-test.develop.eoepca.org
       - HARBOR_URL=https://harbor.vcluster-test.develop.eoepca.org
       - KEYCLOAK_URL=https://keycloak.vcluster-test.develop.eoepca.org

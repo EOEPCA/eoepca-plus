@@ -3,23 +3,27 @@ kind: Kustomization
 resources:
   - ../../base
 
-# TODO: Have two seperate configMapGenerators that generate the full urls based off the BASE_DOMAIN using replacements
 configMapGenerator:
   - name: domains
     literals:
-      - BASE_DOMAIN=https://vcluster-test.develop.eoepca.org
-
+      # Workspace-API
       - WORKSPACE_API_URL=workspace-api.vcluster-test.develop.eoepca.org
       
+      # Minio
       - S3_ENDPOINT=https://minio.vcluster-test.develop.eoepca.org
 
+      # Harbor
       - HARBOR_URL=harbor.vcluster-test.develop.eoepca.org
       - HARBOR_FULL_URL=https://harbor.vcluster-test.develop.eoepca.org
       
-      - KEYCLOAK_URL=https://keycloak.vcluster-test.develop.eoepca.org
+      # Keycloak
+      - KEYCLOAK_URL=keycloak.vcluster-test.develop.eoepca.org
+      - KEYCLOAK_FULL_URL=https://keycloak.vcluster-test.develop.eoepca.org
       
+      # Identity API
       - IDENTITY_API_URL=https://identity-api.vcluster-test.develop.eoepca.org
       
+      # Data Access
       - DATA_ACCESS_URL=data-access.vcluster-test.develop.eoepca.org
 
 
@@ -66,7 +70,7 @@ replacements:
       kind: ConfigMap
       name: domains
       namespace: default
-      fieldPath: data.KEYCLOAK_URL
+      fieldPath: data.KEYCLOAK_FULL_URL
     targets:
       - select:
           kind: Application
@@ -114,3 +118,30 @@ replacements:
           name: harbor
         fieldPaths:
           - spec.source.helm.valuesObject.expose.ingress.hosts.core
+
+
+  # Identity Service
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.KEYCLOAK_URL
+    targets:
+      - select:
+          kind: Application
+          name: identity-service
+        fieldPaths:
+          - spec.source.helm.parameters.0.value
+          - spec.source.helm.parameters.1.value
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.KEYCLOAK_FULL_URL
+    targets:
+      - select:
+          kind: Application
+          name: identity-service
+        fieldPaths:
+          - spec.source.helm.parameters.2.value
+    

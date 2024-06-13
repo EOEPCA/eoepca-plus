@@ -15,6 +15,17 @@ spec:
       releaseName: identity-service
       valueFiles:
         - values-identity-service.yaml
+      parameters:
+        - name: identity-service.identity-keycloak.ingress.hosts[0].host
+          value: keycloak.develop.eoepca.org
+        - name: identity-service.identity-keycloak.ingress.tls[0].hosts[0]
+          value: keycloak.develop.eoepca.org
+        - name: identity-service.identity-api.deployment.extraEnv[0].value
+          value: https://keycloak.develop.eoepca.org
+        - name: identity-service.identity-api-gatekeeper.config.discovery-url
+          value: https://keycloak.develop.eoepca.org/realms/master
+        - name: identity-service.identity-api-gatekeeper.targetService.host
+          value: identity-api.develop.eoepca.org
 
   destination:
     name: in-cluster

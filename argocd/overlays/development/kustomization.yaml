@@ -10,6 +10,7 @@ configMapGenerator:
       - WORKSPACE_API_URL=workspace-api.vcluster-test.develop.eoepca.org
       
       # Minio
+      - MINIO_URL=minio.vcluster-test.develop.eoepca.org
       - S3_ENDPOINT=https://minio.vcluster-test.develop.eoepca.org
 
       # Harbor
@@ -103,6 +104,19 @@ replacements:
         fieldPaths:
           - spec.source.helm.valuesObject.workspace-api.harborUrl
 
+  # Minio
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.MINIO_URL
+    targets:
+      - select:
+          kind: Application
+          name: minio
+        fieldPaths:
+          - spec.source.helm.valuesObject.minio.ingress.hosts.0.host
+          - spec.source.helm.valuesObject.minio.ingress.tls.0.hosts.0
 
   # Data Access
   - source:

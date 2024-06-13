@@ -13,8 +13,6 @@ spec:
 
     helm:
       releaseName: workspace-api
-      valueFiles:
-        - harbor-credentials.yaml
       valuesObject:
         workspace-api:
           fullnameOverride: workspace-api

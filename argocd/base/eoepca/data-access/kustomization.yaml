@@ -1,3 +1,4 @@
 
 resources:
   - app-data-access.yaml
+  - ss-data-access.yaml

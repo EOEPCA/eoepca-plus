@@ -17,17 +17,9 @@ spec:
         - values-core.yaml
         - values-creodias-data.yaml
         - values-harvester.yaml
-      valuesMerge: override
-      valuesInline:
-        - |
-          data-access:
-            global:
-              ingress:
-                hosts:
-                  - host: james-test-override.develop.eoepca.org
-                tls:
-                  - hosts:
-                      - james-test-override.develop.eoepca.org
+      parameters:
+        - name: ingress.hosts[0].host
+          value: parameter-test.develop.eoepca.org
 
   destination:
     name: in-cluster

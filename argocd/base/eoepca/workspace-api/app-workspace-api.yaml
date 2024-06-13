@@ -54,7 +54,10 @@ spec:
     
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-james
-      path: argocd/base/eoepca/workspace-api/ss-harbor.yaml
+      path: argocd/base/eoepca/workspace-api
+      kustomize:
+        components:
+          - ./
   destination:
     name: in-cluster
     namespace: rm

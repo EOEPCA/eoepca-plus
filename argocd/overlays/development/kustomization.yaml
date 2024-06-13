@@ -21,7 +21,8 @@ configMapGenerator:
       - KEYCLOAK_FULL_URL=https://keycloak.vcluster-test.develop.eoepca.org
       
       # Identity API
-      - IDENTITY_API_URL=https://identity-api.vcluster-test.develop.eoepca.org
+      - IDENTITY_API_URL=identity-api.vcluster-test.develop.eoepca.org
+      - IDENTITY_API_FULL_URL=https://identity-api.vcluster-test.develop.eoepca.org
       
       # Data Access
       - DATA_ACCESS_URL=data-access.vcluster-test.develop.eoepca.org
@@ -69,7 +70,7 @@ replacements:
       kind: ConfigMap
       name: domains
       namespace: default
-      fieldPath: data.IDENTITY_API_URL
+      fieldPath: data.IDENTITY_API_FULL_URL
     targets:
       - select:
           kind: Application
@@ -131,7 +132,7 @@ replacements:
           - spec.source.helm.valuesObject.expose.ingress.hosts.core
 
 
-  # Identity Service
+  # Keycloak Service
   - source:
       kind: ConfigMap
       name: domains
@@ -155,7 +156,20 @@ replacements:
           name: identity-service
         fieldPaths:
           - spec.source.helm.parameters.2.value
-    
+  
+  # Identity API
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.IDENTITY_API_URL
+    targets:
+      - select:
+          kind: Application
+          name: identity-service
+        fieldPaths:
+          - spec.source.helm.parameters.4.value
+        
   # Registration API
   - source:
       kind: ConfigMap

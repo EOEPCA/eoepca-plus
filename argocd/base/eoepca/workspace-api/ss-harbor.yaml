@@ -6,6 +6,11 @@ metadata:
 spec:
   encryptedData:
     HARBOR_ADMIN_PASSWORD: changeme
+  template:
     metadata:
+      annotations:
+        sealedsecrets.bitnami.com/namespace-wide: "true"
+      creationTimestamp: null
       name: harbor
       namespace: rm
+    type: Opaque

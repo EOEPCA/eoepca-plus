@@ -14,9 +14,11 @@ configMapGenerator:
       - HARBOR_URL=https://harbor.vcluster-test.develop.eoepca.org
       - KEYCLOAK_URL=https://keycloak.vcluster-test.develop.eoepca.org
       - IDENTITY_API_URL=https://identity-api.vcluster-test.develop.eoepca.org
+      - DATA_ACCESS_URL=data-access.vcluster-test.develop.eoepca.org
 
 
 replacements:
+  # Workspace-API
   - source:
       kind: ConfigMap
       name: domains
@@ -78,3 +80,18 @@ replacements:
           namespace: argocd
         fieldPaths:
           - spec.source.helm.valuesObject.workspace-api.harborUrl
+
+
+  # Data Access
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.DATA_ACCESS_URL
+    targets:
+      - select:
+          kind: Application
+          name: data-access
+        fieldPaths:
+          - spec.source.helm.parameters.0.value
+          - spec.source.helm.parameters.1.value

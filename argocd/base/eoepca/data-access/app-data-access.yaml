@@ -19,7 +19,9 @@ spec:
         - values-harvester.yaml
       parameters:
         - name: data-access.global.ingress.hosts[0].host
-          value: parameter-test.develop.eoepca.org
+          value: data-access.vcluster.develop.eoepca.org
+        - name: data-access.global.ingress.tls[0].hosts[0]
+          value: data-access.vcluster.develop.eoepca.org
 
   destination:
     name: in-cluster

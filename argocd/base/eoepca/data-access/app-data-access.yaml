@@ -18,7 +18,7 @@ spec:
         - values-creodias-data.yaml
         - values-harvester.yaml
       parameters:
-        - name: ingress.hosts[0].host
+        - name: data-access.global.ingress.hosts[0].host
           value: parameter-test.develop.eoepca.org
 
   destination:

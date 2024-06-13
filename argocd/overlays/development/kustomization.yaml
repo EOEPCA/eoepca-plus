@@ -19,6 +19,8 @@ configMapGenerator:
     literals:
       - HARBOR_SECRET=IONWINGREAgAE3L+v+dF3XZjDil+YecLpUIc2eeFJCzvu8lRjbNiJGy3fw3qHu5Q8WmYR/Eq8ZZDz1nVQf1GJYo7dRHCXSthWQ/nBo6zNVGRkNFkLQhXPq1apTO5RVXMJ9unE2jP3cq6JhphSOe8afjwERuceX4rXF8wuNr7THk9vvn/pJnDWDTpzgxsQsaBpwrqKKoFGzxGrE39bLvcZ8INhDCoamJPoqMfwJxovyZ/+RNIYi6GZnDp3+WhKzkFtsrUgV8fxVhoE8YW3CG3jDzZJWIPre+awff9bjROWDCQ5TjxNQnSfThmqt6mSaTlLOwMNT54jAQx7vVcVtXPcYiOVlq1DHY6ZaG+F38OQ0PmoXx0oiVFQEleKASBJFdJ0hbyChHdO2wnes1v8OTxF3Op3TkSJacsQGnPYIGNz5i/A69WSA2MKSQfeuZIOqKi+cq3YGm6BDzooXMn7VVyCXU3XJ6Hcx++Nf+NMUElJ4YJ8z2oA4AVzBKxn3vbtY6AvTyrVel4HH169Ak8mUVarrSc0v+C6HmnFYJ43mBRYAEPk8ghSE4QDoQLhR74w+WmSIlEhVDdiJbibuHE4gNiHOMpISD+XKiVqZE9vPnZpmJcU72WQtPBmQB0OUR+StKC0TxwWWTt1UoFpfLyDDCT9k4f4sZGcMGtmfjnq2VkjaG0fPlMM+w/WnSqAngezMPOeVhonjOqzkFafdekCMsz5uLM3OINERGIONRG
 
+
+
 replacements:
   - source:
       kind: ConfigMap
@@ -31,8 +33,8 @@ replacements:
           name: workspace-api
           namespace: argocd
         fieldPaths:
-          - spec.sources.0.helm.valuesObject.workspace-api.ingress.hosts.0.host
-          - spec.sources.0.helm.valuesObject.workspace-api.ingress.tls.0.hosts.0
+          - spec.source.helm.valuesObject.workspace-api.ingress.hosts.0.host
+          - spec.source.helm.valuesObject.workspace-api.ingress.tls.0.hosts.0
   - source:
       kind: ConfigMap
       name: domains
@@ -44,7 +46,7 @@ replacements:
           name: workspace-api
           namespace: argocd
         fieldPaths:
-          - spec.sources.0.helm.valuesObject.workspace-api.s3Endpoint
+          - spec.source.helm.valuesObject.workspace-api.s3Endpoint
   - source:
       kind: ConfigMap
       name: domains
@@ -56,7 +58,7 @@ replacements:
           name: workspace-api
           namespace: argocd
         fieldPaths:
-          - spec.sources.0.helm.valuesObject.workspace-api.keycloakIntegration.identityApiUrl
+          - spec.source.helm.valuesObject.workspace-api.keycloakIntegration.identityApiUrl
   - source:
       kind: ConfigMap
       name: domains
@@ -68,7 +70,7 @@ replacements:
           name: workspace-api
           namespace: argocd
         fieldPaths:
-          - spec.sources.0.helm.valuesObject.workspace-api.keycloakIntegration.keycloakUrl
+          - spec.source.helm.valuesObject.workspace-api.keycloakIntegration.keycloakUrl
   - source:
       kind: ConfigMap
       name: domains
@@ -80,7 +82,7 @@ replacements:
           name: workspace-api
           namespace: argocd
         fieldPaths:
-          - spec.sources.0.helm.valuesObject.workspace-api.harborUrl
+          - spec.source.helm.valuesObject.workspace-api.harborUrl
   - source:
       kind: ConfigMap
       name: secrets

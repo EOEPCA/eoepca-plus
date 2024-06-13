@@ -11,7 +11,8 @@ spec:
     targetRevision: deploy-james
     path: argocd/base/eoepca/workspace-api
     kustomize:
-      namePrefix: "workspace-api"
+      components:
+        - ./
     helm:
       releaseName: workspace-api
       valuesObject:

@@ -4,58 +4,49 @@ metadata:
   name: workspace-api
   namespace: argocd
 spec:
-  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
-  sources:
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-james
-      path: argocd/base/eoepca/workspace-api
-      helm:
-        releaseName: workspace-api
-        valuesObject:
-          workspace-api:
-            fullnameOverride: workspace-api
-            # image:
-            #   tag: integration
-            #   pullPolicy: Always
-            ingress:
-              enabled: true
-              annotations:
-                cert-manager.io/cluster-issuer: letsencrypt-prod
-                kubernetes.io/ingress.class: nginx
-                nginx.ingress.kubernetes.io/enable-cors: "true"
-                nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-              hosts:
-                - host: workspace-api.develop.eoepca.org
-                  paths: ["/"]
-              tls:
-                - hosts:
-                    - workspace-api.develop.eoepca.org
-                  secretName: workspace-api-tls
-            fluxHelmOperator:
-              enabled: true
-            prefixForName: "ws"
-            workspaceSecretName: "bucket"
-            namespaceForBucketResource: rm
-            s3Endpoint: "https://minio.develop.eoepca.org"
-            s3Region: "RegionOne"
-            harborUrl: "https://harbor.develop.eoepca.org"
-            harborUsername: "admin"
-            harborPasswordSecretName: "harbor"
-            workspaceChartsConfigMap: "workspace-charts"
-            bucketEndpointUrl: "http://minio-bucket-api.infra:8080/bucket"
-            keycloakIntegration:
-              enabled: false
-              keycloakUrl: "https://keycloak.develop.eoepca.org"
-              realm: "master"
-              identityApiUrl: "https://identity-api.develop.eoepca.org"
-              workspaceApiIamClientId: "workspace-api"
-              defaultIamClientSecret: "changeme"
-    
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-james
-      path: argocd/base/eoepca/workspace-api
-
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: deploy-james
+    path: argocd/base/eoepca/workspace-api
+    helm:
+      releaseName: workspace-api
+      valuesObject:
+        workspace-api:
+          fullnameOverride: workspace-api
+          ingress:
+            enabled: true
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+              kubernetes.io/ingress.class: nginx
+              nginx.ingress.kubernetes.io/enable-cors: "true"
+              nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+            hosts:
+              - host: workspace-api.develop.eoepca.org
+                paths: ["/"]
+            tls:
+              - hosts:
+                  - workspace-api.develop.eoepca.org
+                secretName: workspace-api-tls
+          fluxHelmOperator:
+            enabled: true
+          prefixForName: "ws"
+          workspaceSecretName: "bucket"
+          namespaceForBucketResource: rm
+          s3Endpoint: "https://minio.develop.eoepca.org"
+          s3Region: "RegionOne"
+          harborUrl: "https://harbor.develop.eoepca.org"
+          harborUsername: "admin"
+          harborPasswordSecretName: "harbor"
+          workspaceChartsConfigMap: "workspace-charts"
+          bucketEndpointUrl: "http://minio-bucket-api.infra:8080/bucket"
+          keycloakIntegration:
+            enabled: false
+            keycloakUrl: "https://keycloak.develop.eoepca.org"
+            realm: "master"
+            identityApiUrl: "https://identity-api.develop.eoepca.org"
+            workspaceApiIamClientId: "workspace-api"
+            defaultIamClientSecret: "changeme"
   destination:
     name: in-cluster
     namespace: rm

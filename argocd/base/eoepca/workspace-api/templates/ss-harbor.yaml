@@ -1,0 +1,12 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: harbor
+  namespace: {{ .Release.Namespace }}
+spec:
+  encryptedData:
+    HARBOR_ADMIN_PASSWORD: {{ .Values.harborCredentials.encryptedData.adminPassword }}
+  template:
+    metadata:
+      name: harbor
+      namespace: {{ .Release.Namespace }}

@@ -4,16 +4,23 @@ metadata:
   name: workspace-api
   namespace: argocd
 spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-james
-    path: argocd/base/eoepca/workspace-api
+    path: argocd/eoepca/workspace-api
+
     helm:
       releaseName: workspace-api
+      valueFiles:
+        - harbor-credentials.yaml
       valuesObject:
         workspace-api:
           fullnameOverride: workspace-api
+          # image:
+          #   tag: integration
+          #   pullPolicy: Always
           ingress:
             enabled: true
             annotations:
@@ -47,6 +54,7 @@ spec:
             identityApiUrl: "https://identity-api.develop.eoepca.org"
             workspaceApiIamClientId: "workspace-api"
             defaultIamClientSecret: "changeme"
+
   destination:
     name: in-cluster
     namespace: rm

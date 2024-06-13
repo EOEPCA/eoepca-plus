@@ -17,6 +17,9 @@ spec:
         - values-core.yaml
         - values-creodias-data.yaml
         - values-harvester.yaml
+      postRenderer:
+        exec:
+          command: ["rewrite.sh"]
 
   destination:
     name: in-cluster

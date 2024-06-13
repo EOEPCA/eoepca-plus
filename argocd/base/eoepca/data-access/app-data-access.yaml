@@ -19,9 +19,19 @@ spec:
         - values-harvester.yaml
       parameters:
         - name: data-access.global.ingress.hosts[0].host
-          value: data-access.vcluster.develop.eoepca.org
+          value: data-access.develop.eoepca.org
         - name: data-access.global.ingress.tls[0].hosts[0]
-          value: data-access.vcluster.develop.eoepca.org
+          value: data-access.develop.eoepca.org
+
+        - name: data-access.global.env.AWS_ENDPOINT_URL_S3
+          value: https://minio.develop.eoepca.org
+        - name: data-access.global.env.CREODIAS_EODATA_S3_ENDPOINT
+          value: http://eodata.cloudferro.com
+        - name: data-access.global.storage.cache.host
+          value: minio.develop.eoepca.org
+        - name: data-access.vs.registrar.config.defaultBackends[0].kwargs.ows_url
+          value: https://data-access.develop.eoepca.org/ows
+
 
   destination:
     name: in-cluster

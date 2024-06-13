@@ -95,3 +95,16 @@ replacements:
         fieldPaths:
           - spec.source.helm.parameters.0.value
           - spec.source.helm.parameters.1.value
+
+  # Harbor
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.HARBOR_URL
+    targets:
+      - select:
+          kind: Application
+          name: harbor
+        fieldPaths:
+          - spec.source.helm.valuesObject.expose.ingress.hosts.core

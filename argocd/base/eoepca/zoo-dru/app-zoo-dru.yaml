@@ -15,6 +15,13 @@ spec:
         valueFiles:
           - $values/argocd/base/eoepca/zoo-dru/values-zoo.yaml
           - $values/argocd/base/eoepca/zoo-dru/values-stageout.yaml
+        parameters:
+          - name: ingress.hosturl
+            value: https://zoo.develop.eoepca.org
+          - name: ingress.hosts[0].host
+            value: zoo.develop.eoepca.org
+          - name: ingress.tls[0].hosts[0]
+            value: zoo.develop.eoepca.org
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-james
       ref: values

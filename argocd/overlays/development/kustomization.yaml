@@ -34,6 +34,10 @@ configMapGenerator:
       - RESOURCE_CATALOGUE_URL=resource-catalogue.vcluster-test.develop.eoepca.org
       - RESOURCE_CATALOGUE_FULL_URL=https://resource-catalogue.vcluster-test.develop.eoepca.org
 
+      # Zoo
+      - ZOO_URL=zoo.vcluster-test.develop.eoepca.org
+      - ZOO_FULL_URL=https://zoo.vcluster-test.develop.eoepca.org
+
 replacements:
   # Workspace-API
   - source:
@@ -179,3 +183,28 @@ replacements:
         fieldPaths:
           - spec.source.helm.valuesObject.ingress.host
           - spec.source.helm.valuesObject.ingress.tls_host
+
+  # Zoo
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.ZOO_URL
+    targets:
+      - select:
+          kind: Application
+          name: zoo-project-dru
+        fieldPaths:
+          - spec.sources.0.helm.parameters.1.value
+          - spec.sources.0.helm.parameters.2.value
+  - source:
+      kind: ConfigMap
+      name: domains
+      namespace: default
+      fieldPath: data.ZOO_FULL_URL
+    targets:
+      - select:
+          kind: Application
+          name: zoo-project-dru
+        fieldPaths:
+          - spec.sources.0.helm.parameters.0.value

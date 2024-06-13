@@ -10,10 +10,16 @@ configMapGenerator:
       - BASE_DOMAIN=https://vcluster-test.develop.eoepca.org
 
       - WORKSPACE_API_URL=workspace-api.vcluster-test.develop.eoepca.org
+      
       - S3_ENDPOINT=https://minio.vcluster-test.develop.eoepca.org
-      - HARBOR_URL=https://harbor.vcluster-test.develop.eoepca.org
+
+      - HARBOR_URL=harbor.vcluster-test.develop.eoepca.org
+      - HARBOR_FULL_URL=https://harbor.vcluster-test.develop.eoepca.org
+      
       - KEYCLOAK_URL=https://keycloak.vcluster-test.develop.eoepca.org
+      
       - IDENTITY_API_URL=https://identity-api.vcluster-test.develop.eoepca.org
+      
       - DATA_ACCESS_URL=data-access.vcluster-test.develop.eoepca.org
 
 
@@ -72,7 +78,7 @@ replacements:
       kind: ConfigMap
       name: domains
       namespace: default
-      fieldPath: data.HARBOR_URL
+      fieldPath: data.HARBOR_FULL_URL
     targets:
       - select:
           kind: Application

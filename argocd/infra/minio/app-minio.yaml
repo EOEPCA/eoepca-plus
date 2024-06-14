@@ -8,6 +8,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://charts.min.io/
+    chart: minio
     targetRevision: 5.0.7
 
     helm:

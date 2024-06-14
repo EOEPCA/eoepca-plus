@@ -26,6 +26,5 @@ secretYaml() {
 }
 
 # Create Secret and then pipe to kubeseal to create the SealedSecret
-# secretYaml | kubeseal -o yaml --controller-name sealed-secrets --controller-namespace infra > templates/ss-${SECRET_NAME}.yaml
 secretYaml \
-  | kubeseal -o yaml --controller-name sealed-secrets --controller-namespace infra > ss-${SECRET_NAME}.yaml
+  | kubeseal -o yaml --controller-name sealed-secrets --controller-namespace infra > parts/ss-${SECRET_NAME}.yaml

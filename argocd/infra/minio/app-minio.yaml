@@ -7,55 +7,9 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: https://charts.min.io/
-    chart: minio
-    targetRevision: 5.0.7
-
-    helm:
-      releaseName: minio
-      valuesObject:
-        existingSecret: minio-auth
-        replicas: 2
-        ingress:
-          enabled: true
-          ingressClassName: nginx
-          annotations:
-            cert-manager.io/cluster-issuer: letsencrypt-production
-            nginx.ingress.kubernetes.io/ssl-redirect: "true"
-            nginx.ingress.kubernetes.io/proxy-body-size: "0"
-            nginx.ingress.kubernetes.io/proxy-read-timeout: '600'
-          path: /
-          hosts:
-            - minio.guide.svc.rconway.uk
-          tls:
-            - secretName: minio-tls
-              hosts:
-                - minio.guide.svc.rconway.uk
-        consoleIngress:
-          enabled: true
-          ingressClassName: nginx
-          annotations:
-            cert-manager.io/cluster-issuer: letsencrypt-production
-            nginx.ingress.kubernetes.io/ssl-redirect: "true"
-            nginx.ingress.kubernetes.io/proxy-body-size: "0"
-            nginx.ingress.kubernetes.io/proxy-read-timeout: '600'
-          path: /
-          hosts:
-            - console.minio.guide.svc.rconway.uk
-          tls:
-          - secretName: minio-console-tls
-            hosts:
-              - console.minio.guide.svc.rconway.uk
-        resources:
-          requests:
-            memory: 1Gi
-        persistence:
-          storageClass: standard
-          size: 50Gi
-        buckets:
-          - name: eoepca
-          - name: cache-bucket
-
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: deploy-rconway
+    path: argocd/infra/minio/parts
   destination:
     name: in-cluster
     namespace: infra

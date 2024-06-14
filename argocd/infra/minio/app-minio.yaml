@@ -13,8 +13,6 @@ spec:
 
     helm:
       releaseName: minio
-      valueFiles:
-        - admin-credentials.yaml
       valuesObject:
         existingSecret: minio-auth
         replicas: 2

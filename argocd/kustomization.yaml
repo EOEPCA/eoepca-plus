@@ -1,5 +1,5 @@
 
 resources:
-  - infra
+  # - infra
   - test
-  - eoepca
+  # - eoepca

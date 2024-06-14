@@ -4,7 +4,8 @@ metadata:
   name: minio
   namespace: argocd
   labels:
-    name: minio
+    eoepca/is-root-app: true
+    eoepca/app-name: minio
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca

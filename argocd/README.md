@@ -80,6 +80,7 @@ argocd app create eoepca \
   --repo https://github.com/EOEPCA/eoepca-plus \
   --path argocd \
   --revision deploy-rconway \
+  --labels 'eoepca/is-root-app="true",eoepca/app-name=eoepca' \
   --sync-policy automated \
   --auto-prune \
   --self-heal \

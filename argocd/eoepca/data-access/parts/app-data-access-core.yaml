@@ -16,9 +16,9 @@ spec:
     helm:
       releaseName: data-access
       valueFiles:
-        - values-core.yaml
-        - values-creodias-data.yaml
-        - values-harvester.yaml
+        - $values/argocd/eoepca/data-access/parts/values-core.yaml
+        - $values/argocd/eoepca/data-access/parts/values-creodias-data.yaml
+        - $values/argocd/eoepca/data-access/parts/values-harvester.yaml
 
   destination:
     name: in-cluster

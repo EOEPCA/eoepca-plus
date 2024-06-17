@@ -15,9 +15,9 @@ spec:
       helm:
         releaseName: data-access
         valueFiles:
-          - $values/argocd/eoepca/data-access/parts/values-core.yaml
-          - $values/argocd/eoepca/data-access/parts/values-creodias-data.yaml
-          - $values/argocd/eoepca/data-access/parts/values-harvester.yaml
+          - $values/argocd/eoepca/data-access/parts/values/values-core.yaml
+          - $values/argocd/eoepca/data-access/parts/values/values-creodias-data.yaml
+          - $values/argocd/eoepca/data-access/parts/values/values-harvester.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

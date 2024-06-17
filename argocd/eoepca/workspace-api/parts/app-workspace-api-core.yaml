@@ -17,6 +17,7 @@ spec:
       releaseName: rm-workspace-api
       valuesObject:
         workspace-api:
+          existingSecret: harbor
           fullnameOverride: workspace-api
           # image:
           #   tag: integration

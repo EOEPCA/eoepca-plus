@@ -1,6 +1,0 @@
-dependencies:
-- name: rm-workspace-api
-  repository: https://eoepca.github.io/helm-charts
-  version: 1.4.2
-digest: sha256:d2e5ca5068d1972b52c7e0c535df7d7e1dfd54eaf9c5724f3f1774a6ae53876b
-generated: "2024-05-28T16:23:44.882411283+01:00"

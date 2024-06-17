@@ -1,0 +1,17 @@
+
+resources:
+  - app-workspace-api-core.yaml
+  - ss-harbor.yaml
+  - hrepo-eoepca.yaml
+
+configMapGenerator:
+  - name: workspace-charts
+    namespace: rm
+    files:
+      - workspace-templates/template-hr-data-access.yaml
+      - workspace-templates/template-hr-resource-catalogue.yaml
+      - workspace-templates/template-cm-aws-config.yaml
+      - workspace-templates/template-cm-aws-credentials.yaml
+      - workspace-templates/template-cm-docker-config.yaml
+generatorOptions:
+  disableNameSuffixHash: true

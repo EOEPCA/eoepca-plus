@@ -3,57 +3,16 @@ kind: Application
 metadata:
   name: workspace-api
   namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: workspace-api
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
-    path: argocd/eoepca/workspace-api
-
-    helm:
-      releaseName: workspace-api
-      valueFiles:
-        - harbor-credentials.yaml
-      valuesObject:
-        workspace-api:
-          fullnameOverride: workspace-api
-          # image:
-          #   tag: integration
-          #   pullPolicy: Always
-          ingress:
-            enabled: true
-            annotations:
-              cert-manager.io/cluster-issuer: letsencrypt-prod
-              kubernetes.io/ingress.class: nginx
-              nginx.ingress.kubernetes.io/enable-cors: "true"
-              nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-            hosts:
-              - host: workspace-api.develop.eoepca.org
-                paths: ["/"]
-            tls:
-              - hosts:
-                  - workspace-api.develop.eoepca.org
-                secretName: workspace-api-tls
-          fluxHelmOperator:
-            enabled: true
-          prefixForName: "ws"
-          workspaceSecretName: "bucket"
-          namespaceForBucketResource: rm
-          s3Endpoint: "https://minio.develop.eoepca.org"
-          s3Region: "RegionOne"
-          harborUrl: "https://harbor.develop.eoepca.org"
-          harborUsername: "admin"
-          harborPasswordSecretName: "harbor"
-          workspaceChartsConfigMap: "workspace-charts"
-          bucketEndpointUrl: "http://minio-bucket-api.infra:8080/bucket"
-          keycloakIntegration:
-            enabled: false
-            keycloakUrl: "https://keycloak.develop.eoepca.org"
-            realm: "master"
-            identityApiUrl: "https://identity-api.develop.eoepca.org"
-            workspaceApiIamClientId: "workspace-api"
-            defaultIamClientSecret: "changeme"
+    path: argocd/eoepca/workspace-api/parts
 
   destination:
     name: in-cluster

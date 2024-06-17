@@ -1,6 +1,0 @@
-dependencies:
-- name: identity-service
-  repository: https://eoepca.github.io/helm-charts
-  version: 1.0.98
-digest: sha256:a0fb8fcae556dc310eef586f8728b6e4bf85ebe47006c52ff42ba2088239d185
-generated: "2024-05-30T10:21:06.233569921+01:00"

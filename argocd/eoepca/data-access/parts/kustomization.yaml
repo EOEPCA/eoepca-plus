@@ -2,4 +2,4 @@ resources:
   - app-data-access-core.yaml
   - pvc-database.yaml
   - pvc-redis.yaml
-  - ss-data-access.yaml
+  - ss-data-access-secrets.yaml

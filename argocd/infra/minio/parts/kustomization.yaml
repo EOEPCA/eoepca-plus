@@ -1,0 +1,5 @@
+
+resources:
+  - app-minio-server.yaml
+  - app-minio-bucket-api.yaml
+  - ss-minio-auth.yaml

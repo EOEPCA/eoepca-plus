@@ -1,18 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: minio
+  name: minio-bucket-api
   namespace: argocd
   labels:
-    eoepca/is-root-app: "true"
     eoepca/app-name: minio
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
-    path: argocd/infra/minio/parts
+    repoURL: https://eoepca.github.io/helm-charts
+    chart: rm-minio-bucket-api
+    targetRevision: 0.0.4
+
+    helm:
+      releaseName: minio-bucket-api
+      valuesObject:
+        fullnameOverride: minio-bucket-api
+        minIOServerEndpoint: https://minio.develop.eoepca.org
+        accessCredentials:
+          secretName: minio-auth
+
   destination:
     name: in-cluster
     namespace: infra

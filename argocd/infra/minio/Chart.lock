@@ -1,9 +1,0 @@
-dependencies:
-- name: minio
-  repository: https://charts.min.io/
-  version: 5.0.7
-- name: rm-minio-bucket-api
-  repository: https://eoepca.github.io/helm-charts
-  version: 0.0.4
-digest: sha256:e45dd9d44e06d3d72959a38fa75eac87f0af5a161e31d51880122ca84122059e
-generated: "2024-05-17T16:02:45.637312883+01:00"

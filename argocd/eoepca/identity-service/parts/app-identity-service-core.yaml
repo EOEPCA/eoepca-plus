@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: identity-service
+  name: identity-service-core
   namespace: argocd
   labels:
     eoepca/app-name: identity-service

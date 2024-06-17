@@ -4,7 +4,24 @@ The deployment of the Data Access BB relies mostly upon the `data-access` helm c
 
 * Data Access deployed via helm chart - defined in [EOEPCA Helm Chart Repo](https://eoepca.github.io/helm-charts)
 * Persistence: PVCs defined for database and for redis
+* `Sealed Secret` that provides the credentials for the `CREODIAS EO` data
 
-In order that all 'data-access' aspects are deployed under the umbrella of a single ArgoCD `Application`, the approach is to use an 'ad-hoc' helm chart that provides this wrapper by including (as dependency) the core `data-access` helm chart, whilst adding the additional parts - ref. [`ad-hoc` helm chart](Chart.yaml).
+In order that all 'data-access' aspects are deployed under the umbrella of a single ArgoCD `Application`, the approach is to define the `data-access` deployment using the ArgoCD app-of-apps pattern.
 
-An [ArgoCD `Application`](app-data-access.yaml) is then defined that deploys using the 'ad-hoc' wrapper helm chart - thus resulting in a self-contained deployment object for the Data Access BB in ArgoCD.
+Thus, the root `data-access` application references the `parts/` subdirectory that defines the comprising elements.
+
+```yaml
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: deploy-develop
+    path: argocd/eoepca/data-access/parts
+```
+
+
+## Admin Credentials Sealed Secret
+
+The data-access Creodias EO S3 access credentials are provided via a `Secret` that is maintained securely in git as a `SealedSecret`.
+
+This `SealedSecret` is defined as an element with the `parts/`, and is generated via the script `ss-data-access-auth.sh` via the `sealed-secrets-controller` that is running in the live cluster.
+
+The `<CREODIAS_EODATA_S3_ACCESS_KEY>` and `<CREODIAS_EODATA_S3_ACCESS_SECRET>` are supplied as positional cmdline arguments (with built-in defaults).

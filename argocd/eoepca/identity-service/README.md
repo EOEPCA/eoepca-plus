@@ -5,6 +5,13 @@ The deployment of the Identity Service BB relies mostly upon the `identity-servi
 * Identity Service deployed via helm chart - defined in [EOEPCA Helm Chart Repo](https://eoepca.github.io/helm-charts)
 * Persistence: PVC defined for Keycloak
 
-In order that all Identity Service aspects are deployed under the umbrella of a single ArgoCD `Application`, the approach is to use an 'ad-hoc' helm chart that provides this wrapper by including (as dependency) the core `identity-service` helm chart, whilst adding the additional parts - ref. [`ad-hoc` helm chart](Chart.yaml).
+In order that all 'identity-service' aspects are deployed under the umbrella of a single ArgoCD `Application`, the approach is to define the `identity-service` deployment using the ArgoCD app-of-apps pattern.
 
-An [ArgoCD `Application`](app-identity-service.yaml) is then defined that deploys using the 'ad-hoc' wrapper helm chart - thus resulting in a self-contained deployment object for the Identity Service BB in ArgoCD.
+Thus, the root `identity-service` application references the `parts/` subdirectory that defines the comprising elements.
+
+```yaml
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: deploy-develop
+    path: argocd/eoepca/identity-service/parts
+```

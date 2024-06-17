@@ -7,6 +7,13 @@ The deployment of the Workspace API relies mostly upon the `rm-workspace-api` he
 * `HelmRepository` resource used by `flux` during workspace creation
 * `SealedSecret` for access to Harbor container registry
 
-In order that all Workspace API aspects are deployed under the umbrella of a single ArgoCD `Application`, the approach is to use an 'ad-hoc' helm chart that provides this wrapper by including (as dependency) the core `rm-workspace-api` helm chart, whilst adding the additional parts - ref. [`ad-hoc` helm chart](Chart.yaml).
+In order that all 'rm-workspace-api' aspects are deployed under the umbrella of a single ArgoCD `Application`, the approach is to define the `rm-workspace-api` deployment using the ArgoCD app-of-apps pattern.
 
-An [ArgoCD `Application`](app-workspace-api.yaml) is then defined that deploys using the 'ad-hoc' wrapper helm chart - thus resulting in a self-contained deployment object for the Workspace API in ArgoCD.
+Thus, the root `rm-workspace-api` application references the `parts/` subdirectory that defines the comprising elements.
+
+```yaml
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: deploy-develop
+    path: argocd/eoepca/rm-workspace-api/parts
+```

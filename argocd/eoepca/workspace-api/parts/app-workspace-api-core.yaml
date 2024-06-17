@@ -10,8 +10,8 @@ spec:
   project: eoepca
   source:
     repoURL: https://eoepca.github.io/helm-charts
-    chart: 1.4.2
-    targetRevision: deploy-develop
+    chart: rm-workspace-api
+    targetRevision: 1.4.2
 
     helm:
       releaseName: rm-workspace-api

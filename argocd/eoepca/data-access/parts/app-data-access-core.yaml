@@ -8,17 +8,19 @@ metadata:
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
-  source:
-    repoURL: https://eoepca.github.io/helm-charts
-    chart: data-access
-    targetRevision: 1.4.1
-
-    helm:
-      releaseName: data-access
-      valueFiles:
-        - $values/argocd/eoepca/data-access/parts/values-core.yaml
-        - $values/argocd/eoepca/data-access/parts/values-creodias-data.yaml
-        - $values/argocd/eoepca/data-access/parts/values-harvester.yaml
+  sources:
+    - repoURL: https://eoepca.github.io/helm-charts
+      chart: data-access
+      targetRevision: 1.4.1
+      helm:
+        releaseName: data-access
+        valueFiles:
+          - $values/argocd/eoepca/data-access/parts/values-core.yaml
+          - $values/argocd/eoepca/data-access/parts/values-creodias-data.yaml
+          - $values/argocd/eoepca/data-access/parts/values-harvester.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
 
   destination:
     name: in-cluster

@@ -16,9 +16,9 @@ spec:
     helm:
       releaseName: data-access
       valueFiles:
-        - parts/values/values-core.yaml
-        - parts/values/values-creodias-data.yaml
-        - parts/values/values-harvester.yaml
+        - values-core.yaml
+        - values-creodias-data.yaml
+        - values-harvester.yaml
 
   destination:
     name: in-cluster

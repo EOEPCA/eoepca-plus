@@ -13,6 +13,7 @@ spec:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
     path: argocd/infra/minio/parts
+
   destination:
     name: in-cluster
     namespace: infra

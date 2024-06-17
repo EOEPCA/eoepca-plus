@@ -3,6 +3,9 @@ kind: Application
 metadata:
   name: zoo-project-dru
   namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: zoo-project-dru
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca

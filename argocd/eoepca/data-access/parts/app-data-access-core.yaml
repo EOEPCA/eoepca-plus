@@ -1,18 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: data-access
+  name: data-access-core
   namespace: argocd
   labels:
-    eoepca/is-root-app: "true"
     eoepca/app-name: data-access
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: https://github.com/EOEPCA/eoepca-plus
+    repoURL: https://eoepca.github.io/helm-charts
+    chart: 1.4.1
     targetRevision: deploy-develop
-    path: argocd/eoepca/data-access/parts
+
+    helm:
+      releaseName: data-access
+      valueFiles:
+        - values/values-core.yaml
+        - values/values-creodias-data.yaml
+        - values/values-harvester.yaml
+
   destination:
     name: in-cluster
     namespace: rm

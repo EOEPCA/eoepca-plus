@@ -10,8 +10,8 @@ spec:
   project: eoepca
   source:
     repoURL: https://eoepca.github.io/helm-charts
-    chart: 1.4.1
-    targetRevision: deploy-develop
+    chart: data-access
+    targetRevision: 1.4.1
 
     helm:
       releaseName: data-access

@@ -8,13 +8,13 @@ metadata:
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
-  sources:
-    - repoURL: https://eoepca.github.io/helm-charts
-      chart: identity-service
-      targetRevision: 1.0.98
-      helm:
-        releaseName: identity-service
-        valuesFile: ./values/values-identity-service.yaml
+  source:
+    repoURL: https://eoepca.github.io/helm-charts
+    chart: identity-service
+    targetRevision: 1.0.98
+    helm:
+      releaseName: identity-service
+      valuesFile: values-identity-service.yaml
 
   destination:
     name: in-cluster

@@ -9,7 +9,7 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: https://eoepca.github.io/helm-charts
+    repoURL: https://eoepca.github.io/helm-chorts
     chart: identity-service
     targetRevision: 1.0.98
     helm:

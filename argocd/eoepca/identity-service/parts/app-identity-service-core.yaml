@@ -15,10 +15,7 @@ spec:
       helm:
         releaseName: identity-service
         valueFiles:
-          - $values/argocd/eoepca/identity-service/parts/values/values-identity-service.yaml
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
-      ref: values
+          - ./values/values-identity-service.yaml
 
   destination:
     name: in-cluster

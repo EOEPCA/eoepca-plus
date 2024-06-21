@@ -14,8 +14,7 @@ spec:
       targetRevision: 1.0.98
       helm:
         releaseName: identity-service
-        valueFiles:
-          - ./values/values-identity-service.yaml
+        valuesFile: ./values/values-identity-service.yaml
 
   destination:
     name: in-cluster

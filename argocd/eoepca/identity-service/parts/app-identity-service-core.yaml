@@ -15,7 +15,7 @@ spec:
     helm:
       releaseName: identity-service
       valueFiles: 
-        - parts/app-identity-service-core.yaml
+        - values-identity-service.yaml
 
   destination:
     name: in-cluster

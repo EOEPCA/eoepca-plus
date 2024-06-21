@@ -15,7 +15,7 @@ spec:
     helm:
       releaseName: identity-service
       valueFiles: 
-        - values-identity-service.yaml
+        - argocd/eoepca/identity-service/parts/app-identity-service-core.yaml
 
   destination:
     name: in-cluster

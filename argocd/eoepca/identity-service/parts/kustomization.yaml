@@ -2,3 +2,4 @@ resources:
   - app-identity-service-core.yaml
   - pvc-database.yaml
   - pvc-userman.yaml
+  - ss-identity-postgres.yaml

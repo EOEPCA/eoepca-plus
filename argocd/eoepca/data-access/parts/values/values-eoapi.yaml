@@ -1,0 +1,31 @@
+ingress:
+  enabled: true
+  className: "nginx"
+pgstacBootstrap:
+  enabled: true
+raster:
+  enabled: true
+  settings:
+    resources:
+      requests:
+        memory: "3072Mi"
+stac:
+  enabled: true
+  settings:
+    resources:
+      limits:
+        cpu: "1280m"
+        memory: "1536Mi"
+      requests:
+        cpu: "512m"
+vector:
+  enabled: true
+  settings:
+    resources:
+      limits:
+        memory: "1536Mi"
+      requests:
+        memory: "1024Mi"
+    envVars:
+      # needs to on so we can call /refresh for integration tests
+      TIPG_DEBUG: "True"

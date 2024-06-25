@@ -1,6 +1,3 @@
-persistence:
-  storageClassName: managed-nfs-storage-retain
-
 identity-keycloak:
   secrets:
     # Values for secret 'identity-keycloak'

@@ -12,7 +12,7 @@ trap onExit EXIT
 # Optional local .env file for secret values as env vars
 source .env 2>/dev/null
 
-SECRET_NAME="data-access-secrets"
+SECRET_NAME="data-access-v1x-secrets"
 NAMESPACE="rm"
 
 CREODIAS_EODATA_S3_ACCESS_KEY="${1:-${CREODIAS_EODATA_S3_ACCESS_KEY:-eoepca}}"

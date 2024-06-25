@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: data-access-core
+  name: data-access-v1x-core
   namespace: argocd
   labels:
-    eoepca/app-name: data-access
+    eoepca/app-name: data-access-v1x
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
@@ -13,13 +13,13 @@ spec:
       chart: data-access
       targetRevision: 1.4.1
       helm:
-        releaseName: data-access
+        releaseName: data-access-v1x
         valueFiles:
-          - $values/argocd/eoepca/data-access/parts/values/values-core.yaml
-          - $values/argocd/eoepca/data-access/parts/values/values-creodias-data.yaml
-          - $values/argocd/eoepca/data-access/parts/values/values-harvester.yaml
+          - $values/argocd/eoepca/data-access-v1x/parts/values/values-core.yaml
+          - $values/argocd/eoepca/data-access-v1x/parts/values/values-creodias-data.yaml
+          - $values/argocd/eoepca/data-access-v1x/parts/values/values-harvester.yaml
         valuesObject:
-          existingSecret: data-access-secrets
+          existingSecret: data-access-v1x-secrets
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

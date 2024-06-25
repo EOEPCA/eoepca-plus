@@ -14,7 +14,7 @@ Thus, the root `data-access` application references the `parts/` subdirectory th
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
-    path: argocd/eoepca/data-access/parts
+    path: argocd/eoepca/data-access-v1x/parts
 ```
 
 

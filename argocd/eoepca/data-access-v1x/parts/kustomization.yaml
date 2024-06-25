@@ -1,0 +1,5 @@
+resources:
+  - app-data-access-v1x-core.yaml
+  - pvc-database.yaml
+  - pvc-redis.yaml
+  - ss-data-access-v1x-secrets.yaml

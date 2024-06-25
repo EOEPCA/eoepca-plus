@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: data-access
+  name: data-access-v1x
   namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: data-access
+    eoepca/app-name: data-access-v1x
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
-    path: argocd/eoepca/data-access/parts
+    path: argocd/eoepca/data-access-v1x/parts
   destination:
     name: in-cluster
     namespace: rm

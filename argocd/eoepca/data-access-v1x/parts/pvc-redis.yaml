@@ -1,15 +1,15 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: data-access-db
+  name: data-access-v1x-redis
   labels:
-    k8s-app: data-access
-    name: data-access
-    eoepca/app-name: data-access
+    k8s-app: data-access-v1x
+    name: data-access-v1x
+    eoepca/app-name: data-access-v1x
 spec:
   storageClassName: managed-nfs-storage-retain
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 100Gi
+      storage: 1Gi

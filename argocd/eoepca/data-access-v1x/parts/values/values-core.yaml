@@ -181,10 +181,23 @@ vs:
     ingress:
       enabled: true
 
+  database:
+    replicaCount: 1
+    persistence:
+      enabled: true
+      existingClaim: "" # we want the claim to be generated
+      storageClass: managed-nfs-storage-retain
+      size: "100Gi"
+
   redis:
+    replicaCount: 1
+    persistence:
+      existingClaim: "" # we want the claim to be generated
     master:
       persistence:
+        existingClaim: "" # we want the claim to be generated
         storageClass: managed-nfs-storage-retain
+        size: "1Gi"
 
   scheduler:
     resources:

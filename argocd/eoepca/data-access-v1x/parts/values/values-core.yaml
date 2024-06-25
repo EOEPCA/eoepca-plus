@@ -183,11 +183,12 @@ vs:
 
   database:
     replicaCount: 1
-    persistence:
-      enabled: true
-      existingClaim: "" # we want the claim to be generated
-      storageClass: managed-nfs-storage-retain
-      size: "100Gi"
+    primary:
+      persistence:
+        enabled: true
+        existingClaim: "" # we want the claim to be generated
+        storageClass: managed-nfs-storage-retain
+        size: "100Gi"
 
   redis:
     replicaCount: 1

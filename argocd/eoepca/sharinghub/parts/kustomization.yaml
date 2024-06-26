@@ -1,7 +1,10 @@
 
 resources:
   - app-sharinghub.yaml
+  - app-gitlab.yaml
   - ss-sharinghub-robot.yaml
   - ss-sharinghub-repo-creds.yaml
   - ss-sharinghub-oidc.yaml
   - ss-sharinghub.yaml
+  - ss-gitlab-storage.yaml
+  - ns-gitlab.yaml

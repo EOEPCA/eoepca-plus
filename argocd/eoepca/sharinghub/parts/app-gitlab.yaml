@@ -1,0 +1,110 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitlab
+  namespace: argocd
+  labels:
+    eoepca/app-name: gitlab
+spec:
+  destination:
+    namespace: gitlab
+    server: https://kubernetes.default.svc
+  project: eoepca
+  source:
+    repoURL: https://charts.gitlab.io
+    chart: gitlab
+    targetRevision: 8.0.1
+    helm:
+      valuesObject:
+        global:
+          edition: ce
+          hosts:
+            domain: <domain_name>
+          ingress:
+            configureCertmanager: false
+            class: nginx
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+
+          minio:
+            enabled: false
+          
+          appConfig:
+            omniauth:
+              enabled: true
+              allowSingleSignOn: ['saml', 'openid_connect']
+              providers:
+              - secret: openid-connect
+
+            lfs:
+              enabled: false
+            artifacts:
+              enabled: false
+            uploads:
+              enabled: false
+            packages:
+              enabled: false
+            backups:
+              bucket: gitlab-backup-storage
+              tmpBucket: gitlab-tmp-storage
+
+          registry:
+            enabled: false
+
+        upgradeCheck:
+          enabled: false
+
+        gitlab:
+          webservice:
+            ingress:
+              tls:
+                secretName: gitlab.<domain_name>-tls
+
+          toolbox:
+            backups:
+              objectStorage:
+                config:
+                  secret: storage-config
+                  key: config
+          sidekiq:
+            enabled: false
+
+        registry:
+          enabled: false
+          ingress:
+            tls: 
+              secretName: registry.<domain_name>-tls
+        
+        minio:
+          ingress:
+            tls:
+              secretName: minio.<domain_name>-tls
+        certmanager-issuer:
+          email: me@example.com
+        
+        certmanager:
+          install: false
+
+        nginx-ingress:
+          enabled: false
+
+        nginx-ingress-geo:
+          enabled: false
+        
+        prometheus:
+          install: false  
+        
+        gitlab-runner:
+          install: false
+        
+        redis:
+          metrics: 
+            enabled: false
+        
+        postgresql:
+          metrics: 
+            enabled: false
+  syncPolicy:
+    syncOptions:
+    - FailOnSharedResource=true
+    - CreateNamespace=true

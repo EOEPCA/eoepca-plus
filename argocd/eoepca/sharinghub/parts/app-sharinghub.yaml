@@ -17,7 +17,7 @@ spec:
       helm:
         releaseName: sharinghub
         valueFiles:
-        - $values/argocd/eoepca/mlopsbb/parts/values/values-sharinghub.yaml
+        - $values/argocd/eoepca/sharinghub/parts/values/values-sharinghub.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

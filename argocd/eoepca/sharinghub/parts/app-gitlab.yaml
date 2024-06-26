@@ -51,14 +51,15 @@ spec:
           registry:
             enabled: false
 
-        gitaly:
-          persistence:
-            storageClass: managed-nfs-storage-retain
+        
 
         upgradeCheck:
           enabled: false
 
         gitlab:
+          gitaly:
+            persistence:
+              storageClass: managed-nfs-storage-retain
           webservice:
             ingress:
               tls:

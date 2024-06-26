@@ -6,6 +6,7 @@ metadata:
   labels:
     eoepca/is-root-app: "true"
     eoepca/app-name: data-access-v1x
+    eoepca/release-line: v1.x
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca

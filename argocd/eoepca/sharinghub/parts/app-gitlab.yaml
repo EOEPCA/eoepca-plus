@@ -26,9 +26,6 @@ spec:
             annotations:
               cert-manager.io/cluster-issuer: letsencrypt-prod
 
-          gitaly:
-            persistence:
-              storageClass: managed-nfs-storage-retain
           minio:
             enabled: false
           
@@ -53,6 +50,10 @@ spec:
 
           registry:
             enabled: false
+
+        gitaly:
+          persistence:
+            storageClass: managed-nfs-storage-retain
 
         upgradeCheck:
           enabled: false

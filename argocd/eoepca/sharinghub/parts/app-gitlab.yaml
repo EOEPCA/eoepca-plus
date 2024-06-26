@@ -32,9 +32,6 @@ spec:
           appConfig:
             omniauth:
               enabled: false
-              allowSingleSignOn: ['saml', 'openid_connect']
-              providers:
-              - secret: openid-connect
 
             lfs:
               enabled: false

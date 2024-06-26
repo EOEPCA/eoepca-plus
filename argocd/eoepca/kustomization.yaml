@@ -1,8 +1,9 @@
 
 resources:
-  - identity-service
+  # - identity-service
   - app-resource-catalogue.yaml
   - app-registration-api.yaml
-  - data-access
+  - data-access-v1x
   - zoo-dru
   - workspace-api
+  - sharinghub

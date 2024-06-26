@@ -1,25 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: data-access
+  name: sharinghub
   namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: data-access
+    eoepca/app-name: sharinghub
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
-    path: argocd/eoepca/data-access/parts
+    path: argocd/eoepca/sharinghub/parts
   destination:
     name: in-cluster
-    namespace: data-access
+    namespace: sharinghub
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+      selfHeal: false
       allowEmpty: true
     syncOptions:
       - Validate=true

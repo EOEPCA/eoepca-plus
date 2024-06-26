@@ -1,0 +1,16 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: regcred
+  namespace: sharinghub
+spec:
+  encryptedData:
+    .dockerconfigjson: AgBMUzPAy5ld6Jd71vxzu6P9RqDbR+oIB26oaAKDzlxTiWDYoS1iwMeWwv+TxIbDXDUUb/6rzNf3hqBhMsAcwxJvtpI1S+Gktce00Ukxb8qe9nC4m3DfUgjRTi8DFOSiVmfc+yR/N7ozPWeoODSRc+9inq2zic6xDBZPwSFIs8A4jV//tuAoE1B0trIMP35JDgmRRNYyDve0VAmBygEElTGprFb/pJdickiGWxflLfL9PP4mjmAjJxv4OXoP/h41gGXn0X84WVWTWUceqrSBTra4Ikn9cYPtIMyg1Y5JF8Nzfq15VixUkPjDfcV4GmjLT8aBPX+DJ+ndaXEhkJmgIU8bvGgYMr8PEebvxYryiW9/Y+HmZLJLSjpsAmEpPoasGTHkPC3XT8RlKxiFaWnoUokvJOuBLD5q/4eHyIJBxqr3ruBDfiikVeukH9gaKyWsQVAaA3aRObZnA5f8tbu0LxfhPJK0c/9x32LU/1ZFuLYaDWKIg31YHkoPeEmJFuVHctIp6vUbDg1WcEjCoRUvq6h7nJUTJQxjaUV3pVG9aUBgVU9Y5X9U6af6sqEjQz13pqa/YPE7dCe3g1x9z70Q9lzhPBarwlsXx82NbIFHc379CJPxk+byBN3zObIztdvD4P2e1edcgXVgQHn9Q94kaNSy+fMYpbltnRXgtyn1x7aUwM858+MkfErVTBFm6OKhmW76Oqe+ff+CAS/YnlS5u5wPYdsDsD3R/TGhdopI/eKNeH70T10p41P/5nqWBvAHe8pzXFsmqQEKb7GRDSVH/J3NpNvzx4BMTEerdML+NshLuEINO1n5oHhboBlXPaZ262fVW+ZOBQv3VdlT2OOj0X7LJbQt60g4tE+3mq3cwIQat50MpWtZkVe3qcov+f0TezSEHkaE6u74ucol9O/bIpX/y7X0P8K4RlBaRrpj90PGZmKTMXjTj7k+cBw/QjnNCfTHfRJCsGusZ4GZgwJfb2BP8hoOh6xFmS7TMS9Hvy5yOXxtZxonEtJOo4WP/B9Ralg0Ogl4QA==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: regcred
+      namespace: sharinghub
+    type: kubernetes.io/dockerconfigjson
+

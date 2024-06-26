@@ -9,20 +9,6 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - repoURL: https://eoepca.github.io/helm-charts
-      chart: data-access
-      targetRevision: 1.4.1
-      helm:
-        releaseName: data-access
-        valueFiles:
-          - $values/argocd/eoepca/data-access/parts/values/values-core.yaml
-          - $values/argocd/eoepca/data-access/parts/values/values-creodias-data.yaml
-          - $values/argocd/eoepca/data-access/parts/values/values-harvester.yaml
-        valuesObject:
-          existingSecret: data-access-secrets
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
-      ref: values
     # pgo cannot be a dependency of eoAPI b/c it causes zombie resources on helm uninstall
     - repoURL: oci://registry.developers.crunchydata.com/crunchydata/pgo
       chart: pgo-5.5.2
@@ -33,7 +19,7 @@ spec:
           - $values/argocd/eoepca/data-access/parts/values/values-pgo.yaml
     - repoURL: https://devseed.com/eoapi-k8s/
       chart: eoapi
-      targetRevision: 0.3.0
+      targetRevision: 0.3.1
       helm:
         releaseName: eoapi
         valueFiles:
@@ -41,7 +27,7 @@ spec:
 
   destination:
     name: in-cluster
-    namespace: rm
+    namespace: data-access
   syncPolicy:
     automated:
       prune: true

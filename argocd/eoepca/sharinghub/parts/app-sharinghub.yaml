@@ -1,0 +1,146 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sharinghub-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: sharinghub
+spec:
+  destination:
+    namespace: sharinghub
+    name: in-cluster
+  project: eoepca
+  source:
+    repoURL: https://gitlab.si.c-s.fr/space_applications/mlops-services/sharinghub.git
+    path:  deploy/helm/sharinghub
+    targetRevision: main
+    helm:
+      releaseName: sharinghub
+      valuesObject:
+        config: |-
+          gitlab:
+            url: https://gitlab.develop.eoepca.org
+
+          docs:
+            url: /docs
+
+          stac:
+            projects:
+              cache-timeout: 30
+            search:
+              cache-timeout: 30
+            extensions:
+              eo: https://stac-extensions.github.io/eo/v1.1.0/schema.json
+              label: https://stac-extensions.github.io/label/v1.0.1/schema.json
+              sci: https://stac-extensions.github.io/scientific/v1.0.0/schema.json
+              ml-model: https://stac-extensions.github.io/ml-model/v1.0.0/schema.json
+            root:
+              id: gitlab
+              title: SharingHub brings your data and models closer.
+              description: Your platform for collaborating on ML and NLP projects, integrated with [GitLab](https://gitlab.com).
+              locales:
+                fr:
+                  title: SharingHub rapproche vos données et vos modèles.
+                  description: Votre plateforme de collaboration sur les projets ML et NLP, intégré à [GitLab](https://gitlab.com).
+            categories:
+              - ai-model:
+                  title: "AI Models"
+                  description: "AI models are the core of our platform, go and browse them to discover our models."
+                  gitlab_topic: sharinghub:aimodel
+                  logo: https://data.web.p2.csgroup.space/sharinghub/ai-model.jpg
+                  icon: https://img.icons8.com/material/24/artificial-intelligence.png
+                  locales:
+                    fr:
+                      title: "Modèles IA"
+                      description: "Les modèles d'IA sont au cœur de notre plateforme, allez les parcourir pour découvrir nos modèles."
+                  features:
+                    map-viewer: enable
+              - dataset:
+                  title: "Datasets"
+                  description: "Datasets are very important in the process of training an AI, discover those that we put at your disposal."
+                  gitlab_topic: sharinghub:dataset
+                  logo: https://data.web.p2.csgroup.space/sharinghub/datasets.jpg
+                  icon: https://img.icons8.com/ios/50/data-backup.png
+                  locales:
+                    fr:
+                      title: "Jeux de données"
+                      description: "Les jeux de données sont très importants dans le processus de formation d'une IA, découvrez ceux que nous mettons à votre disposition."
+                  features:
+                    map-viewer: enable
+
+          tags:
+            gitlab:
+              minimum_count: 1
+            sections:
+              - name: "Computer Vision"
+                enabled_for:
+                  - ai-model
+                  - dataset
+                keywords:
+                  - "Image qualification"
+                  - "Object detection"
+                  - "Image segmentation"
+                  - "Mask generation"
+              - name: "Multimodal"
+                keywords:
+                  - "Feature Extraction"
+                  - "Text-to-Image"
+                  - "Image-to-3D"
+                  - "Text-to-3D"
+                enabled_for:
+                  - ai-model
+                  - dataset
+              - name: "Tabular"
+                keywords:
+                  - "Tabular Classification"
+                  - "Tabular Regression"
+                enabled_for:
+                  - ai-model
+                  - dataset
+
+          alerts:
+            timeout: 3
+            type: info
+            title: "Welcome to SharingHub"
+            message: "To see all projects and unlock all features, please login..."
+            locales:
+              fr:
+                title: "Bienvenue sur le SharingHub"
+                message: "Pour voir tous les projets et débloquer toutes les fonctionnalités, veuillez vous connecter..."
+
+        image:
+          repository: 643vlk6z.gra7.container-registry.ovh.net/space_applications/sharinghub
+          pullPolicy: IfNotPresent
+          # Overrides the image tag whose default is the chart appVersion.
+          tag: "latest"
+
+        imagePullSecrets:
+          -  name: regcred
+
+        ingress:
+          enabled: true
+          className: "nginx"
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/proxy-body-size: 10g
+          hosts:
+            - host: sharinghub.develop.eoepca.org
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls:
+            - secretName: sharinghub.develop.eoepca.org-tls
+              hosts:
+                - sharinghub.develop.eoepca.org
+
+  syncPolicy:
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+    automated:
+      selfHeal: true

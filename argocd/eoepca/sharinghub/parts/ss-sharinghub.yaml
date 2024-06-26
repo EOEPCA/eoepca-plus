@@ -1,0 +1,15 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: sharinghub
+  namespace: sharinghub
+spec:
+  encryptedData:
+    session-secret-key: AgB/ay6+kKBYuQlsWurVMHUJUtKTAUYbl0UNdsKH5k45dUG+uHWVt7V9JE419gLbQFwAcWGpaNjSm3jNfyKWuK//yjMm7GSpnsHO3hIOYudOGlxDEvba3sLaU40U4eQpeYQweF1I0A5uPj1ZH93ej8ykwO0nV54GhVYEj98RPpT8g90Hvu81aUStKT5+ouPdZv3EgKm7mbI2NKaAOczvzORqdqZPWGKz/ofWeURK6jOT1/ApcXiQ8gz7nqIwn0309fe0yqFNbEl1XRANfoLiFjI0tVb1CaFmDBj0tF1q9wdqL6qk4rOn9B7hnJCElJwptyQAQ4sM7pjUEx46vUxYZC6jvbV0JX0etXaLH5wu+7TTrVYZ6uUCQZYz603j20du4crL+DtrDGQ2bY7JGdHB5DSZKJ6Fw/+0iE74erePwmSGhkV8P41IteHmS2HwDOgpP+9OCwLQALpLWgTyFmqL5T6r/mSqmuC2iMXBT3tSSPe3mHsRsWi5619ffx4ona1iTNR9ExI60H8X+HiiTIyWWymMTrYxPtIn82mB1QBJzAEX+zKAXbe8yxi915Q9VAPFgRsmS1UNmnyN4cg73g9v3OdLctaWASxZedD+1IFVHEWVXpheQHbQycqpwrSYkbPEXOraVp/Kn7hEIA4BwQIBFF+LPy8u3cTlGxI03KoOFoD/FYu6PkRBpWjN38Wb9Tgbmnp/ap5rRVNvYFctNcAI62EYcfn2ancM0brMVBttKiZdJaSP8gY=
+  template:
+    metadata:
+      creationTimestamp: null
+      name: sharinghub
+      namespace: sharinghub
+

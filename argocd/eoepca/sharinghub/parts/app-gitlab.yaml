@@ -26,6 +26,9 @@ spec:
             annotations:
               cert-manager.io/cluster-issuer: letsencrypt-prod
 
+          gitaly:
+            persistence:
+              storageClass: managed-nfs-storage-retain
           minio:
             enabled: false
           
@@ -98,10 +101,14 @@ spec:
           install: false
 
         redis:
+          global:
+            storageClass: managed-nfs-storage-retain
           metrics: 
             enabled: false
 
         postgresql:
+          global:
+            storageClass: managed-nfs-storage-retain
           metrics: 
             enabled: false
 

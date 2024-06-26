@@ -1,0 +1,9 @@
+
+resources:
+  - app-sharinghub.yaml
+  - ss-sharinghub-robot.yaml
+  - ss-sharinghub-repo.yaml
+  - ss-sharinghub-ui-repo.yaml
+  - ss-sharinghub-server-repo.yaml
+  - ss-sharinghub-docs-repo.yaml
+  - ss-sharinghub-oidc.yaml

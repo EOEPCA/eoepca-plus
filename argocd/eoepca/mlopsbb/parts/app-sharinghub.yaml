@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sharinghub
+  namespace: argocd
+  labels:
+    eoepca/app-name: sharinghub
+spec:
+  destination:
+    namespace: sharinghub
+    name: in-cluster
+  project: eoepca
+  sources:
+    - repoURL: https://gitlab.si.c-s.fr/space_applications/mlops-services/sharinghub.git
+      path:  deploy/helm/sharinghub
+      targetRevision: main
+      helm:
+        releaseName: sharinghub
+        valueFiles:
+        - $values/argocd/eoepca/mlopsbb/parts/values/values-sharinghub.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
+
+  syncPolicy:
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+    automated:
+      selfHeal: true

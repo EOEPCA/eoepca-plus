@@ -57,6 +57,8 @@ spec:
         buckets:
           - name: eoepca
           - name: cache-bucket
+          - name: gitlab-backup-storage
+          - name: gitlab-tmp-storage
 
   destination:
     name: in-cluster

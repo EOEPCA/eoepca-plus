@@ -74,7 +74,7 @@ spec:
                   secret: gitlab-storage-config
                   key: config
           sidekiq:
-            enabled: false
+            enabled: true
 
         registry:
           enabled: false

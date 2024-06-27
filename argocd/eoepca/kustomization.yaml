@@ -6,4 +6,4 @@ resources:
   - data-access-v1x
   - zoo-dru
   - workspace-api
-  - sharinghub
+  - mlops

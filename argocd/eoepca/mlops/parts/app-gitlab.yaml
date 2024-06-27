@@ -71,6 +71,13 @@ spec:
           sidekiq:
             enabled: false
 
+        kas:
+          ingress:
+            tls:
+              - hosts:
+                  - kas.develop.eoepca.org
+                secretName: kas.develop.eoepca.org-tls
+
         registry:
           enabled: false
           ingress:

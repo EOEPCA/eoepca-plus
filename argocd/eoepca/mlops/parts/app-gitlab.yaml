@@ -65,9 +65,7 @@ spec:
           kas:
             ingress:
               tls:
-                - hosts:
-                    - kas.develop.eoepca.org
-                  secretName: kas.develop.eoepca.org-tls
+                secretName: kas.develop.eoepca.org-tls
 
           toolbox:
             backups:

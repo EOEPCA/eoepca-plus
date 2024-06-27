@@ -25,13 +25,6 @@ spec:
             class: nginx
             annotations:
               cert-manager.io/cluster-issuer: letsencrypt-prod
-          
-          kas:
-            ingress:
-              tls:
-                - hosts:
-                    - kas.develop.eoepca.org
-                  secretName: kas.develop.eoepca.org-tls
 
           minio:
             enabled: false
@@ -68,6 +61,13 @@ spec:
             ingress:
               tls:
                 secretName: gitlab.develop.eoepca.org-tls
+
+          kas:
+            ingress:
+              tls:
+                - hosts:
+                    - kas.develop.eoepca.org
+                  secretName: kas.develop.eoepca.org-tls
 
           toolbox:
             backups:

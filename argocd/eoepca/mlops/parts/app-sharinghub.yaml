@@ -19,7 +19,7 @@ spec:
       valuesObject:
         config: |-
           gitlab:
-            url: https://gitlab.com
+            url: https://gitlab.develop.eoepca.org
 
           docs:
             url: /docs

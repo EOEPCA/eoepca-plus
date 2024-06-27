@@ -110,7 +110,7 @@ spec:
 
         image:
           repository: 643vlk6z.gra7.container-registry.ovh.net/space_applications/sharinghub
-          pullPolicy: IfNotPresent
+          pullPolicy: Always
           # Overrides the image tag whose default is the chart appVersion.
           tag: "latest"
 

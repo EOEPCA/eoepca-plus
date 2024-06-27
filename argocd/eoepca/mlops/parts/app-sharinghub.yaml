@@ -19,7 +19,7 @@ spec:
       valuesObject:
         config: |-
           gitlab:
-            url: https://gitlab.develop.eoepca.org
+            url: https://gitlab.com
 
           docs:
             url: /docs
@@ -143,4 +143,6 @@ spec:
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
     automated:
-      selfHeal: true
+      prune: true
+      selfHeal: false
+      allowEmpty: true

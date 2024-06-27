@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sharinghub
+  name: mlops
   namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: sharinghub
+    eoepca/app-name: mlops
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
-    path: argocd/eoepca/sharinghub/parts
+    path: argocd/eoepca/mlops/parts
   destination:
     name: in-cluster
     namespace: sharinghub

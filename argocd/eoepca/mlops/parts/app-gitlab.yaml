@@ -113,5 +113,13 @@ spec:
 
   syncPolicy:
     syncOptions:
-    - FailOnSharedResource=true
-    - CreateNamespace=true
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+    automated:
+      prune: true
+      selfHeal: false
+      allowEmpty: true

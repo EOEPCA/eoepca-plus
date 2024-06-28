@@ -1,0 +1,4 @@
+
+resources:
+  - app-workspace-crossplane.yaml
+  - app-workspace-pipelines.yaml

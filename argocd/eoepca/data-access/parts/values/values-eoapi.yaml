@@ -12,9 +12,34 @@ ingress:
     certManager: false
     secretName: eoapi-tls
 
+postgrescluster:
+  postgresVersion: 16
+  postGISVersion: 3.4
+  pgBouncerReplicas: 1
+  monitoring: false
+  backupsSize: 20Gi
+  instances:
+  - name: eoapi
+    replicas: 1
+    dataVolumeClaimSpec:
+      storageClassName: managed-nfs-storage-retain
+      accessModes:
+      - "ReadWriteOnce"
+      resources: {}
+  backups:
+    pgbackrest:
+      repos:
+        - name: eoapi
+          volume:
+            volumeClaimSpec:
+              storageClassName: managed-nfs-storage-retain
+              accessModes:
+                - "ReadWriteOnce"
+              resources: {}
 
 pgstacBootstrap:
   enabled: true
+
 raster:
   enabled: true
   settings:

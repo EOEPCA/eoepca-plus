@@ -1,8 +1,8 @@
 
 resources:
   # - identity-service
-  - app-resource-catalogue.yaml
-  - app-registration-api.yaml
+  - resource-catalogue
+  - registration-api
   - data-access-v1x
   - zoo-dru
   - workspace

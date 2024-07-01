@@ -66,3 +66,4 @@ vector:
     envVars:
       # needs to on so we can call /refresh for integration tests
       TIPG_DEBUG: "True"
+      TIPG_CATALOG_TTL: "30"

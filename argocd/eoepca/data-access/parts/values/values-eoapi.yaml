@@ -24,7 +24,7 @@ postgrescluster:
     dataVolumeClaimSpec:
       storageClassName: managed-nfs-storage-retain
       accessModes:
-      - "ReadWriteOnce"
+      - "ReadWriteMany"
       resources: {}
   backups:
     pgbackrest:
@@ -34,7 +34,7 @@ postgrescluster:
             volumeClaimSpec:
               storageClassName: managed-nfs-storage-retain
               accessModes:
-                - "ReadWriteOnce"
+                - "ReadWriteMany"
               resources: {}
 
 pgstacBootstrap:

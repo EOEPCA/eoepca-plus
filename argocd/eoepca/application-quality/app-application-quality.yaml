@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: application-quality
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: application-quality
+spec
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://github.com/EOEPCA/application-quality'
+    path: helm
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - eoepca-develop-values.yaml
+  destination:
+    name: in-cluster
+    namespace: application-quality
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

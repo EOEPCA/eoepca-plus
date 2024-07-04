@@ -6,7 +6,7 @@ metadata:
   labels:
     eoepca/is-root-app: "true"
     eoepca/app-name: application-quality
-spec
+spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:

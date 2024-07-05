@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: data-access-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: data-access
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+#    # pgo cannot be a dependency of eoAPI b/c it causes zombie resources on helm uninstall
+#    - repoURL: oci://registry.developers.crunchydata.com/crunchydata/pgo
+#      chart: pgo-5.5.2
+#      targetRevision: 5.5.2
+#      helm:
+#        releaseName: pgo
+#        valueFiles:
+#          - $values/argocd/eoepca/data-access/parts/values/values-pgo.yaml
+    - repoURL: https://devseed.com/eoapi-k8s/
+      chart: eoapi
+      targetRevision: 0.3.2
+      helm:
+        releaseName: eoapi
+        valueFiles:
+          - $values/argocd/eoepca/data-access/parts/values/values-eoapi.yaml
+
+  destination:
+    name: in-cluster
+    namespace: data-access
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

@@ -4,6 +4,7 @@ resources:
   - resource-catalogue
   - registration-api
   - data-access-v1x
+  - data-access
   - zoo-dru
   - workspace
   - workspace-api

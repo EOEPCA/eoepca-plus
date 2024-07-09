@@ -9,17 +9,17 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-#    # pgo cannot be a dependency of eoAPI b/c it causes zombie resources on helm uninstall
-#    - repoURL: oci://registry.developers.crunchydata.com/crunchydata/pgo
-#      chart: pgo-5.5.2
-#      targetRevision: 5.5.2
-#      helm:
-#        releaseName: pgo
-#        valueFiles:
-#          - $values/argocd/eoepca/data-access/parts/values/values-pgo.yaml
+    # pgo cannot be a dependency of eoAPI b/c it causes zombie resources on helm uninstall
+    - repoURL: oci://registry.developers.crunchydata.com/crunchydata/pgo
+      chart: pgo-5.5.2
+      targetRevision: 5.5.2
+      helm:
+        releaseName: pgo
+        valueFiles:
+          - $values/argocd/eoepca/data-access/parts/values/values-pgo.yaml
     - repoURL: https://devseed.com/eoapi-k8s/
       chart: eoapi
-      targetRevision: 0.3.2
+      targetRevision: 0.3.3
       helm:
         releaseName: eoapi
         valueFiles:

@@ -25,6 +25,7 @@ jobs:
           cat - <<EOF > .env.${{ env.TARGET }}
           DOMAIN=${{ env.TARGET }}.eoepca.org
           KEYCLOAK=keycloak.\${DOMAIN}
+          EOAPI=eoapi.\${DOMAIN}
           EOF
       - name: Invoke pytest
         run: |

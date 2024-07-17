@@ -20,4 +20,4 @@ curl -JLs -o tmp/bin/create-workspace https://raw.githubusercontent.com/EOEPCA/d
 curl -JLs -o tmp/cluster/functions https://raw.githubusercontent.com/EOEPCA/deployment-guide/main/deploy/cluster/functions
 chmod +x tmp/bin/create-workspace
 
-tmp/bin/create-workspace -w https://workspace-api.develop.eoepca.org -a https://keycloak.develop.eoepca.org -O "${user}"
+tmp/bin/create-workspace -w https://workspace-api.develop.eoepca.org -a https://keycloak-v1x.develop.eoepca.org -O "${user}"

@@ -21,7 +21,7 @@ createUser() {
   user="$1"
   password="changeme"
   tmp/bin/create-user \
-    -a https://keycloak.develop.eoepca.org \
+    -a https://keycloak-v1x.develop.eoepca.org \
     -r "master" \
     -u "admin" \
     -p "changeme" \

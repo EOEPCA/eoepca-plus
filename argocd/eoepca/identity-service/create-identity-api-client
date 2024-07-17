@@ -33,7 +33,7 @@ sleep 1
 
 # Create the client
 tmp/bin/create-client \
-  -a https://keycloak.develop.eoepca.org \
+  -a https://keycloak-v1x.develop.eoepca.org \
   -i http://localhost:9876 \
   -r "master" \
   -u "admin" \

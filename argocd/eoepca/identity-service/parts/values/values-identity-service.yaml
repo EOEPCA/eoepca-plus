@@ -12,14 +12,14 @@ identity-keycloak:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
-      - host: keycloak.develop.eoepca.org
+      - host: keycloak-v1x.develop.eoepca.org
         paths:
           - path: /
             pathType: Prefix
     tls:
       - secretName: identity-keycloak-tls
         hosts:
-          - keycloak.develop.eoepca.org
+          - keycloak-v1x.develop.eoepca.org
 identity-postgres:
   secrets:
     # Values for secret 'identity-postgres'
@@ -38,7 +38,7 @@ identity-api:
     # Config values that can be passed via env vars
     extraEnv:
       - name: AUTH_SERVER_URL  # see configMap.authServerUrl instead
-        value: https://keycloak.develop.eoepca.org
+        value: https://keycloak-v1x.develop.eoepca.org
       - name: ADMIN_USERNAME
         value: "admin"
       - name: REALM
@@ -50,7 +50,7 @@ identity-api:
 identity-api-gatekeeper:
   config:
     client-id: identity-api
-    discovery-url: https://keycloak.develop.eoepca.org/realms/master
+    discovery-url: https://keycloak-v1x.develop.eoepca.org/realms/master
     cookie-domain: develop.eoepca.org
   targetService:
     host: identity-api.develop.eoepca.org

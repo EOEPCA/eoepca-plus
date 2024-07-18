@@ -13,7 +13,7 @@ spec:
     path: argocd/infra/cert-management
     targetRevision: deploy-develop
   destination:
-    server: in-cluster
+    name: in-cluster
     namespace: cert-manager-ns
   syncPolicy:
     automated:

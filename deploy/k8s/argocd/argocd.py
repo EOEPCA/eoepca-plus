@@ -6,7 +6,7 @@ from pulumi_kubernetes.yaml import ConfigFile
 config = pulumi.Config()
 
 
-def deploy(k8s_provider, cluster_issuer, ingress_chart, sealed_secrets_crd):
+def deploy(k8s_provider, ingress_chart):
     # Create Argo CD namespace
     argocd_namespace = Namespace(
         "argocd",

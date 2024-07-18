@@ -12,7 +12,6 @@ from k8s.argocd import argocd
 from k8s.certs import cert_manager
 from k8s.ingress_nginx import ingress_nginx
 from k8s.nfs import nfs_provisioner, nfs_pvc
-from k8s.sealed_secrets import sealed_secrets
 
 config = pulumi.Config()
 
@@ -54,7 +53,7 @@ def main():
         )
         worker_nodes.append(node)
 
-    # Deploy RKE Cluster
+    # # Deploy RKE Cluster
     nodes = {
         "control_node": control_node,
         "worker_nodes": worker_nodes,
@@ -74,9 +73,6 @@ def main():
     # Deploy Ingress Nginx
     ingress_chart = ingress_nginx.deploy(k8s_provider)
 
-    # Deploy Required CRDs
-    sealed_secrets_crd = sealed_secrets.deploy(k8s_provider)
-
     # Deploy Cert Manager
     cluster_issuer = cert_manager.deploy(k8s_provider)
 
@@ -87,9 +83,7 @@ def main():
     # Deploy ArgoCD onto the RKE cluster
     argocd_chart = argocd.deploy(
         k8s_provider,
-        cluster_issuer,
         ingress_chart,
-        sealed_secrets_crd,
     )
 
 

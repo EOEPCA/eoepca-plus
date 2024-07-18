@@ -30,8 +30,8 @@ spec:
       - ApplyOutOfSyncOnly=true
 
   info:
-    - name: 'Example:'
-      value: 'https://example.com'
+    - name: 'EOEPCA Plus:'
+      value: 'https://eoepca.org/'
 
   ignoreDifferences:
     - group: apps

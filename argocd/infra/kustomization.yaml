@@ -3,4 +3,4 @@ resources:
   - app-sealed-secrets.yaml
   - minio
   - app-harbor.yaml
-  - cert-management
+  - app-cert-management.yaml

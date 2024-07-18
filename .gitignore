@@ -1,3 +1,8 @@
 .vscode/
 kubeconfig
 argocd.yaml
+vcluster
+venv/
+k.yaml
+*.crt
+*.key

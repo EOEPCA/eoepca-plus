@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: step-issuer
+  namespace: argocd
+  labels:
+    eoepca/app-name: step-issuer
+spec:
+  project: eoepca
+  source:
+    repoURL: https://smallstep.github.io/helm-charts
+    chart: step-issuer
+    targetRevision: latest
+  destination:
+    name: in-cluster
+    namespace: cert-manager-ns
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

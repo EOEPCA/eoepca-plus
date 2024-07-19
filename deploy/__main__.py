@@ -53,7 +53,7 @@ def main():
         )
         worker_nodes.append(node)
 
-    # # Deploy RKE Cluster
+    # Deploy RKE Cluster
     nodes = {
         "control_node": control_node,
         "worker_nodes": worker_nodes,
@@ -66,7 +66,9 @@ def main():
     k8s_provider = k8s.Provider(
         "k8s-provider",
         kubeconfig=kubeconfig,
-        opts=pulumi.ResourceOptions(depends_on=[cluster]),
+        opts=pulumi.ResourceOptions(
+            depends_on=[cluster], ignore_changes=["kubeconfig"]
+        ),
         enable_server_side_apply=True,
     )
 

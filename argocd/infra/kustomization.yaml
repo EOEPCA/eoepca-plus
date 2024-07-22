@@ -6,4 +6,3 @@ resources:
   - app-cert-management.yaml
   - app-step-ca.yaml
   - app-step-issuer.yaml
-  - cert-management

@@ -1,6 +1,6 @@
 
 resources:
-  # - identity-service
+  - identity-service
   - resource-catalogue
   - registration-api
   - data-access-v1x

@@ -2,7 +2,7 @@
 resources:
   - app-workspace-api-core.yaml
   - ss-harbor.yaml
-  - hrepo-eoepca.yaml
+  # - hrepo-eoepca.yaml
 
 configMapGenerator:
   - name: workspace-charts

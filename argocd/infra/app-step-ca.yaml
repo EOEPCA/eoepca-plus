@@ -10,7 +10,16 @@ spec:
   source:
     repoURL: https://smallstep.github.io/helm-charts
     chart: step-certificates
-    # targetRevision: latest
+    targetRevision: 1.26.2
+    helm:
+      values: |
+        ca:
+          db:
+            persistent: true
+            storageClass: "managed-nfs-storage-retain"
+            size: "10Gi"
+            accessModes:
+              - ReadWriteOnce
   destination:
     name: in-cluster
     namespace: cert-manager-ns

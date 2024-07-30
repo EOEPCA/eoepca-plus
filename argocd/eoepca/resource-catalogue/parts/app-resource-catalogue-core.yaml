@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: resource-catalogue-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: resource-catalogue
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://eoepca.github.io/helm-charts'
+    chart: rm-resource-catalogue
+    targetRevision: 1.4.0
+
+    helm:
+      releaseName: resource-catalogue
+      valuesObject:
+        global:
+          namespace: rm
+        ingress:
+          enabled: true
+          name: resource-catalogue-open
+          host: resource-catalogue-open.develop.eoepca.org
+          tls_host: resource-catalogue-open.develop.eoepca.org
+          tls_secret_name: resource-catalogue-open-tls
+          annotations:
+            kubernetes.io/ingress.class: nginx
+            ingress.kubernetes.io/ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+        db:
+          volume_storage_type: managed-nfs-storage-retain
+        pycsw:
+          # image:
+          #   # repository: geopython/pycsw
+          #   tag: "eoepca-staging"
+          #   pullPolicy: Always
+          config:
+            server:
+              url: https://resource-catalogue.develop.eoepca.org/
+            manager:
+              transactions: "true"
+              allowed_ips: "*"
+
+  destination:
+    name: in-cluster
+    namespace: rm
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

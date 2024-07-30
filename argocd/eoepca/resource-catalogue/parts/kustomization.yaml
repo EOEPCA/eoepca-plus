@@ -1,0 +1,4 @@
+
+resources:
+  - app-resource-catalogue-core.yaml
+  - app-resource-catalogue-protection.yaml

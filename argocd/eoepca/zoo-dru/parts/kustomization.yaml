@@ -1,3 +1,4 @@
 
 resources:
   - app-zoo-dru-core.yaml
+  - app-zoo-protection.yaml

@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zoo-protection
+  namespace: argocd
+  labels:
+    eoepca/app-name: zoo-project-dru
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://eoepca.github.io/helm-charts
+      chart: identity-gatekeeper
+      targetRevision: 1.0.12
+      helm:
+        releaseName: zoo-protection
+        valuesObject:
+          fullnameOverride: zoo-project-dru-protection
+          config:
+            client-id: ades
+            discovery-url: https://keycloak-v1x.develop.eoepca.org/realms/master
+            cookie-domain: develop.eoepca.org
+          targetService:
+            host: zoo.develop.eoepca.org
+            name: zoo-project-dru-service
+            port:
+              number: 80
+          # Values for secret 'zoo-project-dru-protection'
+          secrets:
+            # Note - if ommitted, these can instead be set by creating the secret independently.
+            clientSecret: "changeme"
+            encryptionKey: "changemechangeme"
+          ingress:
+            enabled: true
+            className: nginx
+            annotations:
+              ingress.kubernetes.io/ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/ssl-redirect: "true"
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+            # open access to swagger docs
+            openUri:
+              - ^/(ogc-api/api.*|swagger-ui.*)
+
+  destination:
+    name: in-cluster
+    namespace: zoo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

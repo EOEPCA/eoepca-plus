@@ -31,7 +31,7 @@ workflow:
   storageClass: managed-nfs-storage-retain
 ingress:
   enabled: true
-  hosturl: https://zoo-open.develop.eoepca.org
+  hosturl: https://zoo.develop.eoepca.org
   annotations:
     kubernetes.io/ingress.class: nginx
     ingress.kubernetes.io/ssl-redirect: "true"

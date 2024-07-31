@@ -6,16 +6,8 @@ global:
     AWS_HTTPS: "FALSE"
     CREODIAS_EODATA_S3_ENDPOINT: "http://eodata.cloudferro.com"
     CREODIAS_EODATA_S3_REGION: "WAW3-2"
-    CREODIAS_EODATA_S3_ACCESS_KEY:
-      valueFrom:
-        secretKeyRef:
-          name: data-access-v1x-secrets
-          key: CREODIAS_EODATA_S3_ACCESS_KEY
-    CREODIAS_EODATA_S3_ACCESS_SECRET:
-      valueFrom:
-        secretKeyRef:
-          name: data-access-v1x-secrets
-          key: CREODIAS_EODATA_S3_ACCESS_SECRET
+    CREODIAS_EODATA_S3_ACCESS_KEY: 4SMIGZNCR8LM1LSUY1HU
+    CREODIAS_EODATA_S3_ACCESS_SECRET: MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV
     startup_scripts:
       - /registrar_pycsw/registrar_pycsw/initialize-collections.sh
   # The data-access relies on the value 'ingress.tls.hosts[0]' to specify the service

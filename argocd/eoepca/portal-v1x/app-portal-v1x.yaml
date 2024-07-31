@@ -17,7 +17,7 @@ spec:
       releaseName: eoepca-portal-v1x
       valuesObject:
         configMap:
-          identity_url: "https://keycloak.develop.eoepca.org"
+          identity_url: "https://keycloak-v1x.develop.eoepca.org"
           realm: "master"
           client_id: "eoepca-portal"
           identity_api_url: "https://identity-api.develop.eoepca.org"

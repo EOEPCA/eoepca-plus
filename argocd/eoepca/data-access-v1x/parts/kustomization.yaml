@@ -1,2 +1,3 @@
 resources:
   - app-data-access-v1x-core.yaml
+  - app-data-access-v1x-protection.yaml

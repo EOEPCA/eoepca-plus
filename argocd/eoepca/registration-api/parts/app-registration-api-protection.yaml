@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: registration-api-protection
+  namespace: argocd
+  labels:
+    eoepca/app-name: registration-api
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://eoepca.github.io/helm-charts
+      chart: identity-gatekeeper
+      targetRevision: 1.0.12
+      helm:
+        releaseName: registration-api-protection
+        valuesObject:
+          fullnameOverride: registration-api-protection
+          config:
+            client-id: registration-api
+            discovery-url: https://keycloak-v1x.develop.eoepca.org/realms/master
+            cookie-domain: develop.eoepca.org
+          targetService:
+            host: registration-api.develop.eoepca.org
+            name: registration-api
+            port:
+              number: 8080
+          # Values for secret 'registration-api-protection'
+          secrets:
+            # Note - if ommitted, these can instead be set by creating the secret independently.
+            clientSecret: "changeme"
+            encryptionKey: "changemechangeme"
+          ingress:
+            enabled: true
+            className: nginx
+            annotations:
+              ingress.kubernetes.io/ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/ssl-redirect: "true"
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+              nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+              nginx.ingress.kubernetes.io/enable-cors: "true"
+            # open access to swagger docs
+            openUri:
+              - ^.*
+
+  destination:
+    name: in-cluster
+    namespace: rm
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

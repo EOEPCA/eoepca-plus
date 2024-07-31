@@ -1,21 +1,21 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: test-ca
+  name: eoepca-ca
   namespace: cert-manager
 spec:
   isCA: true
-  commonName: test-ca
+  commonName: "EOEPCA Root CA"
   subject:
     organizations:
-      - ACME Inc.
+      - Telespazio UK
     organizationalUnits:
-      - Widgets
-  secretName: test-ca-secret
+      - Certificate Authority
+  secretName: eoepca-ca-secret
   privateKey:
     algorithm: ECDSA
     size: 256
   issuerRef:
-    name: selfsigned-issuer
+    name: eoepca-selfsigned-issuer
     kind: Issuer
     group: cert-manager.io

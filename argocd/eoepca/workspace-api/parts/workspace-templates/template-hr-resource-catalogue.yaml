@@ -18,7 +18,7 @@ spec:
     db:
       volume_storage_type: managed-nfs-storage-retain
     ingress:
-      enabled: true
+      enabled: false
       name: resource-catalogue
       host: resource-catalogue.{{ workspace_name }}.develop.eoepca.org
       tls_host: resource-catalogue.{{ workspace_name }}.develop.eoepca.org

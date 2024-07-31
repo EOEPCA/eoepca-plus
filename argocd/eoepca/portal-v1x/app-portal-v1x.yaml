@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: portal-v1x
+  namespace: argocd
+  labels:
+    eoepca/app-name: portal-v1x
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://eoepca.github.io/helm-charts'
+    chart: eoepca-portal
+    targetRevision: 1.0.13
+
+    helm:
+      releaseName: eoepca-portal-v1x
+      valuesObject:
+        configMap:
+          identity_url: "https://keycloak.develop.eoepca.org"
+          realm: "master"
+          client_id: "eoepca-portal"
+          identity_api_url: "https://identity-api.develop.eoepca.org"
+          ades_url: "https://zoo.develop.eoepca.org/ogc-api/processes"
+          resource_catalogue_url: "https://resource-catalogue.develop.eoepca.org"
+          data_access_url: "https://data-access-v1x.develop.eoepca.org"
+          workspace_url: "https://workspace-api.develop.eoepca.org"
+          workspace_docs_url: "https://workspace-api.develop.eoepca.org/docs#"
+          images_registry_url: "https://harbor.develop.eoepca.org"
+          dummy_service_url: "https://dummy-service.develop.eoepca.org"
+          access_token_name: "auth_user_id"
+          access_token_domain: ".develop.eoepca.org"
+          refresh_token_name: "auth_refresh_token"
+          refresh_token_domain: ".develop.eoepca.org"
+        ingress:
+          enabled: true
+          annotations:
+            kubernetes.io/ingress.class: nginx
+            ingress.kubernetes.io/ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          hosts:
+            - host: eoepca-portal-v1x.develop.eoepca.org
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: eoepca-portal-v1x-tls
+              hosts:
+                - eoepca-portal-v1x.develop.eoepca.org
+
+  destination:
+    name: in-cluster
+    namespace: demo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

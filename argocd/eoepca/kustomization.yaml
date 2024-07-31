@@ -10,3 +10,4 @@ resources:
   - workspace-api
   - mlops
   - application-quality
+  - portal-v1x

@@ -40,7 +40,7 @@ spec:
 
   destination:
     name: in-cluster
-    namespace: demo
+    namespace: test
   syncPolicy:
     automated:
       prune: true

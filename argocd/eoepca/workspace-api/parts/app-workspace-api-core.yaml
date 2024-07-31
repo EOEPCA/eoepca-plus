@@ -48,7 +48,7 @@ spec:
         workspaceChartsConfigMap: "workspace-charts"
         bucketEndpointUrl: "http://minio-bucket-api.infra:8080/bucket"
         keycloakIntegration:
-          enabled: false
+          enabled: true
           keycloakUrl: "https://keycloak-v1x.develop.eoepca.org"
           realm: "master"
           identityApiUrl: "https://identity-api.develop.eoepca.org"

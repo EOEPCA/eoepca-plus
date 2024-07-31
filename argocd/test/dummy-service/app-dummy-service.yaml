@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
-    path: argocd/eoepca/dummy-service/parts
+    path: argocd/test/dummy-service/parts
   destination:
     name: in-cluster
     namespace: test

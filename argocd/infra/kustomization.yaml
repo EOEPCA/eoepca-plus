@@ -3,6 +3,3 @@ resources:
   - app-sealed-secrets.yaml
   - minio
   - app-harbor.yaml
-  - app-cert-management.yaml
-  - app-step-ca.yaml
-  - app-step-issuer.yaml

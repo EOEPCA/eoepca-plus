@@ -25,7 +25,7 @@ tmp/bin/create-client \
   -u "admin" \
   -p "changeme" \
   -c "admin-cli" \
-  --id=data-access \
+  --id=data-access-v1x \
   --name="Data Access Gatekeeper" \
   --secret="changeme" \
   --description="Client to be used by Data Access Gatekeeper"

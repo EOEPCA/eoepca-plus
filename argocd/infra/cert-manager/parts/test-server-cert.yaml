@@ -1,0 +1,18 @@
+# This certificate is used for securing server communications within the cluster.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: eoepca-test-server
+  namespace: cert-manager-ns # As its cluster issuer it is available to all namespaces, so change this.
+spec:
+  secretName: eoepca-test-server-tls  # Kubernetes secret to store the certificate
+  isCA: false
+  usages:
+    - server auth  # Use case of the certificate
+    - client auth
+  dnsNames:
+    - "eoepca-test-server.test.svc.cluster.local"
+    - "eoepca-test-server"
+  issuerRef:
+    kind: ClusterIssuer
+    name: eoepca-ca-clusterissuer # Reference to the ClusterIssuer that will issue the certificate

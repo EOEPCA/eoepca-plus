@@ -11,7 +11,7 @@ spec:
     path: argocd/infra/cert-manager/parts
   destination:
     name: in-cluster
-    namespace: cert-manager
+    namespace: cert-manager-ns
   syncPolicy:
     automated:
       prune: true

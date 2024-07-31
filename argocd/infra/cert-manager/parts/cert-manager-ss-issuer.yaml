@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
 metadata:
-  name: eoepca-selfsigned-clusterissuer
-  namespace: cert-manager
+  name: eoepca-selfsigned-issuer
+  namespace: cert-manager-ns
 spec:
   selfSigned: {}

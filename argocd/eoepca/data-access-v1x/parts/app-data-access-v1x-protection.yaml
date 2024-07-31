@@ -25,7 +25,7 @@ spec:
             name: data-access-v1x-renderer
             port:
               number: 80
-          # Values for secret 'zoo-project-dru-protection'
+          # Values for secret 'data-access-v1x-protection'
           secrets:
             # Note - if ommitted, these can instead be set by creating the secret independently.
             clientSecret: "changeme"
@@ -46,7 +46,7 @@ spec:
 
             # Routes proxied to services
             hosts:
-              - host: data-access.develop.eoepca.org
+              - host: data-access-v1x.develop.eoepca.org
                 paths:
                   - path: /(ows.*|opensearch.*|coverages/metadata.*|admin.*)
                     pathType: Prefix

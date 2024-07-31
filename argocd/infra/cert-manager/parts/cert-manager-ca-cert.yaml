@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: eoepca-ca
-  namespace: cert-manager
+  namespace: cert-manager-ns
 spec:
   isCA: true
   commonName: "EOEPCA Root CA"

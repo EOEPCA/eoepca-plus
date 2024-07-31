@@ -2,6 +2,6 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: eoepca-selfsigned-issuer
-  namespace: cert-manager
+  namespace: cert-manager-ns
 spec:
   selfSigned: {}

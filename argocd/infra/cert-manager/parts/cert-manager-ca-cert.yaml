@@ -16,6 +16,6 @@ spec:
     algorithm: ECDSA
     size: 256
   issuerRef:
-    name: eoepca-selfsigned-issuer
-    kind: Issuer
+    name: eoepca-selfsigned-clusterissuer
+    kind: ClusterIssuer
     group: cert-manager.io

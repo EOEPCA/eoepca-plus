@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
-kind: Issuer
+kind: ClusterIssuer
 metadata:
-  name: eoepca-ca-issuer
+  name: eoepca-ca-clusterissuer
   namespace: cert-manager
 spec:
   ca:

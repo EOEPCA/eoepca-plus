@@ -11,3 +11,4 @@ resources:
   - mlops
   - application-quality
   - portal-v1x
+  - dummy-service

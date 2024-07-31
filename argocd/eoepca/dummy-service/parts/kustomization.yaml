@@ -1,0 +1,4 @@
+
+resources:
+  - app-dummy-service-core.yaml
+  - app-dummy-service-protection.yaml

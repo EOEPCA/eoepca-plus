@@ -19,7 +19,7 @@ spec:
         global:
           namespace: rm
         ingress:
-          enabled: true
+          enabled: false
           name: resource-catalogue-open
           host: resource-catalogue-open.develop.eoepca.org
           tls_host: resource-catalogue-open.develop.eoepca.org

@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: https://charts.gitlab.io
     chart: gitlab
-    targetRevision: 8.1.0
+    targetRevision: 8.1.3
     helm:
       valuesObject:
         global:
@@ -23,7 +23,10 @@ spec:
           ingress:
             configureCertmanager: false
             class: nginx
+            tls:
+              external: true
             annotations:
+              kubernetes.io/tls-acme: true
               cert-manager.io/cluster-issuer: letsencrypt-prod
 
           minio:
@@ -86,8 +89,6 @@ spec:
           ingress:
             tls:
               secretName: minio.develop.eoepca.org-tls
-        certmanager-issuer:
-          email: me@example.com
 
         certmanager:
           install: false

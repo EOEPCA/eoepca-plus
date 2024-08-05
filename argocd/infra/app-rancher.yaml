@@ -21,7 +21,7 @@ spec:
               cert-manager.io/cluster-issuer: letsencrypt-prod
         privateCA: false
   destination:
-    server: in-cluster
+    name: in-cluster
     namespace: cattle-system
   syncPolicy:
     automated:

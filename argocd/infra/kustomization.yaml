@@ -4,3 +4,4 @@ resources:
   - minio
   - app-harbor.yaml
   - cert-manager
+  - app-rancher.yaml

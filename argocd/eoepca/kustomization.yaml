@@ -12,3 +12,4 @@ resources:
   - application-quality
   - portal-v1x
   - registration-harvester-api
+  - iam

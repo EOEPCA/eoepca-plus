@@ -1,0 +1,57 @@
+# Adapted values.yaml for EOEPCA IAM BB (derived from
+# https://github.com/permitio/opal-helm-chart/blob/master/values.yaml)
+
+image:
+  client:
+    registry: docker.io
+    repository: permitio/opal-client
+  server:
+    registry: docker.io
+    repository: permitio/opal-server
+  pgsql:
+    registry: docker.io
+    repository: postgres
+    tag: alpine
+
+server:
+  port: 7002
+  # policyRepoUrl: "https://github.com/permitio/opal-example-policy-repo"
+  policyRepoUrl: https://github.com/EOEPCA/keycloak-opa-plugin.git/
+  policyRepoSshKey: null
+  policyRepoClonePath: null
+  policyRepoMainBranch: opatest
+  # Poll only every 5min for now. May be reduced or reconfigured to use webhooks if required.
+  pollingInterval: 300
+  dataConfigSources:
+    # Option #1 - No data sources
+    config:
+      entries: []
+
+    # Option #2 - Dynamically get data sources
+    # external_source_url: "https://your-api.com/path/to/api/endpoint"
+
+    # Option #3 - Example static data sources (endpoint is empty by default)
+    # config:
+    #   entries:
+    #   - url: http://opal-server:7002/policy-data
+    #     topics: ["policy_data"]
+    #     dst_path: "/static"
+
+    # Option #4 - Leave config empty and instead supply using the OPAL_DATA_CONFIG_SOURCES environment variable through env or secret
+    # config: null
+
+  broadcastUri: null
+  broadcastPgsql: true
+  uvicornWorkers: 4
+  replicas: 1
+  extraEnv: {
+    # "CUSTOM_ENV_VAR": "VALUE"
+  }
+
+client:
+  port: 7000
+  opaPort: 8181
+  replicas: 1
+  # If you need to specify a custom hostname for the opal-sever, configure the serverUrl property
+  # serverUrl: http://custom-hostname-for-opal:opal-port
+  extraEnv: {}

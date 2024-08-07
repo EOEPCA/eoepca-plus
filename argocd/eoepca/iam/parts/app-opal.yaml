@@ -1,0 +1,41 @@
+# Copied from identity-service and adapted
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: iam-opal
+  namespace: argocd
+  labels:
+    eoepca/app-name: iam-opal
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://permitio.github.io/
+    #https://eoepca.github.io/helm-charts
+      chart: opal
+      targetRevision: 0.7.6
+      helm:
+#        releaseName: identity-service
+        valueFiles:
+          - argocd/eoepca/iam/parts/values/opal-values.yaml
+#          - $values/argocd/eoepca/identity-service/parts/values/values-identity-service.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: iam
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

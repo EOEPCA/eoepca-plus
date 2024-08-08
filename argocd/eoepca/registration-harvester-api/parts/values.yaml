@@ -1,6 +1,11 @@
 host:
   external: registration-harvester-api.develop.eoepca.org
 
+rest:
+  admin:
+    username: eoepca
+    password: eoepca
+
 # https://github.com/bitnami/charts/tree/postgresql/12.10.0/bitnami/postgresql
 global:
   storageClass: managed-nfs-storage-retain

@@ -5,5 +5,5 @@ resources:
   - app-apisix.yaml
 #  - pvc-kc-database.yaml
 #  - ss-kc-postgres.yaml
-#  - apisixtls-iam.yaml
-#  - apisixroute-keycloak.yaml
+  - apisixtls-iam.yaml
+  - apisixroute-keycloak.yaml

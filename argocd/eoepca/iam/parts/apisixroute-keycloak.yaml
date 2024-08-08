@@ -6,6 +6,7 @@ metadata:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    argocd.argoproj.io/sync-wave: 2
 spec:
   http:
   - backends:

@@ -2,6 +2,8 @@ apiVersion: apisix.apache.org/v2
 kind: ApisixTls
 metadata:
   name: iam-tls
+  annotations:
+    argocd.argoproj.io/sync-wave: 2
 spec:
   hosts:
     - iam.develop.eoepca.org

@@ -2,7 +2,8 @@
 resources:
 #  - app-keycloak.yaml
   - app-opal.yaml
-#  - app-apisix.yaml
+  - app-apisix.yaml
 #  - pvc-kc-database.yaml
 #  - ss-kc-postgres.yaml
-#  - apisixroute-keycloak
+  - apisixtls-iam.yaml
+  - apisixroute-keycloak

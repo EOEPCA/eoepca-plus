@@ -1,0 +1,41 @@
+# Copied from identity-service and adapted
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: iam-apisix
+  namespace: argocd
+  labels:
+    eoepca/app-name: iam-apisix
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://charts.apiseven.com
+      chart: apisix
+      # Note: Version 2.5.0 is quite old; current version is at least 2.8.1.
+      targetRevision: 2.5.0
+      helm:
+#        releaseName: iam-apisix
+        valueFiles:
+          - argocd/eoepca/iam/parts/values/apisix-values.yaml
+#        ignoreMissingValueFiles: true
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: iam
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

@@ -1,0 +1,10 @@
+gateway:
+  tls:
+    enabled: true
+    containerPort: 443
+ingress-controller:
+  enabled: true
+# TODO: Maybe add the following if necessary
+#pluginAttrs:
+#  redirect:
+#    https_port: 443

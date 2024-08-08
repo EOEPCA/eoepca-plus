@@ -1,0 +1,11 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: iam-tls
+spec:
+  hosts:
+    - iam.develop.eoepca.org
+    - iam-auth.develop.eoepca.org
+  secret:
+    name: iam-cert
+    namespace: iam

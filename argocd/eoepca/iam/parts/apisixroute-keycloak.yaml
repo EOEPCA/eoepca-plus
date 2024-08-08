@@ -1,0 +1,58 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: keycloak-route
+  namespace: iam
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  http:
+  - backends:
+    - serviceName: keycloak
+      servicePort: 80
+    match:
+      hosts:
+#      - iam.develop.eoepca.org
+      - iam-auth.develop.eoepca.org
+      paths:
+      - /*
+    name: keycloak
+    plugins:
+      - name: redirect
+        enable: true
+        config:
+          http_to_https: true
+
+# Note: Not yet sure how to structure the external view on the IAM BB.
+# Alternative: Maybe make iam-auth.develop.eoepca.org/ a synonym for iam.develop.eoepca.org/auth like this:
+#spec:
+#  http:
+#  - name: iam-auth
+#    match:
+#      hosts:
+#        - iam-auth.develop.eoepca.org
+#      paths:
+#        - /*
+#    backends:
+#    - serviceName: keycloak
+#      servicePort: 80
+#    plugins:
+#      - name: redirect
+#        enable: true
+#        config:
+#          http_to_https: true
+#  - name: iam
+#    match:
+#      hosts:
+#        - iam.develop.eoepca.org
+#      paths:
+#        - /auth/*
+#    backends:
+#      - serviceName: keycloak
+#        servicePort: 80
+#    plugins:
+#      - name: redirect
+#        enable: true
+#        config:
+#          http_to_https: true

@@ -10,7 +10,7 @@ spec:
   project: eoepca
   sources:
     - repoURL: https://flowable.github.io/helm/
-      chart: flowable-oss/flowable
+      chart: flowable
       targetRevision: 7.0.0
       helm:
         releaseName: registration-harvester-api-engine

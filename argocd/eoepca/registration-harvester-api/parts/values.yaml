@@ -7,6 +7,7 @@ rest:
     password: eoepca
 
 ingress:
+  sslRedirect: "true"
   clusterIssuer: letsencrypt-prod
 
 # https://github.com/bitnami/charts/tree/postgresql/12.10.0/bitnami/postgresql

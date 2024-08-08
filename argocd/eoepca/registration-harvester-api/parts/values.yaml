@@ -6,6 +6,9 @@ rest:
     username: eoepca
     password: eoepca
 
+ingress:
+  clusterIssuer: letsencrypt-prod
+
 # https://github.com/bitnami/charts/tree/postgresql/12.10.0/bitnami/postgresql
 global:
   storageClass: managed-nfs-storage-retain

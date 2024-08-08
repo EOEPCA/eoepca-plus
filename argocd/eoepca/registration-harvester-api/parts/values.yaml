@@ -2,5 +2,5 @@ host:
   external: registration-harvester-api.develop.eoepca.org
 
 # https://github.com/bitnami/charts/tree/postgresql/12.10.0/bitnami/postgresql
-postgres:
+global:
   storageClass: managed-nfs-storage-retain

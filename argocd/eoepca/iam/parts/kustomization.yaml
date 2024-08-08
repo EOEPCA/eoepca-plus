@@ -6,4 +6,4 @@ resources:
 #  - pvc-kc-database.yaml
 #  - ss-kc-postgres.yaml
   - apisixtls-iam.yaml
-  - apisixroute-keycloak
+  - apisixroute-keycloak.yaml

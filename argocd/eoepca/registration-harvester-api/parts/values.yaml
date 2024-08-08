@@ -1,2 +1,6 @@
 host:
   external: registration-harvester-api.develop.eoepca.org
+
+postgres:
+  storage:
+    storageClassName: managed-nfs-storage

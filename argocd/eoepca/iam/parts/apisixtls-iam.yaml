@@ -2,6 +2,7 @@ apiVersion: apisix.apache.org/v2
 kind: ApisixTls
 metadata:
   name: iam-tls
+  namespace: iam
   annotations:
     argocd.argoproj.io/sync-wave: 2
 spec:

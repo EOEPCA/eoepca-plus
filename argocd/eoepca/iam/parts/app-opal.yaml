@@ -14,7 +14,7 @@ spec:
     - repoURL: https://permitio.github.io/opal-helm-chart
     #https://eoepca.github.io/helm-charts
       chart: opal
-      targetRevision: 0.7.6
+      targetRevision: 0.0.28
       helm:
 #        releaseName: identity-service
         valueFiles:

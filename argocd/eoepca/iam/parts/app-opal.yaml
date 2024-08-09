@@ -11,7 +11,7 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - repoURL: https://permitio.github.io/
+    - repoURL: https://permitio.github.io/opal-helm-chart
     #https://eoepca.github.io/helm-charts
       chart: opal
       targetRevision: 0.7.6

@@ -18,7 +18,7 @@ spec:
       helm:
 #        releaseName: iam-apisix
         valueFiles:
-          - argocd/eoepca/iam/parts/values/apisix-values.yaml
+          - $values/argocd/eoepca/iam/parts/values/apisix-values.yaml
 #        ignoreMissingValueFiles: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop

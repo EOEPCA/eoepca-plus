@@ -2,8 +2,8 @@ gateway:
   tls:
     enabled: true
     containerPort: 443
-ingress:
-  enabled: true
+#ingress:
+#  enabled: true
 ingress-controller:
   enabled: true
 # TODO: Maybe add the following if necessary

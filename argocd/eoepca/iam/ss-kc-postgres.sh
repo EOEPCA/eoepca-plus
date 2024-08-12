@@ -20,7 +20,7 @@ KC_POSTGRES_PASSWORD="${1:-${KC_POSTGRES_PASSWORD:-changeme}}"
 secretYaml() {
   kubectl -n "${NAMESPACE}" create secret generic "${SECRET_NAME}" \
     --from-literal="password=${KC_POSTGRES_PASSWORD}" \
-    --from-literal="postgresPassword=${KC_POSTGRES_PASSWORD}" \
+    --from-literal="postgres-password=${KC_POSTGRES_PASSWORD}" \
     --dry-run=client -o yaml
 }
 

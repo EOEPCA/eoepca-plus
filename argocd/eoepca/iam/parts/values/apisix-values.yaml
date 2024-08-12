@@ -1,3 +1,5 @@
+global:
+  storageClass: managed-nfs-storage-retain
 gateway:
   tls:
     enabled: true

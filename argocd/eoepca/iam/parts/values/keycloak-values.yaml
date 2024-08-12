@@ -18,7 +18,7 @@ global:
   ##   - myRegistryKeySecretName
   ##
   imagePullSecrets: []
-  storageClass: ""
+  storageClass: "managed-nfs-storage-retain"
   ## Compatibility adaptations for Kubernetes platforms
   ##
   compatibility:

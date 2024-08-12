@@ -1,0 +1,40 @@
+# Copied from identity-service and adapted
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: iam-keycloak
+  namespace: argocd
+  labels:
+    eoepca/app-name: iam-keycloak
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://charts.bitnami.com/bitnami
+#    - repoURL: oci://registry-1.docker.io/bitnamicharts/
+    #https://eoepca.github.io/helm-charts
+      chart: keycloak
+      targetRevision: 24.0.5
+      helm:
+        valueFiles:
+          - $values/argocd/eoepca/iam/parts/values/keycloak-values.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: iam
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

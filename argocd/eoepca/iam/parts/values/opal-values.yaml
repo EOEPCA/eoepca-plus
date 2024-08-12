@@ -54,4 +54,5 @@ client:
   replicas: 1
   # If you need to specify a custom hostname for the opal-sever, configure the serverUrl property
   # serverUrl: http://custom-hostname-for-opal:opal-port
-  extraEnv: {}
+  extraEnv:
+    OPAL_DATA_UPDATER_ENABLED: False

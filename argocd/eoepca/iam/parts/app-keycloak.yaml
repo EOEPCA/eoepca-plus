@@ -15,7 +15,7 @@ spec:
 #    - repoURL: oci://registry-1.docker.io/bitnamicharts/
     #https://eoepca.github.io/helm-charts
       chart: keycloak
-      targetRevision: 24.0.5
+      targetRevision: 21.4.4
       helm:
         valueFiles:
           - $values/argocd/eoepca/iam/parts/values/keycloak-values.yaml

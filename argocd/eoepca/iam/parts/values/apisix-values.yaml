@@ -1,10 +1,10 @@
 global:
   storageClass: managed-nfs-storage-retain
-gateway:
-  type: LoadBalancer
-  tls:
-    enabled: true
-    containerPort: 443
+#gateway:
+#  type: LoadBalancer
+#  tls:
+#    enabled: true
+#    containerPort: 443
 etcd:
   persistence:
     storageClass: managed-nfs-storage-retain
@@ -13,6 +13,11 @@ etcd:
 #  enabled: true
 ingress-controller:
   enabled: true
+  gateway:
+    type: LoadBalancer
+    tls:
+      enabled: true
+      containerPort: 443
   config:
     apisix:
       serviceName: iam-apisix-admin

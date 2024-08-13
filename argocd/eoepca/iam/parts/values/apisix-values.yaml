@@ -1,9 +1,14 @@
 global:
   storageClass: managed-nfs-storage-retain
 gateway:
+  type: LoadBalancer
   tls:
     enabled: true
     containerPort: 443
+etcd:
+  persistence:
+    storageClass: managed-nfs-storage-retain
+    size: 8Gi
 #ingress:
 #  enabled: true
 ingress-controller:

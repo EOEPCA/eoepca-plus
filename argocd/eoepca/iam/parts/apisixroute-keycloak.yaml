@@ -10,7 +10,7 @@ metadata:
 spec:
   http:
   - backends:
-    - serviceName: keycloak
+    - serviceName: iam-keycloak
       servicePort: 80
     match:
       hosts:

@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  labels:
+  name: iam-apisix-ingress-bridge
+  namespace: iam
+spec:
+  ingressClassName: nginx
+  rules:
+#    - host: iam-auth.develop.eoepca.org
+#      http:
+#        paths:
+#          - backend:
+#              service:
+#                name: iam-apisix-ingress-controller
+#                port:
+#                  number: 80
+#            path: /
+#            pathType: Prefix
+    - host: iam.develop.eoepca.org
+      http:
+        paths:
+          - backend:
+              service:
+                name: iam-apisix-ingress-controller
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - iam.develop.eoepca.org
+#        - iam-auth.develop.eoepca.org
+      secretName: iam-cert

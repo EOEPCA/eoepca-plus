@@ -1,0 +1,29 @@
+# Preliminary direct ingress to Keycloak via NginX
+# To be replaced with ingress via APISIX when it is properly set up.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  labels:
+  name: iam-auth-nginx-ingress
+  namespace: iam
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: iam-auth.develop.eoepca.org
+      http:
+        paths:
+          - backend:
+              service:
+                name: iam-keycloak
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - iam-auth.develop.eoepca.org
+      secretName: iam-auth-cert

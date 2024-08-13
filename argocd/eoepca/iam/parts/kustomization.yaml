@@ -8,4 +8,4 @@ resources:
   - apisixtls-iam.yaml
   - apisixroute-keycloak.yaml
   - apisix-ingress-bridge.yaml
-  - iam-auth-nginx-ingress
+  - iam-auth-nginx-ingress.yaml

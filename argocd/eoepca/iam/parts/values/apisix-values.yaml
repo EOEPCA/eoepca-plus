@@ -18,6 +18,9 @@ ingress:
   # -- Ingress annotations
   annotations:
     kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
   # kubernetes.io/tls-acme: "true"
   hosts:
     - host: iam.develop.eoepca.org
@@ -25,7 +28,9 @@ ingress:
         - /
 #    - host: iam-auth.develop.eoepca.org
 #      paths: []
-  tls: []
+  tls:
+    hosts:
+      - iam.develop.eoepca.org
 #ingress-controller:
 #  enabled: true
 #  gateway:

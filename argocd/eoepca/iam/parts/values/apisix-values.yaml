@@ -26,23 +26,19 @@ ingress:
     - host: iam.develop.eoepca.org
       paths:
         - /
-#    - host: iam-auth.develop.eoepca.org
-#      paths: []
+    - host: iam-auth.develop.eoepca.org
+      paths:
+        - /
+    - host: iam-test.develop.eoepca.org
+      paths:
+        - /
   tls:
-    hosts:
-      - iam.develop.eoepca.org
-#ingress-controller:
-#  enabled: true
-#  gateway:
-#    type: LoadBalancer
-#    tls:
-#      enabled: true
-#      containerPort: 443
-#  config:
-#    apisix:
-#      serviceName: iam-apisix-admin
-#      serviceNamespace: iam
-# TODO: Maybe add the following if necessary
-#pluginAttrs:
-#  redirect:
-#    https_port: 443
+    - hosts:
+        - iam.develop.eoepca.org
+      secretName: iam-cert
+    - hosts:
+        - iam-auth.develop.eoepca.org
+      secretName: iam-auth-cert
+    - hosts:
+        - iam-test.develop.eoepca.org
+      secretName: iam-test-cert

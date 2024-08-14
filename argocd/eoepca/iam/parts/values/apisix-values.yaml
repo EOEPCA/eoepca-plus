@@ -11,17 +11,32 @@ etcd:
     size: 8Gi
 #ingress:
 #  enabled: true
-ingress-controller:
+ingress:
   enabled: true
-  gateway:
-    type: LoadBalancer
-    tls:
-      enabled: true
-      containerPort: 443
-  config:
-    apisix:
-      serviceName: iam-apisix-admin
-      serviceNamespace: iam
+  # -- (number) Service port to send traffic. Defaults to `service.http.servicePort`.
+  servicePort:
+  # -- Ingress annotations
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: iam.develop.eoepca.org
+      paths:
+        - /
+#    - host: iam-auth.develop.eoepca.org
+#      paths: []
+  tls: []
+#ingress-controller:
+#  enabled: true
+#  gateway:
+#    type: LoadBalancer
+#    tls:
+#      enabled: true
+#      containerPort: 443
+#  config:
+#    apisix:
+#      serviceName: iam-apisix-admin
+#      serviceNamespace: iam
 # TODO: Maybe add the following if necessary
 #pluginAttrs:
 #  redirect:

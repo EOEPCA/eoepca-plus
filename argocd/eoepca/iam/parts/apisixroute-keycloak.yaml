@@ -6,7 +6,7 @@ metadata:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    argocd.argoproj.io/sync-wave: 2
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   http:
   - backends:
@@ -14,16 +14,17 @@ spec:
       servicePort: 80
     match:
       hosts:
-#      - iam.develop.eoepca.org
+      # Take iam as a synonym for iam-auth for now.
+      - iam.develop.eoepca.org
       - iam-auth.develop.eoepca.org
       paths:
       - /*
     name: keycloak
-    plugins:
-      - name: redirect
-        enable: true
-        config:
-          http_to_https: true
+#    plugins:
+#      - name: redirect
+#        enable: true
+#        config:
+#          http_to_https: true
 
 # Note: Not yet sure how to structure the external view on the IAM BB.
 # Alternative: Maybe make iam-auth.develop.eoepca.org/ a synonym for iam.develop.eoepca.org/auth like this:

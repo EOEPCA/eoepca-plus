@@ -7,5 +7,5 @@ resources:
   - ss-kc-postgres.yaml
   - apisixtls-iam.yaml
   - apisixroute-keycloak.yaml
-  - apisix-ingress-bridge.yaml
+#  - apisix-ingress-bridge.yaml
   - iam-auth-nginx-ingress.yaml

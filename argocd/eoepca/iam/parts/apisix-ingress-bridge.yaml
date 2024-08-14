@@ -1,3 +1,4 @@
+# Note: This file is probably obsolete
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -26,7 +27,7 @@ spec:
         paths:
           - backend:
               service:
-                name: iam-apisix-ingress-controller
+                name: iam-apisix-gateway
                 port:
                   number: 80
             path: /

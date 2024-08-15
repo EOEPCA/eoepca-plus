@@ -4,11 +4,12 @@ metadata:
   name: iam-tls
   namespace: iam
   annotations:
-    argocd.argoproj.io/sync-wave: 2
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   hosts:
     - iam.develop.eoepca.org
     - iam-auth.develop.eoepca.org
+    - iam-test.develop.eoepca.org
   secret:
-    name: iam-cert
+    name: iam-cert-apisix
     namespace: iam

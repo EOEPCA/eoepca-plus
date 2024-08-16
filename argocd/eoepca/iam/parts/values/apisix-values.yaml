@@ -13,6 +13,10 @@ etcd:
 #  enabled: true
 ingress-controller:
   enabled: true
+  config:
+    apisix:
+      serviceName: iam-apisix-admin
+      serviceNamespace: iam
 ingress:
   enabled: true
   # -- (number) Service port to send traffic. Defaults to `service.http.servicePort`.

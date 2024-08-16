@@ -11,6 +11,8 @@ etcd:
     size: 8Gi
 #ingress:
 #  enabled: true
+ingress-controller:
+  enabled: true
 ingress:
   enabled: true
   # -- (number) Service port to send traffic. Defaults to `service.http.servicePort`.

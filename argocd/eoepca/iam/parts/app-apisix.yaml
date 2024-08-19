@@ -12,7 +12,7 @@ spec:
   project: eoepca
   sources:
     - repoURL: https://charts.bitnami.com/bitnami
-      chart: bitnami/apisix
+      chart: apisix
       targetRevision: 2.5.0
       helm:
         releaseName: apisix

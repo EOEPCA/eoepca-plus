@@ -6,6 +6,8 @@ resources:
 #  - pvc-kc-database.yaml
   - ss-kc-postgres.yaml
   - apisixtls-iam.yaml
+  - apisixtls-iam-auth.yaml
+  - apisixtls-iam-test.yaml
   - apisixroute-keycloak.yaml
   - apisixroute-dummy-service.yaml
 #  - apisix-ingress-bridge.yaml

@@ -1,14 +1,14 @@
 apiVersion: apisix.apache.org/v2
 kind: ApisixTls
 metadata:
-  name: iam-tls-test2
+  name: iam-auth-tls
   namespace: iam
   annotations:
+    argocd.argoproj.io/sync-wave: "2"
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   hosts:
-    - iam-test2.develop.eoepca.org
-    - iam-test3.develop.eoepca.org
+    - iam-auth.develop.eoepca.org
   secret:
-    name: iam-test2-cert
+    name: iam-auth-tls
     namespace: iam

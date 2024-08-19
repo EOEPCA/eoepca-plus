@@ -9,10 +9,17 @@ etcd:
   persistence:
     storageClass: managed-nfs-storage-retain
     size: 8Gi
-#ingress:
-#  enabled: true
+apisix:
+  deployment:
+    mode: decoupled
+    role: "data_plane"
 ingress-controller:
   enabled: true
+  gateway:
+    type: NodePort
+    tls:
+      enabled: true
+#      containerPort: 443
   config:
     apisix:
       serviceName: iam-apisix-admin

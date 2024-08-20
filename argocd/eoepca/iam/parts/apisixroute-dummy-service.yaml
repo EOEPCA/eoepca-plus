@@ -37,6 +37,7 @@ spec:
         discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
         #permissions: "Resource all"
         lazy_load_paths: true
+        ssl_verify: false
   - name: dummy-service-direct
     match:
       hosts:

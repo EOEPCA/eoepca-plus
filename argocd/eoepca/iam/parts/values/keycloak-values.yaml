@@ -99,12 +99,14 @@ diagnosticMode:
 ## @param image.debug Specify if debug logs should be enabled
 ##
 image:
-  registry: docker.io
-  repository: bitnami/keycloak
+  registry: byud8gih.c1.de1.container-registry.ovh.net
+#  registry: docker.io
+#  repository: bitnami/keycloak
+  repository: eoepca
 #  repository: pro-ez/keycloak-with-opa-plugin
   # Note: Maybe update to 25.x
-  tag: 24.0.5-debian-12-r0
-#  tag: latest
+#  tag: 24.0.5-debian-12-r0
+  tag: latest
   digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -119,7 +121,8 @@ image:
   ## pullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  pullSecrets: []
+  pullSecrets:
+    - ovh-image-repo
   ## Set to true if you would like to see extra information on logs
   ##
   debug: false

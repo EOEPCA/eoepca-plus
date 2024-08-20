@@ -1,0 +1,16 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: ovh-image-repo
+  namespace: iam
+spec:
+  encryptedData:
+    .dockerconfigjson: AgDBnfDXZsWIDPy5iLiR1Es5JquDcO1lODV+QlqRNneKregIeV4oYHnFOvk5hh47mMcrY2j6CU2JfVuL3+enPbsYoe+y8qH5Msn+JED2VSHhdT+AkucWBVz4ZeP61s+KlViyFnQWhIrp77DUeY6R42GUCmkZZY/ZuMWfV0EnlXjBmqtVxBmxzGLH5OqzJAmvABGL2qb23LbpyT2MDMTe+jUbY76z/1+kaowgFsvHQ5VIPID7hizr9M5O1txghoZx73bslHvojRp87sxPR4YoY5rslnJ+xRwpShnQwtQ3gEDlw2Hguox965vyVk4MaKJgd+y88xptwrZbTD0Dw72IXlLlRokWYcjYb3jPw9GC1dfLdKMmtsAN4vSNu9XXicGKJICavPZ+3PQ5wUT23aUi/0cNFz8jmnr3RY1WHxAeWq1vRIzF2L5FYBb2i1taP1IIzTtEPA3eSW9WZ6dzVplx6+XBoOqjnyM5FioCESB8htAoQmCa9KblU7o2yIgLO6KphFpCT+4d82IBmNkS3y+D9eAyhTGOw/MYZuogBWrFxediTdEF6iiZCoUFRTetDT8bv/+0JihxVMRErg8/T1ACFUK6nYwbIHcKEdjq4G4NHjQEnorI+VyKgJ9hrd/8BwhD+KGg5e19SDFyvMWLZiOV71GIYBiQYu3HqsHrKN1DEuoNHQ3uBNtyUQguen5Jl90ECEU9DO9AHKHJYBznhxyVSgWXJfJFCFkK/Zg1bw4I3ZzFqGyjFlWKcwn81DQINdSySBKQjMLKekq4cWh2+ORbArzAvLuj24p4Osa5goHwgfRVx8eAbO2EjuwJzzmnVRY0iRMupGTE/N4sfMeXWwREaIiySKXag4nDQmyWbm3vojgnCn34m2y8JgAnQK8yin2Uugw9kZojhxWHuni0IOlIR20Z5yrgO4TpAMev/zlZxak1OZ6Z2lt3KHV1wx9yUXyczEh3hXALBX9a+fU0lP2cTK38NtOKME0=
+  template:
+    metadata:
+      creationTimestamp: null
+      name: ovh-image-repo
+      namespace: iam
+    type: kubernetes.io/dockerconfigjson

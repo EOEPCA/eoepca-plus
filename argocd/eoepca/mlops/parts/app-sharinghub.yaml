@@ -11,7 +11,7 @@ spec:
     name: in-cluster
   project: eoepca
   source:
-    repoURL: https://gitlab.si.c-s.fr/space_applications/mlops-services/sharinghub.git
+    repoURL: https://github.com/csgroup-oss/sharinghub.git
     path:  deploy/helm/sharinghub
     targetRevision: main
     helm:

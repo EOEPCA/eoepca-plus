@@ -102,7 +102,7 @@ image:
   registry: byud8gih.c1.de1.container-registry.ovh.net
 #  registry: docker.io
 #  repository: bitnami/keycloak
-  repository: eoepca
+  repository: eoepca/keycloak-with-opa-plugin
 #  repository: pro-ez/keycloak-with-opa-plugin
   # Note: Maybe update to 25.x
 #  tag: 24.0.5-debian-12-r0

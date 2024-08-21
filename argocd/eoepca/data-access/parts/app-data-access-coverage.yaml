@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: data-access-coverage
+  namespace: argocd
+  labels:
+    eoepca/app-name: data-access
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://charts-public.hub.eox.at/api/charts
+      chart: stacture
+      targetRevision: 0.0.0
+      helm:
+        releaseName: stacture
+        valueFiles:
+          - $values/argocd/eoepca/data-access/parts/values/values-stacture.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: data-access
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

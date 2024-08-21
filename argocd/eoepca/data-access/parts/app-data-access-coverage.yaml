@@ -9,7 +9,7 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - repoURL: https://charts-public.hub.eox.at/api/charts
+    - repoURL: https://charts-public.hub.eox.at/
       chart: stacture
       targetRevision: 0.0.0
       helm:

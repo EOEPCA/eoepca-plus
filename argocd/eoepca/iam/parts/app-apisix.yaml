@@ -25,6 +25,11 @@ spec:
   destination:
     name: in-cluster
     namespace: iam
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      jqPathExpressions:
+        - .spec.versions[].additionalPrinterColumns[].priority | select(. == 0)
   syncPolicy:
     automated:
       prune: true

@@ -1,0 +1,14 @@
+stacture:
+  image:
+    tag: 05212030676db911e1da72d30e55b8a9fd87b173
+
+  config:
+    apis:
+      maps: true
+      coverages: true
+
+    collections: {}
+
+terravis:
+  image:
+    tag: 05212030676db911e1da72d30e55b8a9fd87b173

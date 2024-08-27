@@ -1,0 +1,4 @@
+
+resources:
+  - app-application-hub-core.yaml
+  - ss-application-hub.yaml

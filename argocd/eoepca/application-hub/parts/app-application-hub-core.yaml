@@ -1,0 +1,112 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: application-hub-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: application-hub
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://eoepca.github.io/helm-charts'
+    chart: application-hub
+    targetRevision: 2.0.59
+
+    helm:
+      releaseName: application-hub
+      valuesObject:
+        ingress:
+          enabled: true
+          annotations: {}
+          hosts:
+            - host: applicationhub.develop.eoepca.org
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls:
+            - secretName: applicationhub-tls
+              hosts:
+              - applicationhub.develop.eoepca.org
+          clusterIssuer: "letsencrypt-prod"
+
+        jupyterhub:
+          fullnameOverride: "application-hub"
+          hub:
+            baseUrl: /
+            existingSecret: application-hub
+            extraEnv: 
+                JUPYTERHUB_ENV: "dev"
+                JUPYTERHUB_SINGLE_USER_IMAGE: "eoepca/pde-container:1.0.3"
+                OAUTH_CALLBACK_URL: https://applicationhub.develop.eoepca.org/hub/oauth_callback
+                OAUTH2_USERDATA_URL: https://keycloak-v1x.develop.eoepca.org/realms/master/protocol/openid-connect/userinfo
+                OAUTH2_TOKEN_URL: https://keycloak-v1x.develop.eoepca.org/realms/master/protocol/openid-connect/token
+                OAUTH2_AUTHORIZE_URL: https://keycloak-v1x.develop.eoepca.org/realms/master/protocol/openid-connect/auth
+                OAUTH_LOGOUT_REDIRECT_URL: "https://applicationhub.develop.eoepca.org/hub/home"
+                OAUTH2_USERNAME_KEY: "preferred_username"
+                APP_HUB_NAMESPACE: "app-hub"
+                STORAGE_CLASS: "managed-nfs-storage-retain"
+                RESOURCE_MANAGER_WORKSPACE_PREFIX: "ws"
+                BASE_URL: /
+
+                JUPYTERHUB_CRYPT_KEY:
+                  valueFrom:
+                    secretKeyRef:
+                      name: application-hub
+                      key: JUPYTERHUB_CRYPT_KEY
+
+                OAUTH_CLIENT_ID:
+                  valueFrom:
+                    secretKeyRef:
+                      name: application-hub
+                      key: OAUTH_CLIENT_ID
+                  
+                OAUTH_CLIENT_SECRET:
+                  valueFrom:
+                    secretKeyRef:
+                      name: application-hub
+                      key: OAUTH_CLIENT_SECRET
+
+            image:
+              # name: eoepca/application-hub
+              # tag: "1.2.0"
+              pullPolicy: Always
+              # pullSecrets: []
+
+            db:
+              pvc:
+                storageClassName: managed-nfs-storage-retain
+          
+          singleuser:
+            image:
+              name: jupyter/minimal-notebook
+              tag: "2343e33dec46"
+            profileList: 
+            - display_name:  "Minimal environment"
+              description: "To avoid too much bells and whistles: Python."
+              default: "True"
+            - display_name:  "EOEPCA profile"
+              description: "Sample profile"
+              kubespawner_override:
+                cpu_limit": 4
+                mem_limit": "8G"
+
+        nodeSelector:
+          key: node-role.kubernetes.io/worker
+          value: \"true\"
+
+  destination:
+    name: in-cluster
+    namespace: app-hub
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

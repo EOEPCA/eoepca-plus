@@ -13,3 +13,4 @@ resources:
   - portal-v1x
   - registration-harvester-api
   - iam
+  - application-hub

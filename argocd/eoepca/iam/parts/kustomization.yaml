@@ -10,5 +10,9 @@ resources:
   - apisixtls-iam-test.yaml
   - apisixroute-keycloak.yaml
   - apisixroute-dummy-service.yaml
+  - cert-apisix-control-plane.yaml
+  - cert-apisix-data-plane.yaml
+  - cert-apisix-ingress-controller.yaml
+  - cert-apisix-dashboard.yaml
 #  - apisix-ingress-bridge.yaml
 #  - iam-auth-nginx-ingress.yaml

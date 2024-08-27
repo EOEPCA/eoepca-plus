@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: apisix-control-plane
+  namespace: iam
+#  annotations:
+#    argocd.argoproj.io/sync-wave: "1"
+spec:
+  secretName: apisix-control-plane-tls
+#  privateKey:
+#    algorithm: RSA
+#    encoding: PKCS1
+#    size: 2048
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  isCA: false
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - apisix-control-plane
+    - apisix-control-plane.iam.svc.cluster.local
+  issuerRef:
+    name: eoepca-ca-clusterissuer
+    kind: ClusterIssuer

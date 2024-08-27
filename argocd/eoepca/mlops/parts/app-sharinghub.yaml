@@ -109,13 +109,10 @@ spec:
                 message: "Pour voir tous les projets et débloquer toutes les fonctionnalités, veuillez vous connecter..."
 
         image:
-          repository: 643vlk6z.gra7.container-registry.ovh.net/space_applications/sharinghub
+          repository: eoepca/sharinghub
           pullPolicy: Always
           # Overrides the image tag whose default is the chart appVersion.
           tag: "latest"
-
-        imagePullSecrets:
-          -  name: regcred
 
         ingress:
           enabled: true

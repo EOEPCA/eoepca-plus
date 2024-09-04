@@ -9,6 +9,7 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
+    # helm inspect chart oci://registry.developers.crunchydata.com/crunchydata/pgo --version=5.5.2
     # pgo cannot be a dependency of eoAPI b/c it causes zombie resources on helm uninstall
     - repoURL: 'registry.developers.crunchydata.com/crunchydata'
       path: 'pgo'

@@ -13,7 +13,7 @@ ingress:
     secretName: eoapi-tls
 
 db:
-  enabled: true
+  enabled: false
   storageClassName: managed-nfs-storage-retain
   accessModes:
     - ReadWriteMany
@@ -26,7 +26,7 @@ db:
       PGDATA: /data/pgdata
 
 postgrescluster:
-  enabled: false
+  enabled: true
   postgresVersion: 16
   postGISVersion: 3.4
   pgBouncerReplicas: 1
@@ -55,7 +55,7 @@ postgrescluster:
                   storage: 5Gi
 
 pgstacBootstrap:
-  enabled: false
+  enabled: true
 
 raster:
   enabled: true

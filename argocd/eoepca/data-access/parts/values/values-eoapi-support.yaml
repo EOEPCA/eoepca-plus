@@ -19,4 +19,13 @@ grafana:
   datasources:
     datasources.yaml:
         datasources:
-          url: 'http://eoapi-support-prometheus-server.data-access.svc.cluster.local'
+        - name: prometheus
+          orgId: 1
+          type: prometheus
+          url: http://eoapi-support-prometheus-server.data-access.svc.cluster.local
+          access: proxy
+          jsonData:
+            timeInterval: "5s"
+          isDefault: true
+          editable: true
+          version: 2 # This number should be increased when changes are made to update the datasource

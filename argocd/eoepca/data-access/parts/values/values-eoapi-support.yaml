@@ -1,3 +1,6 @@
+prometheus-adapter:
+  prometheus:
+    url: 'http://eoapi-support-prometheus-server.data-access.svc.cluster.local'
 grafana:
   service:
     type: LoadBalancer
@@ -13,3 +16,7 @@ grafana:
       - secretName: eoapi-support-tls
         hosts:
           - eoapisupport.develop.eoepca.org
+  datasources:
+    datasources.yaml:
+        datasources:
+          url: 'http://eoapi-support-prometheus-server.data-access.svc.cluster.local'

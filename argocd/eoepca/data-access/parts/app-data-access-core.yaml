@@ -26,13 +26,13 @@ spec:
         releaseName: eoapi
         valueFiles:
           - $values/argocd/eoepca/data-access/parts/values/values-eoapi.yaml
-#    - repoURL: https://devseed.com/eoapi-k8s/
-#      chart: eoapi-support
-#      targetRevision: 0.1.6
-#      helm:
-#        releaseName: eoapi-support
-#        valueFiles:
-#          - $values/argocd/eoepca/data-access/parts/values/values-eoapi-support.yaml
+    - repoURL: https://devseed.com/eoapi-k8s/
+      chart: eoapi-support
+      targetRevision: 0.1.6
+      helm:
+        releaseName: eoapi-support
+        valueFiles:
+          - $values/argocd/eoepca/data-access/parts/values/values-eoapi-support.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

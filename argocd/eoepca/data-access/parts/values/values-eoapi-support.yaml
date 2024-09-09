@@ -29,3 +29,18 @@ grafana:
           isDefault: true
           editable: true
           version: 2 # This number should be increased when changes are made to update the datasource
+prometheus:
+  server:
+    service:
+      annotations: {}
+      type: LoadBalancer
+    persistentVolume:
+      enabled: true
+      storageClass: "managed-nfs-storage-retain"
+      accessModes:
+        - ReadWriteMany
+      size: 1Gi
+      selector:
+        matchLabels:
+          app: prometheus
+          storage: nfs

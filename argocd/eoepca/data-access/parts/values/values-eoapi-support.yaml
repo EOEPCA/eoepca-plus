@@ -1,0 +1,15 @@
+grafana:
+  service:
+    type: LoadBalancer
+    annotations: {}
+  ingress:
+    enabled: true
+    hosts:
+      - eoapisupport.develop.eoepca.org
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    tls:
+      - secretName: eoapi-support-tls
+        hosts:
+          - eoapisupport.develop.eoepca.org

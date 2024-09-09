@@ -39,8 +39,3 @@ prometheus:
       storageClass: "managed-nfs-storage-retain"
       accessModes:
         - ReadWriteMany
-      size: 1Gi
-      selector:
-        matchLabels:
-          app: prometheus
-          storage: nfs

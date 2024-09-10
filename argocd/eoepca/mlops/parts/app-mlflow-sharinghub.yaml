@@ -52,6 +52,9 @@ spec:
           enabled: true
           auth:
             existingSecret: mlflow-sharinghub-postgres
+          primary:
+            persistence:
+              storageClass: managed-nfs-storage
 
   syncPolicy:
     syncOptions:

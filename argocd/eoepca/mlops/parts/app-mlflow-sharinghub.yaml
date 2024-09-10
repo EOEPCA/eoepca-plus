@@ -29,7 +29,7 @@ spec:
           endpointUrl: https://minio.develop.eoepca.org
 
         persistence:
-          enabled: true
+          enabled: false
 
         podSecurityContext:
           fsGroup: 999

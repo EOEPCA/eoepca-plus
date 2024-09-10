@@ -7,8 +7,10 @@ resources:
   - ss-kc-postgres.yaml
   - apisixtls-iam.yaml
   - apisixtls-iam-auth.yaml
+  - apisixtls-iam-opa.yaml
   - apisixtls-iam-test.yaml
   - apisixroute-keycloak.yaml
+  - apisixroute-opa.yaml
   - apisixroute-dummy-service.yaml
   - cert-apisix-control-plane.yaml
   - cert-apisix-data-plane.yaml

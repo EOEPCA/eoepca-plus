@@ -1,0 +1,35 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: opa
+spec:
+  http:
+  - name: opa
+    match:
+      hosts:
+      - iam-opa.develop.eoepca.org
+      paths:
+      - /*
+    backends:
+    - serviceName: opal-client
+      servicePort: 8181
+    plugins:
+      - name: openid-connect
+        enable: true
+        config:
+          client_id: "opa"
+          client_secret: "ldPg7qBvd6mrazngldUlRIQeXaEL1Dtl"
+          #bearer_only: true
+          #realm: "eoepca"
+          #redirect_uri: "http://iam-test.develop.eoepca.org/"
+          access_token_in_authorization_header: true
+          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+      - name: authz-keycloak
+        enable: true
+        config:
+          client_id: "opa"
+          client_secret: "ldPg7qBvd6mrazngldUlRIQeXaEL1Dtl"
+          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          #permissions: "Resource all"
+          lazy_load_paths: true
+          ssl_verify: false

@@ -1,0 +1,14 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: iam-auth-tls
+  namespace: iam
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  hosts:
+    - iam-opa.develop.eoepca.org
+  secret:
+    name: iam-opa-tls
+    namespace: iam

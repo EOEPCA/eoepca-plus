@@ -687,6 +687,8 @@ dataPlane:
     extraHosts:
       - name: iam-auth.develop.eoepca.org
         path: /
+      - name: iam-opa.develop.eoepca.org
+        path: /
       - name: iam-test.develop.eoepca.org
         path: /
       - name: iam-test2.develop.eoepca.org
@@ -718,6 +720,9 @@ dataPlane:
       - hosts:
           - iam-auth.develop.eoepca.org
         secretName: iam-auth-tls
+      - hosts:
+          - iam-opa.develop.eoepca.org
+        secretName: iam-opa-tls
       - hosts:
           - iam-test.develop.eoepca.org
           - iam-test2.develop.eoepca.org

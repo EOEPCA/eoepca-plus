@@ -1,7 +1,7 @@
 apiVersion: apisix.apache.org/v2
 kind: ApisixTls
 metadata:
-  name: iam-auth-tls
+  name: iam-opa-tls
   namespace: iam
   annotations:
     argocd.argoproj.io/sync-wave: "2"

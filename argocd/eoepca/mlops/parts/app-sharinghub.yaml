@@ -24,6 +24,11 @@ spec:
           docs:
             url: /docs
 
+          s3:
+            enable: true
+            bucket: mlopsbb-sharinghub
+            region: eu
+            endpoint: https://minio.develop.eoepca.org
           stac:
             projects:
               cache-timeout: 30

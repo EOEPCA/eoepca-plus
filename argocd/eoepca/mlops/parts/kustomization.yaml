@@ -3,6 +3,7 @@ resources:
   - app-sharinghub.yaml
   - app-gitlab.yaml
   - ss-sharinghub-oidc.yaml
+  - ss-sharinghub-s3.yaml
   - ss-sharinghub.yaml
   - ss-gitlab-storage.yaml
   - ns-gitlab.yaml

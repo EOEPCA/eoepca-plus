@@ -9,4 +9,5 @@ resources:
   - ns-gitlab.yaml
   - ss-mlflow-postgres.yaml
   - ss-mlflow-sharinghub.yaml
+  - ss-mlflow-s3.yaml
   - app-mlflow-sharinghub.yaml

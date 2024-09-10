@@ -7,3 +7,6 @@ resources:
   - ss-sharinghub.yaml
   - ss-gitlab-storage.yaml
   - ns-gitlab.yaml
+  - ss-mlflow-postgres.yaml
+  - ss-mlflow-sharinghub.yaml
+  - app-mlflow-sharinghub.yaml

@@ -1,0 +1,15 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: mlflow-sharinghub
+  namespace: sharinghub
+spec:
+  encryptedData:
+    secret-key: AgCuXLa7ZXUQ4tCEvPe5ncFqw7qsC3TkO1746DoBIIGM8fJH6EtglSrj2VZ2AlqrNnooeg3vlIzhOPya4fTVXUNxRT+eNoE/0EgYZYSrDCqF2YlHZkF8Ant35ePjkK27M+I2fug/ko8n2d33SCgRPww0hSH+9VdsFimQQ6DkKHnLHQM43tUwKBizqhktC74oHvydpgJyHDAJwU5eNcF5pBjxYcQuAOp+VhVbXUI9zZ6AmGAME5FPWcB4KSSfQ7NfWARNQrXfKOPafoQhswo2Zs94lJ/eLMgpGyBWq+dnqc4jbZ9O1COZwiqD+5NqL4MZ82W6G/5stuaU7yqPIMqBt5aVi9BEf0cfi4/DOnkfKYuPq0ftR+0bvi1x1+7YnzvYnIKdmaIeeO3U3njldiDT2v3NBsZ4BAobENU+cokMAPImT7ta8bvMgGLaLR9k3afLTdLFJftl2s3h9+P5XQ+0d9j83zBxQytCGkcH2d/IFi13Yc7oO4ZQ7aCoXHUWVO+mCupG7P6CknQ/PEP/CCdhqmlEHTNMhHGduiiLZfWbPe0D8+73VHPTnmuDBsPMjepAgeIXeAqtT2f2VCL12tFvSLvvRcWqqYrpBlYow+ZclKXgnU6E0rlzRbr5bSDm6dDF5rIAHwEObxmVJBMOUFyzmXfs7C18n4uifSeY+qHrE6F7Dmb8tcaj6KxcoKLGKcAwofRJQwkeDH9HzLUtOL1MsSzrJPxWwAklLnEPbxs4bxhjyK4UDXE=
+  template:
+    metadata:
+      creationTimestamp: null
+      name: mlflow-sharinghub
+      namespace: sharinghub
+

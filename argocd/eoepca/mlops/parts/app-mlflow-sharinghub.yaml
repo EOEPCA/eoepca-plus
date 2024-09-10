@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlflow-sharinghub
+  namespace: argocd
+spec:
+  destination:
+    namespace: sharinghub
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/csgroup-oss/mlflow-sharinghub.git
+    path: deploy/helm/mlflow-sharinghub
+    targetRevision: main
+    helm:
+      valuesObject:
+        image:
+          repository: eoepca/mlflow-sharinghub
+          tag: latest
+
+        mlflowSharinghub:
+          sharinghubUrl: https://sharinghub.develop.eoepca.org
+          sharinghubStacCollection: ai-model
+          sharinghubAuthDefaultToken: false
+          artifactsDestination: s3://mlopsbb-mlflow-sharinghub
+        
+        s3:
+          enabled: true
+          endpointUrl: https://minio.develop.eoepca.org
+
+        persistence:
+          enabled: true
+
+        podSecurityContext:
+          fsGroup: 999
+
+        ingress:
+          enabled: true
+          className: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          hosts:
+            - host: mlflow.develop.eoepca.org
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls:
+            - secretName: mlflow-sharinghub.develop.eoepca.org-tls
+              hosts:
+                - mlflow.develop.eoepca.org
+        postgresql:
+          enabled: true
+          auth:
+            existingSecret: mlflow-sharinghub-postgres
+
+  syncPolicy:
+    syncOptions:
+      - FailOnSharedResource=true
+      - CreateNamespace=true

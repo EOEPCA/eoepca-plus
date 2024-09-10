@@ -1,7 +1,7 @@
 apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
-  name: opa
+  name: opa-route
 spec:
   http:
   - name: opa
@@ -11,7 +11,7 @@ spec:
       paths:
       - /*
     backends:
-    - serviceName: opal-client
+    - serviceName: iam-opal-opal-client
       servicePort: 8181
     plugins:
       - name: openid-connect

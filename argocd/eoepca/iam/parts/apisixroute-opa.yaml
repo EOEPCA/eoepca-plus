@@ -18,7 +18,7 @@ spec:
         enable: true
         config:
           client_id: "opa"
-          client_secret: "ldPg7qBvd6mrazngldUlRIQeXaEL1Dtl"
+          client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
           #bearer_only: true
           #realm: "eoepca"
           #redirect_uri: "http://iam-test.develop.eoepca.org/"
@@ -28,7 +28,7 @@ spec:
         enable: true
         config:
           client_id: "opa"
-          client_secret: "ldPg7qBvd6mrazngldUlRIQeXaEL1Dtl"
+          client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
           discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
           #permissions: "Resource all"
           lazy_load_paths: true

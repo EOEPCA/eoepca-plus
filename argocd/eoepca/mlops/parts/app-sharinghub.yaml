@@ -24,6 +24,10 @@ spec:
           docs:
             url: /docs
 
+          mlflow:
+            type: mlflow-sharinghub
+            url: https://sharinghub.develop.eoepca.org/mlflow
+
           s3:
             enable: true
             bucket: mlopsbb-sharinghub

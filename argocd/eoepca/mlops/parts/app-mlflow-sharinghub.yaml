@@ -40,14 +40,14 @@ spec:
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt-prod
           hosts:
-            - host: mlflow.develop.eoepca.org
+            - host: sharinghub.develop.eoepca.org
               paths:
-                - path: /
+                - path: /mlflow
                   pathType: ImplementationSpecific
           tls:
-            - secretName: mlflow-sharinghub.develop.eoepca.org-tls
+            - secretName: sharinghub.develop.eoepca.org-tls
               hosts:
-                - mlflow.develop.eoepca.org
+                - sharinghub.develop.eoepca.org
         postgresql:
           enabled: true
           auth:

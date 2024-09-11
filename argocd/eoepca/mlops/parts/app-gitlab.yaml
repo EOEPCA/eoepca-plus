@@ -38,6 +38,10 @@ spec:
 
             lfs:
               enabled: true
+              bucket: gitlab-lfs-storage
+              connection:
+                secret: object-storage
+                key: connection
             artifacts:
               enabled: false
             uploads:

@@ -6,6 +6,7 @@ resources:
   - ss-sharinghub-s3.yaml
   - ss-sharinghub.yaml
   - ss-gitlab-storage.yaml
+  - ss-gitlab-lfs-s3.yaml
   - ns-gitlab.yaml
   - ss-mlflow-postgres.yaml
   - ss-mlflow-sharinghub.yaml

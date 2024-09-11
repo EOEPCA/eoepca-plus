@@ -37,7 +37,7 @@ spec:
               enabled: false
 
             lfs:
-              enabled: false
+              enabled: true
             artifacts:
               enabled: false
             uploads:

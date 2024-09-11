@@ -39,10 +39,15 @@ spec:
           className: nginx
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt-prod
+            nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/proxy-body-size: 10g
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              proxy_set_header X-Script-Name /mlflow;
+              rewrite ^/mlflow/(.*)$ /$1 break;
           hosts:
             - host: sharinghub.develop.eoepca.org
               paths:
-                - path: /mlflow
+                - path: /mlflow/
                   pathType: ImplementationSpecific
           tls:
             - secretName: sharinghub.develop.eoepca.org-tls

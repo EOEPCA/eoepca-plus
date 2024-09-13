@@ -14,3 +14,4 @@ resources:
   - registration-harvester-api
   - iam
   - application-hub
+  - resource-health

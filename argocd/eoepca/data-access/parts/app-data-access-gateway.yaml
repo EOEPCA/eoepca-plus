@@ -16,7 +16,7 @@ spec:
         releaseName: tyk-oss
         valueFiles:
           - $values/argocd/eoepca/data-access/parts/values/values-tyk.yaml
-    - repoURL: oci://registry-1.docker.io/bitnamicharts/
+    - repoURL: https://charts.bitnami.com/bitnami/
       chart: redis
       targetRevision: 20.1.0
       helm:

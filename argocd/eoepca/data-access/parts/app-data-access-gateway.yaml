@@ -11,7 +11,7 @@ spec:
   sources:
     - repoURL: https://helm.tyk.io/public/helm/charts/
       chart: tyk-oss
-      targetRevision: 0.15.0
+      targetRevision: 1.6.0
       helm:
         releaseName: tyk-oss
         valueFiles:

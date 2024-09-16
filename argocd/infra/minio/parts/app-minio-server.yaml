@@ -59,6 +59,7 @@ spec:
           - name: cache-bucket
           - name: gitlab-backup-storage
           - name: gitlab-tmp-storage
+          - name: gitlab-lfs-storage
           - name: mlopbb-mlflow-sharinghub
           - name: mlopbb-sharinghub
 

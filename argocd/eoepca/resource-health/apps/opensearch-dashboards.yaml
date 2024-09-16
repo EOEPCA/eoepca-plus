@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: resource-health-opensearch-dashboards
+  namespace: argocd
+spec:
+  destination:
+    namespace: resource-health-opensearch
+    server: https://kubernetes.default.svc
+  project: eoepca
+  source:
+    chart: opensearch-dashboards
+    helm:
+      values: |
+        config:
+          opensearch_dashboards.yml:
+            server:
+              name: dashboards
+              host: 0.0.0.0
+              ssl:
+                enabled: true
+                certificate: /usr/share/opensearch-dashboards/certs/tls.crt
+                key: /usr/share/opensearch-dashboards/certs/tls.key
+            opensearch:
+              ssl:
+                verificationMode: full
+                certificateAuthorities: [ "/usr/share/opensearch-dashboards/clientcerts/ca.crt" ]
+                certificate: /usr/share/opensearch-dashboards/clientcerts/tls.crt
+                key: /usr/share/opensearch-dashboards/clientcerts/tls.key
+
+        secretMounts:
+          - name: certs
+            secretName: opensearch-dashboards-tls-certificate
+            path: /usr/share/opensearch-dashboards/certs
+          - name: clientcerts
+            secretName: opensearch-dashboards-client-certificate
+            path: /usr/share/opensearch-dashboards/clientcerts
+
+    repoURL: https://opensearch-project.github.io/helm-charts/
+    targetRevision: 2.19.1

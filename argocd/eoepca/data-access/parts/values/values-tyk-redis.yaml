@@ -1,0 +1,4 @@
+global:
+  storageClass: managed-nfs-storage-retain
+  redis:
+    password: ""

@@ -1,3 +1,4 @@
 resources:
   - app-data-access-core.yaml
   - app-data-access-coverage.yaml
+  - app-data-access-gateway.yaml

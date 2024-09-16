@@ -59,6 +59,8 @@ spec:
           - name: cache-bucket
           - name: gitlab-backup-storage
           - name: gitlab-tmp-storage
+          - name: mlopbb-mlflow-sharinghub
+          - name: mlopbb-sharinghub
 
   destination:
     name: in-cluster

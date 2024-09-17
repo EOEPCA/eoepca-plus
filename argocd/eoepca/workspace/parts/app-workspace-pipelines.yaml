@@ -10,7 +10,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/workspace
-    targetRevision: main
+    targetRevision: 0.0.2
     path: setup/eoepca-demo
   destination:
     name: in-cluster

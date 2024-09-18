@@ -3,7 +3,7 @@ prometheus-adapter:
     url: 'http://eoapi-support-prometheus-server.data-access.svc.cluster.local'
 grafana:
   service:
-    type: LoadBalancer
+    type: ClusterIP
     annotations: {}
   ingress:
     enabled: true
@@ -33,7 +33,7 @@ prometheus:
   server:
     service:
       annotations: {}
-      type: LoadBalancer
+      type: ClusterIP
     persistentVolume:
       enabled: true
       storageClass: "managed-nfs-storage-retain"

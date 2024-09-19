@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: 'https://eoepca.github.io/helm-charts-dev'
     chart: rm-resource-catalogue
-    targetRevision: 2.0.0-dev1
+    targetRevision: 2.0.0-dev2
 
     helm:
       releaseName: resource-catalogue

@@ -9,9 +9,9 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: 'https://eoepca.github.io/helm-charts'
+    repoURL: 'https://eoepca.github.io/helm-charts-dev'
     chart: rm-resource-catalogue
-    targetRevision: 1.4.0
+    targetRevision: 2.0.0-dev1
 
     helm:
       releaseName: resource-catalogue
@@ -32,10 +32,10 @@ spec:
         db:
           volume_storage_type: managed-nfs-storage-retain
         pycsw:
-          # image:
-          #   # repository: geopython/pycsw
-          #   tag: "eoepca-staging"
-          #   pullPolicy: Always
+          image:
+            # repository: geopython/pycsw
+            tag: "eoepca-staging"
+            pullPolicy: Always
           config:
             server:
               url: https://resource-catalogue.develop.eoepca.org/

@@ -29,7 +29,12 @@ def main():
         http_pool,
         https_pool,
         load_balancer_floating_ip,
+        apisix_pool,
+        apisix_floating_ip,
+        apisix_lb,
     ) = load_balancer.deploy(subnet_instance)
+
+    pulumi.export("apisix_floating_ip", apisix_floating_ip.address)
 
     # Deploy Bastion
     bastion_instance = bastion.Bastion(network_instance, key_pair)
@@ -49,7 +54,12 @@ def main():
             f"worker-node-{i}", config.require("workerNodeFlavour"), network_instance
         )
         load_balancer.add_member(
-            f"worker-node-{i}", node, http_pool, https_pool, subnet_instance
+            f"worker-node-{i}",
+            node,
+            http_pool,
+            https_pool,
+            apisix_pool,
+            subnet_instance,
         )
         worker_nodes.append(node)
 
@@ -67,7 +77,7 @@ def main():
         "k8s-provider",
         kubeconfig=kubeconfig,
         opts=pulumi.ResourceOptions(
-            depends_on=[cluster], ignore_changes=["kubeconfig"]
+            depends_on=[cluster], ignore_changes=["kubeconfig", "deleteUnreachable"]
         ),
         enable_server_side_apply=True,
     )

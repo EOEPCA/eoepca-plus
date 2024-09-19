@@ -22,8 +22,9 @@ def deploy(k8s_provider):
         helm_options=ReleaseArgs(
             namespace=namespace_name,
             values={"meta": {"helm.sh/release-namespace": namespace_name}},
+            version="v1.15.1",
         ),
-        opts=pulumi.ResourceOptions(provider=k8s_provider, depends_on=[ns]),
+        opts=pulumi.ResourceOptions(provider=k8s_provider, depends_on=[ns], ignore_changes=["helm_options.version"]),
     )
 
     issuer = CustomResource(

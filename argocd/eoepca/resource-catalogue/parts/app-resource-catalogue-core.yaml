@@ -42,7 +42,7 @@ spec:
             manager:
               transactions: "true"
               allowed_ips:
-                - "*"
+                - "\"*"\"
 
   destination:
     name: in-cluster

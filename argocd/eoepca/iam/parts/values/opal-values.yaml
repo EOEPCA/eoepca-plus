@@ -72,8 +72,9 @@ client:
       }
       default allow_policy_evaluation := false
       allow_policy_evaluation if {
-        # Generally allow GET on /v1/data/**
-        "GET" == input.method
+        # Generally allow GET and POST on /v1/data/**
+        #"GET" == input.method
+        input.method in ["GET", "POST"]
         "v1" == input.path[0]
         "data" == input.path[1]
         "system" != input.path[2]

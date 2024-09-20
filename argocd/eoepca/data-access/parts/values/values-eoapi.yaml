@@ -14,16 +14,6 @@ ingress:
 
 db:
   enabled: false
-  storageClassName: managed-nfs-storage-retain
-  accessModes:
-    - ReadWriteMany
-  settings:
-    secrets:
-      POSTGRES_USER: username
-      POSTGRES_PASSWORD: password
-      PGUSER: username
-      PGPASSWORD: password
-      PGDATA: /data/pgdata
 
 postgrescluster:
   enabled: true
@@ -47,9 +37,9 @@ postgrescluster:
     
 pgstacBootstrap:
   enabled: true
-  settings:
-    envVars:
-      KEEP_ALIVE: "true"
+  # settings:
+  #   envVars:
+  #     KEEP_ALIVE: "true"
 
 raster:
   enabled: true

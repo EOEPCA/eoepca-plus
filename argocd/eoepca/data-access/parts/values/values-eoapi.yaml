@@ -42,8 +42,9 @@ postgrescluster:
         requests:
           storage: 1Gi
   backupsStorageClassName: managed-nfs-storage-retain
-  nfsCustom: []  # we added a manual option to our postgresql chart to try and accommodate this b/c it was hardcoded as ReadWriteOnce: https://github.com/developmentseed/eoapi-k8s/pull/147
-
+  nfsCustom:  # we added a manual option to our postgresql chart to try and accommodate this b/c it was hardcoded as ReadWriteOnce: https://github.com/developmentseed/eoapi-k8s/pull/147
+      - name: repo1
+    
 pgstacBootstrap:
   enabled: true
   settings:

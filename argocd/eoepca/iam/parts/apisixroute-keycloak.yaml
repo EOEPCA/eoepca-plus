@@ -17,6 +17,7 @@ spec:
       # Take iam as a synonym for iam-auth for now.
       - iam.develop.eoepca.org
       - iam-auth.develop.eoepca.org
+      - iam-auth.apx.develop.eoepca.org
       paths:
       - /*
     name: keycloak

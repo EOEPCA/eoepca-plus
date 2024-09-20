@@ -13,12 +13,15 @@ spec:
     match:
       hosts:
         - iam-test.develop.eoepca.org
+        - iam-test.apx.develop.eoepca.org
+        # TODO: iam-test.apx.develop.eoepca.org should authenticate via iam-auth.apx.develop.eoepca.org
       paths:
       - /*
     backends:
     - serviceName: dummy-service
       servicePort: 80
     plugins:
+    # TODO: Configure client secrets through secretRef
     - name: openid-connect
       enable: true
       config:
@@ -43,6 +46,8 @@ spec:
       hosts:
         - iam-test2.develop.eoepca.org
         - iam-test3.develop.eoepca.org
+        - iam-test2.apx.develop.eoepca.org
+        - iam-test3.apx.develop.eoepca.org
       paths:
         - /*
     backends:

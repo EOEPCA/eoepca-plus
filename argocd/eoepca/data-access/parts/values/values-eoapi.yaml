@@ -41,18 +41,8 @@ postgrescluster:
       resources:
         requests:
           storage: 1Gi
-  backups:
-    pgbackrest:
-      repos:
-      - name: repo1
-        volume:
-          volumeClaimSpec:
-            storageClassName: managed-nfs-storage-retain
-            accessModes:
-            - "ReadWriteOnce"
-            resources:
-              requests:
-                storage: 1Gi
+  backupsStorageClassName: managed-nfs-storage-retain
+  nfsCustom: []  # we added a manual option to our postgresql chart to try and accommodate this b/c it was hardcoded as ReadWriteOnce: https://github.com/developmentseed/eoapi-k8s/pull/147
 
 pgstacBootstrap:
   enabled: true

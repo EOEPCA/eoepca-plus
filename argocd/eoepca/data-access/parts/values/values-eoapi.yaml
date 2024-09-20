@@ -44,15 +44,15 @@ postgrescluster:
   backups:
     pgbackrest:
       repos:
-        - name: repo1
-          volume:
-            volumeClaimSpec:
-              storageClassName: managed-nfs-storage-retain
-              accessModes:
-                - "ReadWriteMany"
-              resources:
-                requests:
-                  storage: 1Gi
+      - name: repo1
+        volume:
+          volumeClaimSpec:
+            storageClassName: managed-nfs-storage-retain
+            accessModes:
+            - "ReadWriteMany"
+            resources:
+              requests:
+                storage: 1Gi
 
 pgstacBootstrap:
   enabled: true

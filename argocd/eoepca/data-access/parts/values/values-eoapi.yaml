@@ -37,9 +37,9 @@ postgrescluster:
     
 pgstacBootstrap:
   enabled: true
-  # settings:
-  #   envVars:
-  #     KEEP_ALIVE: "true"
+  settings:
+    envVars:
+      KEEP_ALIVE: "false"
 
 raster:
   enabled: true

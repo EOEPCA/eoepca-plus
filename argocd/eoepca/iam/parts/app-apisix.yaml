@@ -17,7 +17,7 @@ spec:
       helm:
         releaseName: apisix
         valueFiles:
-          - $values/argocd/eoepca/iam/parts/values/apisix-values-bitnami.yaml
+          - $values/argocd/eoepca/iam/parts/values/apisix-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

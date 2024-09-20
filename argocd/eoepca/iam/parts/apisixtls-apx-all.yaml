@@ -1,0 +1,15 @@
+# Wildcard certificate for APISIX ingress
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: apx-all-tls
+  namespace: iam
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    cert-manager.io/cluster-issuer: letsencrypt-dns-prod
+spec:
+  hosts:
+    - "*.apx.develop.eoepca.org"
+  secret:
+    name: apx-all-tls
+    namespace: iam

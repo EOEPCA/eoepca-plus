@@ -5,6 +5,7 @@ resources:
   - app-apisix.yaml
 #  - pvc-kc-database.yaml
   - ss-kc-postgres.yaml
+  - apisixtls-apx-all.yaml
   - apisixtls-iam.yaml
   - apisixtls-iam-auth.yaml
   - apisixtls-iam-opa.yaml
@@ -16,5 +17,6 @@ resources:
   - cert-apisix-data-plane.yaml
   - cert-apisix-ingress-controller.yaml
   - cert-apisix-dashboard.yaml
+  - cert-apx-all.yaml
 #  - apisix-ingress-bridge.yaml
 #  - iam-auth-nginx-ingress.yaml

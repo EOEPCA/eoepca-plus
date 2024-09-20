@@ -49,7 +49,7 @@ postgrescluster:
           volumeClaimSpec:
             storageClassName: managed-nfs-storage-retain
             accessModes:
-            - "ReadWriteMany"
+            - "ReadWriteOnce"
             resources:
               requests:
                 storage: 1Gi

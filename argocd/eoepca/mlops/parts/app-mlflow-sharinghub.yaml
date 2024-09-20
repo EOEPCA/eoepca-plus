@@ -16,6 +16,7 @@ spec:
       valuesObject:
         image:
           repository: eoepca/mlflow-sharinghub
+          pullPolicy: Always
           tag: latest
 
         mlflowSharinghub:
@@ -23,7 +24,7 @@ spec:
           sharinghubStacCollection: ai-model
           sharinghubAuthDefaultToken: false
           artifactsDestination: s3://mlopsbb-mlflow-sharinghub
-        
+
         s3:
           enabled: true
           endpointUrl: https://minio.develop.eoepca.org

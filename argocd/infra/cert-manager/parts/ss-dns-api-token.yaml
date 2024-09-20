@@ -1,0 +1,15 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: dns-api-token
+  namespace: cert-manager-ns
+spec:
+  encryptedData:
+    api-token: AgAPIz+GMz5MbcMMv+i3m4fsAWot2VDNMbTc8fu79/k8x8fG0pOwPup9ozmNE6Bp0Tlya899A524AQag8D9U0JDwBgxBX+r6YjInEKEwTXyYn96r1OsoQ0ZqCMJe4O+E7LyJLpRI+/nFFLLDO4twnEa60AatTgs/YYoPHkUiiJO13idc54M0XD0Xy79c9isUrPhN/OejeB3xk8Uxu5J0qHGPVRpxTdTgU9yUOZb26dMmW3Ya9Akd6u744b/X9dBK4Xy+ZyoGLiD6EFBmv/16ClgBWBFtYuaylLULu0epEBoeyOG9WzoMKNVJ+9VLSBuk+i0/DN4Twmpaf0HS8sSkSbNf567IYMFf6QmTiOiHhUvQz5NTkknkFLpOF1HRLnFcqHycAqX9/N97oY3AfYMWKdfjCXvvuNXQ75fvcG4uwbSWzVAXmnvcR9Y4df5rZSIqry+asVbXyRKV8rz448bkww+9K0ELZpV+Yf0+CT/qOSFoRi5Nwz3mlTqr5tdPsnp8Y6902hvR6l6l0S4IlOnCz8iXfg1pH2NTk12135A8CXJy+gMspYylZGjbJD/7HjaoNQqfMnJ8viFpQ0TTt/U5CRrMuhAov/uIIJUUD19fXhiYbCWFqavbMHAXrxaTjJe72dM0GC5skQmgdCmB0kfptoycBl+ECNqCXtk5TEhgoaeX8WSkxJ298C7uNbcSsjkaynYOoE/TA6R7flpJdj+PsSUCLViaqtO3VakqmFTJdkrHVQJ7lDXs3u1p
+  template:
+    metadata:
+      creationTimestamp: null
+      name: dns-api-token
+      namespace: cert-manager-ns

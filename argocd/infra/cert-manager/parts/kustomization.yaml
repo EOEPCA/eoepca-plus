@@ -2,3 +2,5 @@ resources:
   - cert-manager-ca-cert.yaml
   - cert-manager-ss-issuer.yaml
   - cert-manager-ca-issuer.yaml
+  - cert-manager-dns-issuer.yaml
+  - ss-dns-api-token.yaml

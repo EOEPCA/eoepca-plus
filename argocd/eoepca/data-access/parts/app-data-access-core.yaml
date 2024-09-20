@@ -21,7 +21,7 @@ spec:
           - $values/argocd/eoepca/data-access/parts/values/values-pgo.yaml
     - repoURL: https://devseed.com/eoapi-k8s/
       chart: eoapi
-      targetRevision: 0.4.13
+      targetRevision: 0.4.16
       helm:
         releaseName: eoapi
         valueFiles:

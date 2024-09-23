@@ -527,8 +527,8 @@ dataPlane:
     ## NOTE: choose port between <30000-32767>
     ##
     nodePorts:
-      http: 32080
-      https: 32443
+      http: "32080"
+      https: "32443"
       metrics: ""
     ## @param dataPlane.service.clusterIP APISIX service Cluster IP
     ## e.g.:

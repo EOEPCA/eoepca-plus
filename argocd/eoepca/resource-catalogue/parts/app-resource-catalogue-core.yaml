@@ -46,7 +46,7 @@ spec:
             metadata:
               identification:
                 title: EOEPCA Resource Catalogue
-                description: Based on pycsw, an OARec and OGC CSW server implementation written in Python
+                description: pycsw is an OARec and OGC CSW server implementation written in Python
               provider:
                 name: EOEPCA
                 url: https://eoepca.org/

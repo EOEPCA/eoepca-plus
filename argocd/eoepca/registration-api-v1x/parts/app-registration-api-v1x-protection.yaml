@@ -17,7 +17,7 @@ spec:
         valuesObject:
           fullnameOverride: registration-api-v1x-protection
           config:
-            client-id: registration-api-v1x
+            client-id: registration-api
             discovery-url: https://keycloak-v1x.develop.eoepca.org/realms/master
             cookie-domain: develop.eoepca.org
           targetService:

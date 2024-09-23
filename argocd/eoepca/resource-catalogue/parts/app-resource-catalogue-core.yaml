@@ -43,6 +43,13 @@ spec:
               transactions: "true"
               allowed_ips:
                 - '"*"'
+            metadata:
+              identification:
+                title: EOEPCA Resource Catalogue
+                abstract: Based on pycsw, a Python OGC Catalogue server implementation
+              provider:
+                name: EOEPCA
+                url: https://eoepca.org/
 
   destination:
     name: in-cluster

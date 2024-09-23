@@ -39,6 +39,8 @@ spec:
               cert-manager.io/cluster-issuer: letsencrypt-prod
               nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
               nginx.ingress.kubernetes.io/enable-cors: "true"
+              nginx.ingress.kubernetes.io/configuration-snippet: |-
+                auth_request /auth;
             # open access to swagger docs
             openUri:
               - ^.*

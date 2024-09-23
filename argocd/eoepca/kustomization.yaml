@@ -2,6 +2,7 @@
 resources:
   - identity-service
   - resource-catalogue
+  - registration-api
   - registration-api-v1x
   - data-access-v1x
   - data-access

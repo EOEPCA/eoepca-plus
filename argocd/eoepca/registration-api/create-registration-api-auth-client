@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+ORIG_DIR="$(pwd)"
+cd "$(dirname "$0")"
+BIN_DIR="$(pwd)"
+
+onExit() {
+  rm -rf tmp
+  cd "${ORIG_DIR}"
+}
+trap onExit EXIT
+
+# Get helper scripts
+mkdir -p tmp/bin
+mkdir -p tmp/cluster
+curl -JLs -o tmp/bin/create-client https://raw.githubusercontent.com/EOEPCA/deployment-guide/main/deploy/bin/create-client
+curl -JLs -o tmp/cluster/functions https://raw.githubusercontent.com/EOEPCA/deployment-guide/main/deploy/cluster/functions
+chmod +x tmp/bin/create-client
+
+# Create the client
+tmp/bin/create-client \
+  -a https://keycloak-v1x.develop.eoepca.org \
+  -i https://identity-api.develop.eoepca.org \
+  -r "master" \
+  -u "admin" \
+  -p "changeme" \
+  -c "admin-cli" \
+  --id=registration-api \
+  --name="Registration API Gatekeeper" \
+  --secret="changeme" \
+  --description="Client to be used by Registration API Gatekeeper"

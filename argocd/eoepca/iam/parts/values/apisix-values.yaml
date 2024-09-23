@@ -511,8 +511,7 @@ dataPlane:
     ## @param dataPlane.service.type APISIX service type
     ##
     # Adapted to ClusterIP
-    # TODO: Add NodePort service for direct ingress
-    type: ClusterIP
+    type: NodePort
     ## @param dataPlane.service.ports.http APISIX service HTTP port
     ## @param dataPlane.service.ports.https APISIX service HTTPS port
     ## @param dataPlane.service.ports.metrics APISIX service HTTPS port
@@ -528,8 +527,8 @@ dataPlane:
     ## NOTE: choose port between <30000-32767>
     ##
     nodePorts:
-      http: ""
-      https: ""
+      http: 32080
+      https: 32443
       metrics: ""
     ## @param dataPlane.service.clusterIP APISIX service Cluster IP
     ## e.g.:

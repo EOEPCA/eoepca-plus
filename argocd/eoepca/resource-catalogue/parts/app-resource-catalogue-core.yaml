@@ -46,7 +46,7 @@ spec:
             metadata:
               identification:
                 title: EOEPCA Resource Catalogue
-                abstract: Based on pycsw, a Python OGC Catalogue server implementation
+                description: Based on pycsw, an OARec and OGC CSW server implementation written in Python
               provider:
                 name: EOEPCA
                 url: https://eoepca.org/

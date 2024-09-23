@@ -31,6 +31,9 @@ spec:
             logging:
               level: ERROR
               # /tmp/pygeoapi.log
+            metadata:
+              identification:
+                title: EOEPCA+ Registration API
             resources:
               hello-world:
                 type: process

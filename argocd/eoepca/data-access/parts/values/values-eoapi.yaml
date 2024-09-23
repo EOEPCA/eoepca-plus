@@ -44,6 +44,8 @@ pgstacBootstrap:
 raster:
   enabled: true
   settings:
+    envVars:
+      AWS_S3_ENDPOINT: "https://s3.waw3-2.cloudferro.com"
     resources:
       requests:
         memory: "3072Mi"

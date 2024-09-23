@@ -13,6 +13,7 @@ resources:
   - apisixroute-keycloak.yaml
   - apisixroute-opa.yaml
   - apisixroute-dummy-service.yaml
+  - apisixroute-zoo.yaml
   - cert-apisix-control-plane.yaml
   - cert-apisix-data-plane.yaml
   - cert-apisix-ingress-controller.yaml

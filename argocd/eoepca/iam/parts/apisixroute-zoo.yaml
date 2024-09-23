@@ -1,0 +1,55 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: zoo-route
+spec:
+  http:
+  - name: zoo-open-apx
+    match:
+      hosts:
+        - zoo-open.apx.develop.eoepca.org
+      paths:
+        - /*
+    backends:
+      - serviceName: zoo-project-dru-service
+        servicePort: 80
+  - name: zoo-apx-open
+    match:
+      hosts:
+        - zoo.apx.develop.eoepca.org
+      paths:
+        - /*
+      exprs:
+        - subject:
+            scope: Path
+          op: RegexMatch
+          value: "^/(ogc-api/api.*|swagger-ui.*)"
+    backends:
+      - serviceName: zoo-project-dru-service
+        servicePort: 80
+  - name: zoo-apx
+    match:
+      hosts:
+        - zoo.apx.develop.eoepca.org
+      paths:
+        - /*
+    backends:
+      - serviceName: zoo-project-dru-service
+        servicePort: 80
+    plugins:
+      - name: openid-connect
+        enable: true
+        config:
+          client_id: "zoo"
+          client_secret: "Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di"
+          access_token_in_authorization_header: true
+          discovery: "https://iam-auth.apx.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+      - name: authz-keycloak
+        enable: true
+        config:
+          client_id: "zoo"
+          client_secret: "Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di"
+          discovery: "https://iam-auth.apx.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          #permissions: "Resource all"
+          lazy_load_paths: true
+          ssl_verify: false

@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: registration-api
+  name: registration-api-v1x
   namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: registration-api
+    eoepca/app-name: registration-api-v1x
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
-    path: argocd/eoepca/registration-api/parts
+    path: argocd/eoepca/registration-api-v1x/parts
   destination:
     name: in-cluster
     namespace: rm

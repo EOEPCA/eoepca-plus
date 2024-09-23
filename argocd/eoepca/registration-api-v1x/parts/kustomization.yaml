@@ -1,4 +1,4 @@
 
 resources:
-  - app-registration-api-core.yaml
-  - app-registration-api-protection.yaml
+  - app-registration-api-v1x-core.yaml
+  - app-registration-api-v1x-protection.yaml

@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: registration-api-protection
+  name: registration-api-v1x-protection
   namespace: argocd
   labels:
-    eoepca/app-name: registration-api
+    eoepca/app-name: registration-api-v1x
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
@@ -13,16 +13,16 @@ spec:
       chart: identity-gatekeeper
       targetRevision: 1.0.12
       helm:
-        releaseName: registration-api-protection
+        releaseName: registration-api-v1x-protection
         valuesObject:
-          fullnameOverride: registration-api-protection
+          fullnameOverride: registration-api-v1x-protection
           config:
-            client-id: registration-api
+            client-id: registration-api-v1x
             discovery-url: https://keycloak-v1x.develop.eoepca.org/realms/master
             cookie-domain: develop.eoepca.org
           targetService:
-            host: registration-api.develop.eoepca.org
-            name: registration-api
+            host: registration-api-v1x.develop.eoepca.org
+            name: registration-api-v1x
             port:
               number: 8080
           # Values for secret 'registration-api-protection'

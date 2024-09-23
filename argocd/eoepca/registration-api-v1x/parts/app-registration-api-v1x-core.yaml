@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: registration-api-core
+  name: registration-api-v1x-core
   namespace: argocd
   labels:
-    eoepca/app-name: registration-api
+    eoepca/app-name: registration-api-v1x
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
@@ -14,9 +14,9 @@ spec:
     targetRevision: 1.4.0
 
     helm:
-      releaseName: registration-api
+      releaseName: registration-api-v1x
       valuesObject:
-        fullnameOverride: registration-api
+        fullnameOverride: registration-api-v1x
         # image: # {}
           # repository: eoepca/rm-registration-api
           # pullPolicy: Always
@@ -31,12 +31,12 @@ spec:
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
             cert-manager.io/cluster-issuer: letsencrypt-prod
           hosts:
-            - host: registration-api.develop.eoepca.org
+            - host: registration-api-v1x.develop.eoepca.org
               paths: ["/"]
           tls:
             - hosts:
-                - registration-api.develop.eoepca.org
-              secretName: registration-api-tls
+                - registration-api-v1x.develop.eoepca.org
+              secretName: registration-api-v1x-tls
 
         # some values for the workspace API
         workspaceK8sNamespace: "rm"

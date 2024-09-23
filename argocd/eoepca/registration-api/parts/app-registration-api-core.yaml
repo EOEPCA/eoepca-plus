@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: 'https://eoepca.github.io/helm-charts-dev'
     chart: registration-api
-    targetRevision: 2.0.0-dev1
+    targetRevision: 2.0.0-dev2
 
     helm:
       releaseName: registration-api
@@ -19,7 +19,7 @@ spec:
         global:
           namespace: rm
         ingress:
-          enabled: false
+          enabled: "false"
         pygeoapi:
           image:
             repository: eoepca/registration-api

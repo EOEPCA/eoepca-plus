@@ -252,6 +252,7 @@ dataPlane:
   hostAliases: []
   ## @param dataPlane.defaultConfig [string] Apisix apisix configuration (evaluated as a template)
   ##
+  # TODO: Remove preliminary data_encryption section below!
   defaultConfig: |
     {{- if .Values.dataPlane.metrics.enabled }}
     plugin_attr:
@@ -278,6 +279,8 @@ dataPlane:
       control:
         ip: 0.0.0.0
         port: {{ .Values.dataPlane.containerPorts.control }}
+      data_encryption:
+        enable_encrypt_fields: false
     nginx_config:
       error_log: /dev/stderr
       stream:

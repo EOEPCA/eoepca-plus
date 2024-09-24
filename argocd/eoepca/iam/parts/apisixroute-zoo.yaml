@@ -2,6 +2,7 @@ apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
   name: zoo-route
+  namespace: zoo
 spec:
   http:
   - name: zoo-open-apx

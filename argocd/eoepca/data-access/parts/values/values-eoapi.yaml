@@ -44,6 +44,14 @@ pgstacBootstrap:
 raster:
   enabled: true
   settings:
+    envVars:
+      AWS_S3_ENDPOINT: "https://s3.waw3-2.cloudferro.com"
+      AWS_ACCESS_KEY_ID : "4SMIGZNCR8LM1LSUY1HU"
+      AWS_SECRET_ACCESS_KEY: "MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV"
+      AWS_REGION: "WAW3-2"
+      AWS_HTTPS: "YES"
+      AWS_VIRTUAL_HOSTING: "FALSE"
+      GDAL_HTTP_UNSAFESSL: "YES"
     resources:
       requests:
         memory: "3072Mi"

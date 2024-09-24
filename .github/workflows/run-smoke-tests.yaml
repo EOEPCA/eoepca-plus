@@ -26,6 +26,7 @@ jobs:
           DOMAIN=${{ env.TARGET }}.eoepca.org
           KEYCLOAK=keycloak-v1x.\${DOMAIN}
           EOAPI=eoapi.\${DOMAIN}
+          MLOPS=sharinghub.\${DOMAIN}
           EOF
       - name: Invoke pytest
         run: |

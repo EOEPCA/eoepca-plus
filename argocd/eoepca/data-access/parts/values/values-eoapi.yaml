@@ -46,6 +46,10 @@ raster:
   settings:
     envVars:
       AWS_S3_ENDPOINT: "https://s3.waw3-2.cloudferro.com"
+      AWS_S3_ACCESS_SECRET: "MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV"
+      AWS_S3_ACCESS_KEY: "4SMIGZNCR8LM1LSUY1HU"
+      AWS_S3_REGION: "WAW3-2"
+
     resources:
       requests:
         memory: "3072Mi"

@@ -49,7 +49,6 @@ raster:
       AWS_ACCESS_KEY_ID: "4SMIGZNCR8LM1LSUY1HU"
       AWS_SECRET_ACCESS_KEY: "MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV"
       AWS_VIRTUAL_HOSTING: "FALSE"
-      CPL_VSIL_CURL_ALLOWED_EXTENSIONS: ".tif,.TIF,.tiff,.jp2"
     resources:
       requests:
         memory: "3072Mi"

@@ -2,9 +2,8 @@ stacture:
   image:
     tag: v0.0.6
 
-
     ingress:
-      enabled: false
+      enabled: true
       className: "nginx"
       annotations:
         kubernetes.io/ingress.class: nginx

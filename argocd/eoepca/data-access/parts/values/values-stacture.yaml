@@ -5,6 +5,8 @@ stacture:
   env:
     - name: DEBUG
       value: "true"
+    - name: STACTURE_TERRAVIS_URL
+      value: http://stacture-terravis:8080
 
   ingress:
     enabled: true

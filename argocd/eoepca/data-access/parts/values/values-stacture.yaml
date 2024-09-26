@@ -2,6 +2,9 @@ stacture:
   image:
     tag: v0.0.6
 
+  env:
+    DEBUG: "true"
+
   ingress:
     enabled: true
     className: "nginx"

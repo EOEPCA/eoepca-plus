@@ -3,7 +3,8 @@ stacture:
     tag: v0.0.6
 
   env:
-    DEBUG: "true"
+    - name: DEBUG
+      value: "true"
 
   ingress:
     enabled: true

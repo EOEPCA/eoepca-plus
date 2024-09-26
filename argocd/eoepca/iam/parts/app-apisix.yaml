@@ -13,9 +13,9 @@ spec:
   sources:
     - repoURL: https://charts.bitnami.com/bitnami
       chart: apisix
-      #targetRevision: 2.5.8
-      #targetRevision: 2.8.2
-      targetRevision: 3.0.3
+      targetRevision: 2.5.8
+      #targetRevision: 2.8.2 # did not work
+      #targetRevision: 3.0.3 # did not work
       #targetRevision: 3.4.0
       helm:
         releaseName: apisix

@@ -21,8 +21,8 @@ stacture:
       secretName: data-access-stacture-tls
 
   config:
+    terravis_url: http://stacture-terravis:8080
     title: Stacture API
-
     apis:
       maps: true
       coverages: true

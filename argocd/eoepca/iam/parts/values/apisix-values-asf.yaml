@@ -220,35 +220,41 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-buffers: "4"
   hosts:
     - host: apisix.local
-      paths: []
+      paths:
+        - /
     - host: iam.develop.eoepca.org
-      paths: []
+      paths:
+        - /
     - name: iam-auth.develop.eoepca.org
-      paths: []
+      paths:
+        - /
     - name: iam-opa.develop.eoepca.org
-      paths: []
+      paths:
+        - /
     - name: iam-test.develop.eoepca.org
-      paths: []
+      paths:
+        - /
     - name: iam-test2.develop.eoepca.org
-      paths: []
+      paths:
+        - /
     - name: iam-test3.develop.eoepca.org
-      paths: []
-  tls: []
-  # TODO: Configure TLS
-#    - hosts:
-#        - iam.develop.eoepca.org
-#      secretName: iam-tls
-#    - hosts:
-#        - iam-auth.develop.eoepca.org
-#      secretName: iam-auth-tls
-#    - hosts:
-#        - iam-opa.develop.eoepca.org
-#      secretName: iam-opa-tls
-#    - hosts:
-#        - iam-test.develop.eoepca.org
-#        - iam-test2.develop.eoepca.org
-#        - iam-test3.develop.eoepca.org
-#      secretName: iam-test-tls
+      paths:
+        - /
+  tls:
+    - hosts:
+        - iam.develop.eoepca.org
+      secretName: iam-tls
+    - hosts:
+        - iam-auth.develop.eoepca.org
+      secretName: iam-auth-tls
+    - hosts:
+        - iam-opa.develop.eoepca.org
+      secretName: iam-opa-tls
+    - hosts:
+        - iam-test.develop.eoepca.org
+        - iam-test2.develop.eoepca.org
+        - iam-test3.develop.eoepca.org
+      secretName: iam-test-tls
 
 control:
   # -- Enable Control API

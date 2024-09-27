@@ -179,8 +179,8 @@ terravis:
     - name: AWS_S3_ENDPOINT
       value: data.cloudferro.com
     - name: AWS_VIRTUAL_HOSTING
-      value: FALSE
+      value: "FALSE"
     - name: AWS_HTTPS
-      value: FALSE
+      value: "FALSE"
     - name: AWS_REGION
       value: default

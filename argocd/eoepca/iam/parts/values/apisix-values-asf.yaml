@@ -219,9 +219,9 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
     nginx.ingress.kubernetes.io/proxy-buffers: "4"
   hosts:
-    - host: apisix.local
-      paths:
-        - /
+#    - host: apisix.local
+#      paths:
+#        - /
     - host: iam.develop.eoepca.org
       paths:
         - /
@@ -690,3 +690,4 @@ ingress-controller:
   config:
     apisix:
       adminAPIVersion: "v3"
+      serviceNamespace: iam

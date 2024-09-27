@@ -11,16 +11,20 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - repoURL: https://charts.bitnami.com/bitnami
+#    - repoURL: https://charts.bitnami.com/bitnami
+    - repoURL: https://charts.apiseven.com
       chart: apisix
-      targetRevision: 2.5.8
-      #targetRevision: 2.8.2 # did not work
-      #targetRevision: 3.0.3 # did not work
-      #targetRevision: 3.4.0
+      # Bitnami:
+      #targetRevision: 2.5.8
+      # Apache:
+      targetRevision: 2.9.0
       helm:
         releaseName: apisix
         valueFiles:
-          - $values/argocd/eoepca/iam/parts/values/apisix-values.yaml
+          # Bitnami:
+          #- $values/argocd/eoepca/iam/parts/values/apisix-values.yaml
+          # Apache:
+          - $values/argocd/eoepca/iam/parts/values/apisix-values-asf.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

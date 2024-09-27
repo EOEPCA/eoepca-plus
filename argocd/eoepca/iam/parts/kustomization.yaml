@@ -14,10 +14,11 @@ resources:
   - apisixroute-opa.yaml
   - apisixroute-dummy-service.yaml
   - apisixroute-zoo.yaml
-  - cert-apisix-control-plane.yaml
-  - cert-apisix-data-plane.yaml
-  - cert-apisix-ingress-controller.yaml
-  - cert-apisix-dashboard.yaml
   - cert-apx-all.yaml
+# The following four certificates are only used for the Bitnami chart:
+#  - cert-apisix-control-plane.yaml
+#  - cert-apisix-data-plane.yaml
+#  - cert-apisix-ingress-controller.yaml
+#  - cert-apisix-dashboard.yaml
 #  - apisix-ingress-bridge.yaml
 #  - iam-auth-nginx-ingress.yaml

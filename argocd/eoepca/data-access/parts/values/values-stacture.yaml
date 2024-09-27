@@ -172,6 +172,8 @@ terravis:
     tag: v0.0.6
 
   env:
+    - name: CPL_VSIL_CURL_ALLOWED_EXTENSIONS
+      value: .TIF,.TIFF,.tif,.tiff,.xml,.jp2,.jpg,.jpeg,.png,.nc
     - name: AWS_ACCESS_KEY_ID
       value: 4SMIGZNCR8LM1LSUY1HU
     - name: AWS_SECRET_ACCESS_KEY

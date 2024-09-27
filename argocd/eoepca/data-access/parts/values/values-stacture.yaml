@@ -173,11 +173,11 @@ terravis:
 
   env:
     - name: AWS_ACCESS_KEY_ID
-      value: access
+      value: 4SMIGZNCR8LM1LSUY1HU
     - name: AWS_SECRET_ACCESS_KEY
-      value: access
+      value: MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV
     - name: AWS_S3_ENDPOINT
-      value: data.cloudferro.com
+      value: eodata.cloudferro.com
     - name: AWS_VIRTUAL_HOSTING
       value: "FALSE"
     - name: AWS_HTTPS

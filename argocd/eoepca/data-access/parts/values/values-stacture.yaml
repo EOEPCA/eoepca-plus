@@ -104,57 +104,57 @@ stacture:
                   rescale:
                     - - -1.0
                       - 1.0
-              scl:
-                raster:bands:
-                  - classification:classes:
-                    - value: 0
-                      color_hint: "000000"
-                      title: NO_DATA
-                      name: NO_DATA
-                    - value: 1
-                      color_hint: "ff0000"
-                      title: SATURATED_OR_DEFECTIVE
-                      name: SATURATED_OR_DEFECTIVE
-                    - value: 2
-                      color_hint: "2e2e2e"
-                      title: DARK_AREA_PIXELS
-                      name: DARK_AREA_PIXELS
-                    - value: 3
-                      color_hint: "541800"
-                      title: CLOUD_SHADOWS
-                      name: CLOUD_SHADOWS
-                    - value: 4
-                      color_hint: "46e800"
-                      title: VEGETATION
-                      name: VEGETATION
-                    - value: 5
-                      color_hint: "ffff00"
-                      title: NOT_VEGETATED
-                      name: NOT_VEGETATED
-                    - value: 6
-                      color_hint: "0000ff"
-                      title: WATER
-                      name: WATER
-                    - value: 7
-                      color_hint: "525252"
-                      title: UNCLASSIFIED
-                      name: UNCLASSIFIED
-                    - value: 8
-                      color_hint: "787878"
-                      title: CLOUD_MEDIUM_PROBABILITY
-                      name: CLOUD_MEDIUM_PROBABILITY
-                    - value: 9
-                      color_hint: "b5b5b5"
-                      title: CLOUD_HIGH_PROBABILITY
-                      name: CLOUD_HIGH_PROBABILITY
-                    - value: 10
-                      color_hint: "00b6bf"
-                      title: THIN_CIRRUS
-                      name: THIN_CIRRUS
-                    - value: 11
-                      color_hint: "da00f2"
-                      title: SNOW
-                      name: SNOW
+              # scl:
+              #   raster:bands:
+              #     - classification:classes:
+              #       - value: 0
+              #         color_hint: "000000"
+              #         title: NO_DATA
+              #         name: NO_DATA
+              #       - value: 1
+              #         color_hint: "ff0000"
+              #         title: SATURATED_OR_DEFECTIVE
+              #         name: SATURATED_OR_DEFECTIVE
+              #       - value: 2
+              #         color_hint: "2e2e2e"
+              #         title: DARK_AREA_PIXELS
+              #         name: DARK_AREA_PIXELS
+              #       - value: 3
+              #         color_hint: "541800"
+              #         title: CLOUD_SHADOWS
+              #         name: CLOUD_SHADOWS
+              #       - value: 4
+              #         color_hint: "46e800"
+              #         title: VEGETATION
+              #         name: VEGETATION
+              #       - value: 5
+              #         color_hint: "ffff00"
+              #         title: NOT_VEGETATED
+              #         name: NOT_VEGETATED
+              #       - value: 6
+              #         color_hint: "0000ff"
+              #         title: WATER
+              #         name: WATER
+              #       - value: 7
+              #         color_hint: "525252"
+              #         title: UNCLASSIFIED
+              #         name: UNCLASSIFIED
+              #       - value: 8
+              #         color_hint: "787878"
+              #         title: CLOUD_MEDIUM_PROBABILITY
+              #         name: CLOUD_MEDIUM_PROBABILITY
+              #       - value: 9
+              #         color_hint: "b5b5b5"
+              #         title: CLOUD_HIGH_PROBABILITY
+              #         name: CLOUD_HIGH_PROBABILITY
+              #       - value: 10
+              #         color_hint: "00b6bf"
+              #         title: THIN_CIRRUS
+              #         name: THIN_CIRRUS
+              #       - value: 11
+              #         color_hint: "da00f2"
+              #         title: SNOW
+              #         name: SNOW
         map:
           default_style: default
           styles:
@@ -170,3 +170,17 @@ stacture:
 terravis:
   image:
     tag: v0.0.6
+
+  env:
+    - name: AWS_ACCESS_KEY_ID
+      value: access
+    - name: AWS_SECRET_ACCESS_KEY
+      value: access
+    - name: AWS_S3_ENDPOINT
+      value: data.cloudferro.com
+    - name: AWS_VIRTUAL_HOSTING
+      value: FALSE
+    - name: AWS_HTTPS
+      value: FALSE
+    - name: AWS_REGION
+      value: default

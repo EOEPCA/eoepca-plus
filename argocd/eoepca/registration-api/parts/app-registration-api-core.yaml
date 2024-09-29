@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: 'https://eoepca.github.io/helm-charts-dev'
     chart: registration-api
-    targetRevision: 2.0.0-dev6
+    targetRevision: 2.0.0-dev7
 
     helm:
       releaseName: registration-api
@@ -35,10 +35,14 @@ spec:
               identification:
                 title: EOEPCA+ Registration API
             resources:
-              registrar:
+              register:
                 type: process
                 processor:
-                  name: registration_api.processes.registration.RegistrarProcessor
+                  name: registration_api.processes.registration.RegisterProcessor
+              deregister:
+                type: process
+                processor:
+                  name: registration_api.processes.registration.DeregisterProcessor
               hello-world:
                 type: process
                 processor:

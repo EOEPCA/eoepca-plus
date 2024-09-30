@@ -106,7 +106,7 @@ image:
 #  repository: pro-ez/keycloak-with-opa-plugin
   # Note: Maybe update to 25.x
 #  tag: 24.0.5-debian-12-r0
-  tag: latest
+  tag: 0.3-SNAPSHOT
   digest: ""
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'

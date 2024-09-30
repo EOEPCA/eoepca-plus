@@ -107,6 +107,7 @@ client:
       allow if {
         # Preliminarily allow policy evaluation if Authorization header is unset,
         # i.e., if the request is anonymous, but originates from within the cluster
+        print("Request data input: ", input)
         not input.headers["Authorization"]
         allow_policy_evaluation == true
         print("AuthZ unset, Input: ", input)

@@ -10,3 +10,4 @@ resources:
   - certificates/otel-collector-certificate.yaml
   - certificates/otel-collector-client-certificate.yaml
   - secrets/sensmetry-user-sealedsecret.yaml
+  - secrets/resource-health-iam-client-sealedsecret.yaml

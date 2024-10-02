@@ -18,7 +18,7 @@ spec:
       releaseName: sharinghub
       valuesObject:
         config: |-
-          server
+          server:
             allowed-origins:
               - https://eoepca.readthedocs.io
 

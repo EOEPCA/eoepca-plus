@@ -12,12 +12,16 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/csgroup-oss/sharinghub.git
-    path:  deploy/helm/sharinghub
+    path: deploy/helm/sharinghub
     targetRevision: main
     helm:
       releaseName: sharinghub
       valuesObject:
         config: |-
+          server
+            allowed-origins:
+              - https://eoepca.readthedocs.io
+
           gitlab:
             url: https://gitlab.develop.eoepca.org
             allow-public: true
@@ -34,6 +38,7 @@ spec:
             bucket: mlopsbb-sharinghub
             region: eu
             endpoint: https://minio.develop.eoepca.org
+
           stac:
             projects:
               cache-timeout: 30

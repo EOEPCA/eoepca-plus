@@ -4,7 +4,7 @@ metadata:
   name: workspace-api-v2
   namespace: argocd
   labels:
-    eoepca/app-name: workspace-api
+    eoepca/app-name: workspace-api-v2
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
@@ -14,7 +14,7 @@ spec:
     targetRevision: 1.4.2
 
     helm:
-      releaseName: rm-workspace-api
+      releaseName: workspace-api-v2
       valuesObject:
         existingSecret: harbor
         fullnameOverride: workspace-api

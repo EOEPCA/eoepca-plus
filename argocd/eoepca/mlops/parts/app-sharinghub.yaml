@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: https://github.com/csgroup-oss/sharinghub.git
     path: deploy/helm/sharinghub
-    targetRevision: main
+    targetRevision: "0.3.0"
     helm:
       releaseName: sharinghub
       valuesObject:
@@ -130,8 +130,6 @@ spec:
         image:
           repository: eoepca/sharinghub
           pullPolicy: Always
-          # Overrides the image tag whose default is the chart appVersion.
-          tag: "latest"
 
         ingress:
           enabled: true

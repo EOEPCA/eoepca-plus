@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: workspace-api-core
+  name: workspace-api-v2
   namespace: argocd
   labels:
     eoepca/app-name: workspace-api

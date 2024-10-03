@@ -1,0 +1,61 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workspace-api-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: workspace-api
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: https://eoepca.github.io/helm-charts
+    chart: rm-workspace-api
+    targetRevision: 1.4.2
+
+    helm:
+      releaseName: rm-workspace-api
+      valuesObject:
+        existingSecret: harbor
+        fullnameOverride: workspace-api
+        image:
+          tag: 2.0.0_pre1
+          pullPolicy: Always
+        ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+            kubernetes.io/ingress.class: nginx
+            nginx.ingress.kubernetes.io/enable-cors: "true"
+            nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+          hosts:
+            - host: workspace-api-v2.develop.eoepca.org
+              paths: ["/"]
+          tls:
+            - hosts:
+                - workspace-api-v2.develop.eoepca.org
+              secretName: workspace-api-v2-tls
+        fluxHelmOperator:
+          enabled: true
+        prefixForName: "ws-v2"
+        workspaceSecretName: "bucket"
+        s3Endpoint: "https://minio.develop.eoepca.org"
+        s3Region: "RegionOne"
+        harborUrl: "https://harbor.develop.eoepca.org"
+        harborUsername: "admin"
+        harborPasswordSecretName: "harbor"
+  destination:
+    name: in-cluster
+    namespace: workspace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

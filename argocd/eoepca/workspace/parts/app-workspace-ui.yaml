@@ -1,49 +1,39 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: workspace-api-v2
+  name: workspace-ui
   namespace: argocd
   labels:
-    eoepca/app-name: workspace-api-v2
+    eoepca/app-name: workspace-ui
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: https://eoepca.github.io/helm-charts
-    chart: rm-workspace-api
-    targetRevision: 1.4.2
+    repoURL: https://eoepca.github.io/helm-charts-dev
+    chart: workspace-ui
+    targetRevision: 0.0.1
 
     helm:
-      releaseName: workspace-api-v2
+      releaseName: workspace-ui
       valuesObject:
-        existingSecret: harbor
-        fullnameOverride: workspace-api
-        image:
-          tag: 2.0.0_pre1
-          pullPolicy: Always
+        fullnameOverride: workspace-ui
         ingress:
-          enabled: false
+          enabled: true
           annotations:
             cert-manager.io/cluster-issuer: letsencrypt-prod
             kubernetes.io/ingress.class: nginx
             nginx.ingress.kubernetes.io/enable-cors: "true"
             nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
           hosts:
-            - host: workspace-api-v2.develop.eoepca.org
+            - host: workspace-ui.develop.eoepca.org
               paths: ["/"]
           tls:
             - hosts:
-                - workspace-api-v2.develop.eoepca.org
-              secretName: workspace-api-v2-tls
-        fluxHelmOperator:
-          enabled: true
-        prefixForName: "ws-v2"
-        workspaceSecretName: "bucket"
-        s3Endpoint: "https://minio.develop.eoepca.org"
-        s3Region: "RegionOne"
-        harborUrl: "https://harbor.develop.eoepca.org"
-        harborUsername: "admin"
-        harborPasswordSecretName: "harbor"
+                - workspace-ui.develop.eoepca.org
+              secretName: workspace-ui-tls
+        brandingName: "Workspace UI (Global)"
+        password: "changeme"
+        s3CredentialsSecretName: ""
   destination:
     name: in-cluster
     namespace: workspace

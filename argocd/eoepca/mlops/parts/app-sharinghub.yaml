@@ -39,6 +39,9 @@ spec:
             region: eu
             endpoint: https://minio.develop.eoepca.org
 
+          jupyterlab:
+            url: https://nb.p2.csgroup.space
+
           stac:
             projects:
               cache-timeout: 30
@@ -72,6 +75,7 @@ spec:
                     map-viewer: enable
                     store-s3: enable
                     mlflow: enable
+                    jupyter: enable
               - dataset:
                   title: "Datasets"
                   description: "Datasets are very important in the process of training an AI, discover those that we put at your disposal."
@@ -86,6 +90,7 @@ spec:
                     map-viewer: enable
                     store-s3: enable
                     mlflow: disable
+                    jupyter: enable
 
           tags:
             gitlab:

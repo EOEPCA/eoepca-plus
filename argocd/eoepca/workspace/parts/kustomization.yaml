@@ -1,5 +1,6 @@
 
 resources:
-  - app-workspace-api.yaml
+  - app-workspace-api-v2.yaml
   - app-workspace-crossplane.yaml
   - app-workspace-pipelines.yaml
+  - app-workspace-ui.yaml

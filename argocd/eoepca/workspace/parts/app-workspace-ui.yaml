@@ -33,7 +33,7 @@ spec:
               secretName: workspace-ui-tls
         brandingName: "Workspace UI (Global)"
         password: "changeme"
-        s3CredentialsSecretName: ""
+        s3CredentialsSecretName: "minio-secret"
         defaultBucketNames: "ws-alice|ws-bob|ws-eric"
   destination:
     name: in-cluster

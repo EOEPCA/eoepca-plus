@@ -11,7 +11,7 @@ spec:
   sources:
     - repoURL: https://eoepca.github.io/helm-charts-dev
       chart: registration-harvester
-      targetRevision: 0.0.1
+      targetRevision: 0.0.2
       helm:
         releaseName: registration-harvester-api-worker
         valueFiles:

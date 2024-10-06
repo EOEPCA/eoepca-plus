@@ -11,6 +11,23 @@ ingress:
   sslRedirect: "true"
   clusterIssuer: letsencrypt-prod
 
+harvester:
+  service:
+    name: registration-harvester
+    type: ClusterIP
+    port: 8080
+  image:
+    repository: eoepca/registration-harvester
+    pullPolicy: IfNotPresent
+    tag: latest
+  container_port: 8080
+  config:
+    flowable:
+      host: https://registration-harvester-api.develop.eoepca.org/flowable-rest
+      rest_user: eoepca
+      rest_password: eoepca
+      use_tls: "true"
+
 # https://github.com/bitnami/charts/tree/postgresql/12.10.0/bitnami/postgresql
 global:
   storageClass: managed-nfs-storage-retain

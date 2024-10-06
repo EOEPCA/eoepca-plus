@@ -1,3 +1,4 @@
 
 resources:
   - app-registration-harvester-api-core.yaml
+  - app-registration-harvester-api-worker.yaml

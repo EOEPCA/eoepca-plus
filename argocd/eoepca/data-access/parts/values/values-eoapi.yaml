@@ -56,7 +56,7 @@ stac:
   enabled: true
   settings:
     envVars:
-      ENABLED_EXTENSIONS: "query,sort,fields,pagination,filter,collection_search"
+      ENABLED_EXTENSIONS: "query,sort,fields,pagination,filter"
     resources:
       limits:
         cpu: "1280m"

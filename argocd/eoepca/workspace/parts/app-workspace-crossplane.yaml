@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://charts.crossplane.io/stable
     chart: crossplane
-    targetRevision: v1.16
+    targetRevision: v1.17.1
     helm:
       releaseName: workspace-crossplane
   destination:

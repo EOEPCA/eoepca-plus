@@ -32,6 +32,7 @@ def main():
         apisix_pool,
         apisix_floating_ip,
         apisix_lb,
+        apisix_https_pool,
     ) = load_balancer.deploy(subnet_instance)
 
     pulumi.export("apisix_floating_ip", apisix_floating_ip.address)
@@ -59,6 +60,7 @@ def main():
             http_pool,
             https_pool,
             apisix_pool,
+            apisix_https_pool,
             subnet_instance,
         )
         worker_nodes.append(node)

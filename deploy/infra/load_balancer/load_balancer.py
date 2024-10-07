@@ -116,6 +116,22 @@ def deploy(subnet_id):
         opts=pulumi.ResourceOptions(depends_on=[apisix_listener]),
     )
 
+    apisix_https_listener = loadbalancer.Listener(
+        "apisix-https-listener",
+        loadbalancer_id=apisix_lb.id,
+        protocol="TCP",
+        protocol_port=443,
+        opts=pulumi.ResourceOptions(depends_on=[apisix_lb]),
+    )
+
+    apisix_https_pool = loadbalancer.Pool(
+        "apisix-https-pool",
+        listener_id=apisix_https_listener.id,
+        protocol="TCP",
+        lb_method=config.get("lbMethod") or "ROUND_ROBIN",
+        opts=pulumi.ResourceOptions(depends_on=[apisix_https_listener]),
+    )
+
     return (
         api_pool,
         http_pool,
@@ -124,9 +140,10 @@ def deploy(subnet_id):
         apisix_pool,
         apisix_floating_ip,
         apisix_lb,
+        apisix_https_pool,
     )
 
-def add_member(name, node, http_pool, https_pool, apisix_pool, subnet_instance):
+def add_member(name, node, http_pool, https_pool, apisix_pool, apisix_https_pool, subnet_instance):
     http_member = loadbalancer.Member(
         f"{name}-ingress-nginx-http",
         address=node.access_ip_v4,
@@ -159,7 +176,7 @@ def add_member(name, node, http_pool, https_pool, apisix_pool, subnet_instance):
         f"{name}-apisix-https",
         address=node.access_ip_v4,
         protocol_port=32443,
-        pool_id=apisix_pool.id,
+        pool_id=apisix_https_pool.id,
         subnet_id=subnet_instance.id,
-        opts=pulumi.ResourceOptions(depends_on=[apisix_pool]),
+        opts=pulumi.ResourceOptions(depends_on=[apisix_https_pool]),
     )

@@ -15,4 +15,5 @@ resources:
   - registration-harvester-api
   - iam
   - application-hub
-  - resource-health
+  ## NOTE: Disabled during transition to new Helm-setup
+  # - resource-health

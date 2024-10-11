@@ -1,13 +1,2 @@
 resources:
-  - apps/opensearch-dashboards.yaml
-  - apps/opensearch.yaml
-  - apps/opentelemetry-collector.yaml
-  - apps/resource-health.yaml
-  - certificates/opensearch-admin-certificate.yaml
-  - certificates/opensearch-dashboards-client-certificate.yaml
-  - certificates/opensearch-dashboards-tls-certificate.yaml
-  - certificates/opensearch-tls-certificate.yaml
-  - certificates/otel-collector-certificate.yaml
-  - certificates/otel-collector-client-certificate.yaml
-  - secrets/sensmetry-user-sealedsecret.yaml
-  - secrets/resource-health-iam-client-sealedsecret.yaml
+  - resource-health.yaml

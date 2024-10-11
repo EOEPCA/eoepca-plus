@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: resource-health-skeleton
+  name: resource-health
   namespace: argocd
 spec:
   project: eoepca
   source:
     repoURL: 'https://github.com/EOEPCA/resource-health'
-    path: helm
+    path: resource-health-reference-deployment
     targetRevision: deploy-develop
     helm:
       valueFiles:
-        - eoepca-develop-values.yaml
+        - values.yaml
   destination:
     namespace: resource-health
     server: https://kubernetes.default.svc

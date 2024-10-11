@@ -11,7 +11,7 @@ spec:
     targetRevision: deploy-develop
     helm:
       valueFiles:
-        - values.yaml
+        - eoepca-develop-values.yaml
   destination:
     namespace: resource-health
     server: https://kubernetes.default.svc

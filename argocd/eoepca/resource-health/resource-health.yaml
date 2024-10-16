@@ -35,6 +35,12 @@ spec:
               requirements: "https://gist.githubusercontent.com/tilowiklundSensmetry/a9fefe2873b731b483f554607a82deaa/raw/1136a82ca3c8f28b1ad4d895871514185927dd1c/requirements.txt"
               script: "https://raw.githubusercontent.com/EOEPCA/resource-health/refs/tags/v0.1.0-demo/pytest-health/instrumentation/examples/trivial_check.py"
 
+            - name: hourly-simple-http-check
+              schedule: "@hourly"
+              # This is an empty requirements file
+              requirements: "https://gist.githubusercontent.com/tilowiklundSensmetry/a9fefe2873b731b483f554607a82deaa/raw/1136a82ca3c8f28b1ad4d895871514185927dd1c/requirements.txt"
+              script: "https://gist.githubusercontent.com/tilowiklundSensmetry/b75b3bf435e366b2fd5155a41d8f1cb9/raw/892e0e89d078f1f2683b89a1101e31683f77dcee/health_check.py"
+
   destination:
     namespace: resource-health
     server: https://kubernetes.default.svc

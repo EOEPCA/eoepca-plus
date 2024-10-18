@@ -41,6 +41,11 @@ spec:
               requirements: "https://gist.githubusercontent.com/tilowiklundSensmetry/a9fefe2873b731b483f554607a82deaa/raw/1136a82ca3c8f28b1ad4d895871514185927dd1c/requirements.txt"
               script: "https://gist.githubusercontent.com/tilowiklundSensmetry/b75b3bf435e366b2fd5155a41d8f1cb9/raw/892e0e89d078f1f2683b89a1101e31683f77dcee/health_check.py"
 
+            - name: hourly-simple-openeo-check
+              schedule: "@hourly"
+              requirements: "https://gist.githubusercontent.com/soxofaan/7a634cfb0cc6bc0e8281d152a270ea4e/raw/ef77bc9b2c70cc070259715fea63e288026bb6b8/requirements.txt"
+              script: "https://gist.githubusercontent.com/soxofaan/7a634cfb0cc6bc0e8281d152a270ea4e/raw/ef77bc9b2c70cc070259715fea63e288026bb6b8/test_cdse.py"
+
   destination:
     namespace: resource-health
     server: https://kubernetes.default.svc

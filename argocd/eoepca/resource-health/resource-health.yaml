@@ -43,8 +43,8 @@ spec:
 
             - name: hourly-simple-openeo-check
               schedule: "@hourly"
-              requirements: "https://gist.githubusercontent.com/soxofaan/7a634cfb0cc6bc0e8281d152a270ea4e/raw/c6bb3376520a7ffd07e1d913c1ef5fcdd8533fbe/requirements.txt"
-              script: "https://gist.githubusercontent.com/soxofaan/7a634cfb0cc6bc0e8281d152a270ea4e/raw/c6bb3376520a7ffd07e1d913c1ef5fcdd8533fbe/test_cdse.py"
+              requirements: "https://gist.githubusercontent.com/soxofaan/7a634cfb0cc6bc0e8281d152a270ea4e/raw/ef77bc9b2c70cc070259715fea63e288026bb6b8/requirements.txt"
+              script: "https://gist.githubusercontent.com/soxofaan/7a634cfb0cc6bc0e8281d152a270ea4e/raw/ef77bc9b2c70cc070259715fea63e288026bb6b8/test_cdse.py"
 
   destination:
     namespace: resource-health

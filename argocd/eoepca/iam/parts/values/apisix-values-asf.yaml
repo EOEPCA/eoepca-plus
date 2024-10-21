@@ -225,19 +225,19 @@ ingress:
     - host: iam.develop.eoepca.org
       paths:
         - /
-    - name: iam-auth.develop.eoepca.org
+    - host: iam-auth.develop.eoepca.org
       paths:
         - /
-    - name: iam-opa.develop.eoepca.org
+    - host: iam-opa.develop.eoepca.org
       paths:
         - /
-    - name: iam-test.develop.eoepca.org
+    - host: iam-test.develop.eoepca.org
       paths:
         - /
-    - name: iam-test2.develop.eoepca.org
+    - host: iam-test2.develop.eoepca.org
       paths:
         - /
-    - name: iam-test3.develop.eoepca.org
+    - host: iam-test3.develop.eoepca.org
       paths:
         - /
   tls:

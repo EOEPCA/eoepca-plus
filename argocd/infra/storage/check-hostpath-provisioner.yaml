@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: storage-check-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: storage-check-pod
+spec:
+  containers:
+    - name: storage-check-container
+      image: nginx
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: storage-check-volume
+  volumes:
+    - name: storage-check-volume
+      persistentVolumeClaim:
+        claimName: storage-check-pvc

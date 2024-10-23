@@ -1,0 +1,57 @@
+---
+image: vito-docker.artifactory.vgt.vito.be/openeo-geotrellis-kube
+imageVersion: latest
+sparkVersion: 3.2.0
+type: Java
+driver:
+  env:
+    KUBE: "true"
+    KUBE_OPENEO_API_PORT: "50001"
+    PYTHONPATH: $PYTHONPATH:/opt/tensorflow/python38/2.3.0/:/opt/openeo/lib/python3.8/site-packages/
+    ZOOKEEPERNODES: zookeeper.zookeeper.svc.cluster.local:2181
+  podSecurityContext:
+    fsGroup: 18585
+    fsGroupChangePolicy: Always
+executor:
+  env:
+    PYTHONPATH: $PYTHONPATH:/opt/tensorflow/python38/2.3.0/:/opt/openeo/lib/python3.8/site-packages/
+fileDependencies:
+  - local:///opt/layercatalog.json
+  - local:///opt/log4j2.xml
+jarDependencies:
+  - local:///opt/geotrellis-extensions-static.jar
+mainApplicationFile: local:///opt/openeo/lib64/python3.8/site-packages/openeogeotrellis/deploy/kube.py
+sparkConf:
+  spark.executorEnv.DRIVER_IMPLEMENTATION_PACKAGE: openeogeotrellis
+  spark.appMasterEnv.DRIVER_IMPLEMENTATION_PACKAGE: openeogeotrellis
+service:
+  enabled: true
+  port: 50001
+ha:
+  enabled: false
+rbac:
+  create: true
+  role:
+    rules:
+      - apiGroups:
+          - ""
+        resources:
+          - pods
+        verbs:
+          - create
+          - delete
+          - deletecollection
+          - get
+          - list
+          - patch
+          - watch
+      - apiGroups:
+          - ""
+        resources:
+          - configmaps
+        verbs:
+          - create
+          - delete
+          - deletecollection
+          - list
+  serviceAccountDriver: openeo

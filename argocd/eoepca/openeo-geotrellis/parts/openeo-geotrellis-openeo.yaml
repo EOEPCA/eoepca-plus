@@ -1,0 +1,38 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openeo-geotrellis-openeo
+  namespace: argocd
+  labels:
+    eoepca/app-name: openeo-geotrellis-openeo
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://artifactory.vgt.vito.be/artifactory/helm-charts
+      chart: sparkapplication
+      targetRevision: 0.14.9
+      helm:
+        releaseName: openeo-geotrellis-openeo
+        valueFiles:
+          - $values/argocd/eoepca/openeo-geotrellis/parts/values-openeo-geotrellis-openeo.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: openeo-deployment
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: openeo-geotrellis
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

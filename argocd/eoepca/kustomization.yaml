@@ -16,3 +16,4 @@ resources:
   - iam
   - application-hub
   - resource-health
+  - openeo-geotrellis

@@ -55,36 +55,45 @@ subjects:
   name: storage-provisioner
   namespace: kube-system
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: hostpath-storage-provisioner
   namespace: kube-system
 spec:
-  serviceAccountName: storage-provisioner
-  tolerations:
-    - effect: NoExecute
-      key: node.kubernetes.io/not-ready
-      operator: Exists
-      tolerationSeconds: 300
-    - effect: NoExecute
-      key: node.kubernetes.io/unreachable
-      operator: Exists
-      tolerationSeconds: 300
-  hostNetwork: true
-  containers:
-    - name: storage-provisioner
-      image: gcr.io/k8s-minikube/storage-provisioner:v5
-      command: ["/storage-provisioner"]
-      imagePullPolicy: IfNotPresent
-      volumeMounts:
-        - mountPath: /tmp
-          name: tmp
-  volumes:
-    - name: tmp
-      hostPath:
-        path: /tmp
-        type: Directory
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hostpath-storage-provisioner
+  template:
+    metadata:
+      labels:
+        app: hostpath-storage-provisioner
+    spec:
+      serviceAccountName: storage-provisioner
+      tolerations:
+        - effect: NoExecute
+          key: node.kubernetes.io/not-ready
+          operator: Exists
+          tolerationSeconds: 300
+        - effect: NoExecute
+          key: node.kubernetes.io/unreachable
+          operator: Exists
+          tolerationSeconds: 300
+      hostNetwork: true
+      containers:
+        - name: storage-provisioner
+          image: gcr.io/k8s-minikube/storage-provisioner:v5
+          command: ["/storage-provisioner"]
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+      volumes:
+        - name: tmp
+          hostPath:
+            path: /tmp
+            type: Directory
 ---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1

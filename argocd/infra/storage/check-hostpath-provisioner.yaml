@@ -10,18 +10,27 @@ spec:
       storage: 5Gi
   storageClassName: standard
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: storage-check-pod
+  name: storage-check
 spec:
-  containers:
-    - name: storage-check-container
-      image: nginx
-      volumeMounts:
-        - mountPath: "/usr/share/nginx/html"
-          name: storage-check-volume
-  volumes:
-    - name: storage-check-volume
-      persistentVolumeClaim:
-        claimName: storage-check-pvc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-check
+  template:
+    metadata:
+      labels:
+        app: storage-check
+    spec:
+      containers:
+        - name: storage-check-container
+          image: nginx
+          volumeMounts:
+            - mountPath: "/usr/share/nginx/html"
+              name: storage-check-volume
+      volumes:
+        - name: storage-check-volume
+          persistentVolumeClaim:
+            claimName: storage-check-pvc

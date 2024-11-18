@@ -55,7 +55,11 @@ spec:
 
         externalURL: https://harbor.develop.eoepca.org
         # initial password for logging in with user "admin"
-        harborAdminPassword: "changeme"
+        harborAdminPassword:
+          valueFrom:
+            secretKeyRef:
+              name: harbor-auth
+              key: rootPassword
 
         chartmuseum:
           enabled: false

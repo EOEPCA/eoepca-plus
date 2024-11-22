@@ -39,3 +39,11 @@ prometheus:
       storageClass: "managed-nfs-storage-retain"
       accessModes:
         - ReadWriteMany
+
+enableCaBundleFetch: true
+caBundleSecretName: "eoepca-ca-secret"
+metrics-server:
+  apiService:
+    caBundle: |
+      {{ include "eoapi-support.fetchCaBundle" . | indent 4 }}
+

@@ -174,9 +174,15 @@ terravis:
     - name: CPL_VSIL_CURL_ALLOWED_EXTENSIONS
       value: .TIF,.TIFF,.tif,.tiff,.xml,.jp2,.jpg,.jpeg,.png,.nc
     - name: AWS_ACCESS_KEY_ID
-      value: 4SMIGZNCR8LM1LSUY1HU
+      valueFrom:
+        secretKeyRef:
+          name: data-access
+          key: AWS_ACCESS_KEY_ID
     - name: AWS_SECRET_ACCESS_KEY
-      value: MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV
+      valueFrom:
+        secretKeyRef:
+          name: data-access
+          key: AWS_SECRET_ACCESS_KEY
     - name: AWS_S3_ENDPOINT
       value: eodata.cloudferro.com
     - name: AWS_VIRTUAL_HOSTING

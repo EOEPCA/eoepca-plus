@@ -15,7 +15,7 @@ source .env 2>/dev/null
 SECRET_NAME="data-access"
 NAMESPACE="data-access"
 
-AWS_ACCESS_KEY_ID="${2:-${ROOT_PASSWORD:-somekeyid}}"
+AWS_ACCESS_KEY_ID="${2:-${AWS_ACCESS_KEY_ID:-somekeyid}}"
 AWS_SECRET_ACCESS_KEY="${1:-${AWS_SECRET_ACCESS_KEY:-somekey}}"
 
 secretYaml() {

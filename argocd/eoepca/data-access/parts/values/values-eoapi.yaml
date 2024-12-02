@@ -53,11 +53,13 @@ raster:
           secretKeyRef:
             name: data-access
             key: AWS_ACCESS_KEY_ID
+            namespace: data-access
       AWS_SECRET_ACCESS_KEY:
         valueFrom:
           secretKeyRef:
             name: data-access
             key: AWS_SECRET_ACCESS_KEY
+            namespace: data-access
       AWS_VIRTUAL_HOSTING: "FALSE"
     resources:
       requests:

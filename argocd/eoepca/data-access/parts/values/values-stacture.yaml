@@ -178,11 +178,13 @@ terravis:
         secretKeyRef:
           name: data-access
           key: AWS_ACCESS_KEY_ID
+          namespace: data-access
     - name: AWS_SECRET_ACCESS_KEY
       valueFrom:
         secretKeyRef:
           name: data-access
           key: AWS_SECRET_ACCESS_KEY
+          namespace: data-access
     - name: AWS_S3_ENDPOINT
       value: eodata.cloudferro.com
     - name: AWS_VIRTUAL_HOSTING

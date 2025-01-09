@@ -1,12 +1,44 @@
 ---
 image: vito-docker.artifactory.vgt.vito.be/openeo-geotrellis-kube
 imageVersion: latest
+imagePullPolicy: Always
 sparkVersion: 3.2.0
-type: Java
+configMaps:
+  backendConfig: |
+    from pathlib import Path
+
+    from openeogeotrellis.config import GpsBackendConfig
+    from openeogeotrellis.deploy import (
+        build_gps_backend_deploy_metadata,
+        find_geotrellis_jars,
+    )
+
+
+    capabilities_deploy_metadata = build_gps_backend_deploy_metadata(
+        packages=[
+            "openeo",
+            "openeo_driver",
+            "openeo-geopyspark",
+            "openeo_udf",
+            "geopyspark",
+        ],
+        jar_paths=find_geotrellis_jars(extra_search_locations=[Path("/opt")]),
+    )
+
+
+    config = GpsBackendConfig(
+        id="eoepca-openeo",
+        capabilities_title="EOEPCA GeoPySpark Backend",
+        capabilities_description="EOEPCA GeoPySpark Backend",
+        capabilities_deploy_metadata=capabilities_deploy_metadata,
+        enable_basic_auth=True,
+        valid_basic_auth=lambda u, p: p == f"{u}123",
+    )
 driver:
   env:
     KUBE: "true"
     KUBE_OPENEO_API_PORT: "50001"
+    OPENEO_BACKEND_CONFIG: /opt/backend_config/backendconfig.py
     PYTHONPATH: $PYTHONPATH:/opt/tensorflow/python38/2.3.0/:/opt/openeo/lib/python3.8/site-packages/
     ZOOKEEPERNODES: openeo-geotrellis-zookeeper.openeo-geotrellis.svc.cluster.local:2181
   podSecurityContext:
@@ -15,6 +47,7 @@ driver:
 executor:
   env:
     PYTHONPATH: $PYTHONPATH:/opt/tensorflow/python38/2.3.0/:/opt/openeo/lib/python3.8/site-packages/
+existingConfigMaps: false
 fileDependencies:
   - local:///opt/layercatalog.json
   - local:///opt/log4j2.xml
@@ -63,10 +96,45 @@ rbac:
       - apiGroups:
           - ""
         resources:
+          - services
+        verbs:
+          - deletecollection
+          - list
+      - apiGroups:
+          - ""
+        resources:
           - configmaps
         verbs:
           - create
           - delete
           - deletecollection
           - list
+      - apiGroups:
+          - sparkoperator.k8s.io
+        resources:
+          - sparkapplications
+        verbs:
+          - create
+          - delete
+          - get
+          - list
+      - apiGroups:
+          - ""
+        resources:
+          - persistentvolumeclaims
+        verbs:
+          - create
+          - delete
+          - deletecollection
+          - list
   serviceAccountDriver: openeo
+volumeMounts:
+  - mountPath: /opt/backend_config/
+    name: backend-config-configmap
+volumes:
+  - configMap:
+      name: openeo-geotrellis-openeo-sparkapplication
+      items:
+        - key: backendconfig.py
+          path: backendconfig.py
+    name: backend-config-configmap

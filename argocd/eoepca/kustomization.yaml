@@ -16,3 +16,4 @@ resources:
   - application-hub
   - resource-health
   - openeo-geotrellis
+  - openeofed

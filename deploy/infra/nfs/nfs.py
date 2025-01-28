@@ -12,7 +12,7 @@ def attach_volume(instance, size_gb):
     nfs_volume = blockstorage.Volume(
         "nfs_volume",
         size=size_gb,
-        volume_type="SSD",
+        volume_type="ceph",
         description="NFS Volume",
         opts=ResourceOptions(ignore_changes=["volume_type"]),
     )
@@ -43,7 +43,7 @@ def deploy(network_instance):
         "nfs-server",
         "eoepca-dev-keypair",
         config.require("nfsFlavour"),
-        config.require("nodeImage"),
+        #config.require("nodeImage"),
         [{"uuid": network_instance.id}],
         get_node_security_groups("nfs-server"),
         network_instance,

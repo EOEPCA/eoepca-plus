@@ -1,36 +1,73 @@
 import pulumi
 from pulumi import Config, ResourceOptions
 from pulumi_command import remote
-from pulumi_openstack import compute, networking
+from pulumi_openstack import compute, networking, blockstorage
+import pulumi_openstack as openstack
 
 from network import security_group
 
 config = Config()
 
+def get_image_id_by_name(image_name):
+    try:
+        image = openstack.images.get_image(name=image_name)
+        return image.id
+    except Exception as e:
+        pulumi.log.error(f"Error getting image ID for {image_name}: {e}")
+        raise  # Or handle the error differently, e.g., return None
 
 def create_instance(
     instance_name,
     key_pair_name,
     flavor,
-    image,
     networks,
     security_groups,
     network_instance,
     user_data=None,
 ):
-    return compute.Instance(
+    size = config.require_int("nfsVolumeSize")
+    
+    # Retrieve the image ID from the image name
+    image_name = config.require("nodeImage")
+    image_id = get_image_id_by_name(image_name)
+
+    if image_id is None:
+        pulumi.fail(f"Failed to retrieve image ID for image name: {image_name}. Exiting.")
+
+    # Create the boot volume
+    boot_volume = blockstorage.Volume(
+        f"{instance_name}_boot_volume",
+        size=size,
+        volume_type="ceph",
+        image_id=image_id,
+        description=f"{instance_name} boot volume",
+        opts=ResourceOptions(ignore_changes=["volume_type"]),
+    )
+
+    # Create the instance with the boot volume
+    instance = compute.Instance(
         instance_name,
         flavor_name=flavor,
-        image_name=image,
         key_pair=key_pair_name,
         security_groups=security_groups,
         networks=networks,
         user_data=user_data,
+        block_devices=[
+            {
+                "uuid": boot_volume.id,
+                "source_type": "volume",
+                "destination_type": "volume",
+                "boot_index": 0,
+                "delete_on_termination": True,
+            }
+        ],
         opts=ResourceOptions(
-            depends_on=[network_instance],
+            depends_on=[network_instance, boot_volume],
             ignore_changes=["security_groups", "imageName"],
         ),
     )
+
+    return instance
 
 
 def run_command_on_instance(instance, private_key_pem, name, command, opts=None):
@@ -58,7 +95,7 @@ def get_docker_user_data_script():
     return install_docker_script
 
 
-def attach_floating_ip(instance, pool_name="external"):
+def attach_floating_ip(instance, pool_name="MWN_pool"):
     floating_ip = networking.FloatingIp(f"{instance._name}-floating-ip", pool=pool_name)
     floating_ip_assoc = pulumi.Output.all(instance.id, floating_ip.address).apply(
         lambda args: compute.FloatingIpAssociate(
@@ -73,24 +110,23 @@ def attach_floating_ip(instance, pool_name="external"):
 
 
 def deploy(instance_name, flavour, network_instance):
-    # Security Groups
     security_groups = get_node_security_groups(instance_name)
 
-    # Create instance
-    test_instance = create_instance(
-        instance_name=instance_name,
+
+    # Create the instance with the boot volume
+    instance = create_instance(
+        instance_name,
         key_pair_name="eoepca-dev-keypair",
         flavor=flavour,
-        image=config.require("nodeImage"),
         security_groups=security_groups,
         networks=[{"uuid": network_instance.id}],
         network_instance=network_instance,
         user_data=get_docker_user_data_script(),
     )
 
-    pulumi.export(f"{instance_name}_access_ip", test_instance.access_ip_v4)
+    pulumi.export(f"{instance_name}_access_ip", instance.access_ip_v4)
 
-    return test_instance
+    return instance
 
 
 # TODO: There are unresolved issues regarding the security group setup

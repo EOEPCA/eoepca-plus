@@ -6,3 +6,4 @@ venv/
 k.yaml
 *.crt
 *.key
+.venv/

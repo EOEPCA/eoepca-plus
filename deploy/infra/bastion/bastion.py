@@ -34,7 +34,7 @@ def deploy(network_instance, key_pair):
         "bastion",
         key_pair.name,
         config.require("bastionFlavour"),
-        config.require("nodeImage"),
+        #config.require("nodeImage"),
         [{"uuid": network_instance.id}],
         [bastion_security_group.id],
         network_instance,

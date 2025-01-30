@@ -2,6 +2,8 @@ config:
   eoepca-infra:nodeImage: Ubuntu-24.04-noble
   eoepca-infra:sshUser: ubuntu
   eoepca-infra:kubernetesVersion: v1.28.7-rancher1-1
+  eoepca-infra:rancherApiUrl: "xxx"
+  eoepca-infra:rancherToken: "xxx"
 
   eoepca-infra:externalNetworkID: a3e4d020-c8b4-48b5-beb1-5f0d47d06ed7 
   eoepca-infra:networkCIDR: 10.0.0.0/24

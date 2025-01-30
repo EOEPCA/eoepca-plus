@@ -1,7 +1,7 @@
 import pulumi
 
 from bastion import bastion
-from cluster import rke_cluster
+from cluster import rke2_cluster
 from instance import instance
 from keys import keys
 from network import network
@@ -41,7 +41,7 @@ def main():
         "control_node": control_node,
         "worker_nodes": worker_nodes,
     }
-    rke_cluster.deploy(
+    rke2_cluster.deploy(
         nodes, bastion_instance, subnet_instance
     )
 

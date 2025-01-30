@@ -14,10 +14,7 @@ from keys.keys import private_key
 config = Config()
 
 
-def deploy(nodes, bastion_instance, subnet_instance, ): #pool, load_balancer_floating_ip):
-
-    address = "10.195.6.33" #load_balancer_floating_ip.address
-
+def deploy(nodes, bastion_instance, subnet_instance, ):
 
     # Node setup
     node_config = []
@@ -57,7 +54,6 @@ def deploy(nodes, bastion_instance, subnet_instance, ): #pool, load_balancer_flo
             strategy="x509",
             sans=[
                 bastion_instance.bastion_floating_ip_association.floating_ip,
-                address,
             ],
         ),
         ingress=ClusterIngressArgs(
@@ -67,8 +63,6 @@ def deploy(nodes, bastion_instance, subnet_instance, ): #pool, load_balancer_flo
             depends_on=[
                 bastion_instance.bastion_instance,
                 subnet_instance,
-                #pool,
-                #load_balancer_floating_ip,
             ],
         ),
     )
@@ -77,7 +71,7 @@ def deploy(nodes, bastion_instance, subnet_instance, ): #pool, load_balancer_flo
     pulumi.export("kubeconfig", rke_cluster.kube_config_yaml)
     modified_kubeconfig = pulumi.Output.all(
         rke_cluster.kube_config_yaml,
-        address, #load_balancer_floating_ip.address,
+        bastion_instance.bastion_floating_ip_association.floating_ip,
         nodes["control_node"].access_ip_v4,
     ).apply(
         lambda args: args[0].replace(
@@ -86,15 +80,4 @@ def deploy(nodes, bastion_instance, subnet_instance, ): #pool, load_balancer_flo
         )
     )
     modified_kubeconfig.apply(lambda v: open("kubeconfig.yaml", "w").write(v))
-
-    # # Create a member for the pool
-    # loadbalancer.Member(
-    #     "k8s-member",
-    #     pool_id=pool.id,
-    #     address=nodes["control_node"].access_ip_v4,
-    #     protocol_port=6443,
-    #     subnet_id=subnet_instance.id,
-    #     opts=pulumi.ResourceOptions(depends_on=[rke_cluster, pool]),
-    # )
-
     return rke_cluster, modified_kubeconfig

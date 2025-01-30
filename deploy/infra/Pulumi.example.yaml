@@ -1,27 +1,20 @@
-encryptionsalt: XXXXX
 config:
-  eoepca-infra:nodeImage: Ubuntu 22.04 LTS
-  eoepca-infra:sshUser: eouser # The default user on Openstack instances is eouser.
+  eoepca-infra:nodeImage: Ubuntu-24.04-noble
+  eoepca-infra:sshUser: ubuntu
+  eoepca-infra:kubernetesVersion: v1.28.7-rancher1-1
 
-  # Networking
-  eoepca-infra:domainName: develop.eoepca.org
-  eoepca-infra:loadBalancerFloatingIPID: "f962cfb1-3125-4a0b-afa0-f0544956486a"
-  eoepca-infra:externalNetworkID: 22d18510-faec-4d77-974b-ce4f16825b20
-  eoepca-infra:networkCIDR: 192.168.9.0/24
+  eoepca-infra:externalNetworkID: a3e4d020-c8b4-48b5-beb1-5f0d47d06ed7 
+  eoepca-infra:networkCIDR: 10.0.0.0/24
 
   eoepca-infra:lbMethod: ROUND_ROBIN
-  eoepca-infra:floatingIpPool: external
+  eoepca-infra:floatingIpPool: MWN_pool
 
-  # Config for control plane / etcd flavor
-  eoepca-infra:controlPlaneNodeFlavour: eo2a.xlarge
+  eoepca-infra:controlPlaneNodeFlavour: pn56su.medium
 
-  # Config for workers
-  eoepca-infra:workerNodeCount: "5"
-  eoepca-infra:workerNodeFlavour: eo2a.3xlarge
+  eoepca-infra:workerNodeCount: "2"
+  eoepca-infra:workerNodeFlavour: pn56su.medium
 
-  # NFS
-  eoepca-infra:nfsFlavour: eo2a.large
-  eoepca-infra:nfsVolumeSize: 960
+  eoepca-infra:nfsFlavour: pn56su.medium
+  eoepca-infra:nfsVolumeSize: 25
 
-  # Bastion
-  eoepca-infra:bastionFlavour: eo1.xsmall
+  eoepca-infra:bastionFlavour: pn56su.medium

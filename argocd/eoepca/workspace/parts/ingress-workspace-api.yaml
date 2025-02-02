@@ -17,17 +17,33 @@ spec:
         - serviceName: workspace-api
           servicePort: 8080
       plugins: []
+    - name: workspace-api-debug
+      match:
+        hosts:
+          - workspace-api.apx.develop.eoepca.org
+        paths:
+          - /debug*
+      backends:
+        - serviceName: workspace-api
+          servicePort: 8080
+      plugins:
+        - name: openid-connect
+          enable: true
+          config:
+            discovery: "https://iam-auth.apx.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+            bearer_only: false # as we want to redirect to login screen (default: false)
+            set_access_token_header: false # UI endpoint so don't pass access token (default: true)
+            access_token_in_authorization_header: false # not necessary here is it just defines if the access token (if passed) should be in x-access-token or authroization header (default: false)
+            set_id_token_header: true # UI endpoint so pass (default: true)
+            set_userinfo_header: true # UI endpoint so pass (default: true)
+          secretRef: workspace-api
     - name: workspace-api-docs
       match:
         hosts:
           - workspace-api.apx.develop.eoepca.org
         paths:
-          - /*
-        exprs:
-          - subject:
-              scope: Path
-            op: RegexMatch
-            value: "^/(docs(/.*|$)|openapi.json$)"
+          - /docs*
+          - /openapi.json*
       backends:
         - serviceName: workspace-api
           servicePort: 8080
@@ -36,8 +52,8 @@ spec:
           enable: true
           config:
             access_token_in_authorization_header: true
-            discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
-          secretRef: workspace-api-client
+            discovery: "https://iam-auth.apx.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+          secretRef: workspace-api
     - name: workspace-api-admin
       match:  
         hosts:

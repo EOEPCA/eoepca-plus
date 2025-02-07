@@ -5,3 +5,4 @@ resources:
   - harbor
   - minio
   - istio
+  - knative-operator

@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio
+  namespace: istio-system
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: istio
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://istio-release.storage.googleapis.com/charts'
+    chart: base
+    targetRevision: 1.24.2
+    helm:
+      releaseName: sealed-secrets
+  destination:
+    name: in-cluster
+    namespace: istio-system

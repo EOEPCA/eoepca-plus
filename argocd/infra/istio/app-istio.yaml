@@ -53,10 +53,10 @@ spec:
   project: eoepca
   source:
     repoURL: 'https://istio-release.storage.googleapis.com/charts'
-    chart: istiod
+    chart: gateway
     targetRevision: 1.24.2
     helm:
-      releaseName: istiod
+      releaseName: istio-ingress
   destination:
     name: in-cluster
     namespace: istio-ingress

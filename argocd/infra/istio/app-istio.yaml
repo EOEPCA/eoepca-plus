@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: istio
-  namespace: istio-system
+  namespace: argocd
   labels:
     eoepca/is-root-app: "true"
     eoepca/app-name: istio
@@ -23,10 +23,10 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: istiod
-  namespace: istio-system
+  namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: istio
+    eoepca/app-name: istiod
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
@@ -39,3 +39,24 @@ spec:
   destination:
     name: in-cluster
     namespace: istio-system
+--- 
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: istio-system
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: istio-gateway
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://istio-release.storage.googleapis.com/charts'
+    chart: istiod
+    targetRevision: 1.24.2
+    helm:
+      releaseName: istiod
+  destination:
+    name: in-cluster
+    namespace: istio-ingress

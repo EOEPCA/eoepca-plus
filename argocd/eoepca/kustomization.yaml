@@ -18,3 +18,4 @@ resources:
   - resource-health
   - openeo-geotrellis
   - openeofed
+  - notification-automation

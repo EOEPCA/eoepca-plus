@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: na-istio
+    eoepca/app-name: istio
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
@@ -27,8 +27,8 @@ metadata:
   name: istiod
   namespace: argocd
   labels:
-    eoepca/is-root-app: "true"
-    eoepca/app-name: na-istiod
+    eoepca/is-root-app: "false"
+    eoepca/app-name: istio
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
@@ -50,8 +50,8 @@ metadata:
   name: istio-gateway
   namespace: argocd
   labels:
-    eoepca/is-root-app: "true" # Is this a root app ? 
-    eoepca/app-name: na-istio-gateway
+    eoepca/is-root-app: "false" # Is this a root app ? 
+    eoepca/app-name: istio
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca

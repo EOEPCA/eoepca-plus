@@ -47,8 +47,8 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argocd
-  namespace: istio-system
+  name: istio-gateway
+  namespace: argocd
   labels:
     eoepca/is-root-app: "true" # Is this a root app ? 
     eoepca/app-name: na-istio-gateway

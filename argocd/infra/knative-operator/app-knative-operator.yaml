@@ -1,22 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio
+  name: knative-operator
   namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: istio
+    eoepca/app-name: na-knative-operator
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: 'https://istio-release.storage.googleapis.com/charts'
-    chart: base
-    targetRevision: 1.24.2
+    repoURL: 'https://knative.github.io/operator'
+    chart: knative-operator
+    targetRevision: 1.17.1
     helm:
-      releaseName: istio-base
+      releaseName: knative-operator
   destination:
     name: in-cluster
-    namespace: istio-system
+    namespace: knative-operator
   syncPolicy:
     - CreateNamespace=true

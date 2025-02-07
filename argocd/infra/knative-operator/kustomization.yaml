@@ -1,2 +1,2 @@
 resources:
-  - app-istio.yaml
+  - app-knative-operator.yaml

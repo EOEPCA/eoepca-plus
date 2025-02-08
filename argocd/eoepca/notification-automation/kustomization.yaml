@@ -1,3 +1,2 @@
-
-#resources:
-#  - notification-automation-bb.yaml
+resources:
+  - app-notification-automation.yaml

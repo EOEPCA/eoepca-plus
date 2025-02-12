@@ -20,7 +20,7 @@ def ignore_crd_spec(args):
             args.opts.ignore_changes = ["spec"]
 
 
-def deploy(ingress_chart):
+def deploy():
     # Create Argo CD namespace
     argocd_namespace = Namespace(
         "argocd",
@@ -66,24 +66,24 @@ def deploy(ingress_chart):
                     "enabled": True,
                 },
                 "dex": {
-                    "enabled": True,
+                    "enabled": False,
                 },
                 "configs": {
                     "cm": {
                         "url": f"https://{argo_domain_name}",
-                        "dex.config": f"""
-                            connectors:
-                              - type: github
-                                id: github
-                                name: GitHub
-                                config:
-                                    clientID: {config.require("SSOClientID")}
-                                    clientSecret: {config.require("SSOClientSecret")}
-                                    orgs:
-                                    - name: {config.require("SSOOrg")}
-                                    teams:
-                                    - name: {config.require("SSOTeam")}
-                                """,
+                        # "dex.config": f"""
+                        #     connectors:
+                        #       - type: github
+                        #         id: github
+                        #         name: GitHub
+                        #         config:
+                        #             clientID: {config.require("SSOClientID")}
+                        #             clientSecret: {config.require("SSOClientSecret")}
+                        #             orgs:
+                        #             - name: {config.require("SSOOrg")}
+                        #             teams:
+                        #             - name: {config.require("SSOTeam")}
+                        #         """,
                     },
                     "rbac": {
                         "policy.default": config.require("RBACPolicyDefault"),
@@ -92,7 +92,7 @@ def deploy(ingress_chart):
             },
         ),
         opts=ResourceOptions(
-            depends_on=[argocd_namespace, ingress_chart],
+            depends_on=[argocd_namespace],
         ),
     )
 

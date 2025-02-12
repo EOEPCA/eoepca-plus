@@ -11,18 +11,18 @@ config = Config()
 
 def main():
     # Deploy Ingress Nginx
-    ingress_chart = ingress_nginx.deploy()
+    # ingress_chart = ingress_nginx.deploy()
 
     # Deploy Cert Manager
     cert_manager.deploy()
 
     # Add NFS Provisioner to the RKE cluster
-    nfs_provisioner.deploy()
-    nfs_pvc.deploy()
+    # nfs_provisioner.deploy()
+    # nfs_pvc.deploy()
 
     # Deploy ArgoCD onto the RKE cluster
     argocd.deploy(
-        ingress_chart,
+        # ingress_chart,
     )
 
 

@@ -1,19 +1,19 @@
 encryptionsalt: XXXXXX
 config:
   # NFS IP
-  k8s-resources:nfsServerIP: "192.168.9.193"
+  # k8s-resources:nfsServerIP: "192.168.9.193"
   # Versions
   k8s-resources:argoCDVersion: "6.9.2"
-  k8s-resources:ingressNginxVersion: "4.7.3"
-  k8s-resources:nfsProvisionerVersion: "4.0.12"
+  # k8s-resources:ingressNginxVersion: "4.7.3"
+  # k8s-resources:nfsProvisionerVersion: "4.0.12"
   k8s-resources:certManagerVersion: "v1.16.3"
-  k8s-resources:maintainerEmail: xxx@xxxx.com
+  k8s-resources:maintainerEmail: sa@eox.at
 
-  k8s-resources:domainName: example.com
+  k8s-resources:domainName: terrabyte.lrz.de
 
   # ArgoCD
-  k8s-resources:SSOClientID: xxxx
-  k8s-resources:SSOClientSecret: xxxxx
-  k8s-resources:SSOOrg: EOEPCA
-  k8s-resources:SSOTeam: Developers
+  # k8s-resources:SSOClientID: xxxx
+  # k8s-resources:SSOClientSecret: xxxxx
+  # k8s-resources:SSOOrg: EOEPCA
+  # k8s-resources:SSOTeam: Developers
   k8s-resources:RBACPolicyDefault: role:admin

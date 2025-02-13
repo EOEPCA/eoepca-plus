@@ -14,7 +14,7 @@ def main():
     # ingress_chart = ingress_nginx.deploy()
 
     # Deploy Cert Manager
-    cert_manager.deploy()
+    # cert_manager.deploy()
 
     # Add NFS Provisioner to the RKE cluster
     # nfs_provisioner.deploy()

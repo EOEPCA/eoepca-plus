@@ -1,4 +1,4 @@
-encryptionsalt: XXXXXX
+#encryptionsalt: XXXXXX
 config:
   # NFS IP
   # k8s-resources:nfsServerIP: "192.168.9.193"

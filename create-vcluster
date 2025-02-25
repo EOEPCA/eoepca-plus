@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+ORIG_DIR="$(pwd)"
+cd "$(dirname "$0")"
+BIN_DIR="$(pwd)"
+
+onExit() {
+  rm -f "${tmp_vclusterYaml}"
+  cd "${ORIG_DIR}"
+}
+trap onExit EXIT
+
+cluster="${1:-mycluster}"
+domain="${2:-myplatform.org}"
+hostname="${3:-vcluster-${cluster}.${domain}}"
+
+tmp_vclusterYaml="/tmp/${cluster}.yaml"
+kubeconfigFile="kubeconfig-${cluster}.yaml"
+
+vclusterYaml() {
+  cat - <<EOF
+controlPlane:
+  ingress:
+     enabled: true
+     host: ${hostname}
+  proxy:
+     extraSANs:
+     - ${hostname}
+
+exportKubeConfig:
+  server: https://${hostname}
+EOF
+}
+
+# Prepare cluster config
+vclusterYaml > ${tmp_vclusterYaml}
+
+# Create the vCluster
+vcluster create ${cluster} -f "${tmp_vclusterYaml}" \
+  --kubernetes-version=v1.22 \
+  --upgrade \
+  --connect=false
+
+# Helper - retrieve kubeconfig from secret
+getKubeconfig() {
+  kubectl get secret vc-${cluster} -n vcluster-${cluster} --template={{.data.config}} 2>/dev/null
+}
+
+# Get the kubeconfig - waiting for the secret to be available
+kubeconfig="$(getKubeconfig)"
+got_kubeconfig=$?
+while [ $got_kubeconfig -ne 0 ]; do
+  echo Waiting for secret with kubeconfig...
+  sleep 1
+  kubeconfig="$(getKubeconfig)"
+  got_kubeconfig=$?
+done
+echo -n "${kubeconfig}" | base64 -d > "${kubeconfigFile}"
+
+# Rename the context to better identify the cluster
+kubectl config rename-context \
+  --kubeconfig "${kubeconfigFile}" \
+  kubernetes-admin@kubernetes \
+  vcluster-${cluster}

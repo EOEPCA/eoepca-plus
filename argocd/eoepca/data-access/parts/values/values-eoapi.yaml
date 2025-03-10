@@ -54,6 +54,14 @@ raster:
     resources:
       requests:
         memory: "3072Mi"
+multidim:
+  enabled: true
+  settings:
+    envSecrets:
+          - data-access
+    resources:
+      requests:
+        memory: "1024Mi"
 stac:
   enabled: true
   settings:

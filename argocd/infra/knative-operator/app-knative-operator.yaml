@@ -19,4 +19,10 @@ spec:
     name: in-cluster
     namespace: knative-operator
   syncPolicy:
-    - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true

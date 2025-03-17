@@ -1,0 +1,2 @@
+resources:
+  - app-strimzi-operator.yaml

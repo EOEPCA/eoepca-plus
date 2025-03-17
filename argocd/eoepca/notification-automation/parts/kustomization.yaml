@@ -5,3 +5,4 @@ resources:
   - knative-eventing.yaml
   - apisix-route.yaml
   - namespace-notifications.yaml
+  - kafka-cluster.yaml

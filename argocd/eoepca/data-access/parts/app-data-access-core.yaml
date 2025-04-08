@@ -34,7 +34,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/data-access/parts/values/values-eoapi-support.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: 2.0.0-rc1
       ref: values
 
   destination:

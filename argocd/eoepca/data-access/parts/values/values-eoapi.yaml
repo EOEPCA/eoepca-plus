@@ -1,3 +1,5 @@
+previousVersion: 0.6.0
+
 ingress:
   enabled: true
   className: "nginx"

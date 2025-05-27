@@ -19,12 +19,9 @@ spec:
         releaseName: pgo
         valueFiles:
           - $values/argocd/eoepca/data-access/parts/values/values-pgo.yaml
-    # - repoURL: https://devseed.com/eoapi-k8s/
-    - repoURL: https://github.com/developmentseed/eoAPI-k8s
-      # chart: eoapi
-      # targetRevision: 0.7.2
-      path: helm-chart/eoapi/
-      targetRevision: create_role
+    - repoURL: https://devseed.com/eoapi-k8s
+      chart: eoapi
+      targetRevision: 0.7.3
       helm:
         releaseName: eoapi
         valueFiles:

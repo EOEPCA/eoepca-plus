@@ -213,6 +213,7 @@ ingress:
       secretName: openeo-geotrellis-openeo-sparkapplication-cert
 jarDependencies:
   - local:///opt/geotrellis-extensions-static.jar
+  - local:///opt/geotrellis-dependencies-static.jar
 mainApplicationFile: local:///opt/openeo/lib64/python3.8/site-packages/openeogeotrellis/deploy/kube.py
 sparkConf:
   spark.executorEnv.DRIVER_IMPLEMENTATION_PACKAGE: openeogeotrellis

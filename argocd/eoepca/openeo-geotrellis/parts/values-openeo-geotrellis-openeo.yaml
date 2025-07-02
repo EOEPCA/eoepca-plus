@@ -14,6 +14,7 @@ configMaps:
     from pathlib import Path
 
 
+    from openeo_driver.urlsigning import UrlSigner
     from openeo_driver.users.oidc import OidcProvider
     from openeogeotrellis.config import GpsBackendConfig
     from openeogeotrellis.deploy import (
@@ -110,6 +111,7 @@ configMaps:
         oidc_providers=oidc_providers,
         enable_basic_auth=True,
         valid_basic_auth=lambda u, p: p == f"{u}123",
+        url_signer=UrlSigner(secret="dummy", expiration=7 * 24 * 60 * 60),
     )
   layerCatalog: |
     [

@@ -77,4 +77,20 @@ vector:
       TIPG_CATALOG_TTL: "30"
 
 eoapi-notifier:
-  enabled: false
+  enabled: true
+  config:
+    sources:
+      - type: postgres
+        config:
+          channel: pgstac_items_change
+    outputs:
+      - type: cloudevents
+        config:
+          source: /eoapi/pgstac
+          event_type: org.eoapi.stac.item
+          destination:
+            ref:
+              apiVersion: eventing.knative.dev/v1
+              kind: Broker
+              name: primary
+              namespace: default

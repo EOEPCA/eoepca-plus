@@ -680,7 +680,7 @@ spec:
               - name: NOTIFIER_LOG_LEVEL
                 value: DEBUG
               - name: ALERT_USER_EMAILS
-                value: /app/alert-user-emails/alert_user_emails.json
+                value: /app/alerting-user-emails/alert_user_emails.json
             environmentSecrets:
               - name: FROM_EMAIL
                 secret: resource-health-notifier-email-credentials

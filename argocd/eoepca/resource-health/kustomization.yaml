@@ -4,3 +4,5 @@ resources:
   - ingress/ingress-auth-plugin.yaml
   - ingress/ingress-browser-auth-plugin.yaml
   - secrets/resource-health-iam-client-sealedsecret.yaml
+  - secrets/resource-health-notifier-email-sealedsecret.yaml
+  - secrets/resource-health-alerting-user-emails-sealedsecret.yaml

@@ -654,11 +654,11 @@ spec:
               - name: ALERT_USER_EMAILS
                 value: /app/alert-user-emails/alert_user_emails.json
               - name: MAX_EMAILS_PER_DAY
-                value: 300 # I think gmail allows 500
+                value: "300" # I think gmail allows 500
               - name: SMTP_MAILER_HOST
                 value: smtp.gmail.com
               - name: SMTP_MAILER_PORT
-                value: 465
+                value: "465"
             environmentSecrets:
               - name: FROM_EMAIL
                 secret: resource-health-notifier-email-credentials

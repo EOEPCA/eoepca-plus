@@ -22,12 +22,26 @@ application-quality:
 
   oidc:
     enabled: true
+    realm: eoepca
     realmBaseUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca"
     clientId: application-quality-bb
     clientSecret: ""
     postLogoutRedirectUrl: "https://application-quality.develop.eoepca.org/"
     loginRedirectUrl: "https://application-quality.develop.eoepca.org/"
     rpRedirectUri: "https://application-quality.develop.eoepca.org/"
+
+    iam_provisioning:
+      enabled: false
+      # keycloakProviderConfig: keycloak-provider-config
+      # clientName: Application Quality BB
+      # clientDescription: Application Quality Web Portal and Grafana OIDC
+      # clientSecretName: application-quality-iam-client
+      # clientSecretKey: client_secret
+      # clientEnabled: true
+      # namespace: iam-management
+      # accessType: PUBLIC
+      # httpScheme: https
+      # initialiseTestUsers: false
 
   ingress:
     enabled: true

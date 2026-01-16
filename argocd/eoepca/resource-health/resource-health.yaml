@@ -324,12 +324,12 @@ spec:
                 def on_template_access(userinfo: UserInfo, template: hu.CheckTemplate) -> None:
                     print("ON TEMPLATE_ACCESS")
 
-                    ## Only bob can use/access unsafe templates
-                    if userinfo["username"] != "bob" and template.id != "simple_ping":
-                        return hu.CheckTemplateIdError(template.id)
+                    ## Only bob and earthcode can use/access unsafe templates
+                    if userinfo["username"] not in ["bob", "earthcode"] and template.id != "simple_ping":
+                        raise hu.CheckTemplateIdError(template.id)
 
-                    ## Only bob, alice, and eric can access the templates
-                    if userinfo["username"] not in ["bob", "alice", "eric"]:
+                    ## Only bob, alice, eric, and earthcode can access the templates
+                    if userinfo["username"] not in ["bob", "alice", "eric", "earthcode"]:
                         raise hu.CheckTemplateIdError(template.id)
 
 

@@ -32,7 +32,7 @@ metadata:
   name: datalab-session-cleaner
   namespace: workspace
 spec:
-  schedule: "0 20 * * *"
+  schedule: "0 23 * * 5"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 3

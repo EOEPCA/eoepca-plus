@@ -269,6 +269,33 @@ spec:
       enable: true
     - name: cors
       enable: true
+  - name: stac-mgmt-route
+    priority: 90
+    backends:
+    - serviceName: eoapi-stac-auth-proxy
+      servicePort: 8080
+    match:
+      hosts:
+      - eoapi.develop.eoepca.org
+      methods:
+      - GET
+      paths:
+      - /stac/_mgmt/*
+      - /stac/healthz*
+    plugins:
+    - name: proxy-rewrite
+      config:
+        regex_uri:
+        - ^(/stac)($|/.*)
+        - $2
+        headers:
+          set:
+            X-Forwarded-Port: "443"
+            X-Forwarded-Proto: "https"
+            X-Forwarded-Host: "eoapi.develop.eoepca.org"
+      enable: true
+    - name: cors
+      enable: true
   - name: stac-protected-route
     priority: 10
     backends:

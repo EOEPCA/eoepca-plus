@@ -122,7 +122,7 @@ stac-auth-proxy:
     COLLECTIONS_FILTER_CLS: stac_auth_proxy.eoepca_filters:CollectionsFilter
     ITEMS_FILTER_CLS: stac_auth_proxy.eoepca_filters:ItemsFilter
     ALLOWED_JWT_AUDIENCES: eoapi
-    DEFAULT_PUBLIC: |
+    PUBLIC_ENDPOINTS: |
       {
         "^/$": ["GET"],
         "^/api.html$": ["GET"],

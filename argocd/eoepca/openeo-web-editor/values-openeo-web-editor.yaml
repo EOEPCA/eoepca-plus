@@ -5,7 +5,6 @@ image:
   repository: eoepca/processing-editor
   tag: sha-b2c2441
 replicaCount: 1
-serverUrl: https://openeo-eurac.develop.eoepca.org
 ingress:
   enabled: true
   annotations:

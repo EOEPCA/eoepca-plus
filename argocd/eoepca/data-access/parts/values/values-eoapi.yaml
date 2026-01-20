@@ -145,5 +145,9 @@ stac-auth-proxy:
 
 browser:
   catalogUrl: "https://eoapi.develop.eoepca.org/stac"
-  oidcDiscoveryUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
-  oidcClientId: "eoapi"
+  authConfig:
+    type: "openIdConnect"
+    openIdConnectUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+    oidcConfig:
+      client_id: "eoapi"
+      redirect_uri: "https://eoapi.develop.eoepca.org/browser/auth"

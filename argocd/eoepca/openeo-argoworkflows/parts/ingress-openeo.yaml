@@ -37,6 +37,7 @@ spec:
                   -- Store original body for rewriting
                   ngx.ctx.api_ctx = ngx.ctx.api_ctx or {}
                   ngx.ctx.api_ctx.need_body_rewrite = true
+                end
                 end"
         - name: serverless-post-function
           enable: true
@@ -56,6 +57,7 @@ spec:
                     body = string.gsub(body, '\"title\":\"EGI Check%-in\"', '\"title\":\"EURAC Keycloak\"')
                     ngx.arg[1] = body
                   end
+                end
                 end"
 ---
 apiVersion: cert-manager.io/v1

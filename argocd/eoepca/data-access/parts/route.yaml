@@ -40,6 +40,8 @@ spec:
         - ^(/manager)($|/.*)
         - $2
       enable: true
+    - name: cors
+      enable: true
   - name: browser-redirect
     backends:
     - serviceName: eoapi-browser

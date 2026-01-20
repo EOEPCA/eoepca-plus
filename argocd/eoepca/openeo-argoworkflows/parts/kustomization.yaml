@@ -6,4 +6,3 @@ namespace: openeo
 resources:
   - helm-openeo-argoworkflows.yaml
   - ingress-openeo.yaml
-  - ingress-openeo.yaml

@@ -1,6 +1,6 @@
 apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
 kind: Client
-metadata: 
+metadata:
   name: eoapi
 spec:
   providerConfigRef:
@@ -15,16 +15,16 @@ spec:
     directAccessGrantsEnabled: true # allow for now to simplify testing
     fullScopeAllowed: false
     serviceAccountsEnabled: false
-    oauth2DeviceAuthorizationGrantEnabled: true    
+    oauth2DeviceAuthorizationGrantEnabled: true
     rootUrl: https://eoapi.develop.eoepca.org
-    webOrigins: 
+    webOrigins:
       - '*'
     validRedirectUris:
       - '*'
 ---
 apiVersion: role.keycloak.crossplane.io/v1alpha1
 kind: Role
-metadata: 
+metadata:
   name: stac-editor
 spec:
   providerConfigRef:
@@ -39,18 +39,18 @@ spec:
 ---
 apiVersion: group.keycloak.crossplane.io/v1alpha1
 kind: Group
-metadata: 
+metadata:
   name: data-access-admin
 spec:
   providerConfigRef:
     name: iam-keycloak-keycloak-provider-config
   forProvider:
     realmId: eoepca
-    name: data-access-admin    
+    name: data-access-admin
 ---
 apiVersion: group.keycloak.crossplane.io/v1alpha1
 kind: Roles
-metadata: 
+metadata:
   name: data-access-admin
 spec:
   providerConfigRef:
@@ -65,3 +65,24 @@ spec:
       - name: stac-editor
         policy:
           resolution: Required
+---
+apiVersion: client.keycloak.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: eoapi-audience-mapper
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    clientIdRef:
+      name: eoapi
+      policy:
+        resolution: Required
+    realmId: eoepca
+    protocol: openid-connect
+    protocolMapper: oidc-audience-mapper
+    name: eoapi-audience
+    config:
+      "included.client.audience": "eoapi"
+      "access.token.claim": "true"
+      "id.token.claim": "false"

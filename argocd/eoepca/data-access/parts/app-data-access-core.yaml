@@ -30,12 +30,10 @@ spec:
           env:
             TITILER_OPENEO_API_ROOT_PATH: "/openeo/"
           auth:
-            method: "basic"
-            basic:
-              enabled: false
+            method: "oidc"
             oidc:
-              enabled: false
-              clientId: "stac-browser"
+              enabled: true
+              clientId: "eoapi"
               wellKnownUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
               redirectUrl: "https://eoapi.develop.eoepca.org/openeo/"
           extraVolumes:

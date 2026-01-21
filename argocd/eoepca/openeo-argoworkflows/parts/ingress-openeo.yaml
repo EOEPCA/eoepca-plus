@@ -25,6 +25,38 @@ spec:
         # Allow CORS access
         - name: cors
           enable: true
+        # Fix URLs and OIDC configuration in response body
+        - name: serverless-post-function
+          enable: true
+          config:
+            phase: header_filter
+            functions:
+              - "return function(conf, ctx)
+                  local core = require('apisix.core')
+                  local ngx = ngx
+                  -- Store original body for rewriting
+                  ngx.ctx.api_ctx = ngx.ctx.api_ctx or {}
+                  ngx.ctx.api_ctx.need_body_rewrite = true
+                end"
+        - name: serverless-post-function
+          enable: true
+          config:
+            phase: body_filter
+            functions:
+              - "return function(conf, ctx)
+                  local ngx = ngx
+                  local ctx_api = ngx.ctx.api_ctx
+                  if ctx_api and ctx_api.need_body_rewrite and ngx.arg[1] then
+                    -- Fix localhost URLs
+                    local body = ngx.arg[1]
+                    body = string.gsub(body, 'http://127%.0%.0%.1:8000/openeo/1%.1%.0/', 'https://openeo-eurac.develop.eoepca.org/openeo/1.1.0/')
+                    -- Fix OIDC provider: replace EGI with EURAC Keycloak
+                    body = string.gsub(body, '\"id\":\"egi\"', '\"id\":\"eurac-keycloak\"')
+                    body = string.gsub(body, '\"issuer\":\"https://aai.egi.eu/auth/realms/egi\"', '\"issuer\":\"https://edp-portal.eurac.edu/auth/realms/edp\"')
+                    body = string.gsub(body, '\"title\":\"EGI Check%-in\"', '\"title\":\"EURAC Keycloak\"')
+                    ngx.arg[1] = body
+                  end
+                end"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate

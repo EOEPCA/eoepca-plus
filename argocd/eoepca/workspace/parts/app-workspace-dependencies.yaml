@@ -10,12 +10,12 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-dependencies-csi-rclone
-      targetRevision: 2.0.0-rc.17
+      targetRevision: 2.0.0-rc.18
       helm:
         releaseName: workspace-dependencies-csi-rclone
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-dependencies-educates
-      targetRevision: 2.0.0-rc.17
+      targetRevision: 2.0.0-rc.18
       helm:
         releaseName: workspace-dependencies-educates
         values: |

@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-pipeline
-      targetRevision: 2.0.0-rc.17
+      targetRevision: 2.0.0-rc.18
       helm:
         releaseName: workspace-pipeline
         values: |

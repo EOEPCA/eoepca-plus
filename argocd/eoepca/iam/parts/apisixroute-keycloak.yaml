@@ -20,14 +20,8 @@ spec:
       paths:
       - /*
     name: keycloak
-    plugins:
-      - name: cors
-        enable: true
-        config:
-          allow_origins_by_regex:
-            - "^https://([a-zA-Z0-9-]+\\.)*develop\\.eoepca\\.org$"
-          allow_credential: true
 # The following fix has been moved to apisixglobalrule-tls-port-correction.yaml.
+#    plugins:
 #      # Possible workaround for redirect-to-9443 problem that also works for HTTP
 #      - name: serverless-pre-function
 #        enable: true

@@ -10,3 +10,4 @@ resources:
   - apisixroute-pathbased.yaml
   # Removing this one as it makes no sense
   # - ingress-pathbased.yaml
+  - naming-workaround.yaml

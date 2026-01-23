@@ -39,7 +39,7 @@ spec:
         image:
           repository: yuvraj1989/openeo-argoworkflows-api
           pullPolicy: Always
-          tag: "eurac-custom-oidc"
+          tag: "eurac-custom-oidc-v3"
 
         postgresql:
           enabled: true

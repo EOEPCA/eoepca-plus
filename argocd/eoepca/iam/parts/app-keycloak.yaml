@@ -8,20 +8,11 @@ metadata:
   labels:
     eoepca/app-name: iam-keycloak
 spec:
-  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-#    - repoURL: https://charts.bitnami.com/bitnami
-##    - repoURL: oci://registry-1.docker.io/bitnamicharts/
-#    #https://eoepca.github.io/helm-charts
-#      chart: keycloak
-#      targetRevision: 21.4.4
-#      helm:
-#        valueFiles:
-#          - $values/argocd/eoepca/iam/parts/values/keycloak-values.yaml
     - repoURL: https://eoepca.github.io/helm-charts-dev
       chart: iam-bb
-      targetRevision: 2.0.0-rc3
+      targetRevision: 2.0.0-rc4
       helm:
         #releaseName: iam-keycloak
         valueFiles:

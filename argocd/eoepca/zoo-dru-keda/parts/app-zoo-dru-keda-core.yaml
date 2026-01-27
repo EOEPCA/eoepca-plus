@@ -14,20 +14,11 @@ spec:
       targetRevision: "3.5.2"
       helm:
         releaseName: kyverno
-        valuesObject:
-          crds:
-            install: true
-          replicaCount: 2
-          podDisruptionBudget:
-            enabled: true
-            minAvailable: 1
-          resources:
-            limits:
-              cpu: 1000m
-              memory: 512Mi
-            requests:
-              cpu: 100m
-              memory: 256Mi
+        valueFiles:
+          - $values/argocd/eoepca/zoo-dru-keda/parts/values-kyverno.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
   destination:
     name: in-cluster
     namespace: kyverno-system

@@ -14,6 +14,20 @@ spec:
       targetRevision: "3.5.2"
       helm:
         releaseName: kyverno
+        values:
+          crds:
+            install: true
+          replicaCount: 2
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
   destination:
     name: in-cluster
     namespace: kyverno-system

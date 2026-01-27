@@ -261,6 +261,14 @@ keycloak:
     enabled: false
   postgresql:
     enabled: true
+    primary:
+      resources:
+        limits:
+          memory: 1Gi
+          cpu: "1"
+        requests:
+          memory: 512Mi
+          cpu: "0.5"
     auth:
       # postgresPassword: "..."
       username: bn_keycloak

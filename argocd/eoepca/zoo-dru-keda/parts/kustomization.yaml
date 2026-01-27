@@ -1,0 +1,4 @@
+
+resources:
+  - app-zoo-dru-keda-core.yaml
+  - ingress-zoo.yaml

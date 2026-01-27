@@ -7,6 +7,8 @@ zoo:
 zoofpm:
   image:
     tag: eoepca-39b6fc74b6592b4584be5a0b2740dde11a1ffafc
+  autoscaling:
+    enabled: false
 zookernel:
   env:
     ZOO_OUTPUT_FORMAT: "stac-collection"
@@ -36,7 +38,7 @@ workflow:
   storageClass: managed-nfs-storage-retain
 ingress:
   enabled: false
-  hosturl: https://zoostd.develop.eoepca.org
+  hosturl: https://zookeda.develop.eoepca.org
   annotations:
     kubernetes.io/ingress.class: apisix
     ingress.kubernetes.io/ssl-redirect: "true"
@@ -44,14 +46,14 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
     argocd.argoproj.io/ignore-healthcheck: "true"
   hosts:
-  - host: zoostd.develop.eoepca.org
+  - host: zookeda.develop.eoepca.org
     paths:
     - path: /
       pathType: ImplementationSpecific
   tls:
   - hosts:
-    - zoostd.develop.eoepca.org
-    secretName: zoostd-tls
+    - zookeda.develop.eoepca.org
+    secretName: zookeda-tls
 persistence:
   procServicesStorageClass: managed-nfs-storage-retain
   storageClass: managed-nfs-storage-retain
@@ -68,3 +70,36 @@ iam:
   enabled: false
 documentation:
   enabled: true
+kyverno:
+  crds:
+    install: true
+  replicaCount: 2
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+keda:
+  enabled: true
+  skipScaledObject: false
+  triggers:
+    postgresql:
+      enabled: true
+      useConfigMap: false
+      query: "SELECT COUNT(*) FROM workers WHERE status = 1"
+    rabbitmq:
+      enabled: true
+  kyverno:
+    enabled: false
+    policies:
+      zoofpmProtection:
+        enabled: true
+  evictionController:
+    enabled: true
+    image:
+      pullPolicy: "IfNotPresent"

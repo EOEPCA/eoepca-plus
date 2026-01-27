@@ -1,41 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kyverno
-  namespace: argocd
-  labels:
-    eoepca/app-name: zoo-project-dru-keda
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
-spec:
-  # Kyverno for policy management in KEDA deployment
-  project: eoepca
-  sources:
-    - repoURL: https://kyverno.github.io/kyverno/
-      chart: kyverno
-      targetRevision: "3.5.2"
-      helm:
-        releaseName: kyverno
-        valueFiles:
-          - $values/argocd/eoepca/zoo-dru-keda/parts/values-kyverno.yaml
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
-      ref: values
-  destination:
-    name: in-cluster
-    namespace: kyverno-system
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-      allowEmpty: true
-    syncOptions:
-      - Validate=true
-      - CreateNamespace=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
   name: zoo-project-dru-keda-core
   namespace: argocd
   labels:
@@ -69,9 +34,10 @@ spec:
       selfHeal: true
       allowEmpty: true
     syncOptions:
-      - Validate=true
+      - Validate=false
       - CreateNamespace=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
+      - SkipDryRun=true

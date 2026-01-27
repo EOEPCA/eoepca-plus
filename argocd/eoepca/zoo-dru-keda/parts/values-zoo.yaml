@@ -22,8 +22,8 @@ customConfig:
       workspace_prefix=ws
       workspace_catalog_register=false
 workflow:
-  defaultMaxRam: 1024
-  defaultMaxCores: 2
+  defaultMaxRam: "1024"
+  defaultMaxCores: "2"
   inputs:
     STAGEIN_AWS_SERVICEURL: http://eodata.cloudferro.com
     STAGEIN_AWS_ACCESS_KEY_ID: 4SMIGZNCR8LM1LSUY1HU

@@ -5,6 +5,8 @@ metadata:
   namespace: argocd
   labels:
     eoepca/app-name: zoo-project-dru-keda
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   # Kyverno for policy management in KEDA deployment
   project: eoepca
@@ -38,9 +40,13 @@ metadata:
   namespace: argocd
   labels:
     eoepca/app-name: zoo-project-dru-keda
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
+  dependsOn:
+    - name: kyverno
   sources:
     - repoURL: https://zoo-project.github.io/charts/
       chart: zoo-project-dru

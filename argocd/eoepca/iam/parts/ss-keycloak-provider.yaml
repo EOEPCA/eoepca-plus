@@ -1,0 +1,15 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: keycloak-provider
+  namespace: iam-management
+spec:
+  encryptedData:
+    CREDENTIALS: AgAtphrtWnYtqgzew94zZc/QIxzVXF7UFIFNr0o3thZglfSlE6ay8cyyqd7PS0f2WeFyNe1R9rRD7MQOY3+orImj/zxAeaP+smVI8tnwmWbYIBtxkPuixPWYPRtTlqEF+wcVeDF0gRPXi5Jy+wbUZbmgoLqRVaVmybaVgO15uRw4BRv8PliOQc0PYPhD9CRLPxTI/oY6PhW3yd0XQ6Ps9gmdPz4LrZv5SCj42SR90PYadAnyVJLsGDOOWa3GhkwsScjDM6ASvP6yJJiEgNfIKxgW0lGiX2fTaVejsh+bw8TKtgfM/MmCcbSbUR6lqbuuF3jfjcJGSJIrqgYG+0kx9N7BTLrWG4M7YVCPOpIuZiCg3OVe59QSSNKc7sjTbbEtNB1wgbUxOGyvH3t8BoVv5y+yyJlxr60O5gp8z5dOoQ6iwUy9Ow09wyl8ahC4aMJBTGaqg71s1Xe0a8aKvZynOnKo5LJQFHBJ33MwrHCbrm8P9mc3R8s/Zqlq5QxMmylNMo6hRi7u1Qmggys5FtmUlTphq7Qu6qD6G6A5If95gh0VkvfW0k/9Eu6SV51/MGW795BBTdnVOxchagKBJrGtBCCYO7c0UPYRaRqaiKvqOgFH2YcPoC26hwlVN+b55N29nqiBg6CaUyCD0D1EX9m4Wvx/N2a71SgvZEKeWs/+P9HlovnZ7T3rfeRF/7ETVENAEYHgw/s+8JqRV5JmIC2987/2YYFVGpichi1Wkr8fmIX2QkVqMN1Hg+FkAb605FeoJfU7zozxog2RG2rphaF2JTuusAfqnD+tVZYfgKeWlyUVaehR6NfNNzlWUknvJ8Onf2Iqs6xirA7VIUxx3dL5AkrLVRBGVhu8XftQPbuUmNd1YBQsLAaGxXgORvaI9HUPOEr6AJSg1iCXxOEAPuyV9veTHaQcUc33w+DYAGLT9AnDkLYlz8liqSIZVG0QEpfLKPA=
+  template:
+    metadata:
+      creationTimestamp: null
+      name: keycloak-provider
+      namespace: iam-management

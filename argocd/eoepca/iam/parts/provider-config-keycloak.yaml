@@ -1,0 +1,9 @@
+apiVersion: keycloak.m.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: keycloak-provider-config
+  namespace: iam-management
+spec:
+  credentialsSecretRef:
+    name: keycloak-provider
+    key: credentials

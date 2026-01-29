@@ -16,6 +16,12 @@ spec:
   destination:
     name: in-cluster
     namespace: zookeda
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Application
+      jsonPointers:
+        - /status
+        - /operation
   syncPolicy:
     automated:
       prune: true

@@ -6,3 +6,5 @@ resources:
   - secrets/resource-health-iam-client-sealedsecret.yaml
   - secrets/resource-health-notifier-email-sealedsecret.yaml
   - secrets/resource-health-alerting-user-emails-sealedsecret.yaml
+  - secrets/resource-health-opensearch-admin-sealedsecret.yaml
+  - resource-health-opensearch-admin.yaml

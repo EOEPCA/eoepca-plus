@@ -28,6 +28,17 @@ spec:
   destination:
     name: in-cluster
     namespace: zookeda
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/volumeClaimTemplates
+        - /spec/template/metadata
+    - group: kyverno.io
+      kind: ClusterPolicy
+      jsonPointers:
+        - /spec/rules
+        - /metadata/annotations
   syncPolicy:
     automated:
       prune: true

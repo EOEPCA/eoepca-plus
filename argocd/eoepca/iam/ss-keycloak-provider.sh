@@ -28,7 +28,7 @@ EOF`"
 
 secretYaml() {
   kubectl -n "${NAMESPACE}" create secret generic "${SECRET_NAME}" \
-    --from-literal="CREDENTIALS=${CREDENTIALS}" \
+    --from-literal="credentials=${CREDENTIALS}" \
     --dry-run=client -o yaml
 }
 

@@ -339,37 +339,6 @@ spec:
         policy: eoepca/dataaccess/eoapi
     - name: cors
       enable: true
-  - name: maps-redirect
-    backends:
-    - serviceName: eoapi-maps-plugin
-      servicePort: 5000
-    match:
-      hosts:
-      - eoapi.develop.eoepca.org
-      paths:
-      - /maps
-    plugins:
-    - name: redirect
-      enable: true
-      config:
-        uri: /maps/
-  - name: maps-route
-    backends:
-    - serviceName: eoapi-maps-plugin
-      servicePort: 5000
-    match:
-      hosts:
-      - eoapi.develop.eoepca.org
-      paths:
-      - /maps/
-      - /maps/*
-    plugins:
-    - name: proxy-rewrite
-      config:
-        regex_uri:
-        - ^(/maps)($|/.*)
-        - $2
-      enable: true
   - name: docs-redirect
     backends:
     - serviceName: eoapi-doc-server

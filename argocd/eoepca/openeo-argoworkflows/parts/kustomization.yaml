@@ -4,5 +4,5 @@ kind: Kustomization
 namespace: openeo
 
 resources:
-  - helm-openeo-argoworkflows.yaml
+  # - helm-openeo-argoworkflows.yaml
   - ingress-openeo.yaml

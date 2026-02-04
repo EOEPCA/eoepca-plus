@@ -18,8 +18,8 @@ spec:
   syncPolicy:
     automated:
       prune: true
-      selfHeal: false
-      allowEmpty: true
+      selfHeal: true
+      allowEmpty: false
     syncOptions:
       - Validate=true
       - CreateNamespace=true

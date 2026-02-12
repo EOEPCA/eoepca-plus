@@ -26,6 +26,10 @@ def get_cql2_filters(
     - /dss/{group_id}          — grants read and write access
     - /dss/{group_id}-ro       — grants read-only access (ignored during write checks)
 
+    :param collection_prop: The property name to filter on (e.g., "id" for collections, "collection" for items).
+    :param is_write: Whether to generate filters for write access (True) or read access (False).
+    :param token: The user's authentication token containing claims. None for unauthenticated users.
+
     :return: A set of collection prefixes that the user has access to.
     """
     policies = set()

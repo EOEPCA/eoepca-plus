@@ -50,12 +50,12 @@ spec:
       hosts:
       - eoapi.develop.eoepca.org
       paths:
-      - /manager/auth/*
+      - /auth/*
     plugins:
     - name: proxy-rewrite
       config:
         regex_uri:
-        - ^/manager/auth(/?.*)
+        - ^/auth(/?.*)
         - /realms/eoepca$1
       enable: true
     - name: cors

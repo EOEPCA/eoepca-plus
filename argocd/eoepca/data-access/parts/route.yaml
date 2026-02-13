@@ -56,7 +56,7 @@ spec:
       config:
         regex_uri:
         - ^/auth(/?.*)
-        - /realms/eoepca$1
+        - $1
       enable: true
     - name: cors
       enable: true

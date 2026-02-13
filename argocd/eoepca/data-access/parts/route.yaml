@@ -64,8 +64,8 @@ spec:
     - name: proxy-rewrite
       config:
         regex_uri:
-        - ^/auth(/?.*)
-        - /realms/eoepca$1
+        - ^/auth(.*)
+        - $1
       enable: true
     - name: cors
       enable: true

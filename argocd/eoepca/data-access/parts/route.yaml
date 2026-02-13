@@ -40,18 +40,6 @@ spec:
         - ^(/manager)($|/.*)
         - $2
       enable: true
-    - name: openid-connect
-      enable: true
-      config:
-        discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
-        use_jwks: true
-        bearer_only: true
-        set_access_token_header: true
-        access_token_in_authorization_header: true
-        set_id_token_header: false
-        set_userinfo_header: false
-        client_id: eoapi
-        client_secret: ""
     - name: cors
       enable: true
   - name: browser-redirect

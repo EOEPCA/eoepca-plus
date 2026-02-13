@@ -42,6 +42,24 @@ spec:
       enable: true
     - name: cors
       enable: true
+  - name: manager-auth-proxy
+    backends:
+    - serviceName: iam-keycloak
+      servicePort: 80
+    match:
+      hosts:
+      - eoapi.develop.eoepca.org
+      paths:
+      - /manager/auth/*
+    plugins:
+    - name: proxy-rewrite
+      config:
+        regex_uri:
+        - ^/manager/auth(/?.*)
+        - /realms/eoepca$1
+      enable: true
+    - name: cors
+      enable: true
   - name: browser-redirect
     backends:
     - serviceName: eoapi-browser

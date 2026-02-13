@@ -1,3 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: iam-keycloak-external
+  namespace: data-access
+spec:
+  type: ExternalName
+  externalName: iam-keycloak.iam.svc.cluster.local
+---
 apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
@@ -44,7 +53,7 @@ spec:
       enable: true
   - name: manager-auth-proxy
     backends:
-    - serviceName: iam-keycloak.iam.svc.cluster.local
+    - serviceName: iam-keycloak-external
       servicePort: 80
     match:
       hosts:

@@ -1,3 +1,2 @@
 resources:
   - app-notification-automation.yaml
-  - app-notification-automation-helm.yaml

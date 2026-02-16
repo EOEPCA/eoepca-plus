@@ -14,11 +14,11 @@ spec:
     path: charts/notification-automation
     helm:
       releaseName: notification-automation
-      parameters:
+      values:
         - name: serving.install
-          value: "false"
+          value: "true"
         - name: eventing.install
-          value: "false"
+          value: "true"
         - name: eventing.authenticationOidc
           value: "false"
         - name: webhookSource.enabled

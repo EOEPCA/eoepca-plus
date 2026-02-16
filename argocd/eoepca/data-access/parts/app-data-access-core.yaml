@@ -9,23 +9,52 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    # helm inspect chart oci://registry.developers.crunchydata.com/crunchydata/pgo --version=5.5.2
-    # pgo cannot be a dependency of eoAPI b/c it causes zombie resources on helm uninstall
-    - repoURL: 'registry.developers.crunchydata.com/crunchydata'
-      path: 'pgo'
-      chart: pgo
-      targetRevision: 5.7.4
-      helm:
-        releaseName: pgo
-        valueFiles:
-          - $values/argocd/eoepca/data-access/parts/values/values-pgo.yaml
+
     - repoURL: https://devseed.com/eoapi-k8s/
       chart: eoapi
-      targetRevision: 0.7.5
+      targetRevision: 0.10.1
       helm:
         releaseName: eoapi
         valueFiles:
           - $values/argocd/eoepca/data-access/parts/values/values-eoapi.yaml
+
+    - repoURL: https://github.com/sentinel-hub/titiler-openeo
+      path: deployment/k8s/charts
+      targetRevision: v0.9.1
+      helm:
+        releaseName: eoapi-titiler-openeo
+        values: |
+          image:
+            tag: "v0.9.1"
+          stac:
+            apiUrl: "https://eoapi.develop.eoepca.org/stac"
+            serviceStoreUrl: "/app/services/eoapi.json"
+          env:
+            TITILER_OPENEO_API_ROOT_PATH: "/openeo/"
+          auth:
+            method: "oidc"
+            oidc:
+              enabled: true
+              clientId: "eoapi"
+              wellKnownUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+              redirectUrl: "https://eoapi.develop.eoepca.org/openeo/"
+          extraVolumes:
+            - name: services
+              configMap:
+                name: titiler-openeo-services
+          extraVolumeMounts:
+            - name: services
+              mountPath: /app/services
+              readOnly: true
+
+    - repoURL: https://stac-manager.ds.io/
+      chart: stac-manager
+      targetRevision: 0.0.11
+      helm:
+        releaseName: eoapi-stac-manager
+        valueFiles:
+          - $values/argocd/eoepca/data-access/parts/values/values-stac-manager.yaml
+
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openeo-argoworkflows
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: openeo-argoworkflows
+spec:
+  project: eoepca
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: deploy-develop
+    path: argocd/eoepca/openeo-argoworkflows/parts
+  destination:
+    name: in-cluster
+    namespace: openeo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

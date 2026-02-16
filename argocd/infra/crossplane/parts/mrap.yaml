@@ -1,0 +1,50 @@
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: ManagedResourceActivationPolicy
+metadata:
+  name: provider-minio
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  activate:
+    - buckets.minio.crossplane.io
+    - policies.minio.crossplane.io
+    - users.minio.crossplane.io
+---
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: ManagedResourceActivationPolicy
+metadata:
+  name: provider-kubernetes
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  activate:
+    - objects.kubernetes.m.crossplane.io
+---
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: ManagedResourceActivationPolicy
+metadata:
+  name: provider-keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  activate:
+    - groups.group.keycloak.m.crossplane.io
+    - memberships.group.keycloak.m.crossplane.io
+    - roles.group.keycloak.m.crossplane.io
+    - clients.openidclient.keycloak.m.crossplane.io
+    - groupmembershipprotocolmappers.openidgroup.keycloak.m.crossplane.io
+    - roles.role.keycloak.m.crossplane.io
+---
+apiVersion: apiextensions.crossplane.io/v1alpha1
+kind: ManagedResourceActivationPolicy
+metadata:
+  name: provider-helm
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  activate:
+    - releases.helm.m.crossplane.io

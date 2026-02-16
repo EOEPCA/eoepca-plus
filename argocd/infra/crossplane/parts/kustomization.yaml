@@ -1,0 +1,8 @@
+resources:
+  - app-crossplane-core.yaml
+  - mrap.yaml
+  - deploymentRuntimeConfigs.yaml
+  - providers.yaml
+  - providerConfigs.yaml
+  - functions.yaml
+  - rbac.yaml

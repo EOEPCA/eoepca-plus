@@ -1,0 +1,19 @@
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: resource-health-opensearch-admin
+  namespace: iam-management
+spec:
+  forProvider:
+    realmId: eoepca
+    username: opensearch-admin
+    firstName: Opensearch
+    lastName: Admin
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: resource-health-opensearch-admin-secret
+          key: password
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig

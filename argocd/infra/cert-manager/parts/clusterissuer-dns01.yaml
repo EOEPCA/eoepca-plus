@@ -9,7 +9,10 @@ spec:
       name: letsencrypt-dns-prod
     server: https://acme-v02.api.letsencrypt.org/directory
     solvers:
-      - dns01:
+      - selector:
+          dnsZones:
+            - "eoepca.org"
+        dns01:
           cloudflare:
             apiTokenSecretRef:
               name: dns-api-token

@@ -1,0 +1,81 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: resource-catalogue-protected
+  namespace: argocd
+  labels:
+    eoepca/app-name: resource-catalogue
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: 'https://eoepca.github.io/helm-charts-dev'
+    chart: rm-resource-catalogue
+    targetRevision: 2.0.0-rc4
+    helm:
+      releaseName: resource-catalogue
+      valuesObject:
+        global:
+          namespace: rm
+        ingress:
+          enabled: false
+        db:
+          enabled: false
+        external_db:
+          host: default-primary.infra.svc
+          port: 5432
+          database: pycsw
+          auth:
+            secret_name: resource-catalogue-secret
+        pycsw:
+          name: pycsw-protected
+          service_name: resource-catalogue-protected-service
+          configmap_name: resource-catalogue-protected-configmap
+          image:
+            repository: geopython/pycsw
+            # tag: "eoepca-staging"
+            # pullPolicy: Always
+          replicas: 1
+          config:
+            server:
+              url: https://resource-catalogue-protected.develop.eoepca.org/
+            manager:
+              transactions: "true"
+              allowed_ips:
+                - '"*"'
+            metadata:
+              identification:
+                title: EOEPCA+ Resource Catalogue
+                description: EOEPCA+ Resource Catalogue
+                keywords:
+                    - EOEPCA+
+                    - Earth observation
+                    - discovery
+                license:
+                  name: CC-BY 4.0 license
+                  url: https://creativecommons.org/licenses/by/4.0
+                keywords_type: theme
+                terms_of_service: https://creativecommons.org/licenses/by/4.0
+                url: https://eoepca.org
+              provider:
+                name: EOEPCA+
+                url: https://eoepca.org/
+            repository:
+              facets:
+                  - type
+
+  destination:
+    name: in-cluster
+    namespace: rm
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

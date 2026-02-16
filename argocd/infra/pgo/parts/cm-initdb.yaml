@@ -22,3 +22,10 @@ data:
     GRANT pgstac_read TO eoapi WITH ADMIN OPTION;
     GRANT pgstac_ingest TO eoapi WITH ADMIN OPTION;
     GRANT pgstac_admin TO eoapi WITH ADMIN OPTION;
+    \c pycsw
+    CREATE EXTENSION IF NOT EXISTS postgis;
+    ALTER DATABASE pycsw OWNER TO pycsw;
+    GRANT CONNECT ON DATABASE pycsw TO pycsw;
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO pycsw;
+    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO pycsw;
+    GRANT CREATE ON SCHEMA public TO pycsw;

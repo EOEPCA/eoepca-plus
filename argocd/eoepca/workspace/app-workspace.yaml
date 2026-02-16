@@ -6,21 +6,13 @@ metadata:
   labels:
     eoepca/is-root-app: "true"
     eoepca/app-name: workspace
-  annotations:
-    argocd.argoproj.io/sync-wave: "5"
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
-      path: argocd/eoepca/workspace/common
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
-      path: argocd/eoepca/workspace/pipelines
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
-      path: argocd/eoepca/workspace/admin
+      path: argocd/eoepca/workspace/parts
   destination:
     name: in-cluster
     namespace: workspace

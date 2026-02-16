@@ -1,0 +1,100 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: openeo-argoworkflows-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: openeo-argoworkflows
+spec:
+  project: eoepca
+  source:
+    repoURL: https://github.com/Eurac-Research-Institute-for-EO/charts
+    targetRevision: main
+    path: eodc/openeo-argo
+    helm:
+      releaseName: openeo
+      valuesObject:
+        global:
+          env:
+            alembicDir: "/opt/openeo_argoworkflows_api/psql"
+            apiDns: openeo-eurac.develop.eoepca.org
+            apiTLS: true
+            apiUrl: "https://openeo-eurac.develop.eoepca.org/openeo/1.1.0"
+            apiTitle: "OpenEO ArgoWorkflows"
+            apiDescription: "A K8S deployment of the openeo api for argoworkflows."
+            oidcUrl: "https://edp-portal.eurac.edu/auth/realms/edp"
+            oidcOrganisation: "eurac-keycloak"
+            oidcProviderTitle: "EURAC Keycloak"
+            oidcPolicies: ""
+            stacCatalogueUrl: "https://stac.eodc.eu/api/v1"
+            workspaceRoot: "/user_workspaces"
+            executorImage: "yuvraj1989/openeo-argoworkflows-api:eurac-custom-oidc"
+            daskWorkerCores: "4"
+            daskWorkerMemory: "8"
+            daskWorkerLimit: "6"
+            daskClusterTimeout: "3600"
+
+        replicaCount: 1
+
+        image:
+          repository: yuvraj1989/openeo-argoworkflows-api
+          pullPolicy: Always
+          tag: "eurac-custom-oidc-v3"
+
+        postgresql:
+          enabled: true
+          image:
+            repository: bitnamilegacy/postgresql
+          auth:
+            username: "postgres"
+            password: "openeo123"
+            database: "postgres"
+          persistence:
+            size: "8Gi"
+
+        redis:
+          image:
+            repository: bitnamilegacy/redis
+          persistence:
+            size: "8Gi"
+          replicas:
+            enabled: true
+            count: 1
+
+        service:
+          type: ClusterIP
+          port: 8000
+
+        ingress:
+          enabled: false
+
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+
+        autoscaling:
+          enabled: false
+
+        nodeSelector: {}
+        tolerations: []
+        affinity: {}
+
+  destination:
+    name: in-cluster
+    namespace: openeo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

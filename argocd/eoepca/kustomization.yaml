@@ -6,6 +6,8 @@ resources:
   - datacube-access
   - zoo-dru
   - zoo-dru-wes
+  - zoo-dru-std
+  - zoo-dru-keda
   - workspace
   - mlops
   - application-quality
@@ -17,5 +19,6 @@ resources:
   - openeo-geotrellis
   - openeo-web-editor
   - openeofed
+  - openeo-argoworkflows
   - notification-automation
   # - identity-service

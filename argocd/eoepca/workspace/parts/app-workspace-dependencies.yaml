@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workspace-dependencies
+  namespace: argocd
+  labels:
+    eoepca/app-name: workspace-dependencies
+spec:
+  project: eoepca
+  sources:
+    - repoURL: ghcr.io/eoepca/workspace
+      chart: workspace-dependencies-csi-rclone
+      targetRevision: 2.0.0
+      helm:
+        releaseName: workspace-dependencies-csi-rclone
+    - repoURL: ghcr.io/eoepca/workspace
+      chart: workspace-dependencies-educates
+      targetRevision: 2.0.0
+      helm:
+        releaseName: workspace-dependencies-educates
+        values: |
+          clusterIngressDomain: ngx.develop.eoepca.org
+          clusterIngressClass: nginx
+          tlsCertificateRef:
+            name: workspace-tls
+            namespace: workspace
+  destination:
+    name: in-cluster
+    namespace: workspace
+  syncPolicy:
+    automated:
+      prune: false # never prune
+      selfHeal: false # only manual sync
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

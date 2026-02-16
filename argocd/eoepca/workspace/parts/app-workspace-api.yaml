@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workspace-api
+  namespace: argocd
+  labels:
+    eoepca/app-name: workspace-api
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: https://eoepca.github.io/helm-charts
+    chart: rm-workspace-api
+    targetRevision: 2.0.1
+    helm:
+      releaseName: workspace-api
+      valuesObject:
+        fullnameOverride: workspace-api
+        image:
+          tag: 2.0.0
+          pullPolicy: Always
+        ingress:
+          enabled: false        
+        prefixForName: "ws"
+        endpoint: "https://minio.develop.eoepca.org"
+        region: "eoepca-demo"
+        forwardedAllowIps: "*"
+        sessionMode: "auto" # "on"
+        useVcluster: "true"
+        gunicornWorkers: "4"
+        uiMode: "ui"
+  destination:
+    name: in-cluster
+    namespace: workspace
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

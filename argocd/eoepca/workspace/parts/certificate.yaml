@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: workspace-cert
+  namespace: workspace
+spec:
+  dnsNames:
+  - ngx.develop.eoepca.org
+  - '*.ngx.develop.eoepca.org'
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns-prod
+  secretName: workspace-tls

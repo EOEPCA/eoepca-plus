@@ -1,0 +1,45 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-minio
+  annotations:
+    argocd.argoproj.io/sync-wave: "12"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  package: xpkg.upbound.io/vshn/provider-minio:v0.4.4
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-kubernetes
+  annotations:
+    argocd.argoproj.io/sync-wave: "12"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v1.0.0
+  runtimeConfigRef:
+    name: provider-kubernetes
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "12"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  package: ghcr.io/crossplane-contrib/provider-keycloak:v2.7.2
+  runtimeConfigRef:
+    name: provider-keycloak
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-helm
+  annotations:
+    argocd.argoproj.io/sync-wave: "12"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-helm:v1.0.0
+  runtimeConfigRef:
+    name: provider-helm

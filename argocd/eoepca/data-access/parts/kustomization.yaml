@@ -1,7 +1,18 @@
 resources:
   - ss-data-access.yaml
   - app-data-access-core.yaml
-  - app-data-access-maps.yaml
-  - app-data-access-ui.yaml
   - iam.yaml
   - route.yaml
+  - eso-pgo.yaml
+
+configMapGenerator:
+  - name: stac-auth-proxy-filters
+    options:
+      disableNameSuffixHash: true
+    files:
+      - eoepca_filters.py=stac-auth-proxy/eoepca_filters.py
+  - name: titiler-openeo-services
+    options:
+      disableNameSuffixHash: true
+    files:
+      - eoapi.json=titiler-openeo/eoapi.json

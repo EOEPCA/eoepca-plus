@@ -1,0 +1,80 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workspace-pipeline
+  namespace: argocd
+  labels:
+    eoepca/app-name: workspace-pipeline
+spec:
+  project: eoepca
+  sources:
+    - repoURL: ghcr.io/eoepca/workspace
+      chart: workspace-pipeline
+      targetRevision: 2.0.0
+      helm:
+        releaseName: workspace-pipeline
+        values: |
+          storage:
+            annotations:
+              argocd.argoproj.io/sync-wave: "100"
+              argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+          datalab:
+            annotations:
+              argocd.argoproj.io/sync-wave: "100"
+              argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+          environmentconfig:
+            annotations:
+              argocd.argoproj.io/sync-wave: "100"
+              argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+            iam:
+              realm: eoepca
+            ingress:
+              class: nginx
+              domain: ngx.develop.eoepca.org
+              secret: wildcard-tls
+            storage:
+              endpoint: https://minio.develop.eoepca.org
+              forcePathStyle: true
+              provider: Other
+              region: eoepca-demo
+              secretNamespace: workspace
+              type: s3
+            network:
+              serviceCIDR: "10.43.0.0/12"
+            packages:
+              - name: awscli
+                files:
+                  - image:
+                      url: ghcr.io/versioneer-tech/educates-extension-packages/awscli:v2.29.0
+              - name: rclone
+                files:
+                  - image:
+                      url: ghcr.io/versioneer-tech/educates-extension-packages/rclone:v1.71.0
+            auth:
+              type: none
+            defaults:
+              quota:
+                storage: 8Gi
+                budget: x-large
+            database: 
+              gateway:
+                parentName: eoepca-public
+                parentNamespace: gateway
+                sectionName: https
+              storageClassName: ""
+              backupStorageClassName: ""
+  destination:
+    name: in-cluster
+    namespace: workspace
+  syncPolicy:
+    automated:
+      prune: false # never prune
+      selfHeal: false # only manual sync
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

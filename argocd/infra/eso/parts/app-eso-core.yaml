@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: eso-core
+  namespace: argocd
+spec:
+  project: eoepca
+  source:
+    repoURL: https://charts.external-secrets.io
+    chart: external-secrets
+    targetRevision: 0.19.2
+    helm:
+      releaseName: external-secrets
+      values: |
+        installCRDs: true
+        leaderElection:
+          namespace: infra
+  destination:
+    name: in-cluster
+    namespace: infra
+  syncPolicy:
+    automated:
+      prune: false # never prune
+      selfHeal: false # only manual sync
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: externalsecret-validate
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: externalsecrets.external-secrets.io
+      jsonPointers:
+        - /spec/conversion/webhook/clientConfig/caBundle
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: secretstores.external-secrets.io
+      jsonPointers:
+        - /spec/conversion/webhook/clientConfig/caBundle
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: clustersecretstores.external-secrets.io
+      jsonPointers:
+        - /spec/conversion/webhook/clientConfig/caBundle
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: clusterexternalsecrets.external-secrets.io
+      jsonPointers:
+        - /spec/conversion/webhook/clientConfig/caBundle
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: esmetrics.external-secrets.io
+      jsonPointers:
+        - /spec/conversion/webhook/clientConfig/caBundle

@@ -6,20 +6,11 @@ metadata:
   labels:
     eoepca/app-name: iam-identity-api
 spec:
-  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-#    - repoURL: https://eoepca.github.io/helm-charts
-#    #https://eoepca.github.io/helm-charts
-#      chart: identity-service
-#      targetRevision: 1.0.98
-#      helm:
-##        releaseName: identity-api
-#        valueFiles:
-#          - $values/argocd/eoepca/iam/parts/values/identity-service-values.yaml
     - repoURL: https://eoepca.github.io/helm-charts-dev
       chart: iam-bb
-      targetRevision: 2.0.0-rc2.1
+      targetRevision: 2.0.0-rc4
       helm:
         #releaseName: iam-identity-api
         valueFiles:

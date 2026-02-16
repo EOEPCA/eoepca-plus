@@ -1,0 +1,51 @@
+apiVersion: minio.crossplane.io/v1
+kind: ProviderConfig
+metadata:
+  name: provider-minio
+  annotations:
+    argocd.argoproj.io/sync-wave: "13"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  credentials:
+    apiSecretRef:
+      name: minio-secret
+      namespace: workspace
+    source: InjectedIdentity
+  minioURL: http://minio-svc.infra:9000
+---
+apiVersion: kubernetes.m.crossplane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  name: provider-kubernetes
+  namespace: workspace
+  annotations:
+    argocd.argoproj.io/sync-wave: "13"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true  
+spec:
+  credentials:
+    source: InjectedIdentity
+---
+apiVersion: keycloak.m.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: provider-keycloak
+  namespace: workspace
+  annotations:
+    argocd.argoproj.io/sync-wave: "13"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true  
+spec:
+  credentialsSecretRef:
+    name: keycloak-secret
+    key: credentials
+---
+apiVersion: helm.m.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: provider-helm
+  namespace: workspace  
+  annotations:
+    argocd.argoproj.io/sync-wave: "13"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true  
+spec:
+  credentials:
+    source: InjectedIdentity

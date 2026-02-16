@@ -1,3 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: iam-keycloak-external
+  namespace: data-access
+spec:
+  type: ExternalName
+  externalName: iam-keycloak.iam.svc.cluster.local
+---
 apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
@@ -10,7 +19,7 @@ spec:
   - name: manager-redirect
     websocket: true
     backends:
-    - serviceName: stac-manager
+    - serviceName: eoapi-stac-manager
       servicePort: 80
     match:
       hosts:
@@ -25,7 +34,7 @@ spec:
   - name: manager-route
     websocket: true
     backends:
-    - serviceName: stac-manager
+    - serviceName: eoapi-stac-manager
       servicePort: 80
     match:
       hosts:
@@ -40,9 +49,29 @@ spec:
         - ^(/manager)($|/.*)
         - $2
       enable: true
+    - name: cors
+      enable: true
+  - name: manager-auth-proxy
+    backends:
+    - serviceName: iam-keycloak-external
+      servicePort: 80
+    match:
+      hosts:
+      - eoapi.develop.eoepca.org
+      paths:
+      - /auth/*
+    plugins:
+    - name: proxy-rewrite
+      config:
+        regex_uri:
+        - ^/auth(.*)
+        - $1
+      enable: true
+    - name: cors
+      enable: true
   - name: browser-redirect
     backends:
-    - serviceName: browser-eoapi
+    - serviceName: eoapi-browser
       servicePort: 8080
     match:
       hosts:
@@ -56,7 +85,7 @@ spec:
         uri: /browser/
   - name: browser-route
     backends:
-    - serviceName: browser-eoapi
+    - serviceName: eoapi-browser
       servicePort: 8080
     match:
       hosts:
@@ -66,7 +95,7 @@ spec:
       - /browser/*
   - name: vector-redirect
     backends:
-    - serviceName: vector-eoapi
+    - serviceName: eoapi-vector
       servicePort: 8080
     match:
       hosts:
@@ -80,7 +109,7 @@ spec:
         uri: /vector/
   - name: vector-route
     backends:
-    - serviceName: vector-eoapi
+    - serviceName: eoapi-vector
       servicePort: 8080
     match:
       hosts:
@@ -97,7 +126,7 @@ spec:
       enable: true
   - name: multidim-redirect
     backends:
-    - serviceName: multidim-eoapi
+    - serviceName: eoapi-multidim
       servicePort: 8080
     match:
       hosts:
@@ -111,7 +140,7 @@ spec:
         uri: /multidim/
   - name: multidim-route
     backends:
-    - serviceName: multidim-eoapi
+    - serviceName: eoapi-multidim
       servicePort: 8080
     match:
       hosts:
@@ -128,7 +157,7 @@ spec:
       enable: true
   - name: raster-redirect
     backends:
-    - serviceName: raster-eoapi
+    - serviceName: eoapi-raster
       servicePort: 8080
     match:
       hosts:
@@ -142,7 +171,7 @@ spec:
         uri: /raster/
   - name: raster-route
     backends:
-    - serviceName: raster-eoapi
+    - serviceName: eoapi-raster
       servicePort: 8080
     match:
       hosts:
@@ -157,9 +186,41 @@ spec:
         - ^(/raster)($|/.*)
         - $2
       enable: true
-  - name: stac-redirect
+  - name: openeo-redirect
     backends:
-    - serviceName: stac-eoapi
+    - serviceName: eoapi-titiler-openeo
+      servicePort: 80
+    match:
+      hosts:
+      - eoapi.develop.eoepca.org
+      paths:
+      - /openeo
+    plugins:
+    - name: redirect
+      enable: true
+      config:
+        uri: /openeo/
+  - name: openeo-route
+    backends:
+    - serviceName: eoapi-titiler-openeo
+      servicePort: 80
+    match:
+      hosts:
+      - eoapi.develop.eoepca.org
+      paths:
+      - /openeo/
+      - /openeo/*
+    plugins:
+    - name: proxy-rewrite
+      config:
+        regex_uri:
+        - ^(/openeo)($|/.*)
+        - $2
+      enable: true
+  - name: stac-redirect
+    priority: 100
+    backends:
+    - serviceName: eoapi-stac-auth-proxy
       servicePort: 8080
     match:
       hosts:
@@ -176,8 +237,9 @@ spec:
     - name: cors
       enable: true
   - name: stac-open-route
+    priority: 90
     backends:
-    - serviceName: stac-eoapi
+    - serviceName: eoapi-stac-auth-proxy
       servicePort: 8080
     match:
       hosts:
@@ -201,17 +263,24 @@ spec:
         regex_uri:
         - ^(/stac)($|/.*)
         - $2
+        headers:
+          set:
+            X-Forwarded-Port: "443"
+            X-Forwarded-Proto: "https"
+            X-Forwarded-Host: "eoapi.develop.eoepca.org"
       enable: true
     - name: cors
       enable: true
   - name: stac-open-search-route
+    priority: 90
     backends:
-    - serviceName: stac-eoapi
+    - serviceName: eoapi-stac-auth-proxy
       servicePort: 8080
     match:
       hosts:
       - eoapi.develop.eoepca.org
       methods:
+      - GET
       - POST
       paths:
       - /stac/search
@@ -221,12 +290,45 @@ spec:
         regex_uri:
         - ^(/stac)($|/.*)
         - $2
+        headers:
+          set:
+            X-Forwarded-Port: "443"
+            X-Forwarded-Proto: "https"
+            X-Forwarded-Host: "eoapi.develop.eoepca.org"
+      enable: true
+    - name: cors
+      enable: true
+  - name: stac-mgmt-route
+    priority: 90
+    backends:
+    - serviceName: eoapi-stac-auth-proxy
+      servicePort: 8080
+    match:
+      hosts:
+      - eoapi.develop.eoepca.org
+      methods:
+      - GET
+      paths:
+      - /stac/_mgmt/*
+      - /stac/healthz*
+    plugins:
+    - name: proxy-rewrite
+      config:
+        regex_uri:
+        - ^(/stac)($|/.*)
+        - $2
+        headers:
+          set:
+            X-Forwarded-Port: "443"
+            X-Forwarded-Proto: "https"
+            X-Forwarded-Host: "eoapi.develop.eoepca.org"
       enable: true
     - name: cors
       enable: true
   - name: stac-protected-route
+    priority: 10
     backends:
-    - serviceName: stac-eoapi
+    - serviceName: eoapi-stac-auth-proxy
       servicePort: 8080
     match:
       hosts:
@@ -239,6 +341,11 @@ spec:
         regex_uri:
         - ^(/stac)($|/.*)
         - $2
+        headers:
+          set:
+            X-Forwarded-Port: "443"
+            X-Forwarded-Proto: "https"
+            X-Forwarded-Host: "eoapi.develop.eoepca.org"
       enable: true
     - name: openid-connect
       enable: true
@@ -261,7 +368,7 @@ spec:
       enable: true
   - name: docs-redirect
     backends:
-    - serviceName: doc-server-eoapi
+    - serviceName: eoapi-doc-server
       servicePort: 80
     match:
       hosts:
@@ -276,7 +383,7 @@ spec:
         uri: /docs/
   - name: docs-route
     backends:
-    - serviceName: doc-server-eoapi
+    - serviceName: eoapi-doc-server
       servicePort: 80
     match:
       hosts:

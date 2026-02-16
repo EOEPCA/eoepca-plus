@@ -1,0 +1,130 @@
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: provider-minio
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: provider-minio
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: provider-minio
+      template:
+        metadata:
+          labels:
+            runtime: provider-minio
+        spec:
+          containers:
+          - name: package-runtime
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: provider-kubernetes
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: provider-kubernetes
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: provider-kubernetes
+      template:
+        metadata:
+          labels:
+            runtime: provider-kubernetes
+        spec:
+          serviceAccountName: provider-kubernetes
+          containers:
+          - name: package-runtime
+            # args:
+            # - --debug
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: provider-keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: provider-keycloak
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: provider-keycloak
+      template:
+        metadata:
+          labels:
+            runtime: provider-keycloak
+        spec:
+          containers:
+          - name: package-runtime
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: provider-helm
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: provider-helm
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: provider-helm
+      template:
+        metadata:
+          labels:
+            runtime: provider-helm
+        spec:
+          containers:
+          - name: package-runtime
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi

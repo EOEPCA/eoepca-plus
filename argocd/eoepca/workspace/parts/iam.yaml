@@ -1,0 +1,38 @@
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: Client
+metadata: 
+  name: workspace-api
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    name: workspace-api
+    accessType: PUBLIC
+    clientId: workspace-api
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true # allow for now to simplify testing
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    oauth2DeviceAuthorizationGrantEnabled: true    
+    rootUrl: https://workspace-api.develop.eoepca.org
+    webOrigins: 
+      - '*'
+    validRedirectUris:
+      - '*'
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata: 
+  name: workspace-api-admin
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    name: admin
+    clientIdRef:
+      name: workspace-api
+      policy:
+        resolution: Required

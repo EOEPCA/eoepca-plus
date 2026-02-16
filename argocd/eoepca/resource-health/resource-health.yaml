@@ -108,37 +108,39 @@ spec:
             use_hook_configmap: True
             hooks:
               oidc_auth_hooks.py: |
+                from fastapi import Request
                 import python_opentelemetry_access.telemetry_hooks.utils as hu
                 from eoepca_security import OIDCProxyScheme, Tokens
                 from typing import TypedDict
                 import os
 
+
                 class UserInfo(TypedDict):
                     username: str | None
                     access_token: str
 
-                def get_fastapi_security() -> OIDCProxyScheme:
-                    return OIDCProxyScheme(
-                        openIdConnectUrl=os.environ["OPEN_ID_CONNECT_URL"],
-                        audience=os.environ["OPEN_ID_CONNECT_AUDIENCE"],
-                        id_token_header="x-id-token",
-                        refresh_token_header="x-refresh-token",
-                        auth_token_header="Authorization",
-                        auth_token_in_authorization=True,
-                        auto_error=True,  ## Set False to allow unauthenticated access!
-                        scheme_name="OIDC behind auth proxy",
-                    )
+
+                oidc_proxy_scheme = OIDCProxyScheme(
+                    openIdConnectUrl=os.environ["OPEN_ID_CONNECT_URL"],
+                    audience=os.environ["OPEN_ID_CONNECT_AUDIENCE"],
+                    id_token_header="x-id-token",
+                    refresh_token_header="x-refresh-token",
+                    auth_token_header="Authorization",
+                    auth_token_in_authorization=True,
+                    auto_error=True,  ## Set False to allow unauthenticated access!
+                    scheme_name="OIDC behind auth proxy",
+                )
+
+
+                async def get_fastapi_security(request: Request) -> Tokens | None:
+                    return await oidc_proxy_scheme(request)
 
 
                 def on_auth(tokens: Tokens | None) -> UserInfo:
                     if tokens is None or tokens["auth"] is None:
-                        raise hu.APIException(
-                            hu.Error(
-                                status="403",
-                                code="MissingTokens",
-                                title="Missing authentication token",
-                                detail="Potentially missing authenticating proxy",
-                            )
+                        raise hu.APIForbiddenError(
+                            title="Missing authentication token",
+                            detail="Potentially missing authenticating proxy",
                         )
 
                     username_claim = (
@@ -152,7 +154,9 @@ spec:
                         access_token=tokens["auth"].raw,
                     )
 
+
                 ## For the OpenSearch proxy/backend
+
 
                 def get_opensearch_config(userinfo: UserInfo) -> hu.OpensearchConfig:
                     return hu.OpensearchConfig(
@@ -189,12 +193,74 @@ spec:
 
             use_hook_configmap: True
             hooks:
+              disallow_frequent_check_hooks.py: |
+                from datetime import datetime, timedelta
+                from typing import TYPE_CHECKING, Any
+                from cron_converter import Cron
+
+                import check_hooks.hook_utils as hu
+
+                # The hooks are loaded one file at a time, so importing things from one file to another will not work.
+                # This trick ensures that UserInfo is imported only for type checking - and it can only be used for that
+                if TYPE_CHECKING:
+                    from auth_hooks import UserInfo
+                else:
+                    type UserInfo = Any
+
+
+                def on_check_create(userinfo: UserInfo, check: hu.InCheckAttributes) -> None:
+                    print("ON CHECK CREATE from disallow_frequent_check_hooks.py")
+                    min_allowed_days_between_runs = 3
+                    if check.metadata.template_id == "telemetry_access_template":
+                        raise_error_if_schedule_too_frequent(
+                            check.schedule,
+                            min_allowed_days_between_runs=3,
+                            error_detail=f"Check from template {check.metadata.template_id} must run at most once in {min_allowed_days_between_runs} day period.",
+                        )
+
+
+                # This is not a hook
+                def raise_error_if_schedule_too_frequent(
+                    cron_schedule: str, min_allowed_days_between_runs: int, error_detail: str
+                ) -> None:
+                    # For now we don't know if the cron_schedule is valid
+                    # We need to raise something derived from APIException as otherwise user will see
+                    # "500 Internal Server Error"
+                    try:
+                        cron_instance = Cron(cron_schedule)
+                    except ValueError:
+                        raise hu.APIUserInputError(
+                            title="Invalid schedule", detail="Invalid cron expression"
+                        )
+                    error = hu.APIUserInputError(title="Schedule Too Frequent", detail=error_detail)
+                    [minutes, hours, days, months, weekdays] = cron_instance.to_list()
+                    if len(minutes) > 1:
+                        # Means this will sometimes run at twice or more in one hour, which is too frequent
+                        raise error
+                    if len(hours) > 1:
+                        # Means this will sometimes run at twice or more in one day, which is too frequent
+                        raise error
+                    start_date = datetime.now()
+                    schedule = cron_instance.schedule(start_date)
+                    prev_date = schedule.next()
+                    # At this point we know that the schedule is not more frequence than once per day
+                    # This just creates schedules for next year (or more) and checks if any two consecutive
+                    # schedules have enough of a gap between them
+                    for i in range(365):
+                        date = schedule.next()
+                        if date - prev_date < timedelta(days=min_allowed_days_between_runs):
+                            raise error
+                        if date - start_date > timedelta(days=365):
+                            # Haven't found too frequent scheduled times in a year from now, that's enough
+                            return
+                        prev_date = date
               oidc_auth_hooks.py: |
                 import check_hooks.hook_utils as hu
 
                 from eoepca_security import OIDCProxyScheme, Tokens
                 from typing import TypedDict
                 import os
+                from fastapi import Request
 
 
                 class UserInfo(TypedDict):
@@ -204,30 +270,29 @@ spec:
                     refresh_token: str | None
 
 
-                def get_fastapi_security() -> OIDCProxyScheme:
-                    return OIDCProxyScheme(
-                        openIdConnectUrl=os.environ["OPEN_ID_CONNECT_URL"],
-                        audience=os.environ["OPEN_ID_CONNECT_AUDIENCE"],
-                        id_token_header="x-id-token",
-                        refresh_token_header="x-refresh-token",
-                        auth_token_header="Authorization",
-                        auth_token_in_authorization=True,
-                        auto_error=True,  ## Set False to allow unauthenticated access!
-                        scheme_name="OIDC behind auth proxy",
-                    )
+                oidc_proxy_scheme = OIDCProxyScheme(
+                    openIdConnectUrl=os.environ["OPEN_ID_CONNECT_URL"],
+                    audience=os.environ["OPEN_ID_CONNECT_AUDIENCE"],
+                    id_token_header="x-id-token",
+                    refresh_token_header="x-refresh-token",
+                    auth_token_header="Authorization",
+                    auth_token_in_authorization=True,
+                    auto_error=True,  ## Set False to allow unauthenticated access!
+                    scheme_name="OIDC behind auth proxy",
+                )
+
+
+                async def get_fastapi_security(request: Request) -> Tokens | None:
+                    return await oidc_proxy_scheme(request)
 
 
                 def on_auth(tokens: Tokens | None) -> UserInfo:
                     print("ON AUTH")
 
                     if tokens is None or tokens["auth"] is None:  # or tokens['id'] is None:
-                        raise hu.APIException(
-                            hu.Error(
-                                status="403",
-                                code="MissingTokens",
-                                title="Missing authentication or ID token",
-                                detail="Potentially missing authenticating proxy",
-                            )
+                        hu.APIForbiddenError(
+                            title="Missing authentication or ID token",
+                            detail="Potentially missing authenticating proxy",
                         )
 
                     claims = {}
@@ -243,13 +308,9 @@ spec:
 
                     if user_id is None or username is None:
                         print(claims)
-                        raise hu.APIException(
-                            hu.Error(
-                                status="401",
-                                code="Missing user id/name",
-                                title="Missing user identification",
-                                detail="Username or user id missing",
-                            )
+                        raise hu.APIUnauthorizedError(
+                            title="Missing user identification",
+                            detail="Username or user id missing",
                         )
 
                     return UserInfo(
@@ -260,25 +321,24 @@ spec:
                     )
 
 
-                def on_template_access(userinfo: UserInfo, template: hu.CheckTemplate) -> bool:
+                def on_template_access(userinfo: UserInfo, template: hu.CheckTemplate) -> None:
                     print("ON TEMPLATE_ACCESS")
 
-                    ## Only bob can use/access unsafe templates
-                    if userinfo["username"] != "bob" and template.id != "simple_ping":
-                        return False
+                    ## Only bob and earthcode can use/access unsafe templates
+                    if userinfo["username"] not in ["bob", "earthcode"] and template.id != "simple_ping":
+                        raise hu.CheckTemplateIdError(template.id)
 
-                    ## Only bob, alice, and eric can access the templates
-                    if userinfo["username"] not in ["bob", "alice", "eric"]:
-                        return False
-
-                    return True
+                    ## Only bob, alice, eric, and earthcode can access the templates
+                    if userinfo["username"] not in ["bob", "alice", "eric", "earthcode"]:
+                        raise hu.CheckTemplateIdError(template.id)
 
 
-                def on_check_create(userinfo: UserInfo, check: hu.InCheckAttributes) -> bool:
+                def on_check_create(userinfo: UserInfo, check: hu.InCheckAttributes) -> None:
                     if userinfo["username"] == "eric" and check.metadata.template_id == "simple_ping":
-                        return False
-
-                    return True
+                        raise hu.APIForbiddenError(
+                            title="Check creation disallowed",
+                            detail="You are not authorized to create this check",
+                        )
 
 
                 ## For the k8s backend
@@ -291,22 +351,31 @@ spec:
                     return "resource-health"
 
 
-                def on_k8s_cronjob_access(
-                    userinfo: UserInfo, client: hu.K8sClient, cronjob: hu.K8sCronJob
-                ) -> bool:
-                    return cronjob.metadata.annotations.get("owner") == userinfo["username"]
+                async def on_k8s_cronjob_access(
+                    userinfo: UserInfo,
+                    check_id: hu.CheckId,
+                    client: hu.K8sClient,
+                    cronjob: hu.K8sCronJob,
+                ) -> None:
+                    print("on_k8s_cronjob_access")
+
+                    if cronjob.metadata.annotations.get("owner") != userinfo["username"]:
+                        raise hu.CheckIdError(check_id)
 
 
                 async def on_k8s_cronjob_create(
                     userinfo: UserInfo, client: hu.K8sClient, cronjob: hu.K8sCronJob
-                ) -> bool:
+                ) -> None:
                     ## Ensure cronjob is tagged with correct owner
 
                     if (
                         "owner" in cronjob.metadata.annotations
                         and cronjob.metadata.annotations["owner"] != userinfo["username"]
                     ):
-                        return False
+                        raise hu.APIForbiddenError(
+                            title="Unauthorized check create",
+                            detail="Permission denied to create health check cronjob",
+                        )
 
                     cronjob.metadata.annotations["owner"] = userinfo["username"]
 
@@ -323,11 +392,12 @@ spec:
 
                     if offline_secret is None:
                         if userinfo['refresh_token'] is None:
-                            raise hu.APIException(hu.Error(
+                            raise hu.APIException(
                                 status="404",
                                 code="MissingOfflineToken",
-                                title="Missing offline token, please create at least one check using the website",
-                            ))
+                                title="Missing Offline Token",
+                                detail="Missing offline token, please create at least one check using the website",
+                            )
                         await hu.create_k8s_secret(
                             client=client,
                             name=secret_name,
@@ -336,8 +406,6 @@ spec:
                                 "offline_token": userinfo['refresh_token']
                             }
                         )
-
-                    return True
 
           web:
             environmentFixed:
@@ -576,6 +644,50 @@ spec:
               userid: "eric"
               annotations:
                 owner: "eric"
+
+          alerting:
+            secretMounts:
+              - name: alert-user-emails
+                secretName: resource-health-alerting-user-emails
+                mountPath: /app/alerting-user-emails
+            environmentFixed:
+              - name: ERROR_TRACES_FILE
+                value: error_traces.sqlite3
+              - name: TRACE_INFOS_FILE
+                value: trace_infos.sqlite3
+              
+              - name: TRACE_RECEIVER_ADDRESS
+                value: "[::]:50051"
+              - name: TRACE_RECEIVER_MAX_WORKERS
+                value: "20"
+              - name: TRACE_RECEIVER_LOG_LEVEL
+                value: INFO
+              
+              - name: EMAIL_COUNTERS
+                value: email_counters.sqlite3
+              - name: MAX_EMAILS_PER_DAY
+                value: "300" # I think gmail allows 500
+              - name: SMTP_MAILER_HOST
+                value: smtp.gmail.com
+              - name: SMTP_MAILER_PORT
+                value: "465"
+              - name: EXECUTE_PERIOD_SECS
+                value: "10"
+              - name: SEND_NOTIF_SECS
+                value: "60"
+              - name: REMOVE_TRACE_SECS
+                value: "600"
+              - name: NOTIFIER_LOG_LEVEL
+                value: DEBUG
+              - name: ALERT_USER_EMAILS
+                value: /app/alerting-user-emails/alert_user_emails.json
+            environmentSecrets:
+              - name: FROM_EMAIL
+                secret: resource-health-notifier-email-credentials
+                key: from_email
+              - name: FROM_EMAIL_PASSWORD
+                secret: resource-health-notifier-email-credentials
+                key: from_email_password
 
   destination:
     namespace: resource-health

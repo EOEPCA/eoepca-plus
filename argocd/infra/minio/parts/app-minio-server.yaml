@@ -18,6 +18,7 @@ spec:
       valuesObject:
         existingSecret: minio-auth
         replicas: 2
+        clusterDomain: cluster.local
         ingress:
           enabled: true
           ingressClassName: apisix

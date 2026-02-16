@@ -1,6 +1,0 @@
-
-resources:
-  - app-registration-api.yaml
-  - app-resource-catalogue.yaml
-  - routes.yaml
-  - iam.yaml

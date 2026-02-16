@@ -1,0 +1,57 @@
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: openeo-route
+  namespace: openeo
+spec:
+  http:
+    # Open access to OpenEO API documentation and discovery endpoints
+    - name: openeo-docs
+      match:
+        hosts:
+          - openeo-eurac.develop.eoepca.org
+        paths:
+          - /*
+        exprs:
+          - subject:
+              scope: Path
+              name: uri
+            op: RegexMatch
+            value: "^/(\\.well-known.*|openeo/1\\.1\\.0/?$|openeo/1\\.1\\.0/\\.well-known.*|openeo/1\\.1\\.0/credentials.*|openeo/1\\.1\\.0/file_formats.*|openeo/1\\.1\\.0/service_types.*|openeo/1\\.1\\.0/udf_runtimes.*|openeo/1\\.1\\.0/collections.*|openeo/1\\.1\\.0/processes.*|openeo/1\\.1\\.0/process_graphs.*|openeo/1\\.1\\.0/conformance.*)"
+      backends:
+        - serviceName: openeo-openeo-argo
+          servicePort: 8000
+      plugins:
+        # Allow CORS access
+        - name: cors
+          enable: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: openeo-tls
+  namespace: openeo
+spec:
+  dnsNames:
+    - openeo-eurac.develop.eoepca.org
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns-prod
+  secretName: openeo-tls
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: openeo
+  namespace: openeo
+spec:
+  hosts:
+    - openeo-eurac.develop.eoepca.org
+  secret:
+    name: openeo-tls
+    namespace: openeo

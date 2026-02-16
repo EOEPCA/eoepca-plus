@@ -1,0 +1,79 @@
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: workspace-api
+  namespace: workspace
+spec:
+  http:
+    - name: workspace-api-no-auth
+      match:
+        hosts:
+          - workspace-api.develop.eoepca.org
+        paths:
+          - "/metrics*"
+          - "/probe*"
+          - "/ui*"
+      backends:
+        - serviceName: workspace-api
+          servicePort: 8080
+      plugins: []
+    - name: workspace-api-debug
+      match:
+        hosts:
+          - workspace-api.develop.eoepca.org
+        paths:
+          - /debug*
+      backends:
+        - serviceName: workspace-api
+          servicePort: 8080
+      plugins:
+        - name: openid-connect
+          enable: true
+          config:
+            discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+            use_jwks: true
+            bearer_only: false
+            set_access_token_header: true
+            access_token_in_authorization_header: true
+            set_id_token_header: true
+            set_userinfo_header: true
+            client_id: workspace-api
+            client_secret: ""
+    - name: workspace-api-docs
+      match:
+        hosts:
+          - workspace-api.develop.eoepca.org
+        paths:
+          - /docs*
+          - /openapi.json*
+      backends:
+        - serviceName: workspace-api
+          servicePort: 8080
+    - name: workspace-api-auth
+      match:
+        hosts:
+          - workspace-api.develop.eoepca.org
+        paths:
+          - /*
+      backends:
+        - serviceName: workspace-api
+          servicePort: 8080
+      plugins:
+        - name: openid-connect
+          enable: true
+          config:
+            discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+            use_jwks: true
+            bearer_only: false
+            set_access_token_header: true
+            access_token_in_authorization_header: true
+            set_id_token_header: false
+            set_userinfo_header: false
+            client_id: workspace-api
+            client_secret: ""
+        - name: opa
+          enable: true
+          config:
+            host: http://iam-opa.iam:8181
+            policy: eoepca/workspace/wsapi

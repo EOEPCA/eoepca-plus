@@ -1,3 +1,5 @@
+nameOverride: "eoapi-stac-manager"
+
 ingress:
   enabled: false
 resources:
@@ -11,12 +13,12 @@ image:
   tag: latest
   pullPolicy: Always
 
-publicUrl: https://eoapi.develop.eoepca.org/manager/
+publicUrl: https://eoapi.develop.eoepca.org/manager
 stacApi: https://eoapi.develop.eoepca.org/stac/
 primaryColor: "#005ACD"
 secondaryColor: "#048A81"
 
 oidc:
-  providerUrl: https://iam-auth.develop.eoepca.org
+  providerUrl: https://eoapi.develop.eoepca.org/auth
   clientId: eoapi
   realm: eoepca

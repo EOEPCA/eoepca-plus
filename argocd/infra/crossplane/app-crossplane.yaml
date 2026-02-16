@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crossplane
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: crossplane
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: deploy-develop
+    path: argocd/infra/crossplane/parts
+  destination:
+    name: in-cluster
+    namespace: infra
+  syncPolicy:
+    automated:
+      prune: false # never prune
+      selfHeal: false # only manual sync
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

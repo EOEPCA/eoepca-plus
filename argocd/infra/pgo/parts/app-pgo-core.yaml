@@ -14,7 +14,7 @@ spec:
       releaseName: pgo
       values: |
         disable_check_for_upgrades: true
-        singleNamespace: true
+        singleNamespace: false
   destination:
     name: in-cluster
     namespace: infra

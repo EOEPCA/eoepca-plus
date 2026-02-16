@@ -1,0 +1,102 @@
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: zoo-route
+  namespace: zoostd
+spec:
+  http:
+    # Backdoor for open access
+    - name: zoostd-open
+      match:
+        hosts:
+          - zoostd-open.develop.eoepca.org
+        paths:
+          - /*
+      backends:
+        - serviceName: zoo-project-dru-std-service
+          servicePort: 80
+      plugins:
+        # Allow CORS access
+        - name: cors
+          enable: true
+    # Open access to zoo OpenAPI docs
+    - name: zoostd-docs
+      match:
+        hosts:
+          - zoostd.develop.eoepca.org
+        paths:
+          - /ogc-api
+          - /ogc-api/
+          - /ogc-api/api*
+          - /swagger-ui*
+          - /conformance*
+      backends:
+        - serviceName: zoo-project-dru-std-service
+          servicePort: 80
+      plugins:
+        # Allow CORS access
+        - name: cors
+          enable: true
+    # Authorized access to zoo API
+    - name: zoostd-protected
+      match:
+        hosts:
+          - zoostd.develop.eoepca.org
+        paths:
+          - /*
+      backends:
+        - serviceName: zoo-project-dru-std-service
+          servicePort: 80
+      plugins:
+        # Authn - expect JWT in `Authorization: Bearer` header
+        - name: openid-connect
+          enable: true
+          config:
+            client_id: "zoo"
+            client_secret: "Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di"
+            discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+            realm: eoepca
+            use_jwks: true
+            bearer_only: false # as we want to redirect to login screen (default: false)
+            set_access_token_header: true  # (default: true)
+            access_token_in_authorization_header: true  # (default: false)
+        # Authz
+        - name: authz-keycloak
+          enable: true
+          config:
+            client_id: "zoo"
+            client_secret: "Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di"
+            discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+            lazy_load_paths: true
+            ssl_verify: false
+        # Allow CORS access
+        - name: cors
+          enable: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: zoostd-tls
+spec:
+  dnsNames:
+    - zoostd.develop.eoepca.org
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns-prod
+  secretName: zoostd-tls
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: zoostd
+spec:
+  hosts:
+    - zoostd.develop.eoepca.org
+  secret:
+    name: zoostd-tls
+    namespace: zoostd

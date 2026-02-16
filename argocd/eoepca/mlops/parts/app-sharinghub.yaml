@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: https://github.com/csgroup-oss/sharinghub.git
     path: deploy/helm/sharinghub
-    targetRevision: "0.4.0"
+    targetRevision: "0.4.1"
     helm:
       releaseName: sharinghub
       valuesObject:
@@ -75,8 +75,8 @@ spec:
                       title: "Modèles IA"
                       description: "Les modèles d'IA sont au cœur de notre plateforme, allez les parcourir pour découvrir nos modèles."
                   features:
-                    map-viewer: enable
-                    store-s3: enable
+                    map-viewer: disable
+                    store-s3: disable
                     mlflow: enable
                     jupyter: enable
               - dataset:
@@ -93,7 +93,7 @@ spec:
                     map-viewer: enable
                     store-s3: enable
                     mlflow: disable
-                    jupyter: enable
+                    jupyter: disable
 
           tags:
             gitlab:

@@ -47,3 +47,10 @@ spec:
     options: CREATEDB CREATEROLE
     password:
       type: AlphaNumeric
+  - databases:
+    - pycsw
+    - postgres
+    name: pycsw
+    options: CREATEDB CREATEROLE
+    password:
+      type: AlphaNumeric

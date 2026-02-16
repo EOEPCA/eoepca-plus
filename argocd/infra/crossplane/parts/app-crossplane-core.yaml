@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: crossplane-core
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  project: eoepca
+  source:
+    repoURL: 'https://charts.crossplane.io/stable'
+    targetRevision: 2.0.2
+    chart: crossplane
+    helm:
+      releaseName: crossplane
+      values: |
+         provider:
+          defaultActivations: {}
+  destination:
+    name: in-cluster
+    namespace: infra
+  syncPolicy:
+    automated:
+      prune: false # never prune
+      selfHeal: false # only manual sync
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

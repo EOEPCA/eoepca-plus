@@ -11,8 +11,7 @@ spec:
   source:
     repoURL: 'https://eoepca.github.io/helm-charts-dev'
     chart: registration-api
-    targetRevision: 2.0.0-rc2
-
+    targetRevision: 2.0.0-rc4
     helm:
       releaseName: registration-api
       valuesObject:
@@ -21,10 +20,16 @@ spec:
         ingress:
           enabled: false
         pygeoapi:
+          name: pygeoapi
           image:
             repository: eoepca/registration-api
             # pullPolicy: Always
             # tag: "latest"
+          secret:
+            name: "registration-api-secret"
+          iam_endpoint: "https://iam-auth.develop.eoepca.org"
+          iam_realm: "eoepca"
+          iam_grant_type: "client_credentials"
           config:
             server:
               url: https://registration-api.develop.eoepca.org

@@ -58,31 +58,27 @@ def get_cql2_filters(
             else:
                 for name in group_names:
                     # We expect group names in the format of '/dss/{group_prefix}(-ro)?'
-                    if any(
-                        (
-                            # Groups should begin with /dss/
-                            not name.startswith("/dss/"),
-                            # Collection IDs should contain '-dss-'
-                            "-dss-" not in name,
-                            # Ignore manager groups
-                            name.endswith("-mgr"),
-                        )
-                    ):
-                        logger.debug(
-                            "Ignoring group name '%s' as it does not match expected format",
-                            name,
-                        )
+                    if not name.startswith("/dss/"):
+                        logger.debug("Ignoring group '%s': missing /dss/ prefix", name)
                         continue
 
-                    # Strip the '/dss/' prefix
-                    name = name[len("/dss/") :]
+                    # Strip the '/dss/' prefix, then validate the remainder
+                    group_id = name[len("/dss/"):]
 
-                    if name.endswith("-ro"):
+                    if "-dss-" not in group_id:
+                        logger.debug("Ignoring group '%s': missing -dss- infix", name)
+                        continue
+
+                    if group_id.endswith("-mgr"):
+                        logger.debug("Ignoring group '%s': manager group", name)
+                        continue
+
+                    if group_id.endswith("-ro"):
                         if not is_write:
-                            prefixes.add(name[: -len("-ro")])
+                            prefixes.add(group_id[:-len("-ro")])
                         # else: skip — read-only groups grant no write access
                     else:
-                        prefixes.add(name)
+                        prefixes.add(group_id)
         else:
             logger.warning("No 'groups' claim found in token")
 

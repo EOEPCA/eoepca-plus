@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: notification-automation-helm
+  namespace: argocd
+  labels:
+    eoepca/app-name: notification-automation
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: https://github.com/EOEPCA/helm-charts-dev.git
+    targetRevision: latest
+    path: charts/notification-automation
+    helm:
+      releaseName: notification-automation
+  destination:
+    name: in-cluster
+    namespace: na
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

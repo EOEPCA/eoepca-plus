@@ -10,7 +10,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/helm-charts-dev.git
-    targetRevision: latest
+    targetRevision: develop
     path: charts/notification-automation
     helm:
       releaseName: notification-automation

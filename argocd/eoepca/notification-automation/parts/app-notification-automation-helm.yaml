@@ -14,7 +14,7 @@ spec:
     path: charts/notification-automation
     helm:
       releaseName: notification-automation
-      values:
+      parameters:
         - name: serving.install
           value: "true"
         - name: eventing.install

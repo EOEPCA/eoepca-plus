@@ -14,6 +14,25 @@ spec:
     path: charts/notification-automation
     helm:
       releaseName: notification-automation
+      parameters:
+        - name: serving.install
+          value: "false"
+        - name: eventing.install
+          value: "false"
+        - name: eventing.authenticationOidc
+          value: "false"
+        - name: webhookSource.enabled
+          value: "true"
+        - name: webhookSource.secrets.create
+          value: "true"
+        - name: webhookSource.secrets.githubSecret
+          value: "123abc123"
+        - name: webhookSource.sinkBinding.create
+          value: "true"
+        - name: cloudEventsPlayer.enabled
+          value: "true"
+        - name: cloudEventsPlayer.subscribeBroker.enabled
+          value: "true"
   destination:
     name: in-cluster
     namespace: na

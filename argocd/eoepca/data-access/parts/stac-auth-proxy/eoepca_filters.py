@@ -8,14 +8,6 @@ logger = logging.getLogger(__name__)
 _SAFE_PREFIX_RE = re.compile(r"^[A-Za-z0-9_\-]+$")
 
 
-"""
-Rules:
-
-- Public Collections: Any collection without a '.' in the ID is considered "public"
-
-"""
-
-
 def get_cql2_filters(
     *,
     collection_prop: Literal["id", "collection"],
@@ -24,10 +16,6 @@ def get_cql2_filters(
 ) -> str:
     """
     Extract collection prefixes from a user's token claims.
-
-    Groups are expected in one of the following formats:
-    - /dss/{group_id}          — grants read and write access
-    - /dss/{group_id}-ro       — grants read-only access (ignored during write checks)
 
     :param collection_prop: The property name to filter on (e.g., "id" for collections, "collection" for items).
     :param is_write: Whether to generate filters for write access (True) or read access (False).
@@ -51,6 +39,9 @@ def get_cql2_filters(
             logger.warning("No 'preferred_username' claim found in token")
 
         if group_names := token.get("groups"):
+            # Groups are expected in one of the following formats:
+            # - /dss/{group_id}          — grants read and write access
+            # - /dss/{group_id}-ro       — grants read-only access (ignored during write checks)
             if not isinstance(group_names, list):
                 logger.warning(
                     "Expected 'groups' claim to be a list, got %s", type(group_names)
@@ -63,7 +54,7 @@ def get_cql2_filters(
                         continue
 
                     # Strip the '/dss/' prefix, then validate the remainder
-                    group_id = name[len("/dss/"):]
+                    group_id = name[len("/dss/") :]
 
                     if "-dss-" not in group_id:
                         logger.debug("Ignoring group '%s': missing -dss- infix", name)
@@ -75,7 +66,7 @@ def get_cql2_filters(
 
                     if group_id.endswith("-ro"):
                         if not is_write:
-                            prefixes.add(group_id[:-len("-ro")])
+                            prefixes.add(group_id[: -len("-ro")])
                         # else: skip — read-only groups grant no write access
                     else:
                         prefixes.add(group_id)
@@ -84,9 +75,7 @@ def get_cql2_filters(
 
         for prefix in prefixes:
             if not _SAFE_PREFIX_RE.match(prefix):
-                logger.warning(
-                    "Ignoring prefix with unsafe characters: %r", prefix
-                )
+                logger.warning("Ignoring prefix with unsafe characters: %r", prefix)
                 continue
             policies.add(f"{collection_prop} LIKE '{prefix}.%'")
 
@@ -96,7 +85,6 @@ def get_cql2_filters(
 
 @dataclasses.dataclass
 class CollectionsFilter:
-
     async def __call__(self, context: dict[str, Any]) -> str:
         token = context.get("payload")
         if not token:

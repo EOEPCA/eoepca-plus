@@ -191,6 +191,52 @@ class TestCollectionsFilter:
         ), "public access should work without groups claim"
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "username",
+        [
+            pytest.param("' OR 1=1 --", id="sql-injection-style"),
+            pytest.param("alice'bob", id="embedded-single-quote"),
+            pytest.param("alice.bob", id="dot-in-username"),
+            pytest.param("alice bob", id="space-in-username"),
+        ],
+    )
+    async def test_unsafe_username_is_rejected(self, username):
+        """Usernames with unsafe characters must not be interpolated into CQL2."""
+        token = {"preferred_username": username}
+        filt = await CollectionsFilter()({"payload": token})
+        # Should only contain the public-collection policy, no user prefix
+        assert cql2_matches(
+            filt, {"id": "public"}
+        ), "public access should still work with unsafe username"
+        assert not cql2_matches(
+            filt, {"id": f"{username}.data"}
+        ), f"unsafe username {username!r} should not produce a filter granting access"
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "group,derived_prefix",
+        [
+            pytest.param("/dss/org-dss-t'eam", "org-dss-t'eam", id="single-quote"),
+            pytest.param("/dss/org-dss-t eam", "org-dss-t eam", id="space"),
+            pytest.param(
+                "/dss/' OR 1=1-dss- --",
+                "' OR 1=1-dss- --",
+                id="cql2-injection",
+            ),
+        ],
+    )
+    async def test_unsafe_group_prefix_is_rejected(self, group, derived_prefix):
+        """Group names that yield unsafe prefixes must not be interpolated into CQL2."""
+        token = {"preferred_username": "alice", "groups": [group]}
+        filt = await CollectionsFilter()({"payload": token})
+        assert not cql2_matches(
+            filt, {"id": f"{derived_prefix}.data"}
+        ), f"unsafe group {group!r} should not produce a filter granting access"
+        assert cql2_matches(
+            filt, {"id": "alice.data"}
+        ), "username-based access should still work despite unsafe group"
+
+    @pytest.mark.asyncio
     async def test_empty_groups_list_grants_no_group_access(self):
         """An empty groups list contributes no extra collection prefixes."""
         token = {"preferred_username": "alice", "groups": []}

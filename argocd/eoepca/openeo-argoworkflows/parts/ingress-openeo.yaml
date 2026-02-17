@@ -26,6 +26,34 @@ spec:
         # Allow CORS access
         - name: cors
           enable: true
+    # Authorized access to OpenEO protected endpoints (jobs, files)
+    - name: openeo-protected
+      match:
+        hosts:
+          - openeo-eurac.develop.eoepca.org
+        paths:
+          - /openeo/1.1.0/jobs*
+          - /openeo/1.1.0/files*
+          - /openeo/1.1.0/me*
+      backends:
+        - serviceName: openeo-openeo-argo
+          servicePort: 8000
+      plugins:
+        # Authn - expect JWT in Authorization: Bearer header
+        - name: openid-connect
+          enable: true
+          config:
+            client_id: "openeo-apisix"
+            client_secret: "fdeb5f95-b913-45f9-8736-afb618601ad3"
+            discovery: "https://edp-portal.eurac.edu/auth/realms/edp/.well-known/openid-configuration"
+            realm: edp
+            use_jwks: true
+            bearer_only: false
+            set_access_token_header: true
+            access_token_in_authorization_header: true
+        # Allow CORS access
+        - name: cors
+          enable: true
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate

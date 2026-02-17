@@ -48,7 +48,7 @@ spec:
             discovery: "https://edp-portal.eurac.edu/auth/realms/edp/.well-known/openid-configuration"
             realm: edp
             use_jwks: true
-            bearer_only: false
+            bearer_only: true
             set_access_token_header: true
             access_token_in_authorization_header: true
         # Allow CORS access

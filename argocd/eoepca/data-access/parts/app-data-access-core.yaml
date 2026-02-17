@@ -20,7 +20,7 @@ spec:
 
     - repoURL: https://github.com/sentinel-hub/titiler-openeo
       path: deployment/k8s/charts
-      targetRevision: v0.12.0
+      targetRevision: titiler-openeo-v0.12.0
       helm:
         releaseName: eoapi-titiler-openeo
         values: |

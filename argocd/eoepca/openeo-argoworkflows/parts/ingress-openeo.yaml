@@ -39,46 +39,29 @@ spec:
         - serviceName: openeo-openeo-argo
           servicePort: 8000
       plugins:
-        # Step 1: Extract raw JWT from 'Bearer oidc/<provider>/<jwt>' and stash
-        # the original header in X-Openeo-Auth before APISIX validates.
+        # Extract raw JWT from OpenEO's 'Bearer oidc/<provider>/<jwt>' format,
+        # validate it via Keycloak JWKS, then restore the original header for the backend.
         - name: serverless-pre-function
           enable: true
           config:
-            phase: rewrite
+            phase: access
             functions:
               - "return function(conf, ctx)
                   local core = require('apisix.core')
+                  local http = require('resty.http')
+                  local cjson = require('cjson')
                   local auth = core.request.header(ctx, 'Authorization') or ''
                   local jwt = auth:match('^[Bb]earer%s+oidc/[^/]+/(.+)$')
-                  if jwt then
-                    core.request.set_header(ctx, 'X-Openeo-Auth', auth)
-                    core.request.set_header(ctx, 'Authorization', 'Bearer ' .. jwt)
+                  if not jwt then
+                    core.response.exit(401, 'Unauthorized')
                   end
-                end"
-        # Step 2: Validate the raw JWT via JWKS
-        - name: openid-connect
-          enable: true
-          config:
-            client_id: "openeo-apisix"
-            client_secret: "fdeb5f95-b913-45f9-8736-afb618601ad3"
-            discovery: "https://edp-portal.eurac.edu/auth/realms/edp/.well-known/openid-configuration"
-            realm: edp
-            use_jwks: true
-            bearer_only: true
-            set_access_token_header: false
-            access_token_in_authorization_header: false
-        # Step 3: Restore original OpenEO Authorization header for the backend
-        - name: serverless-pre-function
-          enable: true
-          config:
-            phase: before_proxy
-            functions:
-              - "return function(conf, ctx)
-                  local core = require('apisix.core')
-                  local original = core.request.header(ctx, 'X-Openeo-Auth')
-                  if original then
-                    core.request.set_header(ctx, 'Authorization', original)
-                    core.request.set_header(ctx, 'X-Openeo-Auth', nil)
+                  local httpc = http.new()
+                  local res, err = httpc:request_uri(
+                    'https://edp-portal.eurac.edu/auth/realms/edp/protocol/openid-connect/userinfo',
+                    { method = 'GET', headers = { Authorization = 'Bearer ' .. jwt }, ssl_verify = false }
+                  )
+                  if not res or res.status ~= 200 then
+                    core.response.exit(401, 'Unauthorized')
                   end
                 end"
         # Allow CORS access

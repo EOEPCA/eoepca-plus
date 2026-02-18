@@ -39,9 +39,8 @@ spec:
         - serviceName: openeo-openeo-argo
           servicePort: 8000
       plugins:
-        # Extract raw JWT from OpenEO's 'Bearer oidc/<provider>/<jwt>' format
-        # and place it in X-Real-Token for openid-connect to validate,
-        # while preserving the original Authorization header for the backend.
+        # Step 1: Extract raw JWT from 'Bearer oidc/<provider>/<jwt>' and stash
+        # the original header in X-Openeo-Auth before APISIX validates.
         - name: serverless-pre-function
           enable: true
           config:
@@ -50,16 +49,13 @@ spec:
               - "return function(conf, ctx)
                   local core = require('apisix.core')
                   local auth = core.request.header(ctx, 'Authorization') or ''
-                  -- Match 'Bearer oidc/<provider>/<jwt>'
                   local jwt = auth:match('^[Bb]earer%s+oidc/[^/]+/(.+)$')
                   if jwt then
-                    core.request.set_header(ctx, 'X-Real-Token', jwt)
-                    -- Temporarily set Authorization to raw Bearer for openid-connect
+                    core.request.set_header(ctx, 'X-Openeo-Auth', auth)
                     core.request.set_header(ctx, 'Authorization', 'Bearer ' .. jwt)
-                    ngx.ctx._openeo_original_auth = auth
                   end
                 end"
-        # Validate the raw JWT via JWKS
+        # Step 2: Validate the raw JWT via JWKS
         - name: openid-connect
           enable: true
           config:
@@ -71,17 +67,18 @@ spec:
             bearer_only: true
             set_access_token_header: false
             access_token_in_authorization_header: false
-        # Restore original Authorization header before forwarding to backend
+        # Step 3: Restore original OpenEO Authorization header for the backend
         - name: serverless-pre-function
           enable: true
           config:
-            phase: access
+            phase: before_proxy
             functions:
               - "return function(conf, ctx)
                   local core = require('apisix.core')
-                  local original = ngx.ctx._openeo_original_auth
+                  local original = core.request.header(ctx, 'X-Openeo-Auth')
                   if original then
                     core.request.set_header(ctx, 'Authorization', original)
+                    core.request.set_header(ctx, 'X-Openeo-Auth', nil)
                   end
                 end"
         # Allow CORS access

@@ -39,7 +39,7 @@ spec:
         - serviceName: openeo-openeo-argo
           servicePort: 8000
       plugins:
-        # Authn - expect JWT in Authorization: Bearer header
+        # Authn - validate JWT via JWKS and pass original Authorization header through
         - name: openid-connect
           enable: true
           config:
@@ -49,8 +49,8 @@ spec:
             realm: edp
             use_jwks: true
             bearer_only: true
-            set_access_token_header: true
-            access_token_in_authorization_header: true
+            set_access_token_header: false
+            access_token_in_authorization_header: false
         # Allow CORS access
         - name: cors
           enable: true

@@ -39,7 +39,27 @@ spec:
         - serviceName: openeo-openeo-argo
           servicePort: 8000
       plugins:
-        # Authn - validate JWT via JWKS and pass original Authorization header through
+        # Extract raw JWT from OpenEO's 'Bearer oidc/<provider>/<jwt>' format
+        # and place it in X-Real-Token for openid-connect to validate,
+        # while preserving the original Authorization header for the backend.
+        - name: serverless-pre-function
+          enable: true
+          config:
+            phase: rewrite
+            functions:
+              - "return function(conf, ctx)
+                  local core = require('apisix.core')
+                  local auth = core.request.header(ctx, 'Authorization') or ''
+                  -- Match 'Bearer oidc/<provider>/<jwt>'
+                  local jwt = auth:match('^[Bb]earer%s+oidc/[^/]+/(.+)$')
+                  if jwt then
+                    core.request.set_header(ctx, 'X-Real-Token', jwt)
+                    -- Temporarily set Authorization to raw Bearer for openid-connect
+                    core.request.set_header(ctx, 'Authorization', 'Bearer ' .. jwt)
+                    ngx.ctx._openeo_original_auth = auth
+                  end
+                end"
+        # Validate the raw JWT via JWKS
         - name: openid-connect
           enable: true
           config:
@@ -51,6 +71,19 @@ spec:
             bearer_only: true
             set_access_token_header: false
             access_token_in_authorization_header: false
+        # Restore original Authorization header before forwarding to backend
+        - name: serverless-pre-function
+          enable: true
+          config:
+            phase: access
+            functions:
+              - "return function(conf, ctx)
+                  local core = require('apisix.core')
+                  local original = ngx.ctx._openeo_original_auth
+                  if original then
+                    core.request.set_header(ctx, 'Authorization', original)
+                  end
+                end"
         # Allow CORS access
         - name: cors
           enable: true

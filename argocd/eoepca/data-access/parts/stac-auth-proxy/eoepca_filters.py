@@ -29,15 +29,16 @@ def get_cql2_filters(
     policies.add("1=0")
 
     # Public Collections: Any collection without a prefix (ie no '.' in the ID) is considered "public"
-    policies.add(f"{collection_prop} NOT LIKE '%.%'")
+    if not is_write:
+        policies.add(f"{collection_prop} NOT LIKE '%.%'")
 
-    # Authenticated users can access
+    # Private Collections: Authenticated users can access collections based on their username and group memberships
     if token:
-        prefixes = set()
+        allowed_prefixes = set()
 
         # Users can read/write any collection prefixed with their username
         if user_id := token.get("preferred_username"):
-            prefixes.add(user_id)
+            allowed_prefixes.add(user_id)
         else:
             logger.warning("No 'preferred_username' claim found in token")
 
@@ -69,14 +70,14 @@ def get_cql2_filters(
 
                     if group_id.endswith("-ro"):
                         if not is_write:
-                            prefixes.add(group_id[: -len("-ro")])
+                            allowed_prefixes.add(group_id[: -len("-ro")])
                         # else: skip — read-only groups grant no write access
                     else:
-                        prefixes.add(group_id)
+                        allowed_prefixes.add(group_id)
         else:
             logger.warning("No 'groups' claim found in token")
 
-        for prefix in prefixes:
+        for prefix in allowed_prefixes:
             if not _SAFE_PREFIX_RE.match(prefix):
                 logger.warning("Ignoring prefix with unsafe characters: %r", prefix)
                 continue
@@ -84,6 +85,28 @@ def get_cql2_filters(
 
     # Combine policies with OR, as any policy being true should allow access
     return " OR ".join(policies)
+
+
+def is_write_request(req: dict) -> bool:
+    """
+    Determine if the incoming request is a write operation based on its method and path.
+
+    Read operations:
+    - GET, HEAD, OPTIONS — always reads
+    - POST to /search — this is a read (STAC uses POST for complex search queries)
+
+    Write operations:
+    - POST (to non-search endpoints, e.g. creating items/collections)
+    - PUT, PATCH, DELETE
+    """
+    method = req["method"].upper()
+    path = req["path"]
+
+    if method in ("GET", "HEAD", "OPTIONS"):
+        return False
+    if method == "POST" and path.rstrip("/").endswith("/search"):
+        return False
+    return True  # POST (non-search), PUT, PATCH, DELETE
 
 
 @dataclasses.dataclass
@@ -94,7 +117,7 @@ class CollectionsFilter:
             logger.debug("No token found in context, unauthenticated access")
         return get_cql2_filters(
             collection_prop="id",
-            is_write=False,  # TODO: Support write policies
+            is_write=is_write_request(context["req"]),
             token=token,
         )
 
@@ -107,6 +130,6 @@ class ItemsFilter:
             logger.debug("No token found in context, unauthenticated access")
         return get_cql2_filters(
             collection_prop="collection",
-            is_write=False,  # TODO: Support write policies
+            is_write=is_write_request(context["req"]),
             token=token,
         )

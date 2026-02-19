@@ -25,9 +25,6 @@ def get_cql2_filters(
     """
     policies = set()
 
-    # IMPORTANT: We start with a policy that denies all access, then add exceptions below
-    policies.add("1=0")
-
     # Public Collections: Any collection without a prefix (ie no '.' in the ID) is considered "public"
     if not is_write:
         policies.add(f"{collection_prop} NOT LIKE '%.%'")
@@ -84,7 +81,8 @@ def get_cql2_filters(
             policies.add(f"{collection_prop} LIKE '{prefix}.%'")
 
     # Combine policies with OR, as any policy being true should allow access
-    return " OR ".join(policies)
+    # If no policies, return a filter that denies all access
+    return " OR ".join(policies) or "1=0"
 
 
 def is_write_request(req: dict) -> bool:

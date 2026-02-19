@@ -25,6 +25,9 @@ def get_cql2_filters(
     """
     policies = set()
 
+    # IMPORTANT: We start with a policy that denies all access, then add exceptions below
+    policies.add("1=0")
+
     # Public Collections: Any collection without a prefix (ie no '.' in the ID) is considered "public"
     policies.add(f"{collection_prop} NOT LIKE '%.%'")
 

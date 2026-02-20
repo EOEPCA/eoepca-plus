@@ -1,33 +1,41 @@
 from typing import Any, Literal, Optional
 import dataclasses
 import logging
-import re
 
 logger = logging.getLogger(__name__)
-
-_SAFE_PREFIX_RE = re.compile(r"^[A-Za-z0-9_\-]+$")
 
 
 def get_cql2_filters(
     *,
     collection_prop: Literal["id", "collection"],
     is_write: bool,
-    token: Optional[dict[str, Any]],
-) -> str:
+    token: Optional[dict],
+) -> dict:
     """
-    Extract collection prefixes from a user's token claims.
+    Build a CQL2-JSON filter expression based on a user's token claims.
+
+    Returns a CQL2-JSON dict (not CQL2-text) so that user-supplied values are
+    always in the value position of a structured expression, avoiding any
+    possibility of CQL2 injection.
 
     :param collection_prop: The property name to filter on (e.g., "id" for collections, "collection" for items).
     :param is_write: Whether to generate filters for write access (True) or read access (False).
     :param token: The user's authentication token containing claims. None for unauthenticated users.
 
-    :return: A set of collection prefixes that the user has access to.
+    :return: A CQL2-JSON filter dict that restricts access based on the user's claims.
     """
-    policies = set()
+    policies: list[dict] = []
 
     # Public Collections: Any collection without a prefix (ie no '.' in the ID) is considered "public"
     if not is_write:
-        policies.add(f"{collection_prop} NOT LIKE '%.%'")
+        policies.append(
+            {
+                "op": "not",
+                "args": [
+                    {"op": "like", "args": [{"property": collection_prop}, "%.%"]}
+                ],
+            }
+        )
 
     # Private Collections: Authenticated users can access collections based on their username and group memberships
     if token:
@@ -74,15 +82,18 @@ def get_cql2_filters(
         else:
             logger.warning("No 'groups' claim found in token")
 
-        for prefix in allowed_prefixes:
-            if not _SAFE_PREFIX_RE.match(prefix):
-                logger.warning("Ignoring prefix with unsafe characters: %r", prefix)
-                continue
-            policies.add(f"{collection_prop} LIKE '{prefix}.%'")
+        for prefix in sorted(allowed_prefixes):
+            policies.append(
+                {"op": "like", "args": [{"property": collection_prop}, f"{prefix}.%"]}
+            )
 
     # Combine policies with OR, as any policy being true should allow access
     # If no policies, return a filter that denies all access
-    return " OR ".join(policies) or "1=0"
+    if not policies:
+        return {"op": "=", "args": [1, 0]}
+    if len(policies) == 1:
+        return policies[0]
+    return {"op": "or", "args": policies}
 
 
 def is_write_request(req: dict) -> bool:
@@ -109,7 +120,8 @@ def is_write_request(req: dict) -> bool:
 
 @dataclasses.dataclass
 class CollectionsFilter:
-    async def __call__(self, context: dict[str, Any]) -> str:
+
+    async def __call__(self, context: dict) -> dict:
         token = context.get("payload")
         if not token:
             logger.debug("No token found in context, unauthenticated access")
@@ -122,7 +134,8 @@ class CollectionsFilter:
 
 @dataclasses.dataclass
 class ItemsFilter:
-    async def __call__(self, context: dict[str, Any]) -> str:
+
+    async def __call__(self, context: dict) -> dict:
         token = context.get("payload")
         if not token:
             logger.debug("No token found in context, unauthenticated access")

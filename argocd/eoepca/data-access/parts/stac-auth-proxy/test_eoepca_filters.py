@@ -8,9 +8,9 @@ _READ_REQ = {"method": "GET", "path": "/collections"}
 _WRITE_REQ = {"method": "POST", "path": "/collections"}
 
 
-def cql2_matches(cql2_text: str, item: dict) -> bool:
-    """Parse a CQL2-text expression and test it against an item dict."""
-    expr = Expr(cql2_text)
+def cql2_matches(cql2_json: dict, item: dict) -> bool:
+    """Parse a CQL2-JSON expression and test it against an item dict."""
+    expr = Expr(cql2_json)
     expr.validate()
     return expr.matches(item)
 

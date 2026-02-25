@@ -4,6 +4,7 @@ metadata:
   name: registration-harvester-api
   namespace: registration-harvester-api
 spec:
+  ingressClassName: apisix
   http:
     # 1. Redirect to /flowable-rest/
     - name: redirect-root

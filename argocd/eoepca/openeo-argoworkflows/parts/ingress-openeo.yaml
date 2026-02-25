@@ -5,6 +5,7 @@ metadata:
   name: openeo-route
   namespace: openeo
 spec:
+  ingressClassName: apisix
   http:
     # Open access to OpenEO API documentation and discovery endpoints
     - name: openeo-docs

@@ -13,6 +13,7 @@ metadata:
   name: mlflow-sharinghub
   namespace: sharinghub
 spec:
+  ingressClassName: apisix
   http:
   - name: mlflow-sharinghub
     match:

@@ -5,6 +5,7 @@ metadata:
   name: zoo-route
   namespace: zookeda
 spec:
+  ingressClassName: apisix
   http:
     # Backdoor for open access
     - name: zookeda-open
@@ -55,6 +56,8 @@ spec:
           config:
             client_id: "zoo"
             client_secret: "Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di"
+            session:
+              secret: "bP94lsupw4bhsYPQpx6KjQbo"
             discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
             realm: eoepca
             use_jwks: true

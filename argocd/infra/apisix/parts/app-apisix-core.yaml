@@ -16,6 +16,7 @@ spec:
         releaseName: apisix
         valueFiles:
           - $values/argocd/infra/apisix/parts/values/apisix-values.yaml
+        skipCrds: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

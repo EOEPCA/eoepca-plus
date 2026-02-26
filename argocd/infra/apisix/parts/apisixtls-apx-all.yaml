@@ -8,6 +8,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
 spec:
+  ingressClassName: apisix
   hosts:
     - "*.develop.eoepca.org"
   secret:

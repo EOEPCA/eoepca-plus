@@ -99,6 +99,7 @@ kind: ApisixTls
 metadata:
   name: zoo
 spec:
+  ingressClassName: apisix
   hosts:
     - zoo.develop.eoepca.org
   secret:

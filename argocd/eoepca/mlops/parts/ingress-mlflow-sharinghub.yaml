@@ -62,6 +62,7 @@ metadata:
   name: mlflow-sharinghub-tls
   namespace: sharinghub
 spec:
+  ingressClassName: apisix
   hosts:
     - develop.eoepca.org
   secret:

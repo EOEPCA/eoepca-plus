@@ -98,6 +98,7 @@ kind: ApisixTls
 metadata:
   name: zoostd
 spec:
+  ingressClassName: apisix
   hosts:
     - zoostd.develop.eoepca.org
   secret:

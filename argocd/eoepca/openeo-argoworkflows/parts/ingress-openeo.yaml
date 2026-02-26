@@ -92,6 +92,7 @@ metadata:
   name: openeo
   namespace: openeo
 spec:
+  ingressClassName: apisix
   hosts:
     - openeo-eurac.develop.eoepca.org
   secret:

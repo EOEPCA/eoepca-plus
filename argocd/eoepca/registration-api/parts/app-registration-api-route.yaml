@@ -79,6 +79,7 @@ metadata:
   name: registration-api-tls
   namespace: rm
 spec:
+  ingressClassName: apisix
   hosts:
     - registration-api-protected.develop.eoepca.org
     - registration-api.develop.eoepca.org

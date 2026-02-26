@@ -57,6 +57,7 @@ metadata:
   name: registration-harvester-api-tls
   namespace: registration-harvester-api
 spec:
+  ingressClassName: apisix
   hosts:
     - registration-harvester-api.develop.eoepca.org
   secret:

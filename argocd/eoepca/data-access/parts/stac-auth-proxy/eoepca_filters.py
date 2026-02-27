@@ -1,8 +1,11 @@
 from typing import Any, Literal, Optional
 import dataclasses
 import logging
+import re
 
 logger = logging.getLogger(__name__)
+
+_SAFE_PREFIX_RE = re.compile(r"^[A-Za-z0-9_\-]+$")
 
 
 def get_cql2_filters(
@@ -83,6 +86,11 @@ def get_cql2_filters(
             logger.warning("No 'groups' claim found in token")
 
         for prefix in sorted(allowed_prefixes):
+            if not _SAFE_PREFIX_RE.match(prefix):
+                logger.warning(
+                    "Skipping unsafe prefix '%s' derived from token claims", prefix
+                )
+                continue
             policies.append(
                 {"op": "like", "args": [{"property": collection_prop}, f"{prefix}.%"]}
             )

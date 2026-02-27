@@ -346,6 +346,7 @@ class TestCollectionsFilter:
         """Usernames with unsafe characters must not be interpolated into CQL2."""
         token = {"preferred_username": username}
         filt = await CollectionsFilter()({"payload": token, "req": _READ_REQ})
+        print("Generated filter:", filt)
         assert cql2_matches(
             filt, {"id": "public"}
         ), "public access should still work with unsafe username"

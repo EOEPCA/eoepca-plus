@@ -1,0 +1,36 @@
+---
+# Rclone credentials secret for MinIO-backed workspace storage.
+# The rclone CSI driver reads these to mount the S3 bucket as a filesystem.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: openeo-rclone-secret
+  namespace: openeo
+stringData:
+  remote: "s3"
+  remotePath: "openeo-workspace"
+  configData: |
+    [s3]
+    type = s3
+    provider = Other
+    env_auth = false
+    endpoint = https://minio.develop.eoepca.org
+    region = eoepca-demo
+    access_key_id = ""
+    secret_access_key = ""
+---
+# PVC backed by the rclone CSI driver so both the API and executor pods
+# can read/write job results via the platform MinIO storage.
+# The helm chart always references this PVC by name "openeo-workspace".
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openeo-workspace
+  namespace: openeo
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: rclone
+  resources:
+    requests:
+      storage: 8Gi

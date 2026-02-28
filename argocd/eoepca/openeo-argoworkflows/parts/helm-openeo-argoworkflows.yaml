@@ -77,7 +77,10 @@ spec:
             memory: 256Mi
 
         persistence:
-          existingClaim: openeo-workspace
+          storageClassName: managed-nfs-storage-retain
+          accessModes:
+            - ReadWriteMany
+          capacity: "8Gi"
 
         autoscaling:
           enabled: false

@@ -76,12 +76,6 @@ spec:
             cpu: 250m
             memory: 256Mi
 
-        persistence:
-          storageClassName: managed-nfs-storage-retain
-          accessModes:
-            - ReadWriteMany
-          capacity: "8Gi"
-
         autoscaling:
           enabled: false
 

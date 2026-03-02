@@ -51,6 +51,10 @@ spec:
                   local core = require('apisix.core')
                   local http = require('resty.http')
                   local cjson = require('cjson')
+                  local uri_args = core.request.get_uri_args(ctx)
+                  if uri_args and uri_args['Signature'] then
+                    return
+                  end
                   local auth = core.request.header(ctx, 'Authorization') or ''
                   local jwt = auth:match('^[Bb]earer%s+oidc/[^/]+/(.+)$')
                   if not jwt then

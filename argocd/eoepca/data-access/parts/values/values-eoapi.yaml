@@ -61,6 +61,8 @@ stac:
   settings:
     envVars:
       ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
+      STAC_FASTAPI_TITLE: "EOEPCA STAC API"
+      STAC_FASTAPI_DESCRIPTION: "A STAC Catalog for the Earth Observation Exploitation Platform Common Architecture (EOEPCA)"
     resources:
       limits:
         cpu: "1280m"
@@ -131,6 +133,11 @@ stac-auth-proxy:
         "^/_mgmt/ping": ["GET"]
       }
     ROOT_PATH: ""
+    SWAGGER_UI_INIT_OAUTH: |
+      {
+        "clientId": "eoapi", 
+        "usePkceWithAuthorizationCodeGrant": true
+      }
   extraVolumes:
     - name: filters
       configMap:

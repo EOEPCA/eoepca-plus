@@ -40,7 +40,7 @@ spec:
       name: apisix-ingress-controller-webhook
       namespace: ingress-apisix
       jqPathExpressions:
-        - '.spec.webhooks.[].clientConfig.caBundle'
+        - '.spec.webhooks[].clientConfig.caBundle'
 #    - group: ""
 #      kind: Secret
 #      name: apisix-etcd-jwt-token

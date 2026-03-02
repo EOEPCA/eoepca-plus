@@ -61,6 +61,7 @@ stac:
   settings:
     envVars:
       ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
+
     resources:
       limits:
         cpu: "1280m"
@@ -115,8 +116,8 @@ stac-auth-proxy:
   service:
     port: 8080
   env:
-    UPSTREAM_URL: "http://eoapi-stac.data-access.svc.cluster.local:8080"
-    OIDC_DISCOVERY_URL: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+    UPSTREAM_URL: http://eoapi-stac.data-access.svc.cluster.local:8080
+    OIDC_DISCOVERY_URL: https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration
     COLLECTIONS_FILTER_CLS: stac_auth_proxy.eoepca_filters:CollectionsFilter
     ITEMS_FILTER_CLS: stac_auth_proxy.eoepca_filters:ItemsFilter
     ALLOWED_JWT_AUDIENCES: eoapi
@@ -130,7 +131,8 @@ stac-auth-proxy:
         "^/healthz": ["GET"],
         "^/_mgmt/ping": ["GET"]
       }
-    ROOT_PATH: ""
+    ROOT_PATH: /stac
+    SWAGGER_UI_INIT_OAUTH: {"clientId": "eoapi", "usePkceWithAuthorizationCodeGrant": true}
   extraVolumes:
     - name: filters
       configMap:

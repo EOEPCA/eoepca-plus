@@ -31,16 +31,28 @@ spec:
         - .spec.versions[].additionalPrinterColumns[].priority | select(. == 0)
     - group: ""
       kind: Secret
-      name: apisix-etcd-jwt-token
+      name: apisix-ingress-controller-webhook-cert
       namespace: ingress-apisix
       jsonPointers:
         - /data
     - group: apps
-      kind: StatefulSet
-      name: apisix-etcd
+      kind: ValidatingWebhookConfiguration
+      name: apisix-ingress-controller-webhook
       namespace: ingress-apisix
       jqPathExpressions:
-        - '.spec.template.metadata.annotations["checksum/token-secret"]'
+        - '.spec.webhooks.[].clientConfig.caBundle'
+#    - group: ""
+#      kind: Secret
+#      name: apisix-etcd-jwt-token
+#      namespace: ingress-apisix
+#      jsonPointers:
+#        - /data
+#    - group: apps
+#      kind: StatefulSet
+#      name: apisix-etcd
+#      namespace: ingress-apisix
+#      jqPathExpressions:
+#        - '.spec.template.metadata.annotations["checksum/token-secret"]'
   syncPolicy:
     # automated:
     #   prune: true

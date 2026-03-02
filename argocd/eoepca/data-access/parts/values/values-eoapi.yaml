@@ -34,8 +34,6 @@ raster:
   ingress:
     path: "/raster"
   overrideRootPath: "/"
-  image:
-    tag: "1.4.0"
   settings:
     envVars:
       AWS_S3_ENDPOINT: "eodata.cloudferro.com"

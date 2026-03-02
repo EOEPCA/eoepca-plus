@@ -35,12 +35,12 @@ spec:
       namespace: ingress-apisix
       jsonPointers:
         - /data
-    - group: apps
+    - group: admissionregistration.k8s.io/v1
       kind: ValidatingWebhookConfiguration
       name: apisix-ingress-controller-webhook
       namespace: ingress-apisix
       jqPathExpressions:
-        - '.spec.webhooks[].clientConfig.caBundle'
+        - '.webhooks[].clientConfig.caBundle'
 #    - group: ""
 #      kind: Secret
 #      name: apisix-etcd-jwt-token

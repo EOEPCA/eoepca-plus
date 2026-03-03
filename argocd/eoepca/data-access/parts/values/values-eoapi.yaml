@@ -132,7 +132,7 @@ stac-auth-proxy:
         "^/healthz": ["GET"],
         "^/_mgmt/ping": ["GET"]
       }
-    ROOT_PATH: ""
+    ROOT_PATH: "/stac"
     SWAGGER_UI_INIT_OAUTH: |
       {
         "clientId": "eoapi", 

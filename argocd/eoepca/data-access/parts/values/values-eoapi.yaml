@@ -113,6 +113,8 @@ eoapi-notifier:
 
 stac-auth-proxy:
   enabled: true
+  image:
+    tag: "v1.0.1"
   # Custom filters for STAC collections/items filtering
   service:
     port: 8080

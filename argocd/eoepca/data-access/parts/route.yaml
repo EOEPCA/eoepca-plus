@@ -1,11 +1,13 @@
-apiVersion: v1
-kind: Service
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
 metadata:
-  name: iam-keycloak-external
+  name: iam-keycloak-upstream
   namespace: data-access
 spec:
-  type: ExternalName
-  externalName: iam-keycloak.iam.svc.cluster.local
+  externalNodes:
+    - name: iam-keycloak.iam.svc.cluster.local
+      type: Domain
+      port: 80
 ---
 apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
@@ -53,9 +55,8 @@ spec:
     - name: cors
       enable: true
   - name: manager-auth-proxy
-    backends:
-    - serviceName: iam-keycloak-external
-      servicePort: 80
+    upstreams:
+    - name: iam-keycloak-upstream
     match:
       hosts:
       - eoapi.develop.eoepca.org

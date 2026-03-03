@@ -3,6 +3,7 @@ kind: ApisixGlobalRule
 metadata:
   name: redirect-to-tls
 spec:
+  ingressClassName: apisix
   plugins:
     - name: redirect
       enable: true

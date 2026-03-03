@@ -21,8 +21,8 @@ def deploy(network_instance, key_pair):
         }
     ]
     bastion_security_group = security_group.deploy(
-        "bastion-sg",
-        "Security group for the bastion instance",
+        "rke2-bastion-sg",
+        "Security group for the rke2 bastion instance",
         bastion_sg_rules,
     )
 
@@ -31,7 +31,7 @@ def deploy(network_instance, key_pair):
 
     # Create Bastion Instance
     bastion_instance = instance.create_instance(
-        "bastion",
+        "rke2-bastion",
         key_pair.name,
         config.require("bastionFlavour"),
         config.require("nodeImage"),

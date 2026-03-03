@@ -58,15 +58,38 @@ def get_docker_user_data_script():
     return install_docker_script
 
 
+def get_rke2_user_data_script():
+    return """#!/bin/bash
+    # Disable swap
+    swapoff -a
+    sed -i '/ swap / s/^/#/' /etc/fstab
+    
+    # Configure kernel modules for RKE2
+    cat <<EOF | sudo tee /etc/modules-load.d/rke2.conf
+overlay
+br_netfilter
+EOF
+    
+    modprobe overlay
+    modprobe br_netfilter
+    
+    # Sysctl params
+    cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+    
+    sysctl --system
+    """
+
 def attach_floating_ip(instance, pool_name="external"):
     floating_ip = networking.FloatingIp(f"{instance._name}-floating-ip", pool=pool_name)
-    floating_ip_assoc = pulumi.Output.all(instance.id, floating_ip.address).apply(
-        lambda args: compute.FloatingIpAssociate(
-            f"{instance._name}-fip-assoc",
-            floating_ip=args[1],
-            instance_id=args[0],
-            opts=ResourceOptions(depends_on=[instance, floating_ip]),
-        )
+    floating_ip_assoc = compute.FloatingIpAssociate(
+        f"{instance._name}-fip-assoc",
+        floating_ip=floating_ip.address,
+        instance_id=instance.id,
+        opts=ResourceOptions(depends_on=[instance, floating_ip]),
     )
 
     return floating_ip, floating_ip_assoc
@@ -79,13 +102,13 @@ def deploy(instance_name, flavour, network_instance):
     # Create instance
     test_instance = create_instance(
         instance_name=instance_name,
-        key_pair_name="eoepca-dev-keypair",
+        key_pair_name="rke2-eoepca-keypair",
         flavor=flavour,
         image=config.require("nodeImage"),
         security_groups=security_groups,
         networks=[{"uuid": network_instance.id}],
         network_instance=network_instance,
-        user_data=get_docker_user_data_script(),
+        user_data=get_rke2_user_data_script(),
     )
 
     pulumi.export(f"{instance_name}_access_ip", test_instance.access_ip_v4)

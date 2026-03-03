@@ -9,14 +9,14 @@ def deploy(subnet_id):
     floating_ip = networking.FloatingIp.get("k8s-floating-ip", id=lb_floating_ip_id)
 
     lb = loadbalancer.LoadBalancer(
-        "k8s-lb",
-        name="k8s-lb",
+        "rke2-k8s-lb",
+        name="rke2-k8s-lb",
         vip_subnet_id=subnet_id,
     )
 
     # Attach the primary floating IP to the load balancer
     lb_floating_ip = networking.FloatingIpAssociate(
-        "lb-floating-ip",
+        "rke2-lb-floating-ip",
         floating_ip=floating_ip.address,
         port_id=lb.vip_port_id,
         opts=pulumi.ResourceOptions(depends_on=[lb]),
@@ -24,7 +24,7 @@ def deploy(subnet_id):
 
     # Existing Listeners and Pools
     api_listener = loadbalancer.Listener(
-        "k8s-listener",
+        "rke2-k8s-listener",
         loadbalancer_id=lb.id,
         protocol="TCP",
         protocol_port=6443,  # Kubernetes API server port
@@ -33,7 +33,7 @@ def deploy(subnet_id):
 
     # Listener for HTTP
     http_listener = loadbalancer.Listener(
-        "http-listener",
+        "rke2-http-listener",
         loadbalancer_id=lb.id,
         protocol="HTTP",
         protocol_port=80,
@@ -42,16 +42,16 @@ def deploy(subnet_id):
 
     # Listener for HTTPS
     https_listener = loadbalancer.Listener(
-        "https-listener",
+        "rke2-https-listener",
         loadbalancer_id=lb.id,
-        protocol="HTTPS",
+        protocol="TCP",
         protocol_port=443,
         opts=pulumi.ResourceOptions(depends_on=[lb]),
     )
 
     # Pool for the API listener
     api_pool = loadbalancer.Pool(
-        "k8s-pool",
+        "rke2-k8s-pool",
         listener_id=api_listener.id,
         protocol="TCP",
         lb_method=config.get("lbMethod") or "ROUND_ROBIN",
@@ -60,7 +60,7 @@ def deploy(subnet_id):
 
     # Pool for HTTP
     http_pool = loadbalancer.Pool(
-        "http-pool",
+        "rke2-http-pool",
         listener_id=http_listener.id,
         protocol="HTTP",
         lb_method=config.get("lbMethod") or "ROUND_ROBIN",
@@ -68,9 +68,9 @@ def deploy(subnet_id):
     )
     # Pool for HTTPS
     https_pool = loadbalancer.Pool(
-        "https-pool",
+        "rke2-https-pool",
         listener_id=https_listener.id,
-        protocol="HTTPS",
+        protocol="TCP",
         lb_method=config.get("lbMethod") or "ROUND_ROBIN",
         opts=pulumi.ResourceOptions(depends_on=[https_listener]),
     )
@@ -78,22 +78,22 @@ def deploy(subnet_id):
 
     # Create a Second Load Balancer for APISIX
     apisix_lb = loadbalancer.LoadBalancer(
-        "apisix-lb",
-        name="apisix-lb",
+        "rke2-apisix-lb",
+        name="rke2-apisix-lb",
         vip_subnet_id=subnet_id,
         opts=pulumi.ResourceOptions(depends_on=[lb]),
     )
 
     # Allocate a Floating IP for APISIX Load Balancer
     apisix_floating_ip = networking.FloatingIp(
-        "apisix-floating-ip",
+        "rke2-apisix-floating-ip",
         pool=config.require("floatingIpPool"),
         opts=pulumi.ResourceOptions(depends_on=[apisix_lb]),
     )
 
     # Associate the Floating IP with APISIX Load Balancer's VIP Port
     apisix_floating_ip_association = networking.FloatingIpAssociate(
-        "apisix-floating-ip-association",
+        "rke2-apisix-floating-ip-association",
         floating_ip=apisix_floating_ip.address,
         port_id=apisix_lb.vip_port_id,
         opts=pulumi.ResourceOptions(depends_on=[apisix_floating_ip]),
@@ -101,7 +101,7 @@ def deploy(subnet_id):
 
     # Create Listeners and Pools for APISIX
     apisix_listener = loadbalancer.Listener(
-        "apisix-listener",
+        "rke2-apisix-listener",
         loadbalancer_id=apisix_lb.id,
         protocol="TCP",
         protocol_port=80,
@@ -109,7 +109,7 @@ def deploy(subnet_id):
     )
 
     apisix_pool = loadbalancer.Pool(
-        "apisix-pool",
+        "rke2-apisix-pool",
         listener_id=apisix_listener.id,
         protocol="TCP",
         lb_method=config.get("lbMethod") or "ROUND_ROBIN",
@@ -117,7 +117,7 @@ def deploy(subnet_id):
     )
 
     apisix_https_listener = loadbalancer.Listener(
-        "apisix-https-listener",
+        "rke2-apisix-https-listener",
         loadbalancer_id=apisix_lb.id,
         protocol="TCP",
         protocol_port=443,
@@ -125,7 +125,7 @@ def deploy(subnet_id):
     )
 
     apisix_https_pool = loadbalancer.Pool(
-        "apisix-https-pool",
+        "rke2-apisix-https-pool",
         listener_id=apisix_https_listener.id,
         protocol="TCP",
         lb_method=config.get("lbMethod") or "ROUND_ROBIN",
@@ -145,7 +145,7 @@ def deploy(subnet_id):
 
 def add_member(name, node, http_pool, https_pool, apisix_pool, apisix_https_pool, subnet_instance):
     http_member = loadbalancer.Member(
-        f"{name}-ingress-nginx-http",
+        f"rke2-{name}-ingress-nginx-http",
         address=node.access_ip_v4,
         protocol_port=31080,
         pool_id=http_pool.id,
@@ -154,7 +154,7 @@ def add_member(name, node, http_pool, https_pool, apisix_pool, apisix_https_pool
     )
 
     https_member = loadbalancer.Member(
-        f"{name}-ingress-nginx-https",
+        f"rke2-{name}-ingress-nginx-https",
         address=node.access_ip_v4,
         protocol_port=31443,
         pool_id=https_pool.id,
@@ -164,7 +164,7 @@ def add_member(name, node, http_pool, https_pool, apisix_pool, apisix_https_pool
 
     # Add Members to APISIX Pool
     apisix_member = loadbalancer.Member(
-        f"{name}-apisix",
+        f"rke2-{name}-apisix",
         address=node.access_ip_v4,
         protocol_port=32080,
         pool_id=apisix_pool.id,
@@ -173,7 +173,7 @@ def add_member(name, node, http_pool, https_pool, apisix_pool, apisix_https_pool
     )
 
     apisix_member_https = loadbalancer.Member(
-        f"{name}-apisix-https",
+        f"rke2-{name}-apisix-https",
         address=node.access_ip_v4,
         protocol_port=32443,
         pool_id=apisix_https_pool.id,

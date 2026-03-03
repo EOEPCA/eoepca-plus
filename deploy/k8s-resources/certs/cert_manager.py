@@ -2,27 +2,28 @@ import pulumi
 from pulumi import Config
 from pulumi_kubernetes.apiextensions.CustomResource import CustomResource
 from pulumi_kubernetes.core.v1 import Namespace
-from pulumi_kubernetes_cert_manager import CertManager, ReleaseArgs
+from pulumi_kubernetes.helm.v3 import Chart, ChartOpts, FetchOpts
 
 config = Config()
 
 
-# Function to deploy cert-manager and configure a ClusterIssuer
 def deploy():
-    namespace_name = "cert-manager-ns"
+    namespace_name = "cert-manager"
     ns = Namespace(
         "cert-manager-ns",
         metadata={"name": namespace_name},
-        opts=pulumi.ResourceOptions(depends_on=[]),
     )
 
-    cert_manager = CertManager(
+    cert_manager = Chart(
         "cert-manager",
-        install_crds=True,
-        helm_options=ReleaseArgs(
-            namespace=namespace_name,
-            values={"meta": {"helm.sh/release-namespace": namespace_name}},
+        ChartOpts(
+            chart="cert-manager",
             version=config.require("certManagerVersion"),
+            fetch_opts=FetchOpts(repo="https://charts.jetstack.io"),
+            namespace=namespace_name,
+            values={
+                "installCRDs": True,
+            },
         ),
         opts=pulumi.ResourceOptions(depends_on=[ns]),
     )
@@ -42,7 +43,10 @@ def deploy():
                 "solvers": [{"http01": {"ingress": {"class": "nginx"}}}],
             }
         },
-        opts=pulumi.ResourceOptions(depends_on=[cert_manager]),
+        opts=pulumi.ResourceOptions(
+            depends_on=[cert_manager],
+            custom_timeouts=pulumi.CustomTimeouts(create="5m"),
+        ),
     )
 
-    return issuer
+    return cert_manager

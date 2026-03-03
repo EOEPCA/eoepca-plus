@@ -8,3 +8,5 @@ venv/
 k.yaml
 *.crt
 *.key
+documents/*
+eoepca-openrc-2fa.sh

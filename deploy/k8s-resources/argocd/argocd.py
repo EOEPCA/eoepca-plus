@@ -7,32 +7,15 @@ from pulumi_kubernetes.yaml import ConfigFile
 config = pulumi.Config()
 
 
-def ignore_crd_spec(args):
-    if args.props.get("kind") and args.props.get("kind") == "CustomResourceDefinition":
-        if args.opts.ignore_changes:
-            if isinstance(args.opts.ignore_changes, list):
-                if "spec" not in args.opts.ignore_changes:
-                    args.opts.ignore_changes.append("spec")
-            else:
-                if args.opts.ignore_changes != "spec":
-                    args.opts.ignore_changes = [args.opts.ignore_changes, "spec"]
-        else:
-            args.opts.ignore_changes = ["spec"]
-
-
 def deploy(ingress_chart):
-    # Create Argo CD namespace
     argocd_namespace = Namespace(
         "argocd",
         metadata={"name": "argocd"},
-        opts=ResourceOptions(
-            depends_on=[],
-        ),
     )
 
     argo_domain_name = f"argocd.{config.require('domainName')}"
 
-    # Deploy Argo CD using Helm Chart
+    # Deploy ArgoCD - the Helm chart installs its own CRDs
     argo_chart = Chart(
         "argocd",
         ChartOpts(
@@ -41,6 +24,10 @@ def deploy(ingress_chart):
             fetch_opts=FetchOpts(repo="https://argoproj.github.io/argo-helm"),
             namespace=argocd_namespace.metadata["name"],
             values={
+                "crds": {
+                    "install": True,
+                    "keep": True,
+                },
                 "server": {
                     "service": {"type": "ClusterIP"},
                     "extraArgs": ["--insecure"],
@@ -73,7 +60,7 @@ def deploy(ingress_chart):
                         "url": f"https://{argo_domain_name}",
                         "dex.config": f"""
                             connectors:
-                              - type: github
+                            - type: github
                                 id: github
                                 name: GitHub
                                 config:
@@ -83,7 +70,7 @@ def deploy(ingress_chart):
                                     - name: {config.require("SSOOrg")}
                                     teams:
                                     - name: {config.require("SSOTeam")}
-                                """,
+                            """,
                     },
                     "rbac": {
                         "policy.default": config.require("RBACPolicyDefault"),
@@ -93,30 +80,27 @@ def deploy(ingress_chart):
         ),
         opts=ResourceOptions(
             depends_on=[argocd_namespace, ingress_chart],
+            custom_timeouts=pulumi.CustomTimeouts(create="10m"),
         ),
     )
 
-    # Install CRDs for Argo CD
-    argocd_crd = ConfigFile(
-        "argocd-crd",
-        file="https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/crds/application-crd.yaml",
-        opts=ResourceOptions(
-            depends_on=[argocd_namespace],
-            transformations=[ignore_crd_spec],
-        ),
-    )
-
-    # Set up ArgoCD Application and Project
+    # Wait for the Helm chart (and its CRDs) before creating Application/Project
     project = ConfigFile(
         "project",
         file="argocd/project.yaml",
-        opts=ResourceOptions(depends_on=[argo_chart, argocd_crd]),
+        opts=ResourceOptions(
+            depends_on=[argo_chart],
+            custom_timeouts=pulumi.CustomTimeouts(create="5m"),
+        ),
     )
 
     application = ConfigFile(
         "application",
         file="argocd/application.yaml",
-        opts=ResourceOptions(depends_on=[argo_chart, project, argocd_crd]),
+        opts=ResourceOptions(
+            depends_on=[argo_chart, project],
+            custom_timeouts=pulumi.CustomTimeouts(create="5m"),
+        ),
     )
 
     return argo_chart

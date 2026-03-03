@@ -257,6 +257,17 @@ spec:
             X-Forwarded-Proto: "https"
             X-Forwarded-Host: "eoapi.develop.eoepca.org"
       enable: true
+    - name: serverless-post-function
+      enable: true
+      config:
+        phase: "access"
+        functions:
+          - |
+            return function(conf, ctx)
+              ngx.req.set_header("X-Forwarded-Port", "443")
+              ngx.req.set_header("X-Forwarded-Proto", "https")
+              ngx.req.set_header("X-Forwarded-Host", "eoapi.develop.eoepca.org")
+            end
     - name: cors
       enable: true
   - name: docs-redirect

@@ -165,8 +165,7 @@ keycloak:
   cors:
     # Set this to true to enable CORS
     enabled: true
-    allowedOrigins:
-      - https://eoapi.develop.eoepca.org
+    allowedOrigins: "https://eoapi.develop.eoepca.org"
     allowCredentials: true
   ## @param production Run Keycloak in production mode. TLS configuration is required except when using proxy=edge.
   ##

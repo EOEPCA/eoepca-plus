@@ -35,7 +35,7 @@ def deploy(subnet_id):
     http_listener = loadbalancer.Listener(
         "rke2-http-listener",
         loadbalancer_id=lb.id,
-        protocol="HTTP",
+        protocol="TCP",
         protocol_port=80,
         opts=pulumi.ResourceOptions(depends_on=[lb]),
     )
@@ -62,7 +62,7 @@ def deploy(subnet_id):
     http_pool = loadbalancer.Pool(
         "rke2-http-pool",
         listener_id=http_listener.id,
-        protocol="HTTP",
+        protocol="TCP",
         lb_method=config.get("lbMethod") or "ROUND_ROBIN",
         opts=pulumi.ResourceOptions(depends_on=[http_listener]),
     )
@@ -147,7 +147,7 @@ def add_member(name, node, http_pool, https_pool, apisix_pool, apisix_https_pool
     http_member = loadbalancer.Member(
         f"rke2-{name}-ingress-nginx-http",
         address=node.access_ip_v4,
-        protocol_port=31080,
+        protocol_port=80,
         pool_id=http_pool.id,
         subnet_id=subnet_instance.id,
         opts=pulumi.ResourceOptions(depends_on=[http_pool]),
@@ -156,7 +156,7 @@ def add_member(name, node, http_pool, https_pool, apisix_pool, apisix_https_pool
     https_member = loadbalancer.Member(
         f"rke2-{name}-ingress-nginx-https",
         address=node.access_ip_v4,
-        protocol_port=31443,
+        protocol_port=443,
         pool_id=https_pool.id,
         subnet_id=subnet_instance.id,
         opts=pulumi.ResourceOptions(depends_on=[https_pool]),

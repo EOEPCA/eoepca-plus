@@ -43,9 +43,10 @@ def main():
     control_nodes = []
     for i in range(control_node_count):
         node = instance.deploy(
-            f"rke2-control-node-{i}", 
-            config.require("controlPlaneNodeFlavour"), 
-            network_instance
+            f"rke2-control-node-{i}",
+            config.require("controlPlaneNodeFlavour"),
+            network_instance,
+            role="server",
         )
         # Add to API pool
         loadbalancer.Member(
@@ -81,6 +82,24 @@ def main():
     pulumi.export("worker_node_ips", [n.access_ip_v4 for n in worker_nodes])
     pulumi.export("bastion_ip", bastion_instance.bastion_floating_ip_association.floating_ip)
     pulumi.export("load_balancer_ip", load_balancer_floating_ip.address)
+
+    # Export SSH commands
+    pulumi.export("ssh_bastion", bastion_instance.bastion_floating_ip_association.floating_ip.apply(
+        lambda ip: f"ssh -i rke2-generated_key.pem eouser@{ip}"
+    ))
+    pulumi.export("ssh_control_node", pulumi.Output.all(
+        bastion_instance.bastion_floating_ip_association.floating_ip,
+        control_nodes[0].access_ip_v4
+    ).apply(
+        lambda args: f"ssh -i rke2-generated_key.pem eouser@{args[0]} then ssh -i ~/.ssh/key.pem eouser@{args[1]}"
+    ))
+    pulumi.export("ssh_worker_node", pulumi.Output.all(
+        bastion_instance.bastion_floating_ip_association.floating_ip,
+        worker_nodes[0].access_ip_v4
+    ).apply(
+        lambda args: f"ssh -i rke2-generated_key.pem eouser@{args[0]} then ssh -i ~/.ssh/key.pem eouser@{args[1]}"
+    ))
+
 
 if __name__ == "__main__":
     main()

@@ -60,28 +60,131 @@ def get_docker_user_data_script():
 
 def get_rke2_user_data_script():
     return """#!/bin/bash
-    # Disable swap
-    swapoff -a
-    sed -i '/ swap / s/^/#/' /etc/fstab
-    
-    # Configure kernel modules for RKE2
-    cat <<EOF | sudo tee /etc/modules-load.d/rke2.conf
+# Disable swap
+swapoff -a
+sed -i '/ swap / s/^/#/' /etc/fstab
+
+# Configure kernel modules for RKE2
+cat <<EOF | sudo tee /etc/modules-load.d/rke2.conf
 overlay
 br_netfilter
 EOF
-    
-    modprobe overlay
-    modprobe br_netfilter
-    
-    # Sysctl params
-    cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+
+modprobe overlay
+modprobe br_netfilter
+
+# Sysctl params
+cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 EOF
-    
-    sysctl --system
+
+sysctl --system
+
+# Install iptables (needed by CNI portmap plugin)
+apt-get update
+apt-get install -y iptables
     """
+
+
+def get_rke2_server_user_data_script(domain_name, lb_ip, email):
+    return f"""#!/bin/bash
+set -e
+exec > /var/log/rke2-setup.log 2>&1
+
+# Disable swap
+swapoff -a
+sed -i '/ swap / s/^/#/' /etc/fstab
+
+# Kernel modules
+cat <<EOF | tee /etc/modules-load.d/rke2.conf
+overlay
+br_netfilter
+EOF
+modprobe overlay
+modprobe br_netfilter
+
+cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+sysctl --system
+
+# Install iptables (needed by CNI portmap plugin)
+apt-get update
+apt-get install -y iptables
+
+# Install RKE2
+curl -sfL https://get.rke2.io | sh -
+systemctl enable rke2-server.service
+
+# Configure RKE2
+mkdir -p /etc/rancher/rke2
+cat <<EOF > /etc/rancher/rke2/config.yaml
+tls-san:
+  - {lb_ip}
+  - {domain_name}
+  - rancher.{domain_name}
+EOF
+
+systemctl start rke2-server.service
+
+# Wait for kubeconfig
+while [ ! -f /etc/rancher/rke2/rke2.yaml ]; do
+    sleep 5
+done
+
+export KUBECONFIG=/etc/rancher/rke2/rke2.yaml
+export PATH=$PATH:/var/lib/rancher/rke2/bin
+
+# Wait for node ready
+until kubectl get nodes | grep -q ' Ready'; do
+    sleep 10
+done
+
+# Install Helm
+curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+
+# Install cert-manager
+kubectl create namespace cert-manager
+helm install cert-manager jetstack/cert-manager \
+    --namespace cert-manager \
+    --version v1.16.3 \
+    --set crds.enabled=true \
+    --wait --timeout 5m
+
+# Wait for ingress-nginx to be ready
+echo "Waiting for ingress-nginx admission webhook..."
+until kubectl get endpoints -n kube-system rke2-ingress-nginx-controller-admission -o jsonpath='{{.subsets[0].addresses[0].ip}}' 2>/dev/null | grep -q .; do
+    sleep 10
+    echo "Still waiting for ingress-nginx..."
+done
+echo "Ingress-nginx is ready"
+sleep 15
+
+# Install Rancher
+kubectl create namespace cattle-system
+helm install rancher rancher-stable/rancher \
+    --namespace cattle-system \
+    --set hostname=rancher.{domain_name} \
+    --set letsEncrypt.email={email} \
+    --set letsEncrypt.ingress.class=nginx \
+    --set ingress.tls.source=letsEncrypt \
+    --set replicas=1 \
+    --wait --timeout 10m
+
+# Save bootstrap password
+kubectl get secret --namespace cattle-system bootstrap-secret \
+    -o go-template='{{{{.data.bootstrapPassword|base64decode}}}}' \
+    > /home/eouser/rancher-bootstrap-password.txt
+chown eouser:eouser /home/eouser/rancher-bootstrap-password.txt
+"""
 
 def attach_floating_ip(instance, pool_name="external"):
     floating_ip = networking.FloatingIp(f"{instance._name}-floating-ip", pool=pool_name)
@@ -95,11 +198,18 @@ def attach_floating_ip(instance, pool_name="external"):
     return floating_ip, floating_ip_assoc
 
 
-def deploy(instance_name, flavour, network_instance):
-    # Security Groups
+def deploy(instance_name, flavour, network_instance, role="worker"):
     security_groups = get_node_security_groups(instance_name)
 
-    # Create instance
+    if role == "server":
+        user_data = get_rke2_server_user_data_script(
+            config.require("domainName"),
+            config.require("loadBalancerIP"),
+            config.require("maintainerEmail"),
+        )
+    else:
+        user_data = get_rke2_user_data_script()
+
     test_instance = create_instance(
         instance_name=instance_name,
         key_pair_name="rke2-eoepca-keypair",
@@ -108,11 +218,10 @@ def deploy(instance_name, flavour, network_instance):
         security_groups=security_groups,
         networks=[{"uuid": network_instance.id}],
         network_instance=network_instance,
-        user_data=get_rke2_user_data_script(),
+        user_data=user_data,
     )
 
     pulumi.export(f"{instance_name}_access_ip", test_instance.access_ip_v4)
-
     return test_instance
 
 

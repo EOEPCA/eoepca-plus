@@ -17,7 +17,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/registration-harvester/parts/values/values-landsat.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: rke2-upgrade
       ref: values
 
   destination:

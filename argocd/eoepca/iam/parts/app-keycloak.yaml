@@ -38,7 +38,7 @@ spec:
           keycloak:
             enabled: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: rke2-upgrade
       ref: values
 
   destination:

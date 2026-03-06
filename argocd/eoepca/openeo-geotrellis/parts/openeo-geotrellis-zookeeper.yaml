@@ -18,7 +18,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/openeo-geotrellis/parts/values-openeo-geotrellis-zookeeper.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: rke2-upgrade
       ref: values
 
   destination:

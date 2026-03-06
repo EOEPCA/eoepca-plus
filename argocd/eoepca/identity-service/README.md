@@ -12,6 +12,6 @@ Thus, the root `identity-service` application references the `parts/` subdirecto
 ```yaml
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: rke2-upgrade
     path: argocd/eoepca/identity-service/parts
 ```

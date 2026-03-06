@@ -11,7 +11,7 @@ spec:
   project: eoepca
   sources:
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: rke2-upgrade
       path: argocd/eoepca/workspace/parts
   destination:
     name: in-cluster

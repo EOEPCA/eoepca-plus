@@ -17,7 +17,7 @@ spec:
         valueFiles:
           - $values/argocd/infra/apisix/parts/values/apisix-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: rke2-upgrade
       ref: values
 
   destination:

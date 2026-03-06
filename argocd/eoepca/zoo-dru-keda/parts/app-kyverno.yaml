@@ -19,7 +19,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/zoo-dru-keda/parts/values-kyverno.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: rke2-upgrade
       ref: values
   destination:
     name: in-cluster

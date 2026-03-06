@@ -56,7 +56,7 @@ spec:
           - $values/argocd/eoepca/data-access/parts/values/values-stac-manager.yaml
 
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: rke2-upgrade
       ref: values
 
   destination:

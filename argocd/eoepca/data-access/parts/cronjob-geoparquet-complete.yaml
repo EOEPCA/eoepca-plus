@@ -1,0 +1,83 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: geoparquet-export-complete
+  namespace: data-access
+spec:
+  # Run monthly on the 1st at 2 AM UTC (configurable)
+  schedule: "0 2 1 * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: geoparquet-export
+            mode: complete
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: exporter
+            image: ghcr.io/eoepca/stac-geoparquet-exporter:latest
+            imagePullPolicy: Always
+            env:
+            - name: EXPORT_MODE
+              value: "complete"
+            - name: CONFIG_PATH
+              value: "/config/export-config.yaml"
+            - name: PGHOST
+              valueFrom:
+                secretKeyRef:
+                  name: default-pguser-eoapi
+                  key: host
+            - name: PGPORT
+              valueFrom:
+                secretKeyRef:
+                  name: default-pguser-eoapi
+                  key: port
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: default-pguser-eoapi
+                  key: dbname
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: default-pguser-eoapi
+                  key: user
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: default-pguser-eoapi
+                  key: password
+            - name: OUTPUT_PATH
+              value: "s3://eoapi-geoparquet/geoparquet"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: data-access
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: data-access
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_S3_ENDPOINT
+              value: "eodata.cloudferro.com"
+            volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            resources:
+              requests:
+                memory: "2Gi"
+                cpu: "500m"
+              limits:
+                memory: "4Gi"
+                cpu: "2000m"
+          volumes:
+          - name: config
+            configMap:
+              name: geoparquet-export-config

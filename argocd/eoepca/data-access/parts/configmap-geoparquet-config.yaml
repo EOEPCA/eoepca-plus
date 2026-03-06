@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: geoparquet-export-config
+  namespace: data-access
+data:
+  export-config.yaml: |
+    # GeoParquet Export Configuration
+    # Configure collections to export and their partitioning strategy
+    
+    collections:
+      # Example: Sentinel-2 with yearly partitioning
+      - name: sentinel-2
+        partition_by: year  # Options: null, year, month
+        start_year: 2015
+      
+      # Example: Small collection without partitioning
+      # - name: landsat-8
+      #   partition_by: null
+      
+      # Add more collections as needed
+    
+    # Export settings
+    settings:
+      chunk_size: 10000
+      statement_timeout: 3600000  # 1 hour in milliseconds

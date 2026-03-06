@@ -4,6 +4,9 @@ resources:
   - iam.yaml
   - route.yaml
   - eso-pgo.yaml
+  - configmap-geoparquet-config.yaml
+  - cronjob-geoparquet-complete.yaml
+  - cronjob-geoparquet-incremental.yaml
 
 configMapGenerator:
   - name: stac-auth-proxy-filters

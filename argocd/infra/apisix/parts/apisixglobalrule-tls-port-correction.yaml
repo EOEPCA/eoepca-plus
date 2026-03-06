@@ -7,6 +7,9 @@ apiVersion: apisix.apache.org/v2
 kind: ApisixGlobalRule
 metadata:
   name: tls-port-correction
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   plugins:
     - name: serverless-pre-function

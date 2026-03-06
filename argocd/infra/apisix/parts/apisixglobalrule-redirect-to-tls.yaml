@@ -2,6 +2,9 @@ apiVersion: apisix.apache.org/v2
 kind: ApisixGlobalRule
 metadata:
   name: redirect-to-tls
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   plugins:
     - name: redirect

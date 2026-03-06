@@ -22,3 +22,12 @@ resources:
   - openeo-argoworkflows
   - notification-automation
   # - identity-service
+
+
+patches:
+  - target:
+      kind: Application
+    patch: |
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "1"

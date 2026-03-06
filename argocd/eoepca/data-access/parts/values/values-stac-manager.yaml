@@ -14,7 +14,7 @@ image:
   pullPolicy: Always
 
 publicUrl: https://eoapi.develop.eoepca.org/manager
-stacApi: https://eoapi.develop.eoepca.org/stac/
+stacApi: https://eoapi.develop.eoepca.org/stac
 primaryColor: "#005ACD"
 secondaryColor: "#048A81"
 

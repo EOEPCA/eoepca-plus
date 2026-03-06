@@ -8,7 +8,7 @@ spec:
   - name: resource-health-web-route
     match:
       hosts:
-        - resource-health.develop.eoepca.org
+        - resource-health.rke2.deploybox.co.uk
       paths:
         - /
         - /_next/*
@@ -21,7 +21,7 @@ spec:
   - name: resource-health-telemetry-api-doc-route
     match:
       hosts:
-        - resource-health.develop.eoepca.org
+        - resource-health.rke2.deploybox.co.uk
       paths:
         - /api/telemetry/docs
         - /api/telemetry/docs/*
@@ -38,7 +38,7 @@ spec:
   - name: resource-health-telemetry-api-route
     match:
       hosts:
-        - resource-health.develop.eoepca.org
+        - resource-health.rke2.deploybox.co.uk
       paths:
         - /api/telemetry/*
     backends:
@@ -53,7 +53,7 @@ spec:
   - name: resource-health-check-api-doc-route
     match:
       hosts:
-        - resource-health.develop.eoepca.org
+        - resource-health.rke2.deploybox.co.uk
       paths:
         - /api/healthchecks/docs
         - /api/healthchecks/docs/*
@@ -70,7 +70,7 @@ spec:
   - name: resource-health-check-api-route
     match:
       hosts:
-        - resource-health.develop.eoepca.org
+        - resource-health.rke2.deploybox.co.uk
       paths:
         - /api/healthchecks/*
     backends:
@@ -85,7 +85,7 @@ spec:
   - name: resource-health-dashboards-route
     match:
       hosts:
-        - resource-health.develop.eoepca.org
+        - resource-health.rke2.deploybox.co.uk
       paths:
         - /dashboards
         - /dashboards/*

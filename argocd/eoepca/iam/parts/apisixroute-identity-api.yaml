@@ -10,7 +10,7 @@ spec:
   - name: identity-api
     match:
       hosts:
-        - identity-api.develop.eoepca.org
+        - identity-api.rke2.deploybox.co.uk
       paths:
         - /*
     backends:
@@ -23,13 +23,13 @@ spec:
           client_id: "identity-api"
           client_secret: "eBlG9c7IEKlCJglwVC7N8EGwZArl141h"
           access_token_in_authorization_header: true
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+          discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
       - name: authz-keycloak
         enable: true
         config:
           client_id: "identity-api"
           client_secret: "eBlG9c7IEKlCJglwVC7N8EGwZArl141h"
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/uma2-configuration"
           #permissions: "Resource all"
           lazy_load_paths: true
           ssl_verify: false

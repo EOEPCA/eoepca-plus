@@ -9,7 +9,7 @@ harvester:
     worker:
       log_level: INFO
       flowable:
-        host: https://registration-harvester-api.develop.eoepca.org/flowable-rest
+        host: https://registration-harvester-api.rke2.deploybox.co.uk/flowable-rest
         tls: true
         cacert: ./etc/eoepca-ca-chain.pem
       topics:
@@ -58,5 +58,5 @@ harvester:
         SentinelExtractMetadataHandler:
           collections_dir: ./etc/collections
         SentinelRegisterMetadataHandler:
-          stac_api_url: https://resource-catalogue.develop.eoepca.org/stac/
+          stac_api_url: https://resource-catalogue.rke2.deploybox.co.uk/stac/
           stac_file_deletion: true

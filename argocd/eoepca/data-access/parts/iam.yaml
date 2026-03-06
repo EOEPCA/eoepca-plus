@@ -16,7 +16,7 @@ spec:
     fullScopeAllowed: false
     serviceAccountsEnabled: false
     oauth2DeviceAuthorizationGrantEnabled: true
-    rootUrl: https://eoapi.develop.eoepca.org
+    rootUrl: https://eoapi.rke2.deploybox.co.uk
     webOrigins:
       - '*'
     validRedirectUris:

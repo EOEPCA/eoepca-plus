@@ -19,7 +19,7 @@ identity-api:
     # Config values that can be passed via env vars
     extraEnv:
       - name: AUTH_SERVER_URL  # see configMap.authServerUrl instead
-        #value: https://iam-auth.develop.eoepca.org
+        #value: https://iam-auth.rke2.deploybox.co.uk
         value: http://iam-keycloak.iam.svc.cluster.local
         # value: http://keycloak.iam.svc.cluster.local
       - name: ADMIN_USERNAME

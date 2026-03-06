@@ -33,7 +33,7 @@ sleep 1
 
 # Create the client
 tmp/bin/create-client \
-  -a https://iam-auth.develop.eoepca.org \
+  -a https://iam-auth.rke2.deploybox.co.uk \
   -i http://localhost:9876 \
   -r "eoepca" \
   -u "admin" \

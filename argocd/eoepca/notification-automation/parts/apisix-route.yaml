@@ -8,9 +8,9 @@ spec:
   - name: knative-serving-default
     match:
       hosts:
-        - "*.notifications.develop.eoepca.org"
-        - "*.default.notifications.develop.eoepca.org"
-        - "*.knative-serving.notifications.develop.eoepca.org"
+        - "*.notifications.rke2.deploybox.co.uk"
+        - "*.default.notifications.rke2.deploybox.co.uk"
+        - "*.knative-serving.notifications.rke2.deploybox.co.uk"
       paths:
         - "/*"
     backends:

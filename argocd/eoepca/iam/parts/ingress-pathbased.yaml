@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: ngx.develop.eoepca.org
+    - host: ngx.rke2.deploybox.co.uk
       http:
         paths:
           - backend:
@@ -21,5 +21,5 @@ spec:
             pathType: ImplementationSpecific
   tls:
     - hosts:
-        - ngx.develop.eoepca.org
-      secretName: ngx.develop.eoepca.org-tls
+        - ngx.rke2.deploybox.co.uk
+      secretName: ngx.rke2.deploybox.co.uk-tls

@@ -35,7 +35,7 @@ spec:
           replicas: 1
           config:
             server:
-              url: https://resource-catalogue.develop.eoepca.org/
+              url: https://resource-catalogue.rke2.deploybox.co.uk/
             manager:
               transactions: "false"
             metadata:

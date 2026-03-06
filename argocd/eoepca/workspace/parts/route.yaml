@@ -9,7 +9,7 @@ spec:
     - name: workspace-api-no-auth
       match:
         hosts:
-          - workspace-api.develop.eoepca.org
+          - workspace-api.rke2.deploybox.co.uk
         paths:
           - "/metrics*"
           - "/probe*"
@@ -21,7 +21,7 @@ spec:
     - name: workspace-api-debug
       match:
         hosts:
-          - workspace-api.develop.eoepca.org
+          - workspace-api.rke2.deploybox.co.uk
         paths:
           - /debug*
       backends:
@@ -31,7 +31,7 @@ spec:
         - name: openid-connect
           enable: true
           config:
-            discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+            discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
             use_jwks: true
             bearer_only: false
             set_access_token_header: true
@@ -43,7 +43,7 @@ spec:
     - name: workspace-api-docs
       match:
         hosts:
-          - workspace-api.develop.eoepca.org
+          - workspace-api.rke2.deploybox.co.uk
         paths:
           - /docs*
           - /openapi.json*
@@ -53,7 +53,7 @@ spec:
     - name: workspace-api-auth
       match:
         hosts:
-          - workspace-api.develop.eoepca.org
+          - workspace-api.rke2.deploybox.co.uk
         paths:
           - /*
       backends:
@@ -63,7 +63,7 @@ spec:
         - name: openid-connect
           enable: true
           config:
-            discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+            discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
             use_jwks: true
             bearer_only: false
             set_access_token_header: true

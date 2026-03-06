@@ -16,7 +16,7 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     oauth2DeviceAuthorizationGrantEnabled: true    
-    rootUrl: https://workspace-api.develop.eoepca.org
+    rootUrl: https://workspace-api.rke2.deploybox.co.uk
     webOrigins: 
       - '*'
     validRedirectUris:

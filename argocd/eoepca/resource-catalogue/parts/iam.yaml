@@ -16,7 +16,7 @@ spec:
     fullScopeAllowed: false
     serviceAccountsEnabled: false
     oauth2DeviceAuthorizationGrantEnabled: true    
-    rootUrl: https://resource-catalogue-protected.develop.eoepca.org
+    rootUrl: https://resource-catalogue-protected.rke2.deploybox.co.uk
     webOrigins: 
       - '*'
     validRedirectUris:

@@ -30,10 +30,10 @@ spec:
               realm: eoepca
             ingress:
               class: nginx
-              domain: ngx.develop.eoepca.org
+              domain: ngx.rke2.deploybox.co.uk
               secret: wildcard-tls
             storage:
-              endpoint: https://minio.develop.eoepca.org
+              endpoint: https://minio.rke2.deploybox.co.uk
               forcePathStyle: true
               provider: Other
               region: eoepca-demo

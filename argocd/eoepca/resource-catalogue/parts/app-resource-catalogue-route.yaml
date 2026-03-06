@@ -12,7 +12,7 @@ spec:
   - name: resource-catalogue
     match:
       hosts:
-        - resource-catalogue.develop.eoepca.org
+        - resource-catalogue.rke2.deploybox.co.uk
       paths:
         - /*
     backends:

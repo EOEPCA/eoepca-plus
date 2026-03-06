@@ -10,6 +10,6 @@ spec:
       enabled: true
   config:
     domain:
-      notifications.develop.eoepca.org: ""
+      notifications.rke2.deploybox.co.uk: ""
     network:
       ingress-class: "kourier.ingress.networking.knative.dev"

@@ -281,11 +281,11 @@ extraEnvVars:
   # KC_HOSTNAME and optionally KC_HOSTNAME_ADMIN should be set to the official base
   # URL of Keycloak (usually the same as iam.keycloak.url)
   - name: KC_HOSTNAME
-    value: "https://iam-auth.develop.eoepca.org"
+    value: "https://iam-auth.rke2.deploybox.co.uk"
   #- name: KC_HOSTNAME_URL
-  #  value: "https://iam-auth.develop.eoepca.org"
+  #  value: "https://iam-auth.rke2.deploybox.co.uk"
   #- name: KC_HOSTNAME_ADMIN_URL
-  #  value: "https://iam-auth.develop.eoepca.org"
+  #  value: "https://iam-auth.rke2.deploybox.co.uk"
 
 ## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars
 ##

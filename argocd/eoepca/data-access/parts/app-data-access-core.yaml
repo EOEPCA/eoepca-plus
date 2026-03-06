@@ -27,7 +27,7 @@ spec:
           image:
             tag: "v0.9.1"
           stac:
-            apiUrl: "https://eoapi.develop.eoepca.org/stac"
+            apiUrl: "https://eoapi.rke2.deploybox.co.uk/stac"
             serviceStoreUrl: "/app/services/eoapi.json"
           env:
             TITILER_OPENEO_API_ROOT_PATH: "/openeo/"
@@ -36,8 +36,8 @@ spec:
             oidc:
               enabled: true
               clientId: "eoapi"
-              wellKnownUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
-              redirectUrl: "https://eoapi.develop.eoepca.org/openeo/"
+              wellKnownUrl: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
+              redirectUrl: "https://eoapi.rke2.deploybox.co.uk/openeo/"
           extraVolumes:
             - name: services
               configMap:

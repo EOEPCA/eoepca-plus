@@ -16,7 +16,7 @@ spec:
       servicePort: 80
     match:
       hosts:
-      - iam-auth.develop.eoepca.org
+      - iam-auth.rke2.deploybox.co.uk
       paths:
       - /*
     name: keycloak

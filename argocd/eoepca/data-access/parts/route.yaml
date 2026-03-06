@@ -14,7 +14,7 @@ spec:
       servicePort: 80
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /manager
     plugins:
@@ -29,7 +29,7 @@ spec:
       servicePort: 80
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /manager/
       - /manager/*
@@ -43,7 +43,7 @@ spec:
     - name: openid-connect
       enable: true
       config:
-        discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+        discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
         use_jwks: true
         bearer_only: false
         set_access_token_header: true
@@ -52,7 +52,7 @@ spec:
         set_userinfo_header: false
         client_id: eoapi
         client_secret: ""
-        redirect_uri: "https://eoapi.develop.eoepca.org/manager/"
+        redirect_uri: "https://eoapi.rke2.deploybox.co.uk/manager/"
     - name: cors
       enable: true
   - name: browser-redirect
@@ -61,7 +61,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /browser
     plugins:
@@ -75,7 +75,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /browser/
       - /browser/*
@@ -85,7 +85,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /vector
     plugins:
@@ -99,7 +99,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /vector/
       - /vector/*
@@ -116,7 +116,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /multidim
     plugins:
@@ -130,7 +130,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /multidim/
       - /multidim/*
@@ -147,7 +147,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /raster
     plugins:
@@ -161,7 +161,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /raster/
       - /raster/*
@@ -178,7 +178,7 @@ spec:
       servicePort: 80
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /openeo
     plugins:
@@ -192,7 +192,7 @@ spec:
       servicePort: 80
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /openeo/
       - /openeo/*
@@ -210,7 +210,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       methods:
       - GET
       paths:
@@ -229,7 +229,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-        - eoapi.develop.eoepca.org
+        - eoapi.rke2.deploybox.co.uk
       methods:
         - GET
       paths:
@@ -253,7 +253,7 @@ spec:
           set:
             X-Forwarded-Port: "443"
             X-Forwarded-Proto: "https"
-            X-Forwarded-Host: "eoapi.develop.eoepca.org"
+            X-Forwarded-Host: "eoapi.rke2.deploybox.co.uk"
       enable: true
     - name: cors
       enable: true
@@ -264,7 +264,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       methods:
       - GET
       - POST
@@ -280,7 +280,7 @@ spec:
           set:
             X-Forwarded-Port: "443"
             X-Forwarded-Proto: "https"
-            X-Forwarded-Host: "eoapi.develop.eoepca.org"
+            X-Forwarded-Host: "eoapi.rke2.deploybox.co.uk"
       enable: true
     - name: cors
       enable: true
@@ -291,7 +291,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       methods:
       - GET
       paths:
@@ -307,7 +307,7 @@ spec:
           set:
             X-Forwarded-Port: "443"
             X-Forwarded-Proto: "https"
-            X-Forwarded-Host: "eoapi.develop.eoepca.org"
+            X-Forwarded-Host: "eoapi.rke2.deploybox.co.uk"
       enable: true
     - name: cors
       enable: true
@@ -318,7 +318,7 @@ spec:
       servicePort: 8080
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /stac/*
     plugins:
@@ -331,12 +331,12 @@ spec:
           set:
             X-Forwarded-Port: "443"
             X-Forwarded-Proto: "https"
-            X-Forwarded-Host: "eoapi.develop.eoepca.org"
+            X-Forwarded-Host: "eoapi.rke2.deploybox.co.uk"
       enable: true
     - name: openid-connect
       enable: true
       config:
-        discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+        discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
         use_jwks: true
         bearer_only: false # as we want to redirect to login screen (default: false)
         set_access_token_header: true # required for subsequent OPA check (default: true)
@@ -358,7 +358,7 @@ spec:
       servicePort: 80
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /docs
       - /
@@ -373,7 +373,7 @@ spec:
       servicePort: 80
     match:
       hosts:
-      - eoapi.develop.eoepca.org
+      - eoapi.rke2.deploybox.co.uk
       paths:
       - /docs/
       - /docs/*

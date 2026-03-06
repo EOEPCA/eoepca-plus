@@ -118,7 +118,7 @@ stac-auth-proxy:
     port: 8080
   env:
     UPSTREAM_URL: "http://eoapi-stac.data-access.svc.cluster.local:8080"
-    OIDC_DISCOVERY_URL: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+    OIDC_DISCOVERY_URL: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
     COLLECTIONS_FILTER_CLS: stac_auth_proxy.eoepca_filters:CollectionsFilter
     ITEMS_FILTER_CLS: stac_auth_proxy.eoepca_filters:ItemsFilter
     ALLOWED_JWT_AUDIENCES: eoapi
@@ -144,10 +144,10 @@ stac-auth-proxy:
       readOnly: true
 
 browser:
-  catalogUrl: "https://eoapi.develop.eoepca.org/stac"
+  catalogUrl: "https://eoapi.rke2.deploybox.co.uk/stac"
   authConfig:
     type: "openIdConnect"
-    openIdConnectUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+    openIdConnectUrl: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
     oidcConfig:
       client_id: "eoapi"
-      redirect_uri: "https://eoapi.develop.eoepca.org/browser/auth"
+      redirect_uri: "https://eoapi.rke2.deploybox.co.uk/browser/auth"

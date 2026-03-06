@@ -1,4 +1,4 @@
-# Wildcard certificate for preliminary APISIX ingress *.develop.eoepca.org
+# Wildcard certificate for preliminary APISIX ingress *.rke2.deploybox.co.uk
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -13,7 +13,7 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.develop.eoepca.org"
+    - "*.rke2.deploybox.co.uk"
   issuerRef:
     name: letsencrypt-dns-prod
     kind: ClusterIssuer

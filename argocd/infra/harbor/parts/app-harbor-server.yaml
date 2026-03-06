@@ -27,7 +27,7 @@ spec:
               argocd.argoproj.io/ignore-healthcheck: "true"
               k8s.apisix.apache.org/plugin-config-name: "harbor-ingress"
             hosts:
-              core: harbor.develop.eoepca.org
+              core: harbor.rke2.deploybox.co.uk
           tls:
             enabled: true
             certSource: secret
@@ -49,7 +49,7 @@ spec:
             trivy:
               storageClass: managed-nfs-storage-retain
 
-        externalURL: https://harbor.develop.eoepca.org
+        externalURL: https://harbor.rke2.deploybox.co.uk
 
         # initial password for logging in with user "admin"
         harborAdminPassword: changeme

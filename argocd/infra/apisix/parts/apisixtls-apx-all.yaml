@@ -1,4 +1,4 @@
-# Wildcard certificate for preliminary APISIX ingress *.develop.eoepca.org
+# Wildcard certificate for preliminary APISIX ingress *.rke2.deploybox.co.uk
 apiVersion: apisix.apache.org/v2
 kind: ApisixTls
 metadata:
@@ -9,7 +9,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
 spec:
   hosts:
-    - "*.develop.eoepca.org"
+    - "*.rke2.deploybox.co.uk"
   secret:
     name: apx-all-tls
     namespace: ingress-apisix

@@ -9,7 +9,7 @@ harvester:
     worker:
       log_level: INFO
       flowable:
-        host: https://registration-harvester-api.develop.eoepca.org/flowable-rest
+        host: https://registration-harvester-api.rke2.deploybox.co.uk/flowable-rest
         tls: true
         cacert: ./etc/eoepca-ca-chain.pem
       topics:
@@ -36,7 +36,7 @@ harvester:
             wait_period_seconds: 1
             number_of_tasks: 1
           timewindow_hours: 1
-          stac_api_url: https://eoapi.develop.eoepca.org/stac
+          stac_api_url: https://eoapi.rke2.deploybox.co.uk/stac
           stac_api_ca_cert: ""
           stac_api_user: ""
           stac_api_pw: ""
@@ -46,7 +46,7 @@ harvester:
             number_of_retries: 5
             wait_period_seconds: 1
             number_of_tasks: 1
-          stac_api_url: https://eoapi.develop.eoepca.org/stac
+          stac_api_url: https://eoapi.rke2.deploybox.co.uk/stac
           stac_api_ca_cert: ""      
           stac_api_user: ""
           stac_api_pw: ""  

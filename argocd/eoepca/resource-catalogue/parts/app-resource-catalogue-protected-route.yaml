@@ -12,7 +12,7 @@ spec:
   - name: resource-catalogue-protected-public
     match:
       hosts:
-        - resource-catalogue-protected.develop.eoepca.org
+        - resource-catalogue-protected.rke2.deploybox.co.uk
       paths:
         - /static*
         - /conformance*
@@ -30,7 +30,7 @@ spec:
   - name: resource-catalogue-protected
     match:
       hosts:
-        - resource-catalogue-protected.develop.eoepca.org
+        - resource-catalogue-protected.rke2.deploybox.co.uk
       paths:
         - /*
     backends:
@@ -40,7 +40,7 @@ spec:
     - name: openid-connect
       enable: true
       config:
-        discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+        discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
         use_jwks: true
         bearer_only: false
         set_access_token_header: true

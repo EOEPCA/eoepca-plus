@@ -5,8 +5,8 @@ metadata:
   namespace: workspace
 spec:
   dnsNames:
-  - ngx.develop.eoepca.org
-  - '*.ngx.develop.eoepca.org'
+  - ngx.rke2.deploybox.co.uk
+  - '*.ngx.rke2.deploybox.co.uk'
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-dns-prod

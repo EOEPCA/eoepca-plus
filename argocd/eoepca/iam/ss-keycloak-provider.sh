@@ -20,7 +20,7 @@ CREDENTIALS="`cat <<EOF
 {
   "client_id": "crossplane-keycloak-provider",
   "client_secret": "$PROVIDER_CLIENT_SECRET",
-  "url": "https://iam-auth.develop.eoepca.org",
+  "url": "https://iam-auth.rke2.deploybox.co.uk",
   "base_path": "",
   "realm": "eoepca"
 }

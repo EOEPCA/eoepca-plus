@@ -7,11 +7,11 @@ global:
 application-quality:
   # Values for deploying the Application Quality Building Block in the EOEPCA Develop cluster.
 
-  publicUrl: "https://application-quality.develop.eoepca.org"
+  publicUrl: "https://application-quality.rke2.deploybox.co.uk"
 
   # Application Quality frontend
   web:
-    publicUrl: "https://application-quality.develop.eoepca.org"
+    publicUrl: "https://application-quality.rke2.deploybox.co.uk"
 
   persistence:
     enabled: true
@@ -23,12 +23,12 @@ application-quality:
   oidc:
     enabled: true
     realm: eoepca
-    realmBaseUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca"
+    realmBaseUrl: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca"
     clientId: application-quality-bb
     clientSecret: ""
-    postLogoutRedirectUrl: "https://application-quality.develop.eoepca.org/"
-    loginRedirectUrl: "https://application-quality.develop.eoepca.org/"
-    rpRedirectUri: "https://application-quality.develop.eoepca.org/"
+    postLogoutRedirectUrl: "https://application-quality.rke2.deploybox.co.uk/"
+    loginRedirectUrl: "https://application-quality.rke2.deploybox.co.uk/"
+    rpRedirectUri: "https://application-quality.rke2.deploybox.co.uk/"
 
     iam_provisioning:
       enabled: false
@@ -46,7 +46,7 @@ application-quality:
   ingress:
     enabled: true
     className: apisix
-    domain: application-quality.develop.eoepca.org
+    domain: application-quality.rke2.deploybox.co.uk
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-http01-apisix
       apisix.ingress.kubernetes.io/use-regex: "true"
@@ -56,7 +56,7 @@ application-quality:
       argocd.argoproj.io/ignore-healthcheck: "true"
     tls:
       - hosts:
-        - application-quality.develop.eoepca.org
+        - application-quality.rke2.deploybox.co.uk
         secretName: application-quality-tls
 
   notifications:
@@ -78,7 +78,7 @@ grafana:
     enabled: true
     ingressClassName: apisix
     hosts:
-      - application-quality.develop.eoepca.org
+      - application-quality.rke2.deploybox.co.uk
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-http01-apisix
       k8s.apisix.apache.org/rewrite-target-regex: "/dashboards/?(.*)"
@@ -92,7 +92,7 @@ grafana:
     tls:
       - secretName: application-quality-tls
         hosts:
-          - application-quality.develop.eoepca.org
+          - application-quality.rke2.deploybox.co.uk
 
   persistence:
     enabled: true
@@ -100,4 +100,4 @@ grafana:
 
   grafana.ini:
     server:
-      root_url: https://application-quality.develop.eoepca.org/dashboards
+      root_url: https://application-quality.rke2.deploybox.co.uk/dashboards

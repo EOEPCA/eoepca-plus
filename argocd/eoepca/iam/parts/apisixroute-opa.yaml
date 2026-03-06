@@ -9,7 +9,7 @@ spec:
   - name: opa
     match:
       hosts:
-      - iam-opa.develop.eoepca.org
+      - iam-opa.rke2.deploybox.co.uk
       paths:
       - /*
     backends:
@@ -24,22 +24,22 @@ spec:
           client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
           #bearer_only: true
           #realm: "eoepca"
-          #redirect_uri: "http://iam-test.develop.eoepca.org/"
+          #redirect_uri: "http://iam-test.rke2.deploybox.co.uk/"
           access_token_in_authorization_header: true
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+          discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
       - name: authz-keycloak
         enable: true
         config:
           client_id: "opa"
           client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/uma2-configuration"
           #permissions: "Resource all"
           lazy_load_paths: true
           ssl_verify: false
   - name: opa
     match:
       hosts:
-        - iam-opa.develop.eoepca.org
+        - iam-opa.rke2.deploybox.co.uk
       paths:
         - /*
     backends:
@@ -52,13 +52,13 @@ spec:
           client_id: "opa"
           client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
           access_token_in_authorization_header: true
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+          discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
       - name: authz-keycloak
         enable: true
         config:
           client_id: "opa"
           client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/uma2-configuration"
           #permissions: "Resource all"
           lazy_load_paths: true
           ssl_verify: false

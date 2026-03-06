@@ -17,7 +17,7 @@ spec:
   - name: mlflow-sharinghub
     match:
       hosts:
-      - develop.eoepca.org
+      - rke2.deploybox.co.uk
       paths:
       - /mlflow
       - /mlflow/*
@@ -45,11 +45,11 @@ metadata:
   namespace: sharinghub
 spec:
   dnsNames:
-    - develop.eoepca.org
+    - rke2.deploybox.co.uk
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-http01-apisix
-  secretName: sharinghub-develop.eoepca.org-tls
+  secretName: sharinghub-rke2.deploybox.co.uk-tls
   usages:
     - digital signature
     - key encipherment
@@ -62,7 +62,7 @@ metadata:
   namespace: sharinghub
 spec:
   hosts:
-    - develop.eoepca.org
+    - rke2.deploybox.co.uk
   secret:
-    name: sharinghub-develop.eoepca.org-tls
+    name: sharinghub-rke2.deploybox.co.uk-tls
     namespace: sharinghub

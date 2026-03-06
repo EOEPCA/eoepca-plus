@@ -30,7 +30,7 @@ spec:
                 bucketnames: logging
                 insecure: false
                 region: default
-                s3: https://minio.develop.eoepca.org/logging
+                s3: https://minio.rke2.deploybox.co.uk/logging
                 s3forcepathstyle: true
                 sse_encryption: false
               boltdb_shipper:

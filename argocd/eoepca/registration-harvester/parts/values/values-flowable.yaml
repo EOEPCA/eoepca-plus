@@ -1,6 +1,6 @@
 host:
   # suspect this is not needed since it is only used by the (disabled) ingress
-  external: registration-harvester-api.develop.eoepca.org
+  external: registration-harvester-api.rke2.deploybox.co.uk
 
 rest:
   admin:

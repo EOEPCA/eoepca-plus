@@ -11,7 +11,7 @@ spec:
     chart: rancher
     helm:
       values: |
-        hostname: rancher.develop.eoepca.org
+        hostname: rancher.rke2.deploybox.co.uk
         replicas: 1
         ingress:
           enabled: true

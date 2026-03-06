@@ -3,6 +3,9 @@ kind: ApisixPluginConfig
 metadata:
   name: resource-health-route-auth-plugin
   namespace: resource-health
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   plugins:
   - name: openid-connect

@@ -3,6 +3,9 @@ kind: User
 metadata:
   name: resource-health-opensearch-admin
   namespace: iam-management
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   forProvider:
     realmId: eoepca

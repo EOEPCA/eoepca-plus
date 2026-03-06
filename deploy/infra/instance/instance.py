@@ -85,6 +85,13 @@ sysctl --system
 # Install iptables (needed by CNI portmap plugin)
 apt-get update
 apt-get install -y iptables
+
+# Pre-configure kubelet for higher pod limit
+mkdir -p /etc/rancher/rke2
+cat <<EOF > /etc/rancher/rke2/config.yaml
+kubelet-arg:
+  - max-pods=500
+EOF
     """
 
 
@@ -127,6 +134,8 @@ tls-san:
   - {lb_ip}
   - {domain_name}
   - rancher.{domain_name}
+kubelet-arg:
+  - max-pods=500
 EOF
 
 systemctl start rke2-server.service

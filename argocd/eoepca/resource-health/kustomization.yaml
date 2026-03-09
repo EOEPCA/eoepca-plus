@@ -8,3 +8,32 @@ resources:
   - secrets/resource-health-alerting-user-emails-sealedsecret.yaml
   - secrets/resource-health-opensearch-admin-sealedsecret.yaml
   - resource-health-opensearch-admin.yaml
+
+
+patches:
+  - target:
+      group: bitnami.com
+      kind: SealedSecret
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "2"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: user.keycloak.m.crossplane.io
+      kind: User
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "4"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: apisix.apache.org
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "4"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

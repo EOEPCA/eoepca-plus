@@ -1,5 +1,7 @@
 # Connect Workers to Cluster
 
+> You will not be able to access the Rancher dashboard until you have at least one worker node connected to the cluster.
+
 With RKE2 there is a manual step to connect the workers to the cluster.
 
 Once the `pulumi up` has completed, SSH into the control node with:
@@ -13,6 +15,12 @@ Retrieve the `node token`
 
 ```bash
 sudo cat /var/lib/rancher/rke2/server/node-token
+```
+
+__Optional__ Retrieve the `kubeconfig` file to use with `kubectl` on your local machine:
+
+```bash
+sudo cat /etc/rancher/rke2/rke2.yaml
 ```
 
 Exit the control node and SSH into your worker node:

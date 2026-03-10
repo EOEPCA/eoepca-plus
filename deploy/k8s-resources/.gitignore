@@ -1,2 +1,3 @@
 *.pyc
 venv/
+resources/sealed-secrets-keys.yaml

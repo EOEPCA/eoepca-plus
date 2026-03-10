@@ -76,7 +76,7 @@ kubectl create namespace argocd 2>/dev/null || true
 helm upgrade --install argocd argo/argo-cd \
     --namespace argocd \
     --version "${ARGOCD_VERSION}" \
-    -f argocd-values.yaml \
+    -f argocd/argocd-values.yaml \
     --set crds.install=true \
     --set crds.keep=true \
     --set server.service.type=ClusterIP \

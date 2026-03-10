@@ -1,6 +1,6 @@
 
 resources:
-  - ss-resource-catalogue-secret.yaml
+  - eso-pgo.yaml
   - app-resource-catalogue-core.yaml
   - app-resource-catalogue-protected.yaml
   - app-resource-catalogue-route.yaml

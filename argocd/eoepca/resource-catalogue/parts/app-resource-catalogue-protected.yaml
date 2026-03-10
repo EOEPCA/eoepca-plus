@@ -26,7 +26,7 @@ spec:
           port: 5432
           database: pycsw
           auth:
-            secret_name: resource-catalogue-secret
+            secret_name: default-pguser-pycsw
         pycsw:
           name: pycsw-protected
           service_name: resource-catalogue-protected-service

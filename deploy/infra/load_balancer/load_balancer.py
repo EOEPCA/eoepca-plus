@@ -4,7 +4,7 @@ from pulumi_openstack import loadbalancer, networking
 
 config = Config()
 
-def deploy(subnet_id):
+def deploy(subnet_id, router_interface):
     lb_floating_ip_id = config.require("loadBalancerFloatingIPID")
     floating_ip = networking.FloatingIp.get("k8s-floating-ip", id=lb_floating_ip_id)
 
@@ -19,7 +19,7 @@ def deploy(subnet_id):
         "rke2-lb-floating-ip",
         floating_ip=floating_ip.address,
         port_id=lb.vip_port_id,
-        opts=pulumi.ResourceOptions(depends_on=[lb]),
+        opts=pulumi.ResourceOptions(depends_on=[lb, router_interface]),
     )
 
     # Existing Listeners and Pools
@@ -27,7 +27,7 @@ def deploy(subnet_id):
         "rke2-k8s-listener",
         loadbalancer_id=lb.id,
         protocol="TCP",
-        protocol_port=6443,  # Kubernetes API server port
+        protocol_port=6443,
         opts=pulumi.ResourceOptions(depends_on=[lb]),
     )
 
@@ -75,7 +75,6 @@ def deploy(subnet_id):
         opts=pulumi.ResourceOptions(depends_on=[https_listener]),
     )
 
-
     # Create a Second Load Balancer for APISIX
     apisix_lb = loadbalancer.LoadBalancer(
         "rke2-apisix-lb",
@@ -96,7 +95,7 @@ def deploy(subnet_id):
         "rke2-apisix-floating-ip-association",
         floating_ip=apisix_floating_ip.address,
         port_id=apisix_lb.vip_port_id,
-        opts=pulumi.ResourceOptions(depends_on=[apisix_floating_ip]),
+        opts=pulumi.ResourceOptions(depends_on=[apisix_floating_ip, router_interface]),
     )
 
     # Create Listeners and Pools for APISIX

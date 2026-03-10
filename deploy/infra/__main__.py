@@ -15,7 +15,7 @@ def main():
     key_pair = keys.deploy()
 
     # Deploy Network
-    network_instance, subnet_instance = network.deploy()
+    network_instance, subnet_instance, router_interface = network.deploy()
 
     # Deploy Load Balancer
     (
@@ -27,12 +27,12 @@ def main():
         apisix_floating_ip,
         apisix_lb,
         apisix_https_pool,
-    ) = load_balancer.deploy(subnet_instance)
+    ) = load_balancer.deploy(subnet_instance, router_interface)
 
     pulumi.export("apisix_floating_ip", apisix_floating_ip.address)
 
     # Deploy Bastion
-    bastion_instance = bastion.Bastion(network_instance, key_pair)
+    bastion_instance = bastion.Bastion(network_instance, key_pair, router_interface)
 
     # Deploy NFS
     nfs_server = nfs.deploy(network_instance)
@@ -62,8 +62,8 @@ def main():
     worker_nodes = []
     for i in range(config.require_int("workerNodeCount")):
         node = instance.deploy(
-            f"rke2-worker-node-{i}", 
-            config.require("workerNodeFlavour"), 
+            f"rke2-worker-node-{i}",
+            config.require("workerNodeFlavour"),
             network_instance
         )
         load_balancer.add_member(

@@ -9,7 +9,7 @@ from network import security_group
 config = Config()
 
 
-def deploy(network_instance, key_pair):
+def deploy(network_instance, key_pair, router_interface):
     bastion_sg_rules = [
         {
             "direction": "ingress",
@@ -56,7 +56,7 @@ chown eouser:eouser /home/eouser/.ssh/key.pem
     )
 
     bastion_floating_ip, bastion_floating_ip_association = instance.attach_floating_ip(
-        bastion_instance
+        bastion_instance, extra_deps=[router_interface]
     )
     pulumi.export("bastion_ip", bastion_floating_ip_association.floating_ip)
 
@@ -64,16 +64,17 @@ chown eouser:eouser /home/eouser/.ssh/key.pem
 
 
 class Bastion:
-    def __init__(self, network_instance, key_pair):
+    def __init__(self, network_instance, key_pair, router_interface):
         self.network_instance = network_instance
         self.key_pair = key_pair
+        self.router_interface = router_interface
         self.private_key = private_key
         self.bastion_instance, self.bastion_floating_ip_association = (
             self.deploy_bastion()
         )
 
     def deploy_bastion(self):
-        return deploy(self.network_instance, self.key_pair)
+        return deploy(self.network_instance, self.key_pair, self.router_interface)
 
     def run_command(self, name, command, ip_to_run_on):
         return remote.Command(

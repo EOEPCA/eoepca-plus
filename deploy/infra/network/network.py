@@ -43,4 +43,4 @@ def deploy():
     # Output network ID
     pulumi.export("network_id", network.id)
 
-    return network, subnet
+    return network, subnet, router_interface

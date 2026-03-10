@@ -195,13 +195,18 @@ kubectl get secret --namespace cattle-system bootstrap-secret \
 chown eouser:eouser /home/eouser/rancher-bootstrap-password.txt
 """
 
-def attach_floating_ip(instance, pool_name="external"):
+def attach_floating_ip(instance, pool_name="external", extra_deps=None):
     floating_ip = networking.FloatingIp(f"{instance._name}-floating-ip", pool=pool_name)
+
+    deps = [instance, floating_ip]
+    if extra_deps:
+        deps.extend(extra_deps)
+
     floating_ip_assoc = compute.FloatingIpAssociate(
         f"{instance._name}-fip-assoc",
         floating_ip=floating_ip.address,
         instance_id=instance.id,
-        opts=ResourceOptions(depends_on=[instance, floating_ip]),
+        opts=ResourceOptions(depends_on=deps),
     )
 
     return floating_ip, floating_ip_assoc
@@ -234,8 +239,6 @@ def deploy(instance_name, flavour, network_instance, role="worker"):
     return test_instance
 
 
-# TODO: There are unresolved issues regarding the security group setup
-#       For now allowing all traffic to and from the instance is acceptable as the nodes are not exposed to the internet
 def get_node_security_groups(instance_name):
     sg_rules = [
         {

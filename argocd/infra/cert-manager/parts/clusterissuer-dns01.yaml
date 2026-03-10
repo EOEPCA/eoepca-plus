@@ -11,7 +11,7 @@ spec:
     solvers:
       - selector:
           dnsZones:
-            - "eoepca.org"
+            - "deploybox.co.uk"
         dns01:
           cloudflare:
             apiTokenSecretRef:

@@ -10,3 +10,4 @@ k.yaml
 *.key
 documents/*
 eoepca-openrc-2fa.sh
+deploy/sealed-secrets-keys.yaml

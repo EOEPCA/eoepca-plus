@@ -14,6 +14,17 @@ NFS_PROVISIONER_VERSION="4.0.12"
 
 ARGOCD_DOMAIN="argocd.${DOMAIN}"
 
+echo "=== Installing cert-manager ==="
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+helm upgrade --install cert-manager jetstack/cert-manager \
+    --namespace cert-manager \
+    --create-namespace \
+    --set crds.enabled=true \
+    --set clusterResourceNamespace=cert-manager-ns \
+    --wait --timeout 3m
+
+
 echo "=== Installing cluster issuer ==="
 kubectl apply -f - <<EOF
 apiVersion: cert-manager.io/v1
@@ -65,6 +76,7 @@ kubectl create namespace argocd 2>/dev/null || true
 helm upgrade --install argocd argo/argo-cd \
     --namespace argocd \
     --version "${ARGOCD_VERSION}" \
+    -f argocd-values.yaml \
     --set crds.install=true \
     --set crds.keep=true \
     --set server.service.type=ClusterIP \

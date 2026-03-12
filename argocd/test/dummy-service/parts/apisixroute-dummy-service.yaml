@@ -1,12 +1,7 @@
 apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
-  name: dummy-service-route
-  namespace: test
-  annotations:
-    ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    argocd.argoproj.io/sync-wave: "2"
+  name: dummy-service
 spec:
   ingressClassName: apisix
   http:
@@ -78,3 +73,35 @@ spec:
     backends:
       - serviceName: dummy-service
         servicePort: 80
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: dummy-service-tls
+spec:
+  dnsNames:
+    - dummy.develop.eoepca.org
+    - dummy-offline.develop.eoepca.org
+    - dummy-open.develop.eoepca.org
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-http01-apisix
+  secretName: dummy-service-tls
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: dummy-service
+spec:
+  ingressClassName: apisix
+  hosts:
+    - dummy.develop.eoepca.org
+    - dummy-offline.develop.eoepca.org
+    - dummy-open.develop.eoepca.org
+  secret:
+    name: dummy-service-tls
+    namespace: test

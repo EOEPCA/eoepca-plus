@@ -1,4 +1,3 @@
 
 resources:
-  - app-dummy-service-core.yaml
-  - apisixroute-dummy-service.yaml
+  - dummy-service.yaml

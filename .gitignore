@@ -1,4 +1,5 @@
 .vscode/
+.envrc
 kubeconfig
 kubeconfig.yaml
 argocd.yaml

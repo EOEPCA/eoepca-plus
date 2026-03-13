@@ -13,23 +13,25 @@ spec:
     path: charts/pgstac-geoparquet-exporter
     helm:
       values: |
+        fullnameOverride: "eoapi-geoparquet-export"
+
         stacApiUrl: "https://eoapi.develop.eoepca.org/stac"
-        
+
         database:
           existingSecret: "default-pguser-eoapi"
-        
+
         storage:
           outputPath: "s3://eoapi-geoparquet/geoparquet"
           existingSecret: "data-access"
           endpoint: "eodata.cloudferro.com"
-        
+
         exportConfig:
           exportAll: true
-  
+
   destination:
     server: https://kubernetes.default.svc
     namespace: data-access
-  
+
   syncPolicy:
     automated:
       prune: true

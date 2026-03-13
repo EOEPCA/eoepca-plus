@@ -55,6 +55,15 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/data-access/parts/values/values-stac-manager.yaml
 
+    - repoURL: https://github.com/developmentseed/pgstac-geoparquet-exporter
+      chart: pgstac-geoparquet-exporter
+      path: charts/pgstac-geoparquet-exporter
+      targetRevision: pgstac-geoparquet-exporter-v0.2.0
+      helm:
+        releaseName: eoapi-geoparquet-export
+        valueFiles:
+          - $values/argocd/eoepca/data-access/parts/values/values-pgstac-geoparquet-exporter.yaml
+
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

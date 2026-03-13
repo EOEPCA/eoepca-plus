@@ -1,0 +1,17 @@
+fullnameOverride: "eoapi-geoparquet-export"
+
+image:
+  tag: "0.2"
+
+stacApiUrl: "https://eoapi.develop.eoepca.org/stac"
+
+database:
+  existingSecret: "default-pguser-eoapi"
+
+storage:
+  outputPath: "s3://eoapi-geoparquet/geoparquet"
+  existingSecret: "data-access"
+  endpoint: "eodata.cloudferro.com"
+
+exportConfig:
+  exportAll: true

@@ -4,6 +4,7 @@ resources:
   - iam.yaml
   - route.yaml
   - eso-pgo.yaml
+  - app-geoparquet-exporter.yaml
 
 configMapGenerator:
   - name: stac-auth-proxy-filters

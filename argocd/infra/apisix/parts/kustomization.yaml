@@ -5,3 +5,4 @@ resources:
   - cert-apx-all.yaml
   - apisixglobalrule-redirect-to-tls.yaml
   - apisixglobalrule-tls-port-correction.yaml
+  - apisixglobalrule-prometheus.yaml

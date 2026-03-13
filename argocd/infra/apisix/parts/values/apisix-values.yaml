@@ -5,7 +5,6 @@
 # This may change in the future.
 
 apisix:
-
   enableIPv6: false
   enableServerTokens: false
 
@@ -25,6 +24,9 @@ apisix:
     role: traditional
     role_traditional:
       config_provider: yaml # Standalone Mode
+
+  prometheus:
+    enabled: true
 
 etcd:
   # Etcd is not needed in standalone mode.

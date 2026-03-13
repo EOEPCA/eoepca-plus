@@ -5,22 +5,22 @@ resources:
   - data-access
   - datacube-access
   - zoo-dru
-  - zoo-dru-wes
-  - zoo-dru-std
-  - zoo-dru-keda
+  # - zoo-dru-wes
+  # - zoo-dru-std
+  # - zoo-dru-keda
   - workspace
-  - mlops
+  # - mlops
   - application-quality
   # - portal-v1x
   - registration-harvester
   - iam
   - application-hub
-  - resource-health
+  # - resource-health
   - openeo-geotrellis
   - openeo-web-editor
-  - openeofed
-  - openeo-argoworkflows
-  - notification-automation
+  # - openeofed
+  # - openeo-argoworkflows
+  # - notification-automation
   # - identity-service
 
 

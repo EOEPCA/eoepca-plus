@@ -6,3 +6,5 @@ resources:
   - apisixglobalrule-redirect-to-tls.yaml
   - apisixglobalrule-tls-port-correction.yaml
   - apisixglobalrule-prometheus.yaml
+  - servicemonitor.yaml
+  - slo.yaml

@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: stac-route
+  namespace: ingress-apisix
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: STAC_100ms_Error_Rate_Recording
+      rules:
+        - record: stac_api_latency_100ms_burn_rate_1h
+          expr: >
+            (
+              1 - (
+                sum(rate(apisix_http_latency_bucket{type="request", route="data-access_stac_stac-route", le="100.0"}[1h]))
+                /
+                sum(rate(apisix_http_latency_count{type="request", route="data-access_stac_stac-route"}[1h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+    - name: STAC_100ms_99p_Alerting
+      rules:
+        - alert: STACApiLatencyBudgetBurn_Critical
+          expr: stac_api_latency_100ms_burn_rate_1h > 14.4
+          labels:
+            severity: critical
+            service: prometheus-server
+          annotations:
+            summary: "STAC API is burning its latency error budget."
+

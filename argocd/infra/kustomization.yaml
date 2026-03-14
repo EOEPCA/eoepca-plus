@@ -12,7 +12,9 @@ resources:
   - app-monitoring.yaml
   - route-monitoring.yaml
   - app-logging.yaml
+  - alertmanagerconfig-keep-ingress-apisix.yaml
   - eso
   - crossplane
   - trivy
+  - keephq
 

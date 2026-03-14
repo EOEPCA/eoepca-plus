@@ -7,3 +7,5 @@ spec:
   plugins:
     - name: prometheus
       enable: true
+      config:
+        prefer_name: true

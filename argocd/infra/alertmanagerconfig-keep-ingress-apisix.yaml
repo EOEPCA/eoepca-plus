@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: keep
+  namespace: ingress-apisix
+  labels:
+    release: kube-prometheus-stack
+spec:
+  route:
+    groupBy: ['alertname']
+    groupWait: 15s
+    groupInterval: 15s
+    repeatInterval: 1m
+    receiver: 'keep'
+  receivers:
+    - name: 'keep'
+      webhookConfigs:
+        - url: 'http://keep-backend.operations.svc.cluster.local:8080/alerts/event/prometheus'
+          sendResolved: true
+          httpConfig:
+            basicAuth:
+              username:
+                name: keep-api-key
+                key: username
+              password:
+                name: keep-api-key
+                key: password
+

@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keephq-core
+  namespace: argocd
+spec:
+  project: eoepca
+  source:
+    repoURL: 'https://keephq.github.io/helm-charts'
+    targetRevision: 0.1.95
+    chart: keep
+    helm:
+      releaseName: keephq
+      values: |
+        global:
+          ingress:
+            enabled: false
+        backend:
+          envFromSecret: "keep-auth-secrets"
+          env:
+            - name: AUTH_TYPE
+              value: "DB"
+        frontend:
+          env:
+            - name: NEXTAUTH_URL
+              value: "https://keep.develop.eoepca.org"
+            - name: API_URL
+              value: "https://keep.develop.eoepca.org/v2"
+            - name: AUTH_TYPE
+              value: "DB"
+  destination:
+    name: in-cluster
+    namespace: infra
+  syncPolicy:
+    automated:
+      prune: false # never prune
+      selfHeal: false # only manual sync
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

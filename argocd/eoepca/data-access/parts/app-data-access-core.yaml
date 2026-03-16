@@ -25,7 +25,7 @@ spec:
         releaseName: eoapi-titiler-openeo
         values: |
           image:
-            tag: "titiler-openeo-v0.12.0"
+            tag: "v0.9.1"
           stac:
             apiUrl: "https://eoapi.develop.eoepca.org/stac"
             serviceStoreUrl: "/app/services/eoapi.json"

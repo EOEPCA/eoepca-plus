@@ -549,7 +549,8 @@ spec:
 
                     url: str = tu.Field(json_schema_extra={"format": "textarea"})
                     collection_pointer: str = tu.Field(
-                        description="Json pointer to collection in the response to inspect"
+                        description="Json pointer to the collection in the response to inspect",
+                        default="",
                     )
                     expected_count: int = tu.Field(gt=0)
 
@@ -557,7 +558,7 @@ spec:
                 CollectionCheck = tu.simple_runner_template(
                     template_id="collection_check",
                     argument_type=CollectionCheckArguments,
-                    label="Collection Check Template",
+                    label="Collection template",
                     description="To create checks which query an endpoint and check that the returned collection size is not smaller than expected.",
                     script_url=tu.src_to_data_url(CODE_SOURCE),
                     requirements_url=tu.src_to_data_url(REQUIREMENTS_SOURCE),

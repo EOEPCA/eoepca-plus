@@ -6,7 +6,7 @@ metadata:
   labels:
     argocd.argoproj.io/instance: data-access
 spec:
-  replicas: 5
+  replicas: 2
   selector:
     matchLabels:
       app.kubernetes.io/name: synthetic-api-check

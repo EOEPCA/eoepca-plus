@@ -6,7 +6,7 @@ metadata:
   labels:
     argocd.argoproj.io/instance: data-access
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app.kubernetes.io/name: synthetic-api-check
@@ -20,6 +20,13 @@ spec:
         - name: checker
           image: quay.io/curl/curl:8.12.1
           imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
           command:
             - /bin/sh
             - /opt/synthetic-api-check/check-stac.sh
@@ -27,11 +34,11 @@ spec:
             - name: STAC_BASE_URL
               value: https://eoapi.develop.eoepca.org/stac
             - name: SYNTHETIC_API_CHECK_ITEMS_LIMIT
-              value: "3"
+              value: "100"
             - name: SYNTHETIC_API_CHECK_SEARCH_LIMIT
-              value: "3"
-            - name: SYNTHETIC_API_CHECK_SLEEP_SECONDS
               value: "10"
+            - name: SYNTHETIC_API_CHECK_SLEEP_SECONDS
+              value: "3"
           volumeMounts:
             - name: synthetic-api-check-script
               mountPath: /opt/synthetic-api-check/check-stac.sh

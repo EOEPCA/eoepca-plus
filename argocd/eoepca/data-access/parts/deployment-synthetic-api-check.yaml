@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synthetic-api-check
+  namespace: data-access
+  labels:
+    argocd.argoproj.io/instance: data-access
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: synthetic-api-check
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: synthetic-api-check
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: checker
+          image: quay.io/curl/curl:8.12.1
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - /opt/synthetic-api-check/check-stac.sh
+          env:
+            - name: STAC_BASE_URL
+              value: https://eoapi.develop.eoepca.org/stac
+            - name: SYNTHETIC_API_CHECK_ITEMS_LIMIT
+              value: "3"
+            - name: SYNTHETIC_API_CHECK_SEARCH_LIMIT
+              value: "3"
+            - name: SYNTHETIC_API_CHECK_SLEEP_SECONDS
+              value: "10"
+          volumeMounts:
+            - name: synthetic-api-check-script
+              mountPath: /opt/synthetic-api-check/check-stac.sh
+              subPath: check-stac.sh
+              readOnly: true
+      volumes:
+        - name: synthetic-api-check-script
+          configMap:
+            name: synthetic-api-check-script
+            defaultMode: 0755

@@ -4,6 +4,13 @@
 # separately in the demo environment and so this file remains relevant.
 # This may change in the future.
 
+gateway:
+  type: NodePort
+  http:
+    nodePort: 32080
+  tls:
+    nodePort: 32443
+
 apisix:
 
   enableIPv6: false

@@ -34,6 +34,9 @@ spec:
               volumeMounts:
               volumes:
           configFile: |
+            rego:
+              data:
+                - /extra-trivy-config/trivy-config-data.yaml
   destination:
     name: in-cluster
     namespace: trivy-system

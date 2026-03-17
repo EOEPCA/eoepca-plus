@@ -1,4 +1,5 @@
 apiVersion: argoproj.io/v1alpha1
+apiVersion: v1
 kind: Application
 metadata:
   name: trivy-operator
@@ -18,9 +19,27 @@ spec:
         operator:
           scanJobsConcurrentLimit: 4  # Default is 10
           clusterSbomCacheEnabled: true
+        trivyOperator:
+          scanJobCustomVolumes:
+            - name: extra-trivy-config
+              configMap:
+                name: extra-trivy-config
+          scanJobCustomVolumesMount:
+            - name: extra-trivy-config
+              mountPath: /extra-trivy-config
         trivy:
-          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          severity: UNKNOWN,MEDIUM,HIGH,CRITICAL
           ignoreUnfixed: false
+          server:
+            extraServerVolumes:
+              volumeMounts:
+              volumes:
+          configFile: |
+            kubernetes:
+              k8s-version: '1.32.0'
+            rego:
+              data:
+                - /extra-trivy-config/trivy-config-data.yaml
   destination:
     name: in-cluster
     namespace: trivy-system

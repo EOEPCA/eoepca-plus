@@ -34,11 +34,6 @@ spec:
               volumeMounts:
               volumes:
           configFile: |
-            kubernetes:
-              k8s-version: '1.32.0'
-            rego:
-              data:
-                - /extra-trivy-config/trivy-config-data.yaml
   destination:
     name: in-cluster
     namespace: trivy-system

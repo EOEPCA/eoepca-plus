@@ -25,6 +25,7 @@ data:
     \c pycsw
     CREATE EXTENSION IF NOT EXISTS postgis;
     ALTER DATABASE pycsw OWNER TO pycsw;
+    ALTER USER pycsw SET search_path TO pycsw, public;
     ALTER DATABASE pycsw set search_path to pycsw, public;
     GRANT CONNECT ON DATABASE pycsw TO pycsw;
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO pycsw;

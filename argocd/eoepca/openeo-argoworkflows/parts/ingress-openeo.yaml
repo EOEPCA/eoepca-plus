@@ -5,6 +5,7 @@ metadata:
   name: openeo-route
   namespace: openeo
 spec:
+  ingressClassName: apisix
   http:
     # Open access to OpenEO API documentation and discovery endpoints
     - name: openeo-docs
@@ -23,6 +24,51 @@ spec:
         - serviceName: openeo-openeo-argo
           servicePort: 8000
       plugins:
+        # Allow CORS access
+        - name: cors
+          enable: true
+    # Authorized access to OpenEO protected endpoints (jobs, files)
+    - name: openeo-protected
+      match:
+        hosts:
+          - openeo-eurac.develop.eoepca.org
+        paths:
+          - /openeo/1.1.0/jobs*
+          - /openeo/1.1.0/files*
+          - /openeo/1.1.0/me*
+      backends:
+        - serviceName: openeo-openeo-argo
+          servicePort: 8000
+      plugins:
+        # Extract raw JWT from OpenEO's 'Bearer oidc/<provider>/<jwt>' format,
+        # validate it via Keycloak JWKS, then restore the original header for the backend.
+        - name: serverless-pre-function
+          enable: true
+          config:
+            phase: access
+            functions:
+              - "return function(conf, ctx)
+                  local core = require('apisix.core')
+                  local http = require('resty.http')
+                  local cjson = require('cjson')
+                  local uri_args = core.request.get_uri_args(ctx)
+                  if uri_args and uri_args['Signature'] then
+                    return
+                  end
+                  local auth = core.request.header(ctx, 'Authorization') or ''
+                  local jwt = auth:match('^[Bb]earer%s+oidc/[^/]+/(.+)$')
+                  if not jwt then
+                    core.response.exit(401, 'Unauthorized')
+                  end
+                  local httpc = http.new()
+                  local res, err = httpc:request_uri(
+                    'https://edp-portal.eurac.edu/auth/realms/edp/protocol/openid-connect/userinfo',
+                    { method = 'GET', headers = { Authorization = 'Bearer ' .. jwt }, ssl_verify = false }
+                  )
+                  if not res or res.status ~= 200 then
+                    core.response.exit(401, 'Unauthorized')
+                  end
+                end"
         # Allow CORS access
         - name: cors
           enable: true
@@ -50,6 +96,7 @@ metadata:
   name: openeo
   namespace: openeo
 spec:
+  ingressClassName: apisix
   hosts:
     - openeo-eurac.develop.eoepca.org
   secret:

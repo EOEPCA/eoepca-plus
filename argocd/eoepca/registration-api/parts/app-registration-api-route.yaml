@@ -4,6 +4,7 @@ metadata:
   name: registration-api-route
   namespace: rm
 spec:
+  ingressClassName: apisix
   http:
   - name: registration-api-protected
     match:
@@ -21,6 +22,8 @@ spec:
         config:
           client_id: "registration-api"
           client_secret: "TBD"
+          session:
+            secret: "V649LpBqKIfJv95BzDsR29e9"
           discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
           realm: eoepca
           use_jwks: true
@@ -76,6 +79,7 @@ metadata:
   name: registration-api-tls
   namespace: rm
 spec:
+  ingressClassName: apisix
   hosts:
     - registration-api-protected.develop.eoepca.org
     - registration-api.develop.eoepca.org

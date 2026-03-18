@@ -1,12 +1,3 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: iam-keycloak-external
-  namespace: data-access
-spec:
-  type: ExternalName
-  externalName: iam-keycloak.iam.svc.cluster.local
----
 apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
@@ -15,6 +6,7 @@ metadata:
   # annotations:
   #   argocd.argoproj.io/sync-options: skip
 spec:
+  ingressClassName: apisix
   http:
   - name: manager-redirect
     websocket: true
@@ -51,24 +43,7 @@ spec:
       enable: true
     - name: cors
       enable: true
-  - name: manager-auth-proxy
-    backends:
-    - serviceName: iam-keycloak-external
-      servicePort: 80
-    match:
-      hosts:
-      - eoapi.develop.eoepca.org
-      paths:
-      - /auth/*
-    plugins:
-    - name: proxy-rewrite
-      config:
-        regex_uri:
-        - ^/auth(.*)
-        - $1
-      enable: true
-    - name: cors
-      enable: true
+
   - name: browser-redirect
     backends:
     - serviceName: eoapi-browser
@@ -236,96 +211,7 @@ spec:
         uri: /stac/
     - name: cors
       enable: true
-  - name: stac-open-route
-    priority: 90
-    backends:
-    - serviceName: eoapi-stac-auth-proxy
-      servicePort: 8080
-    match:
-      hosts:
-        - eoapi.develop.eoepca.org
-      methods:
-        - GET
-      paths:
-        - /stac/
-        - /stac/api*
-        - /stac/collections
-        - /stac/collections/*
-      exprs:
-      - subject:
-          scope: Path
-          name: uri
-        op: RegexNotMatch
-        value: '^/stac/collections/ws-.*'
-    plugins:
-    - name: proxy-rewrite
-      config:
-        regex_uri:
-        - ^(/stac)($|/.*)
-        - $2
-        headers:
-          set:
-            X-Forwarded-Port: "443"
-            X-Forwarded-Proto: "https"
-            X-Forwarded-Host: "eoapi.develop.eoepca.org"
-      enable: true
-    - name: cors
-      enable: true
-  - name: stac-open-search-route
-    priority: 90
-    backends:
-    - serviceName: eoapi-stac-auth-proxy
-      servicePort: 8080
-    match:
-      hosts:
-      - eoapi.develop.eoepca.org
-      methods:
-      - GET
-      - POST
-      paths:
-      - /stac/search
-    plugins:
-    - name: proxy-rewrite
-      config:
-        regex_uri:
-        - ^(/stac)($|/.*)
-        - $2
-        headers:
-          set:
-            X-Forwarded-Port: "443"
-            X-Forwarded-Proto: "https"
-            X-Forwarded-Host: "eoapi.develop.eoepca.org"
-      enable: true
-    - name: cors
-      enable: true
-  - name: stac-mgmt-route
-    priority: 90
-    backends:
-    - serviceName: eoapi-stac-auth-proxy
-      servicePort: 8080
-    match:
-      hosts:
-      - eoapi.develop.eoepca.org
-      methods:
-      - GET
-      paths:
-      - /stac/_mgmt/*
-      - /stac/healthz*
-    plugins:
-    - name: proxy-rewrite
-      config:
-        regex_uri:
-        - ^(/stac)($|/.*)
-        - $2
-        headers:
-          set:
-            X-Forwarded-Port: "443"
-            X-Forwarded-Proto: "https"
-            X-Forwarded-Host: "eoapi.develop.eoepca.org"
-      enable: true
-    - name: cors
-      enable: true
-  - name: stac-protected-route
+  - name: stac-route
     priority: 10
     backends:
     - serviceName: eoapi-stac-auth-proxy
@@ -334,36 +220,9 @@ spec:
       hosts:
       - eoapi.develop.eoepca.org
       paths:
+      - /stac/
       - /stac/*
     plugins:
-    - name: proxy-rewrite
-      config:
-        regex_uri:
-        - ^(/stac)($|/.*)
-        - $2
-        headers:
-          set:
-            X-Forwarded-Port: "443"
-            X-Forwarded-Proto: "https"
-            X-Forwarded-Host: "eoapi.develop.eoepca.org"
-      enable: true
-    - name: openid-connect
-      enable: true
-      config:
-        discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
-        use_jwks: true
-        bearer_only: false # as we want to redirect to login screen (default: false)
-        set_access_token_header: true # required for subsequent OPA check (default: true)
-        access_token_in_authorization_header: true # required for subsequent OPA check (default: false)
-        set_id_token_header: false # not needed (default: true)
-        set_userinfo_header: false # not needed (default: true)
-        client_id: eoapi
-        client_secret: ""
-    - name: opa
-      enable: true
-      config:
-        host: http://iam-opa.iam:8181
-        policy: eoepca/dataaccess/eoapi
     - name: cors
       enable: true
   - name: docs-redirect

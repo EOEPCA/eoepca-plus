@@ -1,4 +1,5 @@
 .vscode/
+.envrc
 kubeconfig
 kubeconfig.yaml
 argocd.yaml
@@ -8,3 +9,4 @@ venv/
 k.yaml
 *.crt
 *.key
+*.pyc

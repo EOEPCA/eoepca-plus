@@ -14,11 +14,11 @@ image:
   pullPolicy: Always
 
 publicUrl: https://eoapi.develop.eoepca.org/manager
-stacApi: https://eoapi.develop.eoepca.org/stac/
+stacApi: https://eoapi.develop.eoepca.org/stac
 primaryColor: "#005ACD"
 secondaryColor: "#048A81"
 
 oidc:
-  providerUrl: https://eoapi.develop.eoepca.org/auth
+  providerUrl: https://iam-auth.develop.eoepca.org
   clientId: eoapi
   realm: eoepca

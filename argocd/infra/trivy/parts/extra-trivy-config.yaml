@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: extra-trivy-config
+  namespace: trivy-system
+data:
+  trivy-config-data.yaml: |
+    ksv0125:
+      trusted_registries:
+        - "docker.io"
+        - "ghcr.io"
+        - "quay.io"
+        - "registry.k8s.io"
+        - "gcr.io"

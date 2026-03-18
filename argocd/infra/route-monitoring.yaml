@@ -4,6 +4,7 @@ metadata:
   name: monitoring
   namespace: infra
 spec:
+  ingressClassName: apisix
   http:
     - name: grafana
       match:

@@ -8,6 +8,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     argocd.argoproj.io/sync-wave: "2"
 spec:
+  ingressClassName: apisix
   http:
   - name: resource-catalogue-protected-public
     match:
@@ -49,6 +50,8 @@ spec:
         set_userinfo_header: false
         client_id: resource-catalogue
         client_secret: ""
+        session:
+          secret: "5szUZCL4tTILhFUUFy8hqf9C"
     - name: opa
       enable: true
       config:

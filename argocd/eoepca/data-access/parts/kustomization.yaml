@@ -4,6 +4,7 @@ resources:
   - iam.yaml
   - route.yaml
   - eso-pgo.yaml
+  - deployment-synthetic-api-check.yaml
 
 configMapGenerator:
   - name: stac-auth-proxy-filters
@@ -16,3 +17,8 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - eoapi.json=titiler-openeo/eoapi.json
+  - name: synthetic-api-check-script
+    options:
+      disableNameSuffixHash: true
+    files:
+      - check-stac.sh=synthetic-api-check/check-stac.sh

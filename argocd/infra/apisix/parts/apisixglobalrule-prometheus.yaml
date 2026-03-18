@@ -1,0 +1,9 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixGlobalRule
+metadata:
+  name: prometheus
+spec:
+  ingressClassName: apisix
+  plugins:
+    - name: prometheus
+      enable: true

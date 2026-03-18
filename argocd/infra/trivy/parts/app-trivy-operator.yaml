@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: trivy-operator
+  namespace: argocd
+  labels:
+    eoepca/app-name: trivy
+spec:
+  project: eoepca
+  source:
+    repoURL: "https://aquasecurity.github.io/helm-charts/"
+    chart: trivy-operator
+    targetRevision: 0.32.1
+
+    helm:
+      releaseName: trivy-operator
+      valuesObject:
+        operator:
+          scanJobsConcurrentLimit: 4  # Default is 10
+          clusterSbomCacheEnabled: true
+        trivyOperator:
+          scanJobCustomVolumes:
+            - name: extra-trivy-config
+              configMap:
+                name: extra-trivy-config
+          scanJobCustomVolumesMount:
+            - name: extra-trivy-config
+              mountPath: /extra-trivy-config
+        trivy:
+          severity: UNKNOWN,MEDIUM,HIGH,CRITICAL
+          ignoreUnfixed: false
+          server:
+            extraServerVolumes:
+              volumeMounts:
+              volumes:
+          configFile:
+            kubernetes:
+              k8s-version: "1.32.0"
+            rego:
+              data:
+                - /extra-trivy-config/trivy-config-data.yaml
+  destination:
+    name: in-cluster
+    namespace: trivy-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

@@ -4,6 +4,7 @@ metadata:
   name: resource-health-route
   namespace: resource-health
 spec:
+  ingressClassName: apisix
   http:
   - name: resource-health-web-route
     match:

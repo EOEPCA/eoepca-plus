@@ -190,6 +190,10 @@ spec:
                 value: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
               - name: OPEN_ID_CONNECT_AUDIENCE
                 value: "account"
+              - name: DEFAULT_COLLECTOR_URL_NO_PROTOCOL
+                value: "resource-health-opentelemetry-collector:4317"
+              - name: DEFAULT_PROXY_REMOTE_DOMAIN
+                value: "https://opensearch-cluster-master-headless:9200"
 
             use_hook_configmap: True
             hooks:

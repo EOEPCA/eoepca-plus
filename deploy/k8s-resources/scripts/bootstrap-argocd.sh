@@ -8,21 +8,45 @@ if ! kubectl get nodes &>/dev/null; then
 fi
 
 DOMAIN="${1:?Usage: $0 <domain> <nfs-ip> [argocd-version]}" # rke2.deploybox.co.uk
-NFS_IP="${2:?Usage: $0 <domain> <nfs-ip> [argocd-version]}" # openstack server list
+NFS_IP="${2:?Usage: $0 <domain> <nfs-ip> [argocd-version]}" # openstack server list e.g. 192.168.11.6
 ARGOCD_VERSION="${3:-6.9.2}"
 NFS_PROVISIONER_VERSION="4.0.12"
 
 ARGOCD_DOMAIN="argocd.${DOMAIN}"
 
-echo "=== Installing cert-manager ==="
-helm repo add jetstack https://charts.jetstack.io
+echo "=== applying sealed secrets keys ==="
+kubectl create namespace infra 2>/dev/null || true
+kubectl apply -f resources/sealed-secrets-keys.yaml
+
+echo "=== installing sealed secrets controller ==="
+helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
 helm repo update
+helm upgrade --install sealed-secrets sealed-secrets/sealed-secrets \
+    --namespace infra \
+    --create-namespace \
+    --version 2.16.0 \
+    --wait --timeout 3m
+
+
+echo "=== Installing cert-manager ==="
 helm upgrade --install cert-manager jetstack/cert-manager \
     --namespace cert-manager \
     --create-namespace \
     --set crds.enabled=true \
     --set clusterResourceNamespace=cert-manager-ns \
     --wait --timeout 3m
+
+
+echo "=== applying dns-api-token secret ==="
+kubectl create namespace cert-manager-ns 2>/dev/null || true
+kubectl create secret generic dns-api-token \
+    --namespace cert-manager-ns \
+    --from-literal=api-token="<YOUR DNS TOKEN>" \
+    --dry-run=client -o yaml | \
+    kubeseal --controller-name=sealed-secrets --controller-namespace=infra -o yaml \
+    > ../../argocd/infra/cert-manager/parts/ss-dns-api-token.yaml
+
+kubectl apply -f ../../argocd/infra/cert-manager/parts/ss-dns-api-token.yaml
 
 
 echo "=== Installing cluster issuer ==="
@@ -46,7 +70,7 @@ EOF
 
 echo "=== Installing NFS Provisioner ==="
 helm repo add nfs-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
-helm repo update
+# helm repo update
 
 helm upgrade --install nfs-provisioner nfs-provisioner/nfs-subdir-external-provisioner \
     --set nfs.server="${NFS_IP}" \
@@ -69,7 +93,7 @@ helm upgrade --install nfs-provisioner-retain nfs-provisioner/nfs-subdir-externa
 
 echo "=== Installing ArgoCD ==="
 helm repo add argo https://argoproj.github.io/argo-helm
-helm repo update
+# helm repo update
 
 kubectl create namespace argocd 2>/dev/null || true
 
@@ -109,6 +133,7 @@ echo ""
 echo "=== Done ==="
 echo ""
 echo "ArgoCD UI: https://${ARGOCD_DOMAIN}"
+echo "Admin username: admin"
 echo "Admin password: $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)"
 echo ""
 echo "Rancher UI: https://rancher.${DOMAIN}"

@@ -42,4 +42,4 @@ sudo systemctl enable rke2-agent.service
 sudo systemctl start rke2-agent.service
 ```
 
-This will then connect the worker to the cluster and you should see it in the output of `kubectl get nodes` on the control node.
+This will then connect the worker to the cluster and you should see it in the output of `kubectl get nodes`.

@@ -37,7 +37,7 @@ spec:
 
             ignore if {
                 # seccomp policies are for individual operators to set up
-                input.ID == "KSV-0104"
+                input.checkID == "AVD-KSV-0104"
             }
           ignorePolicy.kube-system: |
             package trivy

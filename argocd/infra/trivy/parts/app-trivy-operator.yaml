@@ -31,15 +31,17 @@ spec:
           ignoreUnfixed: false
           ignorePolicy: |
             package trivy
+            import rego.v1
 
             default ignore = false
 
             ignore if {
                 # seccomp policies are for individual operators to set up
-                input.CheckID == "AVD-KSV-0104"
+                input.ID == "KSV-0104"
             }
           ignorePolicy.kube-system: |
             package trivy
+            import rego.v1
 
             default ignore = false
 
@@ -66,10 +68,12 @@ spec:
 
           ignorePolicy.kube-system.canal: |
             package trivy
+            import rego.v1
             default ignore = true
 
           ignorePolicy.workspace.csi-rclone-nodeplugin: |
             package trivy
+            import rego.v1
 
             default ignore = false
 
@@ -90,6 +94,7 @@ spec:
 
           ignorePolicy.workspace.secrets-manager-.: |
             package trivy
+            import rego.v1
 
             default ignore = false
 
@@ -100,6 +105,7 @@ spec:
             
           ignorePolicy.workspace.session-manager-.: |
             package trivy
+            import rego.v1
 
             default ignore = false
 
@@ -110,6 +116,7 @@ spec:
             
           ignorePolicy.infra.kube-prometheus-stack-prometheus-node-exporter: |
             package trivy
+            import rego.v1
 
             default ignore = false
 
@@ -136,6 +143,7 @@ spec:
 
           ignorePolicy.infra.loki-stack-promtail: |
             package trivy
+            import rego.v1
 
             default ignore = false
 

@@ -59,6 +59,11 @@ spec:
                 input.ID == "KSV-0009"
             }
 
+            # Needs local FS access
+            ignore if {
+                input.ID == "KSV-0023"
+            }
+
 
           ignorePolicy.workspace.csi-rclone-nodeplugin: |
             package trivy
@@ -68,6 +73,11 @@ spec:
             # CSI needs to be privileged (and is not an output of EOEPCA anyway)
             ignore if {
                 input.ID == "KSV-0017"
+            }
+
+            # Needs local FS access
+            ignore if {
+                input.ID == "KSV-0023"
             }
 
           ignorePolicy.workspace.secrets-manager-.: |
@@ -95,9 +105,24 @@ spec:
 
             default ignore = false
 
-            # Prometheuse node exporter monitors the host network interfaces
+            # Prometheus node exporter monitors the host network interfaces
             ignore if {
                 input.ID == "KSV-0009"
+            }
+
+            # Prometheus needs local FS access to monitor it
+            ignore if {
+                input.ID == "KSV-0023"
+            }
+
+          ignorePolicy.infra.loki-stack-promtail: |
+            package trivy
+
+            default ignore = false
+
+            # Loki needs local FS access to gather logs
+            ignore if {
+                input.ID == "KSV-0023"
             }
 
           server:

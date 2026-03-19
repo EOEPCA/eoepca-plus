@@ -36,7 +36,7 @@ spec:
 
             ignore if {
                 # seccomp policies are for individual operators to set up
-                input.ID == "KSV-0104"
+                input.CheckID == "AVD-KSV-0104"
             }
           ignorePolicy.kube-system: |
             package trivy
@@ -64,6 +64,9 @@ spec:
                 input.ID == "KSV-0023"
             }
 
+          ignorePolicy.kube-system.canal: |
+            package trivy
+            default ignore = true
 
           ignorePolicy.workspace.csi-rclone-nodeplugin: |
             package trivy
@@ -78,6 +81,11 @@ spec:
             # Needs local FS access
             ignore if {
                 input.ID == "KSV-0023"
+            }
+
+            # CSI needs SYS_ADMIN cap
+            ignore if {
+                input.ID == "KSV-0005"
             }
 
           ignorePolicy.workspace.secrets-manager-.: |
@@ -113,6 +121,17 @@ spec:
             # Prometheus needs local FS access to monitor it
             ignore if {
                 input.ID == "KSV-0023"
+            }
+
+            # Prometheus needs to mount /proc/, /sys/ etc for monitoring the node
+            ignore if {
+                input.ID == "KSV-0121"
+            }
+
+            # Prometheus needs to be able to see all processes on the host to monitor them
+            # (This is about setting hostPID: true)
+            ignore if {
+                input.ID == "KSV-0010"
             }
 
           ignorePolicy.infra.loki-stack-promtail: |

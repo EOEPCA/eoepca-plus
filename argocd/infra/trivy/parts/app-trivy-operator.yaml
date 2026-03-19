@@ -38,7 +38,8 @@ spec:
             print("CheckID is:", input.CheckId)
             print("checkID is:", input.checkId)
             print("ID is:", input.ID)
-            print("input is:", input)
+            print("Id is:", input.Id)
+            print("spec is:", input.spec)
 
             ignore if {
                 # seccomp policies are for individual operators to set up

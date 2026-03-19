@@ -1,7 +1,6 @@
 resources:
   - namespace-knative-serving.yaml
   - namespace-knative-eventing.yaml
-  - knative-operator.yaml
   - knative-serving.yaml
   - knative-eventing.yaml
   - apisix-route.yaml

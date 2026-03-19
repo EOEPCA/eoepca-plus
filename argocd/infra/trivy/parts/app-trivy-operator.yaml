@@ -31,33 +31,19 @@ spec:
           ignoreUnfixed: false
           ignorePolicy: |
             package trivy
-            import data.lib.trivy
+
             import rego.v1
 
-            default ignore = false
-
-
-            ignore if {
-                print("CheckID is:", input.CheckId)
-                print("checkID is:", input.checkId)
-                print("ID is:", input.ID)
-                print("Id is:", input.Id)
-                print("spec is:", input.spec)
-                # seccomp policies are for individual operators to set up
-                input.CheckID == "AVD-KSV-0104"
+            allowed_checks := {
+                "AVD-KSV-0104"
             }
 
-            ignore if {
-              input.ID == "KSV-0104"
-            }
+            default ignore := false
 
-            ignore if {
-              input.AVDID == "KSV-0104"
-            }
+            ignore if not is_check_allowed
 
-            ignore if {
-              input.AVDID == "AVD-KSV-0104"
-            }
+            is_check_allowed if input.AVDID in allowed_checks
+
           ignorePolicy.kube-system: |
             package trivy
             import rego.v1
@@ -181,6 +167,7 @@ spec:
             rego:
               data:
                 - /extra-trivy-config/trivy-config-data.yaml
+              trace: true
   destination:
     name: in-cluster
     namespace: trivy-system

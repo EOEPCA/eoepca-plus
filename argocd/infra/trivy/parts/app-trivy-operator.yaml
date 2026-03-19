@@ -29,6 +29,77 @@ spec:
         trivy:
           severity: UNKNOWN,MEDIUM,HIGH,CRITICAL
           ignoreUnfixed: false
+          ignorePolicy: |
+            package trivy
+
+            default ignore = false
+
+            ignore if {
+                # seccomp policies are for individual operators to set up
+                input.ID == "KSV-0104"
+            }
+          ignorePolicy.kube-system: |
+            package trivy
+
+            default ignore = false
+
+            ignore if {
+                # Every workload in kube-system is falsely detected as a user workload that should
+                # be somewhere else.
+                input.ID == "KSV-0037"
+            }
+
+            ignore if {
+                # Various privileged containers are needed in kube-system
+                input.ID == "KSV-0017"
+            }
+
+            # Needs host network access
+            ignore if {
+                input.ID == "KSV-0009"
+            }
+
+
+          ignorePolicy.workspace.csi-rclone-nodeplugin: |
+            package trivy
+
+            default ignore = false
+
+            # CSI needs to be privileged (and is not an output of EOEPCA anyway)
+            ignore if {
+                input.ID == "KSV-0017"
+            }
+
+          ignorePolicy.workspace.secrets-manager-.: |
+            package trivy
+
+            default ignore = false
+
+            # False positive? Reports automountServiceAccountToken not false but it is.
+            ignore if {
+                input.ID == "KSV-0036"
+            }
+            
+          ignorePolicy.workspace.session-manager-.: |
+            package trivy
+
+            default ignore = false
+
+            # False positive? Reports automountServiceAccountToken not false but it is.
+            ignore if {
+                input.ID == "KSV-0036"
+            }
+            
+          ignorePolicy.infra.kube-prometheus-stack-prometheus-node-exporter: |
+            package trivy
+
+            default ignore = false
+
+            # Prometheuse node exporter monitors the host network interfaces
+            ignore if {
+                input.ID == "KSV-0009"
+            }
+
           server:
             extraServerVolumes:
               volumeMounts:

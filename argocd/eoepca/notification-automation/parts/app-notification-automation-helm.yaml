@@ -33,6 +33,23 @@ spec:
           value: "true"
         - name: cloudEventsPlayer.subscribeBroker.enabled
           value: "true"
+        - name: emailer.install
+          value: "true"
+        - name: emailer.config.emailFrom
+          value: "noreply@example.com"
+        - name: emailer.config.emailTo
+          value: "team@example.com"
+        - name: emailer.config.yagmailHost
+          value: "smtp.example.com"
+        - name: emailer.config.yagmailPort
+          value: "587"
+        - name: emailer.config.yagmailUser
+          value: "user@example.com"
+        - name: emailer.config.yagmailPassword
+          value: "password"
+        - name: emailer.config.yagmailSmtpStarttls
+          value: "true"
+        
   destination:
     name: in-cluster
     namespace: na

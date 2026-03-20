@@ -18,14 +18,7 @@ spec:
         operator:
           scanJobsConcurrentLimit: 4  # Default is 10
           clusterSbomCacheEnabled: true
-        trivyOperator:
-          scanJobCustomVolumes:
-            - name: extra-trivy-config
-              configMap:
-                name: extra-trivy-config
-          scanJobCustomVolumesMount:
-            - name: extra-trivy-config
-              mountPath: /extra-trivy-config
+          scanJobTTL: 10m
         trivy:
           severity: UNKNOWN,MEDIUM,HIGH,CRITICAL
           ignoreUnfixed: false

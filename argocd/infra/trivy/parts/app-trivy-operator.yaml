@@ -158,16 +158,10 @@ spec:
                 input.ID == "KSV-0023"
             }
 
-          server:
-            extraServerVolumes:
-              volumeMounts:
-              volumes:
           configFile:
             kubernetes:
               k8s-version: "1.32.0"
             rego:
-              data:
-                - /extra-trivy-config/trivy-config-data.yaml
               trace: true
   destination:
     name: in-cluster

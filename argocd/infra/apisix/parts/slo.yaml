@@ -13,7 +13,7 @@ spec:
           expr: >
             (
               1 - (
-                sum(rate(apisix_http_latency_bucket{type="request", route="data-access_stac_stac-route", le="100.0"}[1h]))
+                sum(rate(apisix_http_latency_bucket{type="request", route="data-access_stac_stac-route", le="500.0"}[1h]))
                 /
                 sum(rate(apisix_http_latency_count{type="request", route="data-access_stac_stac-route"}[1h]))
               )
@@ -23,7 +23,7 @@ spec:
     - name: STAC_100ms_99p_Alerting
       rules:
         - alert: STACApiLatencyBudgetBurn_Critical
-          expr: stac_api_latency_100ms_burn_rate_1h > 14.4
+          expr: stac_api_latency_500ms_burn_rate_1h > 14.4
           labels:
             severity: critical
             service: prometheus-server

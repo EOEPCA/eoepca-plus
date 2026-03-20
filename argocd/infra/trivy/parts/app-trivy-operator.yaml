@@ -19,24 +19,33 @@ spec:
           scanJobsConcurrentLimit: 4  # Default is 10
           clusterSbomCacheEnabled: true
           scanJobTTL: 10m
+        trivyOperator:
+          scanJobCustomVolumes:
+            - name: extra-trivy-config
+              configMap:
+                name: extra-trivy-config
+          scanJobCustomVolumesMount:
+            - name: extra-trivy-config
+              mountPath: /extra-trivy-config
         trivy:
           severity: UNKNOWN,MEDIUM,HIGH,CRITICAL
           ignoreUnfixed: false
+          # The ignore policies are currently not working in the cluster but work when run
+          # locally with, for example,
+          #    trivy k8s --ignore-policy ignore-seccomp.rego --scanners misconfig
+          #
+          # I've left them here as a record of what should be ignored and in case a fix for Trivy
+          # Operator appears.
           ignorePolicy: |
             package trivy
-
             import rego.v1
 
-            allowed_checks := {
-                "AVD-KSV-0104",
-                "KSV-0104"
+            default ignore = false
+
+            ignore if {
+                # seccomp policies are for individual operators to set up
+                input.ID == "KSV-0104"
             }
-
-            default ignore := false
-
-            ignore if not is_check_allowed
-
-            is_check_allowed if input.id in allowed_checks
 
           ignorePolicy.kube-system: |
             package trivy
@@ -155,6 +164,8 @@ spec:
             kubernetes:
               k8s-version: "1.32.0"
             rego:
+              data:
+                - /extra-trivy-config/trivy-config-data.yaml
               trace: true
   destination:
     name: in-cluster

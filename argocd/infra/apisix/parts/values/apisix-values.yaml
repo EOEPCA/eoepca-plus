@@ -68,6 +68,7 @@ etcd:
 ingress-controller:
   enabled: true
   config:
+    execADCTimeout: "60s"
     apisix:
       serviceNamespace: ingress-apisix
 #    kubernetes:

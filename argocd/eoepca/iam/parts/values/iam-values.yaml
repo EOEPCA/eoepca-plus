@@ -53,7 +53,7 @@ iam: &iam
         # Set to true to auto-generate realm as Crossplane CR.
         # Note that this only makes sense if useKeycloakConfigCli is set to
         # false and the iam-bb-config chart is applied separately.
-        create: false
+        create: true
         # Name of realm to create or of existing realm to create clients in
         name: &realmName eoepca
         displayName: &realmDisplayName EOEPCA

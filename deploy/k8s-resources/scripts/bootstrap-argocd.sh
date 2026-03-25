@@ -7,9 +7,10 @@ if ! kubectl get nodes &>/dev/null; then
     exit 1
 fi
 
-DOMAIN="${1:?Usage: $0 <domain> <nfs-ip> [argocd-version]}" # rke2.deploybox.co.uk
-NFS_IP="${2:?Usage: $0 <domain> <nfs-ip> [argocd-version]}" # openstack server list e.g. 192.168.11.6
-ARGOCD_VERSION="${3:-6.9.2}"
+DOMAIN="${1:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
+NFS_IP="${2:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
+DNS_API_TOKEN="${3:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
+ARGOCD_VERSION="${4:-6.9.2}"
 NFS_PROVISIONER_VERSION="4.0.12"
 
 ARGOCD_DOMAIN="argocd.${DOMAIN}"
@@ -41,7 +42,13 @@ echo "=== applying dns-api-token secret ==="
 kubectl create namespace cert-manager-ns 2>/dev/null || true
 kubectl create secret generic dns-api-token \
     --namespace cert-manager-ns \
-    --from-literal=api-token="<YOUR DNS TOKEN>" \
+    --from-literal=api-token="${DNS_API_TOKEN}"
+
+
+# Also store as a sealed secret for ArgoCD to use in the Git repository
+kubectl create secret generic dns-api-token \
+    --namespace cert-manager-ns \
+    --from-literal=api-token="${DNS_API_TOKEN}" \
     --dry-run=client -o yaml | \
     kubeseal --controller-name=sealed-secrets --controller-namespace=infra -o yaml \
     > ../../argocd/infra/cert-manager/parts/ss-dns-api-token.yaml

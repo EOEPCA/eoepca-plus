@@ -15,7 +15,7 @@ spec:
   receivers:
     - name: 'keep'
       webhookConfigs:
-        - url: 'http://keep-backend.operations.svc.cluster.local:8080/alerts/event/prometheus'
+        - url: 'http://keep-backend.infra.svc.cluster.local:8080/alerts/event/prometheus'
           sendResolved: true
           httpConfig:
             basicAuth:

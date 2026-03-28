@@ -30,6 +30,9 @@ spec:
   port: 5432
   postGISVersion: "3.4"
   postgresVersion: 16
+  monitoring:
+    pgmonitor:
+      exporter: {}
   proxy:
     pgBouncer:
       port: 5432

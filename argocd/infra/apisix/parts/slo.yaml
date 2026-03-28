@@ -7,26 +7,181 @@ metadata:
     release: kube-prometheus-stack
 spec:
   groups:
-    - name: STAC_100ms_Error_Rate_Recording
+    - name: STAC_Latency_Error_Rate_Recording
       rules:
-        - record: stac_api_latency_100ms_burn_rate_1h
+        - record: stac_get_latency_100ms_burn_rate_1h
           expr: >
             (
               1 - (
-                sum(rate(apisix_http_latency_bucket{type="request", route="data-access_stac_stac-route", le="500.0"}[1h]))
+                sum by (route) (rate(apisix_http_latency_bucket{type="request", route="data-access_stac_stac-route", http_method="GET", le="100.0"}[1h]))
                 /
-                sum(rate(apisix_http_latency_count{type="request", route="data-access_stac_stac-route"}[1h]))
+                sum by (route) (rate(apisix_http_latency_count{type="request", route="data-access_stac_stac-route", http_method="GET"}[1h]))
               )
             ) / 0.01
           labels:
             namespace: ingress-apisix
-    - name: STAC_100ms_99p_Alerting
+        - record: stac_post_latency_500ms_burn_rate_1h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="request", route="data-access_stac_stac-route", http_method="POST", le="500.0"}[1h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="request", route="data-access_stac_stac-route", http_method="POST"}[1h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+        - record: stac_get_latency_100ms_burn_rate_6h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="request", route="data-access_stac_stac-route", http_method="GET", le="100.0"}[6h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="request", route="data-access_stac_stac-route", http_method="GET"}[6h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+        - record: stac_post_latency_500ms_burn_rate_6h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="request", route="data-access_stac_stac-route", http_method="POST", le="500.0"}[6h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="request", route="data-access_stac_stac-route", http_method="POST"}[6h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+    - name: STAC_Application_Latency_Correlation
       rules:
-        - alert: STACApiLatencyBudgetBurn_Critical
-          expr: stac_api_latency_500ms_burn_rate_1h > 14.4
+        - record: stac_app_latency_100ms_burn_rate_1h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="upstream", route="data-access_stac_stac-route", http_method="GET", le="100.0"}[1h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="upstream", route="data-access_stac_stac-route", http_method="GET"}[1h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+        - record: stac_app_latency_500ms_burn_rate_1h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="upstream", route="data-access_stac_stac-route", http_method="POST", le="500.0"}[1h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="upstream", route="data-access_stac_stac-route", http_method="POST"}[1h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+        - record: stac_app_latency_100ms_burn_rate_6h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="upstream", route="data-access_stac_stac-route", http_method="GET", le="100.0"}[6h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="upstream", route="data-access_stac_stac-route", http_method="GET"}[6h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+        - record: stac_app_latency_500ms_burn_rate_6h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="upstream", route="data-access_stac_stac-route", http_method="POST", le="500.0"}[6h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="upstream", route="data-access_stac_stac-route", http_method="POST"}[6h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+    - name: STAC_Gateway_Latency_Correlation
+      rules:
+        - record: stac_gateway_latency_100ms_burn_rate_1h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="apisix", route="data-access_stac_stac-route", http_method="GET", le="100.0"}[1h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="apisix", route="data-access_stac_stac-route", http_method="GET"}[1h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+        - record: stac_gateway_latency_500ms_burn_rate_1h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="apisix", route="data-access_stac_stac-route", http_method="POST", le="500.0"}[1h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="apisix", route="data-access_stac_stac-route", http_method="POST"}[1h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+        - record: stac_gateway_latency_100ms_burn_rate_6h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="apisix", route="data-access_stac_stac-route", http_method="GET", le="100.0"}[6h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="apisix", route="data-access_stac_stac-route", http_method="GET"}[6h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+        - record: stac_gateway_latency_500ms_burn_rate_6h
+          expr: >
+            (
+              1 - (
+                sum by (route) (rate(apisix_http_latency_bucket{type="apisix", route="data-access_stac_stac-route", http_method="POST", le="500.0"}[6h]))
+                /
+                sum by (route) (rate(apisix_http_latency_count{type="apisix", route="data-access_stac_stac-route", http_method="POST"}[6h]))
+              )
+            ) / 0.01
+          labels:
+            namespace: ingress-apisix
+    - name: STAC_DB_Latency_Correlation
+      rules:
+        - record: stac_db_mean_latency_ms
+          expr: avg(ccp_pg_stat_statements_total_mean_exec_time_ms{dbname="eoapi", role="eoapi"})
+    - name: STAC_SLOs_Warning
+      rules:
+        - alert: STACGetLatencyBudgetBurn_Warning
+          expr: >
+            stac_get_latency_100ms_burn_rate_6h > 6
+            unless
+            stac_get_latency_100ms_burn_rate_1h > 14.4
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "STAC GET requests have a sustained high latency."
+        - alert: STACPostLatencyBudgetBurn_Warning
+          expr: >
+            stac_post_latency_500ms_burn_rate_6h > 6
+            unless
+            stac_post_latency_500ms_burn_rate_1h > 14.4
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "STAC POST requests have a sustained high latency."
+    - name: STAC_SLOs_Critical
+      rules:
+        - alert: STACGetLatencyBudgetBurn_Critical
+          expr: stac_get_latency_100ms_burn_rate_1h > 14.4
           labels:
             severity: critical
-            service: prometheus-server
           annotations:
-            summary: "STAC API is burning its latency error budget."
-
+            summary: "STAC GET requests are burning their latency error budget."
+        - alert: STACPostLatencyBudgetBurn_Critical
+          expr: stac_post_latency_500ms_burn_rate_1h > 14.4
+          labels:
+            severity: critical
+          annotations:
+            summary: "STAC POST requests are burning their latency error budget."

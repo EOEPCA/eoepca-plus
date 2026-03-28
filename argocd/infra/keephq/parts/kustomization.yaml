@@ -1,2 +1,3 @@
 resources:
   - app-keephq-core.yaml
+  - routes.yaml

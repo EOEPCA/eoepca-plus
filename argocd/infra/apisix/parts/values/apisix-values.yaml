@@ -19,6 +19,20 @@ apisix:
   pluginAttrs:
     redirect:
       https_port: 443
+    prometheus:
+      metrics:
+        http_latency:
+          extra_labels:
+            - http_method: $request_method
+            - uri: $uri
+        http_status:
+          extra_labels:
+            - http_method: $request_method
+            - uri: $uri
+        bandwidth:
+          extra_labels:
+            - http_method: $request_method
+            - uri: $uri
 
   deployment:
     role: traditional

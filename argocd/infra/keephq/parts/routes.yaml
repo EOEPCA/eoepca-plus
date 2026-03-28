@@ -1,0 +1,46 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: keephq-route
+spec:
+  ingressClassName: apisix
+  http:
+    - name: keep-backend
+      match:
+        hosts:
+          - keep.develop.eoepca.org
+        paths:
+          - "/v2/*"
+      plugins:
+        - name: proxy-rewrite
+          enable: true
+          config:
+            regex_uri: ["^/v2/(.*)", "/$1"]
+      backends:
+        - serviceName: keep-backend
+          servicePort: 8080
+    - name: keep-websocket
+      match:
+        hosts:
+          - keep.develop.eoepca.org
+        paths:
+          - "/websocket/*"
+      websocket: true
+      plugins:
+        - name: proxy-rewrite
+          enable: true
+          config:
+            regex_uri: ["^/websocket/(.*)", "/$1"]
+      backends:
+        - serviceName: keep-websocket
+          servicePort: 6001
+    - name: keep-frontend
+      match:
+        hosts:
+          - keep.develop.eoepca.org
+        paths:
+          - "/*"
+      backends:
+        - serviceName: keep-frontend
+          servicePort: 3000
+

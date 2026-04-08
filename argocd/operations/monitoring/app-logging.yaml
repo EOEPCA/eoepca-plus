@@ -59,6 +59,12 @@ spec:
 
         singleBinary:
           replicas: 1
+          extraVolumes:
+            - name: loki-tmp
+              emptyDir: {}
+          extraVolumeMounts:
+            - name: loki-tmp
+              mountPath: /var/loki
           persistence:
             enabled: false
 

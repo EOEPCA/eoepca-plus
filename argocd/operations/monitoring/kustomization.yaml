@@ -1,6 +1,6 @@
 resources:
   - app-monitoring.yaml
   - app-logging.yaml
-  - app-promtail.yaml
+  - app-alloy-logs.yaml
   - iam.yaml
   - routes.yaml

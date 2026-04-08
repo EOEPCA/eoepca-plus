@@ -54,7 +54,6 @@ spec:
           set-xauthrequest: "true"
           pass-user-headers: "true"
           pass-authorization-header: "true"
-          keycloak-group: admin
           skip-provider-button: "true"
         extraEnv:
           - name: OAUTH2_PROXY_CLIENT_ID

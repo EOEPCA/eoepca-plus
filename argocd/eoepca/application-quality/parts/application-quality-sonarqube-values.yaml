@@ -12,6 +12,9 @@ resources:
     cpu: 2000m
     memory: 4Gi
 
+postgresql:
+  enabled: false
+
 persistence:
   # SonarQube comes with a bundled Elasticsearch, and as Elasticsearch is stateful, so is SonarQube.
   # There is an option to persist the Elasticsearch indexes in a Persistent Volume, but with regular

@@ -1,3 +1,9 @@
+
+# Bypass the Bitnami image check (https://github.com/bitnami/charts/issues/30850)
+global:
+  security:
+    allowInsecureImages: true
+
 image:
   registry: docker.io
   repository: library/postgres

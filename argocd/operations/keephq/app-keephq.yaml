@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keephq
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: keephq
+spec:
+  project: eoepca
+  source:
+    repoURL: https://keephq.github.io/helm-charts
+    chart: keep
+    targetRevision: 0.1.94
+    helm:
+      releaseName: keep
+      values: |
+        backend:
+          env:
+          - name: AUTH_TYPE
+            value: OAUTH2PROXY
+          - name: KEEP_OAUTH2_PROXY_USER_HEADER
+            value: x-forwarded-email
+          - name: KEEP_OAUTH2_PROXY_ROLE_HEADER
+            value: x-forwarded-groups
+          - name: KEEP_OAUTH2_PROXY_AUTO_CREATE_USER
+            value: "true"
+          - name: KEEP_OAUTH2_PROXY_ADMIN_ROLES
+            value: admin
+          envFromSecret: keep-auth-secrets
+        frontend:
+          env:
+          - name: NEXTAUTH_URL
+            value: https://keep.develop.eoepca.org
+          - name: NEXTAUTH_URL_INTERNAL
+            value: http://keep-frontend.operations.svc.cluster.local:3000
+          - name: API_URL_CLIENT
+            value: /v2
+          - name: API_URL
+            value: http://keep-backend.operations.svc.cluster.local:8080
+          - name: AUTH_TYPE
+            value: OAUTH2PROXY
+          - name: KEEP_OAUTH2_PROXY_USER_HEADER
+            value: x-forwarded-email
+          - name: KEEP_OAUTH2_PROXY_ROLE_HEADER
+            value: x-forwarded-groups
+        global:
+          ingress:
+            enabled: false
+  destination:
+    name: in-cluster
+    namespace: operations
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

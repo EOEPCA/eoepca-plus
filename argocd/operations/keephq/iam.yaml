@@ -1,0 +1,71 @@
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: keep
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  writeConnectionSecretToRef:
+    name: keep-oidc
+    namespace: operations
+  forProvider:
+    realmId: eoepca
+    name: keep
+    accessType: CONFIDENTIAL
+    clientId: keep
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://keep.develop.eoepca.org
+    validRedirectUris:
+      - https://keep.develop.eoepca.org/oauth2/callback
+    validPostLogoutRedirectUris:
+      - https://keep.develop.eoepca.org/
+      - https://keep.develop.eoepca.org/oauth2/*
+    webOrigins:
+      - https://keep.develop.eoepca.org
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: keep-admin
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    name: admin
+    description: Access to KeepHQ through oauth2-proxy
+    clientIdRef:
+      name: keep
+      policy:
+        resolution: Required
+---
+apiVersion: client.keycloak.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: keep-client-roles-groups
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    clientIdRef:
+      name: keep
+      policy:
+        resolution: Required
+    realmId: eoepca
+    protocol: openid-connect
+    protocolMapper: oidc-usermodel-client-role-mapper
+    name: keep-client-roles-groups
+    config:
+      "access.token.claim": "true"
+      "id.token.claim": "true"
+      "userinfo.token.claim": "true"
+      "multivalued": "true"
+      "claim.name": "groups"
+      "jsonType.label": "String"
+      "usermodel.clientRoleMapping.clientId": "keep"

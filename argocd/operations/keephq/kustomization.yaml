@@ -1,0 +1,6 @@
+resources:
+  - app-keephq.yaml
+  - app-keephq-oauth2-proxy.yaml
+  - iam.yaml
+  - secret-keephq-oauth2-proxy-cookie.yaml
+  - routes.yaml

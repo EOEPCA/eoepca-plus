@@ -1,0 +1,39 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: keephq-route
+  namespace: operations
+spec:
+  ingressClassName: apisix
+  http:
+    - name: keep-backend
+      match:
+        hosts:
+          - keep.develop.eoepca.org
+        paths:
+          - /v2/*
+      backends:
+        - serviceName: keephq-oauth2-proxy
+          servicePort: 80
+      plugins:
+        - name: prometheus
+          enable: true
+    - name: keep-websocket
+      match:
+        hosts:
+          - keep.develop.eoepca.org
+        paths:
+          - /websocket/*
+      backends:
+        - serviceName: keephq-oauth2-proxy
+          servicePort: 80
+      websocket: true
+    - name: keep-frontend
+      match:
+        hosts:
+          - keep.develop.eoepca.org
+        paths:
+          - /*
+      backends:
+        - serviceName: keephq-oauth2-proxy
+          servicePort: 80

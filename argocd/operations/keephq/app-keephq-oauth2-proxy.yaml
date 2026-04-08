@@ -1,0 +1,94 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keephq-oauth2-proxy
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: keephq-oauth2-proxy
+spec:
+  project: eoepca
+  source:
+    repoURL: https://oauth2-proxy.github.io/manifests
+    chart: oauth2-proxy
+    targetRevision: 10.4.2
+    helm:
+      releaseName: keephq-oauth2-proxy
+      values: |
+        proxyVarsAsSecrets: false
+        config:
+          requiredSecretKeys: []
+          emailDomains:
+            - "*"
+          cookieName: keephq
+        alphaConfig:
+          enabled: true
+          configData:
+            upstreamConfig:
+              upstreams:
+                - id: backend
+                  path: /v2/
+                  uri: http://keep-backend.operations.svc.cluster.local:8080
+                  rewriteTarget: /
+                  passHostHeader: true
+                - id: websocket
+                  path: /websocket/
+                  uri: http://keep-websocket.operations.svc.cluster.local:6001
+                  rewriteTarget: /
+                  passHostHeader: true
+                  proxyWebSockets: true
+                - id: frontend
+                  path: /
+                  uri: http://keep-frontend.operations.svc.cluster.local:3000
+                  passHostHeader: true
+        extraArgs:
+          provider: keycloak
+          login-url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/auth
+          redeem-url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/token
+          profile-url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/userinfo
+          validate-url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/userinfo
+          redirect-url: https://keep.develop.eoepca.org/oauth2/callback
+          scope: openid email profile
+          cookie-secure: "true"
+          reverse-proxy: "true"
+          set-xauthrequest: "true"
+          pass-user-headers: "true"
+          pass-authorization-header: "true"
+          keycloak-group: admin
+          skip-provider-button: "true"
+        extraEnv:
+          - name: OAUTH2_PROXY_CLIENT_ID
+            value: keep
+          - name: OAUTH2_PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: keep-oidc
+                key: attribute.client_secret
+          - name: OAUTH2_PROXY_COOKIE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: keephq-oauth2-proxy-cookie
+                key: cookie-secret
+        service:
+          type: ClusterIP
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+            labels:
+              release: kube-prometheus-stack
+  destination:
+    name: in-cluster
+    namespace: operations
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

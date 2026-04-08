@@ -39,7 +39,7 @@ spec:
   forProvider:
     realmId: eoepca
     name: keep_admin
-    description: Admin access to alerting through oauth2-proxy
+    description: Admin access for alerting stack
     clientIdRef:
       name: alerting
       policy:
@@ -55,7 +55,7 @@ spec:
   forProvider:
     realmId: eoepca
     name: keep_noc
-    description: NOC access to alerting through oauth2-proxy
+    description: NOC access for alerting stack
     clientIdRef:
       name: alerting
       policy:

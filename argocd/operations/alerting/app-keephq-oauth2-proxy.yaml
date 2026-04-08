@@ -29,7 +29,7 @@ spec:
                 provider: keycloak-oidc
                 clientID: ${OAUTH2_PROXY_CLIENT_ID}
                 clientSecret: ${OAUTH2_PROXY_CLIENT_SECRET}
-                groups:
+                allowedGroups:
                   - keep_admin
                   - keep_noc
                 oidcConfig:

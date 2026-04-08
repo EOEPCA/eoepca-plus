@@ -1,3 +1,4 @@
 resources:
   - app-application-quality.yaml
   - app-application-quality-sonarqube.yaml
+  - sonarqube

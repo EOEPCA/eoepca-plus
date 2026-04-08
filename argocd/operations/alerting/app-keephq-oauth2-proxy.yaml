@@ -25,10 +25,13 @@ spec:
           enabled: true
           configData:
             providers:
-              - id: keep
+              - id: alerting
                 provider: keycloak-oidc
                 clientID: ${OAUTH2_PROXY_CLIENT_ID}
                 clientSecret: ${OAUTH2_PROXY_CLIENT_SECRET}
+                groups:
+                  - keep_admin
+                  - keep_noc
                 oidcConfig:
                   issuerURL: https://iam-auth.develop.eoepca.org/realms/eoepca
                 scope: openid email profile roles
@@ -59,17 +62,18 @@ spec:
                   - claimSource:
                       claim: groups
         extraArgs:
-          redirect-url: https://keep.develop.eoepca.org/oauth2/callback
+          redirect-url: https://alerting.develop.eoepca.org/oauth2/callback
           cookie-secure: "true"
+          session-cookie-minimal: "true"
           reverse-proxy: "true"
           skip-provider-button: "true"
         extraEnv:
           - name: OAUTH2_PROXY_CLIENT_ID
-            value: keep
+            value: alerting
           - name: OAUTH2_PROXY_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: keep-oidc
+                name: alerting-oidc
                 key: attribute.client_secret
           - name: OAUTH2_PROXY_COOKIE_SECRET
             valueFrom:

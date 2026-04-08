@@ -1,18 +1,18 @@
 apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
 kind: Client
 metadata:
-  name: keep
+  name: alerting
 spec:
   providerConfigRef:
     name: iam-keycloak-keycloak-provider-config
   writeConnectionSecretToRef:
-    name: keep-oidc
+    name: alerting-oidc
     namespace: operations
   forProvider:
     realmId: eoepca
-    name: keep
+    name: alerting
     accessType: CONFIDENTIAL
-    clientId: keep
+    clientId: alerting
     enabled: true
     standardFlowEnabled: true
     implicitFlowEnabled: false
@@ -20,47 +20,63 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
-    rootUrl: https://keep.develop.eoepca.org
+    rootUrl: https://alerting.develop.eoepca.org
     validRedirectUris:
-      - https://keep.develop.eoepca.org/oauth2/callback
+      - https://alerting.develop.eoepca.org/oauth2/callback
     validPostLogoutRedirectUris:
-      - https://keep.develop.eoepca.org/
-      - https://keep.develop.eoepca.org/oauth2/*
+      - https://alerting.develop.eoepca.org/
+      - https://alerting.develop.eoepca.org/oauth2/*
     webOrigins:
-      - https://keep.develop.eoepca.org
+      - https://alerting.develop.eoepca.org
 ---
 apiVersion: role.keycloak.crossplane.io/v1alpha1
 kind: Role
 metadata:
-  name: keep-admin
+  name: alerting-keep-admin
 spec:
   providerConfigRef:
     name: iam-keycloak-keycloak-provider-config
   forProvider:
     realmId: eoepca
-    name: admin
-    description: Access to KeepHQ through oauth2-proxy
+    name: keep_admin
+    description: Admin access to alerting through oauth2-proxy
     clientIdRef:
-      name: keep
+      name: alerting
+      policy:
+        resolution: Required
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: alerting-keep-noc
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    name: keep_noc
+    description: NOC access to alerting through oauth2-proxy
+    clientIdRef:
+      name: alerting
       policy:
         resolution: Required
 ---
 apiVersion: client.keycloak.crossplane.io/v1alpha1
 kind: ProtocolMapper
 metadata:
-  name: keep-client-roles-groups
+  name: alerting-client-roles-groups
 spec:
   providerConfigRef:
     name: iam-keycloak-keycloak-provider-config
   forProvider:
     clientIdRef:
-      name: keep
+      name: alerting
       policy:
         resolution: Required
     realmId: eoepca
     protocol: openid-connect
     protocolMapper: oidc-usermodel-client-role-mapper
-    name: keep-client-roles-groups
+    name: alerting-client-roles-groups
     config:
       "access.token.claim": "true"
       "id.token.claim": "true"
@@ -68,4 +84,4 @@ spec:
       "multivalued": "true"
       "claim.name": "groups"
       "jsonType.label": "String"
-      "usermodel.clientRoleMapping.clientId": "keep"
+      "usermodel.clientRoleMapping.clientId": "alerting"

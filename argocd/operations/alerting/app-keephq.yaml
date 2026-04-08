@@ -26,12 +26,14 @@ spec:
           - name: KEEP_OAUTH2_PROXY_AUTO_CREATE_USER
             value: "true"
           - name: KEEP_OAUTH2_PROXY_ADMIN_ROLES
-            value: admin
+            value: keep_admin
+          - name: KEEP_OAUTH2_PROXY_NOC_ROLES
+            value: keep_noc
           envFromSecret: keep-auth-secrets
         frontend:
           env:
           - name: NEXTAUTH_URL
-            value: https://keep.develop.eoepca.org
+            value: https://alerting.develop.eoepca.org
           - name: NEXTAUTH_URL_INTERNAL
             value: http://keep-frontend.operations.svc.cluster.local:3000
           - name: API_URL_CLIENT

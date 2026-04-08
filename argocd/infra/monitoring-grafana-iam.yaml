@@ -17,7 +17,7 @@ spec:
     standardFlowEnabled: true
     implicitFlowEnabled: false
     directAccessGrantsEnabled: false
-    fullScopeAllowed: false
+    fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
     rootUrl: https://monitoring.develop.eoepca.org
@@ -39,7 +39,7 @@ spec:
   forProvider:
     realmId: eoepca
     name: grafana_admin
-    description: Grafana admin access for the EOEPCA monitoring stack
+    description: Admin access for monitoring stack
     clientIdRef:
       name: monitoring
       policy:
@@ -55,7 +55,7 @@ spec:
   forProvider:
     realmId: eoepca
     name: grafana_editor
-    description: Grafana editor access for the EOEPCA monitoring stack
+    description: Editor access for monitoring stack
     clientIdRef:
       name: monitoring
       policy:
@@ -71,7 +71,7 @@ spec:
   forProvider:
     realmId: eoepca
     name: grafana_viewer
-    description: Grafana viewer access for the EOEPCA monitoring stack
+    description: Viewer access for monitoring stack
     clientIdRef:
       name: monitoring
       policy:

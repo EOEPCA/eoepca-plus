@@ -1,3 +1,4 @@
+# https://artifacthub.io/packages/helm/kubelauncher/postgresql
 
 fullnameOverride: "application-quality-sonarqube-db"
 
@@ -16,7 +17,8 @@ auth:
     userPasswordKey: password
 
 primary:
-  replicaCount: 1
+  initdb:
+    args: "--auth-host=md5 --encoding=UTF8 --lc-collate=C --lc-ctype=C"
   persistence:
     enabled: true
     mountPath: /data/postgresql

@@ -14,7 +14,7 @@ data:
 
     loki.write "default" {
       endpoint {
-        url = "http://loki-gateway.operations.svc.cluster.local/loki/api/v1/push"
+        url = "http://loki-stack-gateway.operations.svc.cluster.local/loki/api/v1/push"
       }
     }
 

@@ -12,12 +12,12 @@ metadata:
 spec:
   project: eoepca
   source:
-    - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
-      targetRevision: 10.3.0
-      chart: sonarqube
-      helm:
-        valueFiles:
-          - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-values.yaml
+    repoURL: https://SonarSource.github.io/helm-chart-sonarqube
+    targetRevision: 10.3.0
+    chart: sonarqube
+    helm:
+      valueFiles:
+        - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-values.yaml
   destination:
     name: in-cluster
     namespace: application-quality-sonarqube

@@ -1,23 +1,27 @@
-# --- SonarQube Application ---
+# --- PostgreSQL Application ---
 
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: application-quality-sonarqube
+  name: application-quality-sonarqube-db
   namespace: argocd
   labels:
     eoepca/app-name: application-quality
-    app: sonarqube
-    category: quality
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: eoepca
-  source:
-    repoURL: https://SonarSource.github.io/helm-chart-sonarqube
-    targetRevision: 10.3.0
-    chart: sonarqube
-    helm:
-      valueFiles:
-        - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-values.yaml
+  sources:
+    - repoURL: https://charts.bitnami.com/bitnami
+      targetRevision: 17.1.0
+      chart: postgresql
+      helm:
+        releaseName: application-quality-sonarqube
+        valueFiles:
+          - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-db-values.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
   destination:
     name: in-cluster
     namespace: application-quality-sonarqube
@@ -36,24 +40,30 @@ spec:
 
 ---
 
-# --- PostgreSQL Application ---
+# --- SonarQube Application ---
 
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: application-quality-sonarqube-db
+  name: application-quality-sonarqube
   namespace: argocd
+  labels:
+    eoepca/app-name: application-quality
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   project: eoepca
-  source:
-    repoURL: https://charts.bitnami.com/bitnami
-    targetRevision: 17.1.0
-    chart: postgresql
-    helm:
-      valueFiles:
-        - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-db-values.yaml
+  sources:
+    - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
+      targetRevision: 10.3.0
+      chart: sonarqube
+      helm:
+        releaseName: application-quality-sonarqube
+        valueFiles:
+          - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-values.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
   destination:
     name: in-cluster
     namespace: application-quality-sonarqube

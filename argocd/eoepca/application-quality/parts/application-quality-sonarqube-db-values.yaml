@@ -4,9 +4,15 @@ global:
   security:
     allowInsecureImages: true
 
+fullnameOverride: "application-quality-sonarqube-db"
+
 # Disable the chart's automatic secret-to-file logic (which creates POSTGRES_PASSWORD_FILE)
 auth:
   usePasswordFiles: false
+  existingSecret: "application-quality-sonarqube-db-secrets"
+  secretKeys:
+    adminPasswordKey: "postgres-password"
+    userPasswordKey: "password"
 
 # Prevent Bitnami init script to try changing permissions
 volumePermissions:

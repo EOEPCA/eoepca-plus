@@ -8,15 +8,16 @@ spec:
     key: initdb.sql
     name: initdb
   instances:
-  - dataVolumeClaimSpec:
+  - name: default
+    replicas: 1
+    dataVolumeClaimSpec:
       accessModes:
       - ReadWriteMany
       resources:
         requests:
           storage: 1Gi
       storageClassName: managed-nfs-storage-retain
-    name: default
-    replicas: 1
+  backups: {}
   patroni:
     dynamicConfiguration:
       postgresql:
@@ -27,16 +28,20 @@ spec:
     leaderLeaseDurationSeconds: 30
     port: 8008
     syncPeriodSeconds: 10
+  config:
+    parameters:
+      shared_buffers: 12GB
+      work_mem: 125MB
+      effective_cache_size: 20GB
+      maintenance_work_mem: 3GB
+      random_page_cost: "1.1"
+      temp_buffers: 768MB
   port: 5432
-  postGISVersion: "3.4"
-  postgresVersion: 16
+  postGISVersion: "3.5"
+  postgresVersion: 17  
   monitoring:
     pgmonitor:
       exporter: {}
-  proxy:
-    pgBouncer:
-      port: 5432
-      replicas: 1
   users:
   - databases:
     - eoapi

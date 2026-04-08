@@ -1,0 +1,78 @@
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: monitoring
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  writeConnectionSecretToRef:
+    name: monitoring-oidc
+    namespace: infra
+  forProvider:
+    realmId: eoepca
+    name: monitoring
+    accessType: CONFIDENTIAL
+    clientId: monitoring
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    fullScopeAllowed: false
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://monitoring.develop.eoepca.org
+    validRedirectUris:
+      - https://monitoring.develop.eoepca.org/login/generic_oauth
+    validPostLogoutRedirectUris:
+      - https://monitoring.develop.eoepca.org/
+      - https://monitoring.develop.eoepca.org/login
+    webOrigins:
+      - https://monitoring.develop.eoepca.org
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: grafana-admin
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    name: grafana_admin
+    description: Grafana admin access for the EOEPCA monitoring stack
+    clientIdRef:
+      name: monitoring
+      policy:
+        resolution: Required
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: grafana-editor
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    name: grafana_editor
+    description: Grafana editor access for the EOEPCA monitoring stack
+    clientIdRef:
+      name: monitoring
+      policy:
+        resolution: Required
+---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: grafana-viewer
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    name: grafana_viewer
+    description: Grafana viewer access for the EOEPCA monitoring stack
+    clientIdRef:
+      name: monitoring
+      policy:
+        resolution: Required

@@ -10,9 +10,9 @@ resources:
   - pgo
   - gateway
   - app-monitoring.yaml
+  - monitoring-grafana-iam.yaml
   - route-monitoring.yaml
   - app-logging.yaml
   - eso
   - crossplane
   - trivy
-

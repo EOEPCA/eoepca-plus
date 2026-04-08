@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgres-exporter
+  namespace: infra
+  labels:
+    release: kube-prometheus-stack
+spec:
+  endpoints:
+    - interval: 30s
+      targetPort: exporter
+  selector:
+    matchLabels:
+      postgres-operator.crunchydata.com/cluster: default

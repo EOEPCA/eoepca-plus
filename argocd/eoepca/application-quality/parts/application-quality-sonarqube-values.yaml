@@ -1,0 +1,79 @@
+# https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/values.yaml
+# edition: community
+community:
+  enabled: true
+
+# Resource tuning for the EOEPCA environment
+resources:
+  requests:
+    cpu: 500m
+    memory: 2Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+
+persistence:
+  # SonarQube comes with a bundled Elasticsearch, and as Elasticsearch is stateful, so is SonarQube.
+  # There is an option to persist the Elasticsearch indexes in a Persistent Volume, but with regular
+  # killing operations by the Kubernetes Cluster, these indexes can be corrupted.
+  # By default, persistency is disabled in the Helm chart.
+  # Enabling persistency decreases the startup time of the SonarQube Pod significantly, but you are
+  # risking corrupting your Elasticsearch index.
+  enabled: false
+  #enabled: true
+  #size: 5Gi
+  #storageClass: "" 
+
+# Security hardening: Disable other privileged init containers
+initSysctl:
+  enabled: false
+initFs:
+  enabled: false
+
+# Define the sub-path for the application internally
+sonarProperties:
+  sonar.web.context: /sonarqube
+  sonar.web.port: 9000
+
+# A monitoring passcode must be defined in order to get reasonable probe results
+# Not setting the monitoring passcode will result in a deployment that will never be ready
+# monitoringPasscodeSecretName: "pass-secret-name"
+# monitoringPasscodeSecretKey: "pass-key"
+
+ingress:
+  enabled: true
+  ingressClassName: apisix
+  pathType: Prefix
+  path: /sonarqube
+  hosts:
+    - name: application-quality.develop.eoepca.org
+      path: /sonarqube
+  annotations:
+    kubernetes.io/ingress.class: apisix
+    cert-manager.io/cluster-issuer: letsencrypt-http01-apisix
+    k8s.apisix.apache.org/enable-cors: "true"
+    k8s.apisix.apache.org/http-to-https: "true"
+    k8s.apisix.apache.org/enable-websocket: "true"
+    k8s.apisix.apache.org/rewrite-target: /sonarqube
+  tls:
+    - secretName: application-quality-sonarqube-tls
+      hosts:
+        - application-quality.develop.eoepca.org
+
+# Resource tuning for the EOEPCA environment
+resources:
+  requests:
+    cpu: 500m
+    memory: 2Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+
+# Since SonarQube version 25, PostgreSQL must be deployed separately
+# In this setup PostgreSQL is deployed in the same namespace => short URL
+jdbcOverwrite:
+  enable: true
+  jdbcUrl: "jdbc:postgresql://application-quality-sonarqube-db:5432/sonar"
+  jdbcUsername: "sonarUser"
+  jdbcSecretName: "application-quality-sonarqube-db-secrets"
+  jdbcSecretPasswordKey: "password"

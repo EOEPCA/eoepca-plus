@@ -1,0 +1,26 @@
+global:
+  security:
+    allowInsecureImages: true
+
+global:
+  postgresql:
+    auth:
+      existingSecret: "application-quality-sonarqube-db-secrets"
+      database: "sonar"
+      username: "sonarUser"
+      secretKeys:
+        # Key in the secret containing the 'postgres' admin password
+        adminPasswordKey: "postgres-password"
+        # Key in the secret containing the 'sonarUser' password
+        userPasswordKey: "password"
+
+image:
+  registry: docker.io
+  repository: bitnamilegacy/postgresql
+  tag: 16.2.0
+  pullPolicy: IfNotPresent
+
+primary:
+  persistence:
+    enabled: true
+    size: 10Gi

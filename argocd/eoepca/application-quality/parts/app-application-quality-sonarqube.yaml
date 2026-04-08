@@ -1,0 +1,71 @@
+# --- SonarQube Application ---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: application-quality-sonarqube
+  namespace: argocd
+  labels:
+    eoepca/app-name: application-quality
+    app: sonarqube
+    category: quality
+spec:
+  project: eoepca
+  source:
+    - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
+      targetRevision: 10.3.0
+      chart: sonarqube
+      helm:
+        valueFiles:
+          - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-values.yaml
+  destination:
+    name: in-cluster
+    namespace: application-quality-sonarqube
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+
+---
+
+# --- PostgreSQL Application ---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: application-quality-sonarqube-db
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: eoepca
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: 17.1.0
+    chart: postgresql
+    helm:
+      valueFiles:
+        - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-db-values.yaml
+  destination:
+    name: in-cluster
+    namespace: application-quality-sonarqube
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

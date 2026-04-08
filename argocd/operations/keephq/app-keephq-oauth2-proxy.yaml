@@ -42,18 +42,16 @@ spec:
                   uri: http://keep-frontend.operations.svc.cluster.local:3000
                   passHostHeader: true
         extraArgs:
-          provider: keycloak
-          login-url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/auth
-          redeem-url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/token
-          profile-url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/userinfo
-          validate-url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/userinfo
+          provider: keycloak-oidc
+          oidc-issuer-url: https://iam-auth.develop.eoepca.org/realms/eoepca
           redirect-url: https://keep.develop.eoepca.org/oauth2/callback
-          scope: openid email profile
+          scope: openid email profile roles
           cookie-secure: "true"
           reverse-proxy: "true"
           set-xauthrequest: "true"
           pass-user-headers: "true"
           pass-authorization-header: "true"
+          oidc-groups-claim: groups
           skip-provider-button: "true"
         extraEnv:
           - name: OAUTH2_PROXY_CLIENT_ID

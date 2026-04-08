@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: promtail
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: promtail
+spec:
+  project: eoepca
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: promtail
+    targetRevision: 6.17.1
+    helm:
+      values: |
+        config:
+          clients:
+            - url: http://loki-gateway.operations.svc.cluster.local/loki/api/v1/push
+
+        serviceMonitor:
+          enabled: true
+          labels:
+            release: kube-prometheus-stack
+
+        tolerations:
+          - key: node-role.kubernetes.io/master
+            operator: Exists
+            effect: NoSchedule
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+          - key: hub.jupyter.org/dedicated
+            operator: Equal
+            value: user
+            effect: NoSchedule
+          - key: hub.jupyter.org_dedicated
+            operator: Equal
+            value: user
+            effect: NoSchedule
+          - key: nvidia.com/gpu
+            operator: Exists
+            effect: NoSchedule
+          - key: nvidia.com_gpu
+            operator: Exists
+            effect: NoSchedule
+  destination:
+    name: in-cluster
+    namespace: operations
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

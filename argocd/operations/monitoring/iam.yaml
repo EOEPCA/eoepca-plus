@@ -7,7 +7,7 @@ spec:
     name: iam-keycloak-keycloak-provider-config
   writeConnectionSecretToRef:
     name: monitoring-oidc
-    namespace: infra
+    namespace: operations
   forProvider:
     realmId: eoepca
     name: monitoring

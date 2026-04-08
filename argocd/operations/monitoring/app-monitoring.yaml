@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: 83.0.2
+    targetRevision: 83.1.0
     helm:
       values: |
         grafana:
@@ -48,7 +48,7 @@ spec:
               role_attribute_strict: true
               use_refresh_token: true
               tls_skip_verify_insecure: false
-              
+
         alertmanager:
           enabled: true
 
@@ -70,7 +70,7 @@ spec:
             enabled: false
   destination:
     name: in-cluster
-    namespace: infra
+    namespace: operations
   ignoreDifferences:
     - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
@@ -94,4 +94,4 @@ spec:
       - PruneLast=true
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
-      - ServerSideApply=true # mitigate problem with annotations length
+      - ServerSideApply=true

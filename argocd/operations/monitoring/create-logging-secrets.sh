@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-NAMESPACE="infra"
+NAMESPACE="operations"
 SECRET_NAME="loki-s3-credentials"
 
 ACCESS_KEY="${AWS_ACCESS_KEY_ID:-${LOKI_S3_ACCESS_KEY_ID:-}}"

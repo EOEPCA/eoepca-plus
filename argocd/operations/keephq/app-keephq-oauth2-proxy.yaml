@@ -24,6 +24,14 @@ spec:
         alphaConfig:
           enabled: true
           configData:
+            providers:
+              - id: keep
+                provider: keycloak-oidc
+                clientID: ${OAUTH2_PROXY_CLIENT_ID}
+                clientSecret: ${OAUTH2_PROXY_CLIENT_SECRET}
+                oidcConfig:
+                  issuerURL: https://iam-auth.develop.eoepca.org/realms/eoepca
+                scope: openid email profile roles
             upstreamConfig:
               upstreams:
                 - id: backend
@@ -41,17 +49,19 @@ spec:
                   path: /
                   uri: http://keep-frontend.operations.svc.cluster.local:3000
                   passHostHeader: true
+            injectRequestHeaders:
+              - name: X-Forwarded-Email
+                values:
+                  - claimSource:
+                      claim: email
+              - name: X-Forwarded-Groups
+                values:
+                  - claimSource:
+                      claim: groups
         extraArgs:
-          provider: keycloak-oidc
-          oidc-issuer-url: https://iam-auth.develop.eoepca.org/realms/eoepca
           redirect-url: https://keep.develop.eoepca.org/oauth2/callback
-          scope: openid email profile roles
           cookie-secure: "true"
           reverse-proxy: "true"
-          set-xauthrequest: "true"
-          pass-user-headers: "true"
-          pass-authorization-header: "true"
-          oidc-groups-claim: groups
           skip-provider-button: "true"
         extraEnv:
           - name: OAUTH2_PROXY_CLIENT_ID

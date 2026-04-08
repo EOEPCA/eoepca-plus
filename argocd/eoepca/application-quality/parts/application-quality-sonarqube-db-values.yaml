@@ -1,26 +1,32 @@
-global:
-  security:
-    allowInsecureImages: true
-
-global:
-  postgresql:
-    auth:
-      existingSecret: "application-quality-sonarqube-db-secrets"
-      database: "sonar"
-      username: "sonarUser"
-      secretKeys:
-        # Key in the secret containing the 'postgres' admin password
-        adminPasswordKey: "postgres-password"
-        # Key in the secret containing the 'sonarUser' password
-        userPasswordKey: "password"
-
 image:
   registry: docker.io
-  repository: bitnamilegacy/postgresql
-  tag: 16.2.0
+  repository: library/postgres
+  tag: "16.2"
   pullPolicy: IfNotPresent
 
 primary:
+  extraEnvVars:
+    - name: POSTGRES_DB
+      value: "sonar"
+    - name: POSTGRES_USER
+      value: "sonarUser"
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: application-quality-sonarqube-db-secrets
+          key: password
+  livenessProbe:
+    enabled: true
+    exec:
+      command: ["/bin/sh", "-c", "exec pg_isready -U sonarUser -d sonar"]
+  readinessProbe:
+    enabled: true
+    exec:
+      command: ["/bin/sh", "-c", "exec pg_isready -U sonarUser -d sonar"]
   persistence:
     enabled: true
+    mountPath: /var/lib/postgresql/data
     size: 10Gi
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 999

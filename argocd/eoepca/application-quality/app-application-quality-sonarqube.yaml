@@ -18,7 +18,7 @@ spec:
       helm:
         releaseName: application-quality-sonarqube
         valueFiles:
-          - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-db-values.yaml
+          - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-db-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values
@@ -60,7 +60,7 @@ spec:
       helm:
         releaseName: application-quality-sonarqube
         valueFiles:
-          - $values/argocd/eoepca/application-quality/parts/application-quality-sonarqube-values.yaml
+          - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: deploy-develop
       ref: values

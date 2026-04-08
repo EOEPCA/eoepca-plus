@@ -1,0 +1,3 @@
+
+resources:
+  - ss-application-quality-sonarqube-db-secrets.yaml

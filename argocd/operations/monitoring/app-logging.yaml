@@ -16,13 +16,6 @@ spec:
       values: |
         deploymentMode: SingleBinary
 
-        global:
-          extraArgs:
-            - -config.expand-env=true
-          extraEnvFrom:
-            - secretRef:
-                name: loki-s3-credentials
-
         loki:
           auth_enabled: false
           commonConfig:
@@ -59,6 +52,11 @@ spec:
 
         singleBinary:
           replicas: 1
+          extraArgs:
+            - -config.expand-env=true
+          extraEnvFrom:
+            - secretRef:
+                name: loki-s3-credentials
           extraVolumes:
             - name: loki-tmp
               emptyDir: {}

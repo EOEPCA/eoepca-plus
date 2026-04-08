@@ -8,6 +8,10 @@ global:
 auth:
   usePasswordFiles: false
 
+# Prevent Bitnami init script to try changing permissions
+volumePermissions:
+  enabled: false
+
 image:
   registry: docker.io
   repository: library/postgres
@@ -15,6 +19,12 @@ image:
   pullPolicy: IfNotPresent
 
 primary:
+  # Prevent the execution of the Bitnami init script
+  initContainers: []
+  # Use Kubernetes native permission handling instead
+  podSecurityContext:
+    enabled: true
+    fsGroup: 999
   extraEnvVars:
     - name: POSTGRES_DB
       value: "sonar"
@@ -40,3 +50,6 @@ primary:
   containerSecurityContext:
     enabled: true
     runAsUser: 999
+    runAsNonRoot: true
+    readOnlyRootFilesystem: false 
+    allowPrivilegeEscalation: false

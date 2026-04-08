@@ -1,61 +1,23 @@
 
-# Bypass the Bitnami image check (https://github.com/bitnami/charts/issues/30850)
-global:
-  security:
-    allowInsecureImages: true
-
 fullnameOverride: "application-quality-sonarqube-db"
 
-# Disable the chart's automatic secret-to-file logic (which creates POSTGRES_PASSWORD_FILE)
-auth:
-  usePasswordFiles: false
-  existingSecret: "application-quality-sonarqube-db-secrets"
-  secretKeys:
-    adminPasswordKey: "postgres-password"
-    userPasswordKey: "password"
-
-# Prevent Bitnami init script to try changing permissions
-volumePermissions:
-  enabled: false
-
 image:
-  registry: docker.io
-  repository: library/postgres
-  tag: "16.2"
+  registry: ghcr.io
+  repository: kubelauncher/postgresql
+  tag: "17.9"
   pullPolicy: IfNotPresent
 
+auth:
+  username: "sonarUser"
+  database: "sonar"
+  existingSecret: "application-quality-sonarqube-db-secrets"
+  secretKeys:
+    adminPasswordKey: postgres-password
+    userPasswordKey: password
+
 primary:
-  # Prevent the execution of the Bitnami init script
-  initContainers: []
-  # Use Kubernetes native permission handling instead
-  podSecurityContext:
-    enabled: true
-    fsGroup: 999
-  extraEnvVars:
-    - name: POSTGRES_DB
-      value: "sonar"
-    - name: POSTGRES_USER
-      value: "sonarUser"
-    - name: POSTGRES_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: application-quality-sonarqube-db-secrets
-          key: password
-  livenessProbe:
-    enabled: true
-    exec:
-      command: ["/bin/sh", "-c", "exec pg_isready -U sonarUser -d sonar"]
-  readinessProbe:
-    enabled: true
-    exec:
-      command: ["/bin/sh", "-c", "exec pg_isready -U sonarUser -d sonar"]
+  replicaCount: 1
   persistence:
     enabled: true
-    mountPath: /var/lib/postgresql/data
-    size: 10Gi
-  containerSecurityContext:
-    enabled: true
-    runAsUser: 999
-    runAsNonRoot: true
-    readOnlyRootFilesystem: false 
-    allowPrivilegeEscalation: false
+    mountPath: /data/postgresql
+    size: 8Gi

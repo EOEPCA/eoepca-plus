@@ -12,9 +12,9 @@ metadata:
 spec:
   project: eoepca
   sources:
-    - repoURL: registry-1.docker.io/bitnamicharts
+    - repoURL: https://kubelauncher.github.io/charts
       chart: postgresql
-      targetRevision: 18.5.*
+      targetRevision: 0.3.4
       helm:
         releaseName: application-quality-sonarqube
         valueFiles:

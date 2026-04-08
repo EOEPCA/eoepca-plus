@@ -4,6 +4,10 @@ global:
   security:
     allowInsecureImages: true
 
+# Disable the chart's automatic secret-to-file logic (which creates POSTGRES_PASSWORD_FILE)
+auth:
+  usePasswordFiles: false
+
 image:
   registry: docker.io
   repository: library/postgres

@@ -1,16 +1,6 @@
 # https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/values.yaml
-# edition: community
 community:
   enabled: true
-
-# Resource tuning for the EOEPCA environment
-resources:
-  requests:
-    cpu: 500m
-    memory: 2Gi
-  limits:
-    cpu: 2000m
-    memory: 4Gi
 
 postgresql:
   enabled: false
@@ -43,25 +33,10 @@ sonarProperties:
 # monitoringPasscodeSecretName: "pass-secret-name"
 # monitoringPasscodeSecretKey: "pass-key"
 
+# Use ApisixRoute instead of a traditional Ingress
+# See application-quality-sonarqube-apisixroute.yaml
 ingress:
-  enabled: true
-  ingressClassName: apisix
-  pathType: Prefix
-  path: /sonarqube
-  hosts:
-    - name: application-quality.develop.eoepca.org
-      path: /sonarqube
-  annotations:
-    kubernetes.io/ingress.class: apisix
-    cert-manager.io/cluster-issuer: letsencrypt-http01-apisix
-    k8s.apisix.apache.org/enable-cors: "true"
-    k8s.apisix.apache.org/http-to-https: "true"
-    k8s.apisix.apache.org/enable-websocket: "true"
-    k8s.apisix.apache.org/rewrite-target: /sonarqube
-  tls:
-    - secretName: application-quality-sonarqube-tls
-      hosts:
-        - application-quality.develop.eoepca.org
+  enabled: false
 
 # Resource tuning for the EOEPCA environment
 resources:

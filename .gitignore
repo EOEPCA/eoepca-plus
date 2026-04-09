@@ -1,12 +1,38 @@
-.vscode/
+# Editor and local tool state
+.vscode*
+.code*
+.idea*
+*.swp
+*.swo
+*~
+
+# Environment files
+.env*
 .envrc
+
+# Kubernetes and ArgoCD local files
+.argocd/
+argocd.yaml
+k.yaml
 kubeconfig
 kubeconfig.yaml
-argocd.yaml
 vcluster
-venv/
-.venv/
-k.yaml
+
+# TLS and secrets
 *.crt
 *.key
+
+# Python
+__pycache__/
 *.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+build/
+dist/
+venv/
+.venv/
+
+# Pulumi
+.pulumi/

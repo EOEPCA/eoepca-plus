@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: alloy-logs
+      annotations:
+        eoepca-config-alloy: alloy-logs-config
     spec:
       serviceAccountName: alloy-logs
       tolerations:

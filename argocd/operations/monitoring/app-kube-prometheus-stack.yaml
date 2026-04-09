@@ -70,6 +70,16 @@ spec:
 
         prometheus:
           enabled: true
+          prometheusSpec:
+            retention: 30d
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 50Gi
 
         prometheusAgent:
           enabled: false

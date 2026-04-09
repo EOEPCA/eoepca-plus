@@ -61,6 +61,22 @@ spec:
       policy:
         resolution: Required
 ---
+apiVersion: role.keycloak.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: alerting-keep-webhook
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    name: keep_webhook
+    description: Webhook ingestion access for alerting stack
+    clientIdRef:
+      name: alerting
+      policy:
+        resolution: Required
+---
 apiVersion: client.keycloak.crossplane.io/v1alpha1
 kind: ProtocolMapper
 metadata:

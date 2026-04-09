@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://keephq.github.io/helm-charts
     chart: keep
-    targetRevision: 0.1.94
+    targetRevision: 0.1.95
     helm:
       releaseName: keep
       values: |
@@ -29,6 +29,8 @@ spec:
             value: keep_admin
           - name: KEEP_OAUTH2_PROXY_NOC_ROLES
             value: keep_noc
+          - name: KEEP_OAUTH2_PROXY_WEBHOOK_ROLES
+            value: keep_webhook
           envFromSecret: keep-auth-secrets
         frontend:
           env:

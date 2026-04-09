@@ -1,6 +1,8 @@
 resources:
+  - alertmanagerconfig-keep.yaml
   - app-keep.yaml
   - app-keep-oauth2-proxy.yaml
   - iam.yaml
+  - keep-alertmanager-relay.yaml
   - secret-keep-oauth2-proxy-cookie.yaml
   - routes.yaml

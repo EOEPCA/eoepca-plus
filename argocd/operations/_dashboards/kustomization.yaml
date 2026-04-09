@@ -6,15 +6,21 @@ generatorOptions:
   disableNameSuffixHash: true
 
 configMapGenerator:
-  - name: manual-k8s-resources-cluster
+  - name: curated-k8s-resources-cluster
     options:
       labels:
         grafana_dashboard: "1"
     files:
       - k8s-resources-cluster.json
-  - name: manual-k8s-resources-pod
+  - name: curated-k8s-resources-pod
     options:
       labels:
         grafana_dashboard: "1"
     files:
       - k8s-resources-pod.json
+  - name: curated-prometheus-overview
+    options:
+      labels:
+        grafana_dashboard: "1"
+    files:
+      - prometheus-overview.json

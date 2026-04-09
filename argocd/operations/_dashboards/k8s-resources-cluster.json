@@ -6,8 +6,7 @@
             "includeVars": true,
             "keepTime": true,
             "tags": [
-                "baseline",
-                "kubernetes-mixin"
+                "baseline"
             ],
             "targetBlank": false,
             "title": "Kubernetes",
@@ -1534,8 +1533,7 @@
     "refresh": "10s",
     "schemaVersion": 39,
     "tags": [
-        "baseline",
-        "kubernetes-mixin"
+        "baseline"
     ],
     "templating": {
         "list": [

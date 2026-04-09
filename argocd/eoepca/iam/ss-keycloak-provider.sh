@@ -1,20 +1,13 @@
 #!/usr/bin/bash
-
 ORIG_DIR="$(pwd)"
 cd "$(dirname "$0")"
 BIN_DIR="$(pwd)"
-
 onExit() {
   cd "${ORIG_DIR}"
 }
 trap onExit EXIT
-
-# Optional local .env file for secret values as env vars
 source .env 2>/dev/null
-
 SECRET_NAME="keycloak-provider"
-NAMESPACE="iam-management"
-
 PROVIDER_CLIENT_SECRET="${2:-${PROVIDER_CLIENT_SECRET:-changeme}}"
 CREDENTIALS="`cat <<EOF
 {
@@ -26,12 +19,14 @@ CREDENTIALS="`cat <<EOF
 }
 EOF`"
 
-secretYaml() {
-  kubectl -n "${NAMESPACE}" create secret generic "${SECRET_NAME}" \
+sealFor() {
+  local ns="$1"
+  local outfile="$2"
+  kubectl -n "${ns}" create secret generic "${SECRET_NAME}" \
     --from-literal="credentials=${CREDENTIALS}" \
-    --dry-run=client -o yaml
+    --dry-run=client -o yaml \
+  | kubeseal -o yaml --controller-name sealed-secrets --controller-namespace infra > "${outfile}"
 }
 
-# Create Secret and then pipe to kubeseal to create the SealedSecret
-secretYaml \
-  | kubeseal -o yaml --controller-name sealed-secrets --controller-namespace infra > parts/ss-${SECRET_NAME}.yaml
+sealFor "iam-management" "parts/ss-${SECRET_NAME}.yaml"
+sealFor "iam" "parts/ss-${SECRET_NAME}-iam.yaml"

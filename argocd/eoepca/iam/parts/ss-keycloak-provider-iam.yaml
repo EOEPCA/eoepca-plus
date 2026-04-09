@@ -1,0 +1,15 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: keycloak-provider
+  namespace: iam
+spec:
+  encryptedData:
+    credentials: AgBv1eTUxx5eEHHMiOae4Dv4RjDoy1J3gV3DAlZdAcniOAt1QK8D2v2huL3I/BqHLMzHmXjuYDyvFJBmK1xitQJapvIWqyNHje/51zT90w+gkpbqSqKfhhiSa+BW0May7wY6Z2DCN1lwexvJXCkB38U8IEU6sK1QJXCrfnZAvh4u4y/sELKDD2KI8P4CtTc2EZoZbIWslUNbMsDxUQBH8tydUhaJlI5J9wCnvHekdCP1FHdaklLSVm5d5UvWg8nQZJofUHFnrS+YlumXpG0EJTdRrYslp/r19pEIj03Vr4Tnq9qJS+Rve05cJtU25uAXm5ETxzGxvEQ30fFd7tWWiAzFxuB2DYWnP5U4GjG8CMhAVcStgiBfsdKv5FtgmeEPOfyN0Sd8HXPgPvVk1uU8UabYGOVBH9A0JaNhSkIf7zXIiR6Tn1naMffdNb3YySIJ274FM7VU4WjBsdCC/eLeKF8TFLgfep67VFiBeOYaT23kCQvqZ1OVDgXXAf9r8bLQ1APVdN/EG6XJXBrjEv2bj+9S0zbIT5shmwb0nNXMtw8n34GjnuOVvHOBas2h1iCHzH1NmHWFLzrvc+3dHwM+WEJr7O4LTJ4nLiaiXTKeF/wP5QGxVYa0G5+ENyQE55bN6Yo3o8E8d8YTaYcxd8fSZBj95DVBkQlqxaQWZ+3mw1a3E7e5bBsH3nX1YmKPUoAKLsVMu8J9LA4WWJHdxlAfo7xfSlKHtdPWQF0JlByiLfeXpTZMqKJJ4PRRNoWUcT8YUkC2qs0GuT13Hiss/NETsHUb4xavEf4n95rJzVYZIAgmipro4oA3CydnMSdgxBTDpmr7JQsD7Zo7WDj8YqiIqo3xEVq+kO8tfKzBH1/RC5FGqRuGh5EgBUtCAaXxmOGjWUIDCgPWSfITqfv9unRL21qp0R5bc+MYe9DpWA==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: keycloak-provider
+      namespace: iam

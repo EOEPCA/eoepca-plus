@@ -1,2 +1,3 @@
 resources:
-  - stac-route.yaml
+  - baseline-alerts.yaml
+  - stac-alerts.yaml

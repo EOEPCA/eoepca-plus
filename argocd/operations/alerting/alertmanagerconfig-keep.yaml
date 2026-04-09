@@ -2,11 +2,12 @@ apiVersion: monitoring.coreos.com/v1alpha1
 kind: AlertmanagerConfig
 metadata:
   name: keep
-  namespace: ingress-apisix
+  namespace: operations
   labels:
     release: kube-prometheus-stack
 spec:
   receivers:
+    - name: "null"
     - name: keep
       webhookConfigs:
         - sendResolved: true
@@ -18,3 +19,9 @@ spec:
     groupWait: 15s
     receiver: keep
     repeatInterval: 1m
+    routes:
+      - receiver: "null"
+        matchers:
+          - name: alertname
+            value: KubeJobFailed
+            matchType: =

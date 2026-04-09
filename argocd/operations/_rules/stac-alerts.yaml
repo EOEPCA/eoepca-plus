@@ -1,8 +1,8 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: stac-route
-  namespace: ingress-apisix
+  name: stac-alerts
+  namespace: operations
   labels:
     release: kube-prometheus-stack
 spec:

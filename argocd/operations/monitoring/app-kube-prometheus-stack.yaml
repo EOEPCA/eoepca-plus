@@ -59,6 +59,9 @@ spec:
               jsonData:
                 httpMethod: GET
 
+        defaultRules:
+          create: false
+
         alertmanager:
           enabled: true
 

@@ -2,7 +2,7 @@
 resources:
   - app-keycloak.yaml
   - app-opal.yaml
-  - app-identity-api.yaml
+  # - app-identity-api.yaml
 #  - pvc-kc-database.yaml
   - ss-kc-postgres.yaml
   - ss-identity-api.yaml

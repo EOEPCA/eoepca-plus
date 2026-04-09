@@ -1,3 +1,5 @@
 resources:
+  - _dashboards
+  - _rules
   - alerting
   - monitoring

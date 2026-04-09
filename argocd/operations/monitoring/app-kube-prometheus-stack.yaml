@@ -16,6 +16,7 @@ spec:
       values: |
         grafana:
           enabled: true
+          defaultDashboardsEnabled: false
           envValueFrom:
             GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET:
               secretKeyRef:

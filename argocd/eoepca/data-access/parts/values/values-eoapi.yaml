@@ -149,6 +149,25 @@ stac-auth-proxy:
       mountPath: /app/src/stac_auth_proxy/eoepca_filters.py
       subPath: eoepca_filters.py
       readOnly: true
+  # Override health check paths to include ROOT_PATH
+  startupProbe:
+    httpGet:
+      path: /stac/healthz
+      port: http
+    periodSeconds: 2
+    failureThreshold: 30
+  livenessProbe:
+    httpGet:
+      path: /stac/healthz
+      port: http
+    periodSeconds: 60
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /stac/healthz
+      port: http
+    periodSeconds: 5
+    failureThreshold: 3
 
 browser:
   catalogUrl: "https://eoapi.develop.eoepca.org/stac"

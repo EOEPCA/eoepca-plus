@@ -13,3 +13,5 @@ resources:
   # Removing this one as it makes no sense
   # - ingress-pathbased.yaml
   - naming-workaround.yaml
+  - iam-management-ns.yaml
+

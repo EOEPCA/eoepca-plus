@@ -1571,6 +1571,6 @@
         "to": "now"
     },
     "timezone": "utc",
-    "title": "Kubernetes / Compute Resources / Cluster",
+    "title": "Kubernetes / Cluster View",
     "uid": "efa86fd1d0c121a26444b636a3f509a8"
 }

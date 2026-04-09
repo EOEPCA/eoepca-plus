@@ -18,6 +18,12 @@ configMapGenerator:
         grafana_dashboard: "1"
     files:
       - k8s-resources-pod.json
+  - name: curated-k8s-resources-node
+    options:
+      labels:
+        grafana_dashboard: "1"
+    files:
+      - k8s-resources-node.json
   - name: curated-prometheus-overview
     options:
       labels:

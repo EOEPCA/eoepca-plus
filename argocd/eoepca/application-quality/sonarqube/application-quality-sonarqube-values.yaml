@@ -29,9 +29,8 @@ sonarProperties:
   sonar.web.port: 9000
 
 # A monitoring passcode must be defined in order to get reasonable probe results
-# Not setting the monitoring passcode will result in a deployment that will never be ready
-# monitoringPasscodeSecretName: "pass-secret-name"
-# monitoringPasscodeSecretKey: "pass-key"
+monitoringPasscodeSecretName: "application-quality-sonarqube-sonarqube-monitoring-passcode"
+monitoringPasscodeSecretKey: "SONAR_WEB_SYSTEMPASSCODE"
 
 # Use ApisixRoute instead of a traditional Ingress
 # See application-quality-sonarqube-apisixroute.yaml

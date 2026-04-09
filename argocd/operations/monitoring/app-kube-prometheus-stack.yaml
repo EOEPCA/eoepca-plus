@@ -64,6 +64,9 @@ spec:
 
         alertmanager:
           enabled: true
+          alertmanagerSpec:
+            alertmanagerConfigMatcherStrategy:
+              type: None
 
         prometheus:
           enabled: true

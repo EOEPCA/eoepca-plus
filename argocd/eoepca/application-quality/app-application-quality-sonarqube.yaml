@@ -55,7 +55,7 @@ spec:
   project: eoepca
   sources:
     - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
-      targetRevision: 10.3.0
+      targetRevision: 2026.2.1
       chart: sonarqube
       helm:
         releaseName: application-quality-sonarqube

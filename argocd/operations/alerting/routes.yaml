@@ -13,7 +13,7 @@ spec:
         paths:
           - /v2/*
       backends:
-        - serviceName: keephq-oauth2-proxy
+        - serviceName: keep-oauth2-proxy
           servicePort: 80
       plugins:
         - name: prometheus
@@ -25,7 +25,7 @@ spec:
         paths:
           - /websocket/*
       backends:
-        - serviceName: keephq-oauth2-proxy
+        - serviceName: keep-oauth2-proxy
           servicePort: 80
       websocket: true
     - name: keep-frontend
@@ -35,5 +35,5 @@ spec:
         paths:
           - /*
       backends:
-        - serviceName: keephq-oauth2-proxy
+        - serviceName: keep-oauth2-proxy
           servicePort: 80

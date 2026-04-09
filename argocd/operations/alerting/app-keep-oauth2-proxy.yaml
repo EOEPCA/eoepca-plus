@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: keephq-oauth2-proxy
+  name: keep-oauth2-proxy
   namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: keephq-oauth2-proxy
+    eoepca/app-name: keep-oauth2-proxy
 spec:
   project: eoepca
   source:
@@ -13,14 +13,14 @@ spec:
     chart: oauth2-proxy
     targetRevision: 10.4.2
     helm:
-      releaseName: keephq-oauth2-proxy
+      releaseName: keep-oauth2-proxy
       values: |
         proxyVarsAsSecrets: false
         config:
           requiredSecretKeys: []
           emailDomains:
             - "*"
-          cookieName: keephq
+          cookieName: keep
         alphaConfig:
           enabled: true
           configData:
@@ -78,7 +78,7 @@ spec:
           - name: OAUTH2_PROXY_COOKIE_SECRET
             valueFrom:
               secretKeyRef:
-                name: keephq-oauth2-proxy-cookie
+                name: keep-oauth2-proxy-cookie
                 key: cookie-secret
         service:
           type: ClusterIP

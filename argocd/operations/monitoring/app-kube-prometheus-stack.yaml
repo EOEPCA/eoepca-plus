@@ -48,6 +48,15 @@ spec:
               role_attribute_strict: true
               use_refresh_token: true
               tls_skip_verify_insecure: false
+          additionalDataSources:
+            - name: Loki
+              uid: loki
+              type: loki
+              access: proxy
+              url: http://loki-stack-gateway.operations.svc.cluster.local
+              isDefault: false
+              jsonData:
+                httpMethod: GET
 
         alertmanager:
           enabled: true

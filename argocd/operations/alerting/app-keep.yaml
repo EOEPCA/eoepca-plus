@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: keephq
+  name: keep
   namespace: argocd
   labels:
     eoepca/is-root-app: "true"
-    eoepca/app-name: keephq
+    eoepca/app-name: keep
 spec:
   project: eoepca
   source:

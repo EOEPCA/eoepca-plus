@@ -43,7 +43,7 @@ iam: &iam
       # Set this to true to enable Keycloak Config CLI for initial realm
       # setup. The realm configuration must be provided in the
       # keycloak.keycloakConfigCli section.
-      useKeycloakConfigCli: &useKeycloakConfigCli false
+      useKeycloakConfigCli: &useKeycloakConfigCli true
       # Set to true to generate secrets using kubernetes-secret-generator;
       # Set to false (default) to generate them using Helm random functions.
       useSecretGenerator: false
@@ -53,7 +53,7 @@ iam: &iam
         # Set to true to auto-generate realm as Crossplane CR.
         # Note that this only makes sense if useKeycloakConfigCli is set to
         # false and the iam-bb-config chart is applied separately.
-        create: true
+        create: false
         # Name of realm to create or of existing realm to create clients in
         name: &realmName eoepca
         displayName: &realmDisplayName EOEPCA

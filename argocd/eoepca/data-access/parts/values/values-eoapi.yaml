@@ -84,7 +84,7 @@ vector:
       TIPG_CATALOG_TTL: "30"
 
 eoapi-notifier:
-  enabled: true
+  enabled: false
   config:
     sources:
       - type: pgstac

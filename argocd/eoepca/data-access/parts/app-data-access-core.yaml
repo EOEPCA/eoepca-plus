@@ -10,7 +10,7 @@ spec:
   project: eoepca
   sources:
 
-    - repoURL: https://devseed.com/eoapi-k8s/
+    - repoURL: https://developmentseed.org/eoapi-k8s/
       chart: eoapi
       targetRevision: 0.10.1
       helm:

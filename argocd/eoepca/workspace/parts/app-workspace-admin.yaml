@@ -6,9 +6,10 @@ metadata:
   labels:
     eoepca/app-name: workspace-admin
 spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: registry-1.docker.io/kubernetesui/charts
+    repoURL: https://kubernetes.github.io/dashboard/
     chart: kubernetes-dashboard
     targetRevision: 7.10.1
     helm:
@@ -16,9 +17,9 @@ spec:
       valuesObject:
         fullnameOverride: workspace-admin
         kong:
-          admin:
-            tls:
-              enabled: false
+         admin:
+          tls:
+            enabled: false
         app:
           ingress:
             enabled: false

@@ -1,3 +1,9 @@
+# Point your domain DNS to the load balancer IP address
+
+From the Pulumi output you should see the ArgoCD and Rancher on a floating IP and then 
+
+`*.rke2` and `rke2.<YOUR DOMAIN>` which are the wildcard and root domain for your cluster. You will need to point these to the floating IP address listed at `apisix_floating_ip` in the Pulumi output.
+
 # Connect Workers to Cluster
 
 > You will not be able to access the Rancher dashboard until you have at least one worker node connected to the cluster.
@@ -11,13 +17,13 @@ ssh -i rke2-generated_key.pem eouser@<YOUR BASTION IP>
 ssh -i ~/.ssh/key.pem eouser@<YOUR CONTROL NODE IP>`
 ```
 
-Retrieve the `node token`
+Retrieve the `node token` from the control node.
 
 ```bash
 sudo cat /var/lib/rancher/rke2/server/node-token
 ```
 
-__Optional__ Retrieve the `kubeconfig` file to use with `kubectl` on your local machine:
+__Optional__ Retrieve the `kubeconfig` file to use with `kubectl` on your local machine.
 
 ```bash
 sudo cat /etc/rancher/rke2/rke2.yaml
@@ -43,3 +49,5 @@ sudo systemctl start rke2-agent.service
 ```
 
 This will then connect the worker to the cluster and you should see it in the output of `kubectl get nodes`.
+
+Now proceed to `k8s-resources` directory one level above and run the `scripts/bootstrap-argocd.sh` script to deploy ArgoCD to the cluster.

@@ -3,6 +3,9 @@ kind: PostgresCluster
 metadata:
   name: default
   namespace: infra
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   databaseInitSQL:
     key: initdb.sql

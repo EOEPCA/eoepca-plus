@@ -33,3 +33,4 @@ spec:
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
       - SkipDryRunOnMissingResource=true
+      - ServerSideApply=true

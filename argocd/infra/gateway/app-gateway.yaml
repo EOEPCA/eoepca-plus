@@ -26,7 +26,7 @@ spec:
       selfHeal: false
       allowEmpty: true
     syncOptions:
-      - Validate=true
+      - Validate=false
       - CreateNamespace=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true

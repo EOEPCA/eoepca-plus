@@ -132,6 +132,8 @@ until kubectl get crd appprojects.argoproj.io &>/dev/null; do
     sleep 5
 done
 
+kubectl create ns ingress-nginx-ns
+
 echo "=== Creating ArgoCD Project and Application ==="
 kubectl apply -f argocd/project.yaml
 kubectl apply -f argocd/application.yaml

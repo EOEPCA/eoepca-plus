@@ -31,7 +31,7 @@ spec:
           opal:
             enabled: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: rke2-upgrade
+      targetRevision: tmp-dd-to-rke2-merge
       ref: values
 
   destination:

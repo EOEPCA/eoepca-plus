@@ -22,7 +22,7 @@ spec:
           - $values/argocd/eoepca/zoo-dru-keda/parts/values-zoo.yaml
           # - $values/argocd/eoepca/zoo-dru-keda/parts/values-stageout.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: rke2-upgrade
+      targetRevision: tmp-dd-to-rke2-merge
       ref: values
 
   destination:

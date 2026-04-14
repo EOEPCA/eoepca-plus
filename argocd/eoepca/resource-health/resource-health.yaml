@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/EOEPCA/resource-health'
     path: resource-health-reference-deployment
-    targetRevision: rke2-upgrade
+    targetRevision: tmp-dd-to-rke2-merge
     helm:
       valuesObject:
         global:

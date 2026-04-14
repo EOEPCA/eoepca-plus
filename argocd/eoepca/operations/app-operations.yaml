@@ -1,22 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: eoepca
+  name: operations
   namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: operations
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: eoepca
-
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: tmp-dd-to-rke2-merge
-    path: argocd
-
+    path: argocd/eoepca/operations/parts
   destination:
-    server: https://kubernetes.default.svc
+    name: in-cluster
     namespace: argocd
-
   syncPolicy:
     automated:
       prune: true
@@ -29,23 +31,6 @@ spec:
         maxDuration: 10m
     syncOptions:
       - CreateNamespace=true
-      - Validate=false
       - ServerSideApply=true
-      - SkipDryRunOnMissingResource=true
-      - PrunePropagationPolicy=foreground
-      - PruneLast=true
+      - Validate=false
       - RespectIgnoreDifferences=true
-      - ApplyOutOfSyncOnly=true
-
-  info:
-    - name: 'EOEPCA Plus:'
-      value: 'https://eoepca.org/'
-
-  ignoreDifferences:
-    - group: apps
-      kind: Deployment
-      jsonPointers:
-        - /spec/replicas
-    - kind: ConfigMap
-      jqPathExpressions:
-        - '.data["config.yaml"].auth'

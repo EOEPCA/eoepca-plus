@@ -2,7 +2,6 @@
 resources:
   - infra
   - eoepca
-  - operations
   - test
 
 patches:

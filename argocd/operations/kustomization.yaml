@@ -3,3 +3,19 @@ resources:
   - _rules
   - alerting
   - monitoring
+
+patches:
+  - target:
+      kind: Application
+    patch: |
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "0"
+  - target:
+      group: apisix.apache.org
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "3"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

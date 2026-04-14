@@ -80,9 +80,9 @@ metadata:
   name: dummy-service-tls
 spec:
   dnsNames:
-    - dummy.develop.eoepca.org
-    - dummy-offline.develop.eoepca.org
-    - dummy-open.develop.eoepca.org
+    - dummy.rke2.deploybox.co.uk
+    - dummy-offline.rke2.deploybox.co.uk
+    - dummy-open.rke2.deploybox.co.uk
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-http01-apisix
@@ -99,9 +99,9 @@ metadata:
 spec:
   ingressClassName: apisix
   hosts:
-    - dummy.develop.eoepca.org
-    - dummy-offline.develop.eoepca.org
-    - dummy-open.develop.eoepca.org
+    - dummy.rke2.deploybox.co.uk
+    - dummy-offline.rke2.deploybox.co.uk
+    - dummy-open.rke2.deploybox.co.uk
   secret:
     name: dummy-service-tls
     namespace: test

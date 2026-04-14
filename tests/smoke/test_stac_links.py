@@ -9,7 +9,7 @@ import re
 import httpx
 import pytest
 
-EOAPI = os.environ.get("EOAPI", "eoapi.develop.eoepca.org")
+EOAPI = os.environ.get("EOAPI", "eoapi.rke2.deploybox.co.uk")
 STAC_URL = f"https://{EOAPI}/stac/"
 
 # Matches URLs containing a non-standard port (anything other than :443 or :80)

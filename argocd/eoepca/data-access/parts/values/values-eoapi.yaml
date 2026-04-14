@@ -170,7 +170,7 @@ stac-auth-proxy:
     failureThreshold: 3
 
 browser:
-  catalogUrl: "https://eoapi.develop.eoepca.org/stac"
+  catalogUrl: "https://eoapi.rke2.deploybox.co.uk/stac"
   catalogTitle: "EOEPCA Data Catalog"
   catalogImage: "https://eoepca.org/media_portal/images/eoepca_logo_no_bg.original.png"
   footerLinks:

@@ -32,7 +32,7 @@ spec:
             - /opt/synthetic-api-check/check-stac.sh
           env:
             - name: STAC_BASE_URL
-              value: https://eoapi.develop.eoepca.org/stac
+              value: https://eoapi.rke2.deploybox.co.uk/stac
             - name: SYNTHETIC_API_CHECK_ITEMS_LIMIT
               value: "100"
             - name: SYNTHETIC_API_CHECK_SEARCH_LIMIT

@@ -165,7 +165,7 @@ keycloak:
   cors:
     # Set this to true to enable CORS
     enabled: true
-    allowedOrigins: "https://eoapi.develop.eoepca.org"
+    allowedOrigins: "https://eoapi.rke2.deploybox.co.uk"
     allowedHeaders: "Authorization,Content-Type,Accept,Origin,X-Requested-With"
     exposedHeaders: "Content-Length,Content-Type"
     allowCredentials: true

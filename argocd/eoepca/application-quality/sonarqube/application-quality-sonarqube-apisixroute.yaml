@@ -9,7 +9,7 @@ spec:
   - name: application-quality-sonarqube-route
     match:
       hosts:
-        - application-quality.develop.eoepca.org
+        - application-quality.rke2.deploybox.co.uk
       paths:
         - /sonarqube
         - /sonarqube/*

@@ -3,7 +3,7 @@ fullnameOverride: "eoapi-geoparquet-export"
 image:
   tag: "0.2"
 
-stacApiUrl: "https://eoapi.develop.eoepca.org/stac"
+stacApiUrl: "https://eoapi.rke2.deploybox.co.uk/stac"
 
 database:
   existingSecret: "default-pguser-eoapi"

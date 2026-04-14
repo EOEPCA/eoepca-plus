@@ -20,14 +20,14 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
-    rootUrl: https://alerting.develop.eoepca.org
+    rootUrl: https://alerting.rke2.deploybox.co.uk
     validRedirectUris:
-      - https://alerting.develop.eoepca.org/oauth2/callback
+      - https://alerting.rke2.deploybox.co.uk/oauth2/callback
     validPostLogoutRedirectUris:
-      - https://alerting.develop.eoepca.org/
-      - https://alerting.develop.eoepca.org/oauth2/*
+      - https://alerting.rke2.deploybox.co.uk/
+      - https://alerting.rke2.deploybox.co.uk/oauth2/*
     webOrigins:
-      - https://alerting.develop.eoepca.org
+      - https://alerting.rke2.deploybox.co.uk
 ---
 apiVersion: role.keycloak.crossplane.io/v1alpha1
 kind: Role

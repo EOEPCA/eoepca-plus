@@ -33,7 +33,7 @@ spec:
                   - keep_admin
                   - keep_noc
                 oidcConfig:
-                  issuerURL: https://iam-auth.develop.eoepca.org/realms/eoepca
+                  issuerURL: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca
                 scope: openid email profile roles
             upstreamConfig:
               upstreams:
@@ -62,7 +62,7 @@ spec:
                   - claimSource:
                       claim: groups
         extraArgs:
-          redirect-url: https://alerting.develop.eoepca.org/oauth2/callback
+          redirect-url: https://alerting.rke2.deploybox.co.uk/oauth2/callback
           cookie-secure: "true"
           session-cookie-minimal: "true"
           reverse-proxy: "true"

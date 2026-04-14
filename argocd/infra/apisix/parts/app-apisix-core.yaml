@@ -18,7 +18,7 @@ spec:
         releaseName: apisix
         valueFiles:
           - $values/argocd/infra/apisix/parts/values/apisix-values.yaml
-        skipCrds: true
+        skipCrds: false
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: tmp-dd-to-rke2-merge
       ref: values

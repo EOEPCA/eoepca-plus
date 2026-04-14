@@ -21,7 +21,7 @@ kubectl apply -f resources/sealed-secrets-keys.yaml
 
 echo "=== installing sealed secrets controller ==="
 helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
-helm repo update
+# helm repo update
 helm upgrade --install sealed-secrets sealed-secrets/sealed-secrets \
     --namespace infra \
     --create-namespace \

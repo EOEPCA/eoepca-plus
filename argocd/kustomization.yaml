@@ -4,3 +4,16 @@ resources:
   - eoepca
   - operations
   - test
+
+patches:
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Application
+    patch: |
+      - op: add
+        path: /spec/syncPolicy/syncOptions/-
+        value: ServerSideApply=true
+      - op: add
+        path: /spec/syncPolicy/syncOptions/-
+        value: RespectIgnoreDifferences=true

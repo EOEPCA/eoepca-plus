@@ -1,0 +1,184 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: trivy-operator
+  namespace: argocd
+  labels:
+    eoepca/app-name: trivy
+spec:
+  project: eoepca
+  source:
+    repoURL: "https://aquasecurity.github.io/helm-charts/"
+    chart: trivy-operator
+    targetRevision: 0.32.1
+
+    helm:
+      releaseName: trivy-operator
+      valuesObject:
+        operator:
+          scanJobsConcurrentLimit: 4  # Default is 10
+          clusterSbomCacheEnabled: true
+          scanJobTTL: 10m
+        trivyOperator:
+          scanJobCustomVolumes:
+            - name: extra-trivy-config
+              configMap:
+                name: extra-trivy-config
+          scanJobCustomVolumesMount:
+            - name: extra-trivy-config
+              mountPath: /extra-trivy-config
+        trivy:
+          severity: UNKNOWN,MEDIUM,HIGH,CRITICAL
+          ignoreUnfixed: false
+          # The ignore policies are currently not working in the cluster but work when run
+          # locally with, for example,
+          #    trivy k8s --ignore-policy ignore-seccomp.rego --scanners misconfig
+          #
+          # I've left them here as a record of what should be ignored and in case a fix for Trivy
+          # Operator appears.
+          ignorePolicy: |
+            package trivy
+            import rego.v1
+
+            default ignore = false
+
+            ignore if {
+                # seccomp policies are for individual operators to set up
+                input.ID == "KSV-0104"
+            }
+
+          ignorePolicy.kube-system: |
+            package trivy
+            import rego.v1
+
+            default ignore = false
+
+            ignore if {
+                # Every workload in kube-system is falsely detected as a user workload that should
+                # be somewhere else.
+                input.ID == "KSV-0037"
+            }
+
+            ignore if {
+                # Various privileged containers are needed in kube-system
+                input.ID == "KSV-0017"
+            }
+
+            # Needs host network access
+            ignore if {
+                input.ID == "KSV-0009"
+            }
+
+            # Needs local FS access
+            ignore if {
+                input.ID == "KSV-0023"
+            }
+
+          ignorePolicy.kube-system.canal: |
+            package trivy
+            import rego.v1
+            default ignore = true
+
+          ignorePolicy.workspace.csi-rclone-nodeplugin: |
+            package trivy
+            import rego.v1
+
+            default ignore = false
+
+            # CSI needs to be privileged (and is not an output of EOEPCA anyway)
+            ignore if {
+                input.ID == "KSV-0017"
+            }
+
+            # Needs local FS access
+            ignore if {
+                input.ID == "KSV-0023"
+            }
+
+            # CSI needs SYS_ADMIN cap
+            ignore if {
+                input.ID == "KSV-0005"
+            }
+
+          ignorePolicy.workspace.secrets-manager-.: |
+            package trivy
+            import rego.v1
+
+            default ignore = false
+
+            # False positive? Reports automountServiceAccountToken not false but it is.
+            ignore if {
+                input.ID == "KSV-0036"
+            }
+            
+          ignorePolicy.workspace.session-manager-.: |
+            package trivy
+            import rego.v1
+
+            default ignore = false
+
+            # False positive? Reports automountServiceAccountToken not false but it is.
+            ignore if {
+                input.ID == "KSV-0036"
+            }
+            
+          ignorePolicy.infra.kube-prometheus-stack-prometheus-node-exporter: |
+            package trivy
+            import rego.v1
+
+            default ignore = false
+
+            # Prometheus node exporter monitors the host network interfaces
+            ignore if {
+                input.ID == "KSV-0009"
+            }
+
+            # Prometheus needs local FS access to monitor it
+            ignore if {
+                input.ID == "KSV-0023"
+            }
+
+            # Prometheus needs to mount /proc/, /sys/ etc for monitoring the node
+            ignore if {
+                input.ID == "KSV-0121"
+            }
+
+            # Prometheus needs to be able to see all processes on the host to monitor them
+            # (This is about setting hostPID: true)
+            ignore if {
+                input.ID == "KSV-0010"
+            }
+
+          ignorePolicy.infra.loki-stack-promtail: |
+            package trivy
+            import rego.v1
+
+            default ignore = false
+
+            # Loki needs local FS access to gather logs
+            ignore if {
+                input.ID == "KSV-0023"
+            }
+
+          configFile:
+            kubernetes:
+              k8s-version: "1.32.0"
+            rego:
+              data:
+                - /extra-trivy-config/trivy-config-data.yaml
+              trace: true
+  destination:
+    name: in-cluster
+    namespace: trivy-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

@@ -1,0 +1,6 @@
+resources:
+  - app-kube-prometheus-stack.yaml
+  - app-loki-stack.yaml
+  - app-alloy-logs.yaml
+  - iam.yaml
+  - routes.yaml

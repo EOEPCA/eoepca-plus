@@ -6,6 +6,7 @@ metadata:
   # annotations:
   #   argocd.argoproj.io/sync-options: skip
 spec:
+  ingressClassName: apisix
   http:
   - name: manager-redirect
     websocket: true
@@ -55,6 +56,7 @@ spec:
         redirect_uri: "https://eoapi.rke2.deploybox.co.uk/manager/"
     - name: cors
       enable: true
+
   - name: browser-redirect
     backends:
     - serviceName: eoapi-browser
@@ -320,6 +322,7 @@ spec:
       hosts:
       - eoapi.rke2.deploybox.co.uk
       paths:
+      - /stac/
       - /stac/*
     plugins:
     - name: proxy-rewrite

@@ -4,6 +4,7 @@ metadata:
   name: registration-api-route
   namespace: rm
 spec:
+  ingressClassName: apisix
   http:
   - name: registration-api-protected
     match:
@@ -21,7 +22,9 @@ spec:
         config:
           client_id: "registration-api"
           client_secret: "TBD"
-          discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
+          session:
+            secret: "V649LpBqKIfJv95BzDsR29e9"
+          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
           realm: eoepca
           use_jwks: true
           bearer_only: false # as we want to redirect to login screen (default: false)
@@ -76,6 +79,7 @@ metadata:
   name: registration-api-tls
   namespace: rm
 spec:
+  ingressClassName: apisix
   hosts:
     - registration-api-protected.rke2.deploybox.co.uk
     - registration-api.rke2.deploybox.co.uk

@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: apisix
+  namespace: ingress-apisix
+  labels:
+    release: kube-prometheus-stack
+spec:
+  endpoints:
+    - interval: 15s
+      path: /apisix/prometheus/metrics
+      port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: apisix

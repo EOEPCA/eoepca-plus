@@ -13,11 +13,12 @@ spec:
   sources:
     - repoURL: https://apache.github.io/apisix-helm-chart
       chart: apisix
-      targetRevision: 2.10.0
+      targetRevision: 2.13.0
       helm:
         releaseName: apisix
         valueFiles:
           - $values/argocd/infra/apisix/parts/values/apisix-values.yaml
+        skipCrds: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: rke2-upgrade
       ref: values
@@ -32,16 +33,28 @@ spec:
         - .spec.versions[].additionalPrinterColumns[].priority | select(. == 0)
     - group: ""
       kind: Secret
-      name: apisix-etcd-jwt-token
+      name: apisix-ingress-controller-webhook-cert
       namespace: ingress-apisix
       jsonPointers:
         - /data
-    - group: apps
-      kind: StatefulSet
-      name: apisix-etcd
+    - group: admissionregistration.k8s.io/v1
+      kind: ValidatingWebhookConfiguration
+      name: apisix-ingress-controller-webhook
       namespace: ingress-apisix
       jqPathExpressions:
-        - '.spec.template.metadata.annotations["checksum/token-secret"]'
+        - '.webhooks[].clientConfig.caBundle'
+#    - group: ""
+#      kind: Secret
+#      name: apisix-etcd-jwt-token
+#      namespace: ingress-apisix
+#      jsonPointers:
+#        - /data
+#    - group: apps
+#      kind: StatefulSet
+#      name: apisix-etcd
+#      namespace: ingress-apisix
+#      jqPathExpressions:
+#        - '.spec.template.metadata.annotations["checksum/token-secret"]'
   syncPolicy:
     automated:
       prune: true

@@ -2,11 +2,12 @@ apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
   name: monitoring
-  namespace: infra
+  namespace: operations
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "2"
 spec:
+  ingressClassName: apisix
   http:
     - name: grafana
       match:

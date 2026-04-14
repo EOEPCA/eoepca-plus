@@ -1,0 +1,26 @@
+resources:
+  - serviceaccount.yaml
+  - clusterrole.yaml
+  - clusterrolebinding.yaml
+  - daemonset.yaml
+  - service.yaml
+  - servicemonitor.yaml
+
+configMapGenerator:
+  - name: alloy-logs-config
+    options:
+      disableNameSuffixHash: true
+    files:
+      - config.alloy=config.alloy
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: alloy-logs-config
+      fieldPath: data.config\.alloy
+    targets:
+      - select:
+          kind: DaemonSet
+          name: alloy-logs
+        fieldPaths:
+          - spec.template.metadata.annotations.eoepca-config-alloy

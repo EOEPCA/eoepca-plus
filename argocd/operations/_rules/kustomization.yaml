@@ -1,0 +1,3 @@
+resources:
+  - baseline-alerts.yaml
+  - stac-alerts.yaml

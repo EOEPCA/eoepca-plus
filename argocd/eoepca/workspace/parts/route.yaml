@@ -5,6 +5,7 @@ metadata:
   name: workspace-api
   namespace: workspace
 spec:
+  ingressClassName: apisix
   http:
     - name: workspace-api-no-auth
       match:
@@ -40,6 +41,8 @@ spec:
             set_userinfo_header: true
             client_id: workspace-api
             client_secret: ""
+            session:
+              secret: "17Y56d3w4tnicLSCljwwbP0P"
     - name: workspace-api-docs
       match:
         hosts:
@@ -72,6 +75,8 @@ spec:
             set_userinfo_header: false
             client_id: workspace-api
             client_secret: ""
+            session:
+              secret: "17Y56d3w4tnicLSCljwwbP0P"
         - name: opa
           enable: true
           config:

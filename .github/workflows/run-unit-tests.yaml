@@ -1,0 +1,19 @@
+name: Run Unit Tests
+
+on:
+  push:
+
+jobs:
+  stac-auth-proxy-filters:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Run pytest
+        working-directory: argocd/eoepca/data-access/parts/stac-auth-proxy
+        run: uv run --with pytest,pytest-asyncio,cql2 pytest

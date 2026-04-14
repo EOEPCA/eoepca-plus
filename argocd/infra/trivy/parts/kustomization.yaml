@@ -1,0 +1,4 @@
+
+resources:
+  - app-trivy-operator.yaml
+  - extra-trivy-config.yaml

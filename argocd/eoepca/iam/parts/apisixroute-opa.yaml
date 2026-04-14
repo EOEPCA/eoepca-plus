@@ -5,6 +5,7 @@ kind: ApisixRoute
 metadata:
   name: opa-route
 spec:
+  ingressClassName: apisix
   http:
   - name: opa
     match:
@@ -22,6 +23,8 @@ spec:
         config:
           client_id: "opa"
           client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
+          session:
+            secret: 0123456789abcdef
           #bearer_only: true
           #realm: "eoepca"
           #redirect_uri: "http://iam-test.rke2.deploybox.co.uk/"
@@ -51,6 +54,8 @@ spec:
         config:
           client_id: "opa"
           client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
+          session:
+            secret: 0123456789abcdef
           access_token_in_authorization_header: true
           discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
       - name: authz-keycloak

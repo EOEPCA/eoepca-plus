@@ -9,6 +9,7 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "1"
 spec:
+  ingressClassName: apisix
   hosts:
     - "*.rke2.deploybox.co.uk"
   secret:

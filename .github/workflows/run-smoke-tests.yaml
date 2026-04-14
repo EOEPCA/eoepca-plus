@@ -19,3 +19,14 @@ jobs:
     secrets: inherit
     with:
       pytest-options: "-m smoketest"
+
+  stac-link-check:
+    name: "STAC Link Check"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Source env and run tests
+        run: |
+          set -a && source pytest.env && set +a
+          uv run --with httpx,pytest pytest tests/smoke/ -v

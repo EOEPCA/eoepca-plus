@@ -3,6 +3,11 @@
 # the "official" port is 443. This rule globally replaces the value 9443 with
 # the value 443. Actually the rule also replaces port 9080 with port 80 though
 # this should be irrelevant due to prior HTTP-to-HTTPS redirection.
+#
+# Note: APISIX's set_upstream_x_forwarded_headers() runs AFTER all plugins and
+# copies ctx.var.http_x_forwarded_port into var_x_forwarded_port, which nginx
+# uses in proxy_set_header. So we must modify http_x_forwarded_port (not
+# var_x_forwarded_port or ngx.req.set_header). See apisix/init.lua.
 apiVersion: apisix.apache.org/v2
 kind: ApisixGlobalRule
 metadata:
@@ -11,10 +16,17 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "1"
 spec:
+  ingressClassName: apisix
   plugins:
     - name: serverless-pre-function
       enable: true
       config:
         phase: "rewrite"
         functions:
-          - "return function(conf, ctx) if tonumber(ngx.var.var_x_forwarded_port) > 9000 then ngx.var.var_x_forwarded_port = ngx.var.var_x_forwarded_port - 9000 end end"
+          - |
+            return function(conf, ctx)
+              local port = tonumber(ctx.var.http_x_forwarded_port)
+              if port and port > 9000 then
+                ctx.var.http_x_forwarded_port = tostring(port - 9000)
+              end
+            end

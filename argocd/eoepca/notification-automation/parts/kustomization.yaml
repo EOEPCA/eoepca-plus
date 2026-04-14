@@ -6,4 +6,5 @@ resources:
   - knative-eventing.yaml
   - apisix-route.yaml
   - namespace-notifications.yaml
+  - app-notification-automation-helm.yaml
   #- kafka-cluster.yaml

@@ -5,6 +5,7 @@ metadata:
   name: zoo-route
   namespace: zoowes
 spec:
+  ingressClassName: apisix
   http:
     # Backdoor for open access
     - name: zoowes-open
@@ -56,7 +57,9 @@ spec:
           config:
             client_id: "zoo"
             client_secret: "Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di"
-            discovery: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"
+            session:
+              secret: "on1DwknmpLLsPXT5Yi1Ai3IO"
+            discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
             realm: eoepca
             use_jwks: true
             bearer_only: false # as we want to redirect to login screen (default: false)
@@ -96,6 +99,7 @@ kind: ApisixTls
 metadata:
   name: zoowes
 spec:
+  ingressClassName: apisix
   hosts:
     - zoowes.rke2.deploybox.co.uk
   secret:

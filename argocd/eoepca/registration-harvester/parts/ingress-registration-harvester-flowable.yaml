@@ -4,6 +4,7 @@ metadata:
   name: registration-harvester-api
   namespace: registration-harvester-api
 spec:
+  ingressClassName: apisix
   http:
     # 1. Redirect to /flowable-rest/
     - name: redirect-root
@@ -56,6 +57,7 @@ metadata:
   name: registration-harvester-api-tls
   namespace: registration-harvester-api
 spec:
+  ingressClassName: apisix
   hosts:
     - registration-harvester-api.rke2.deploybox.co.uk
   secret:

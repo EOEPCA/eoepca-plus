@@ -1,0 +1,12 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: application-quality-sonarqube-monitoring-passcode
+  namespace: application-quality-sonarqube
+spec:
+  encryptedData:
+    passcode: AgAljky3RQQfUUdERnXLHUXwvIdYr4PLFwfa562uerMSRfvxtVzSYbsn8NQ/+UCOQLHcPqw+qNliWC2SEebxQoUDsLsLPtAvn0t2ujxLGjGKx5peVEeM2WdwK2hOUguIcVuk5aGdSagqNwGBRtYNUo5oO4JxkxsEG91RA5PNhB5BHEOoCajqW3g2jHh00lP+PkhX5f8dA5NQy1/N/RtOfPMgY/Mb594NXcVvCyN1gThkaB/6k2feFNnXoe9oYWWDr9put4LfeCg5Qd6T6tG3CB9Rm5V+3sg40j3jyISLZN40V8mmh2KQ1SUgAmtZKXB7/saSY/JKhNCB7hujp5jn/Z0tgOJUlMENVR6MOvMyl0KKqlJSBzGWkLKu0FbNZklWmUbMCd7wmcYMMNSSrLjyl3PMJ8AMwuRpeNS8GwcKCYhVE9VgCn7W6dNFz/x0/DyBeW9/faCcVdnrsAR+iYLjan5qPbQts1jGy9TtRWT10LlJiWksD55IdPIr1i8Y/jMfxgLWokt24fDXNfRiBejjSv1ex0110440wblKhGdR+KHZU+bwOfDvr+fFXWiBO2BDSl4GcsBL1aXy2FkImhI4OingvF4RNbjKUTwZyE1TnizEM9LvZ5vX1mhmcXBSX7mH8tP+6Sk2//wY2koeSj880oAe8xgWNqpuqll28MTnLik9nuzclYH5tN1xEC0adCc2nFuRo+L59T1G3m3NJeWJX9YU3s5wrDcp+RsNzCCWrXk=
+  template:
+    metadata:
+      name: application-quality-sonarqube-monitoring-passcode
+      namespace: application-quality-sonarqube

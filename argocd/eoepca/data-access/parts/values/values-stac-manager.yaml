@@ -13,8 +13,8 @@ image:
   tag: latest
   pullPolicy: Always
 
-publicUrl: https://eoapi.rke2.deploybox.co.uk/manager
-stacApi: https://eoapi.rke2.deploybox.co.uk/stac/
+publicUrl: https://eoapi.develop.eoepca.org/manager
+stacApi: https://eoapi.develop.eoepca.org/stac
 primaryColor: "#005ACD"
 secondaryColor: "#048A81"
 

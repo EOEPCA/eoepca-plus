@@ -4,6 +4,7 @@ metadata:
   name: notifications-wildcard-route
   namespace: knative-serving
 spec:
+  ingressClassName: apisix
   http:
   - name: knative-serving-default
     match:

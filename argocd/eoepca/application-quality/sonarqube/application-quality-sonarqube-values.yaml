@@ -1,0 +1,56 @@
+# https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/values.yaml
+community:
+  enabled: true
+
+postgresql:
+  enabled: false
+
+persistence:
+  # SonarQube comes with a bundled Elasticsearch, and as Elasticsearch is stateful, so is SonarQube.
+  # There is an option to persist the Elasticsearch indexes in a Persistent Volume, but with regular
+  # killing operations by the Kubernetes Cluster, these indexes can be corrupted.
+  # By default, persistency is disabled in the Helm chart.
+  # Enabling persistency decreases the startup time of the SonarQube Pod significantly, but you are
+  # risking corrupting your Elasticsearch index.
+  enabled: false
+  #enabled: true
+  #size: 5Gi
+  #storageClass: "" 
+
+# Security hardening: Disable other privileged init containers
+initSysctl:
+  enabled: false
+initFs:
+  enabled: false
+
+# Define the sub-path for the application internally
+sonarProperties:
+  sonar.web.context: /sonarqube
+  sonar.web.port: 9000
+
+# The monitoring passcode allows fetching probe results
+monitoringPasscodeSecretName: "application-quality-sonarqube-monitoring-passcode"
+monitoringPasscodeSecretKey: "passcode"
+
+# Use ApisixRoute instead of a traditional Ingress
+# See application-quality-sonarqube-apisixroute.yaml
+ingress:
+  enabled: false
+
+# Resource tuning for the EOEPCA environment
+resources:
+  requests:
+    cpu: 500m
+    memory: 2Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+
+# Since SonarQube version 25, PostgreSQL must be deployed separately
+# In this setup PostgreSQL is deployed in the same namespace => short URL
+jdbcOverwrite:
+  enable: true
+  jdbcUrl: "jdbc:postgresql://application-quality-sonarqube-db:5432/sonar"
+  jdbcUsername: "sonarUser"
+  jdbcSecretName: "application-quality-sonarqube-db-secrets"
+  jdbcSecretPasswordKey: "password"

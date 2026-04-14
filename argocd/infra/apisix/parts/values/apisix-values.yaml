@@ -12,7 +12,6 @@ gateway:
     nodePort: 32443
 
 apisix:
-
   enableIPv6: false
   enableServerTokens: false
 
@@ -27,18 +26,62 @@ apisix:
   pluginAttrs:
     redirect:
       https_port: 443
+    prometheus:
+      metrics:
+        http_latency:
+          extra_labels:
+            - http_method: $request_method
+            - uri: $uri
+        http_status:
+          extra_labels:
+            - http_method: $request_method
+            - uri: $uri
+        bandwidth:
+          extra_labels:
+            - http_method: $request_method
+            - uri: $uri
+
+  deployment:
+    role: traditional
+    role_traditional:
+      config_provider: yaml # Standalone Mode
+
+  prometheus:
+    enabled: true
 
 etcd:
-  # Added: Set Cluster-specific storage class
-  persistence:
-    storageClass: managed-nfs-storage-retain
-    size: 8Gi
-  image:
-    repository: bitnamilegacy/etcd
+  # Etcd is not needed in standalone mode.
+  enabled: false
+#  # Added: Set Cluster-specific storage class
+#  persistence:
+#    storageClass: managed-nfs-storage-retain
+#    size: 8Gi
+#  image:
+#    repository: bitnamilegacy/etcd
+
+# There is a bug in APISIX 3.15 that causes the health check to contact etcd even though
+# it is not used in standalone mode. This causes regular error and warning messages in
+# the logs, but does not otherwise impact APISIX's functionality.
+# See: https://github.com/apache/apisix/issues/12989
+# Uncommenting the following lines causes a DNS-related error message to disappear in
+# favour of a warning message regarding connection failure. This does not really solve
+# the issue, but lets the logs look a bit less harmful.
+#externalEtcd:
+#  # Changing host to localhost prevent DNS lookup error - unneeded health check still fails though.
+#  host:
+#    - http://localhost:2379
 
 # -- Ingress controller configuration
 ingress-controller:
   enabled: true
   config:
+    execADCTimeout: "60s"
     apisix:
       serviceNamespace: ingress-apisix
+#    kubernetes:
+#      defaultIngressClass: true
+    provider:
+      type: apisix-standalone
+  gatewayProxy:
+    createDefault: true
+

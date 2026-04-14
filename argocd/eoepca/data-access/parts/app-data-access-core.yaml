@@ -12,7 +12,7 @@ spec:
 
     - repoURL: https://developmentseed.org/eoapi-k8s/
       chart: eoapi
-      targetRevision: 0.10.1
+      targetRevision: 0.12.3
       helm:
         releaseName: eoapi
         valueFiles:
@@ -20,7 +20,7 @@ spec:
 
     - repoURL: https://github.com/sentinel-hub/titiler-openeo
       path: deployment/k8s/charts
-      targetRevision: v0.9.1
+      targetRevision: titiler-openeo-v0.12.0
       helm:
         releaseName: eoapi-titiler-openeo
         values: |
@@ -49,11 +49,19 @@ spec:
 
     - repoURL: https://stac-manager.ds.io/
       chart: stac-manager
-      targetRevision: 0.0.11
+      targetRevision: 0.0.13
       helm:
         releaseName: eoapi-stac-manager
         valueFiles:
           - $values/argocd/eoepca/data-access/parts/values/values-stac-manager.yaml
+
+    - repoURL: https://github.com/developmentseed/pgstac-geoparquet-exporter
+      path: charts/pgstac-geoparquet-exporter
+      targetRevision: pgstac-geoparquet-exporter-v0.2.0
+      helm:
+        releaseName: eoapi-geoparquet-export
+        valueFiles:
+          - $values/argocd/eoepca/data-access/parts/values/values-pgstac-geoparquet-exporter.yaml
 
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: rke2-upgrade

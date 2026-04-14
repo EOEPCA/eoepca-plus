@@ -1,8 +1,36 @@
-.vscode/
+# Editor and local tool state
+.vscode*
+.code*
+.idea*
+*.swp
+*.swo
+*~
+
+# Environment files
+.env*
+.envrc
+
+# Kubernetes and ArgoCD local files
+.argocd/
+argocd.yaml
+k.yaml
 kubeconfig
 kubeconfig.yaml
-argocd.yaml
 vcluster
+
+# TLS and secrets
+*.crt
+*.key
+
+# Python
+__pycache__/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+build/
+dist/
 venv/
 .venv/
 k.yaml
@@ -11,3 +39,6 @@ k.yaml
 documents/*
 eoepca-openrc-2fa.sh
 deploy/sealed-secrets-keys.yaml
+
+# Pulumi
+.pulumi/

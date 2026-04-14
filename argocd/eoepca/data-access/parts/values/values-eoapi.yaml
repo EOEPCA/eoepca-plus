@@ -34,8 +34,6 @@ raster:
   ingress:
     path: "/raster"
   overrideRootPath: "/"
-  image:
-    tag: "1.4.0"
   settings:
     envVars:
       AWS_S3_ENDPOINT: "eodata.cloudferro.com"
@@ -63,6 +61,8 @@ stac:
   settings:
     envVars:
       ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
+      STAC_FASTAPI_TITLE: "EOEPCA STAC API"
+      STAC_FASTAPI_DESCRIPTION: "A STAC Catalog for the Earth Observation Exploitation Platform Common Architecture (EOEPCA)"
     resources:
       limits:
         cpu: "1280m"
@@ -113,6 +113,8 @@ eoapi-notifier:
 
 stac-auth-proxy:
   enabled: true
+  image:
+    tag: "v1.0.2"
   # Custom filters for STAC collections/items filtering
   service:
     port: 8080
@@ -132,7 +134,12 @@ stac-auth-proxy:
         "^/healthz": ["GET"],
         "^/_mgmt/ping": ["GET"]
       }
-    ROOT_PATH: ""
+    ROOT_PATH: "/stac"
+    SWAGGER_UI_INIT_OAUTH: |
+      {
+        "clientId": "eoapi", 
+        "usePkceWithAuthorizationCodeGrant": true
+      }
   extraVolumes:
     - name: filters
       configMap:
@@ -142,9 +149,35 @@ stac-auth-proxy:
       mountPath: /app/src/stac_auth_proxy/eoepca_filters.py
       subPath: eoepca_filters.py
       readOnly: true
+  # Override health check paths to include ROOT_PATH
+  startupProbe:
+    httpGet:
+      path: /stac/healthz
+      port: http
+    periodSeconds: 2
+    failureThreshold: 30
+  livenessProbe:
+    httpGet:
+      path: /stac/healthz
+      port: http
+    periodSeconds: 60
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /stac/healthz
+      port: http
+    periodSeconds: 5
+    failureThreshold: 3
 
 browser:
-  catalogUrl: "https://eoapi.rke2.deploybox.co.uk/stac"
+  catalogUrl: "https://eoapi.develop.eoepca.org/stac"
+  catalogTitle: "EOEPCA Data Catalog"
+  catalogImage: "https://eoepca.org/media_portal/images/eoepca_logo_no_bg.original.png"
+  footerLinks:
+    - label: "Website"
+      url: "https://eoepca.org/"
+    - label: "Documentation"
+      url: "https://docs.eoepca.org/"
   authConfig:
     type: "openIdConnect"
     openIdConnectUrl: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration"

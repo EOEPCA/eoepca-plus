@@ -1,0 +1,35 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: default-pguser-pycsw
+  namespace: rm
+spec:
+  refreshInterval: 5m
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: infra
+  target:
+    name: default-pguser-pycsw
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  data:
+    - secretKey: username
+      remoteRef:
+        key: default-pguser-pycsw
+        property: user
+    - secretKey: password
+      remoteRef:
+        key: default-pguser-pycsw
+        property: password
+    - secretKey: host
+      remoteRef:
+        key: default-pguser-pycsw
+        property: host
+    - secretKey: port
+      remoteRef:
+        key: default-pguser-pycsw
+        property: port
+    - secretKey: database
+      remoteRef:
+        key: default-pguser-pycsw
+        property: dbname

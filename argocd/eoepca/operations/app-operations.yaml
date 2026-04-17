@@ -34,3 +34,4 @@ spec:
       - ServerSideApply=true
       - Validate=false
       - RespectIgnoreDifferences=true
+      - SkipDryRunOnMissingResource=true

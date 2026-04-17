@@ -3,6 +3,8 @@ kind: PrometheusRule
 metadata:
   name: baseline-alerts
   namespace: operations
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
   labels:
     release: kube-prometheus-stack
 spec:

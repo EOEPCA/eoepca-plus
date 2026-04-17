@@ -15,7 +15,7 @@ resources:
   - registration-harvester
   - iam
   - application-hub
-  - operations
+  # - operations
   # - resource-health
   # - openeo-geotrellis
   # - openeo-web-editor

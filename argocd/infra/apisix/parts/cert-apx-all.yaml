@@ -5,7 +5,7 @@ metadata:
   name: apx-all-tls
   namespace: ingress-apisix
   annotations:
-    argocd.argoproj.io/sync-wave: "-1"
+    argocd.argoproj.io/sync-wave: "-10"
 spec:
   secretName: apx-all-tls
   duration: 2160h # 90d

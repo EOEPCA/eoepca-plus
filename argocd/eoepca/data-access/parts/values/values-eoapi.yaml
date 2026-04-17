@@ -1,20 +1,20 @@
 ingress:
   enabled: false
 
-# postgresql:
-#   type: "external-secret"
-#   external:
-#     existingSecret:
-#       name: "default-pguser-eoapi"
-#       keys:
-#         username: "user"
-#         password: "password"
-#         host: "host"
-#         port: "port"
-#         database: "dbname"
+postgresql:
+  type: "external-secret"
+  external:
+    existingSecret:
+      name: "default-pguser-eoapi"
+      keys:
+        username: "user"
+        password: "password"
+        host: "host"
+        port: "port"
+        database: "dbname"
 
 postgrescluster:
-  enabled: true
+  enabled: false
 
 pgstacBootstrap:
   enabled: true

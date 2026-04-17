@@ -68,4 +68,3 @@ spec:
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
       - ServerSideApply=true
-      - Replace=true

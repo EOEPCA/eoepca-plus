@@ -122,6 +122,7 @@ helm upgrade --install argocd argo/argo-cd \
     --set applicationSet.enabled=true \
     --set dex.enabled=true \
     --set configs.cm.url="https://${ARGOCD_DOMAIN}" \
+    --set configs.cm.application\.resourceTrackingMethod=annotation+label \
     --wait --timeout 5m
 
 echo "=== Waiting for ArgoCD CRDs ==="

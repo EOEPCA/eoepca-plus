@@ -54,6 +54,8 @@ spec:
         client_id: eoapi
         client_secret: ""
         redirect_uri: "https://eoapi.rke2.deploybox.co.uk/manager/"
+        session:
+          secret: "VV8oL13hR19zU4XwPPFibdra"
     - name: cors
       enable: true
 
@@ -348,6 +350,8 @@ spec:
         set_userinfo_header: false # not needed (default: true)
         client_id: eoapi
         client_secret: ""
+        session:
+          secret: "VV8oL13hR19zU4XwPPFibdrw"
     - name: opa
       enable: true
       config:

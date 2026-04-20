@@ -60,39 +60,56 @@ def get_docker_user_data_script():
 
 def get_rke2_user_data_script():
     return """#!/bin/bash
-# Disable swap
+set -euo pipefail
+exec > /var/log/rke2-setup.log 2>&1
+
+# Wait for DNS to actually work
+until getent hosts nova.clouds.archive.ubuntu.com >/dev/null 2>&1; do
+    echo "Waiting for DNS..."
+    sleep 5
+done
+
+# Wait for apt lock
+while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+    echo "Waiting for apt lock..."
+    sleep 5
+done
+
 swapoff -a
 sed -i '/ swap / s/^/#/' /etc/fstab
 
-# Configure kernel modules for RKE2
-cat <<EOF | sudo tee /etc/modules-load.d/rke2.conf
+cat <<EOF | tee /etc/modules-load.d/rke2.conf
 overlay
 br_netfilter
 EOF
-
 modprobe overlay
 modprobe br_netfilter
 
-# Sysctl params
-cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
+cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 EOF
-
 sysctl --system
 
-# Install iptables (needed by CNI portmap plugin)
-apt-get update
-apt-get install -y iptables
+# Retry iptables install until it succeeds
+for i in $(seq 1 10); do
+    apt-get update && apt-get install -y iptables && break
+    echo "apt attempt $i failed, sleeping 15s"
+    sleep 15
+done
 
-# Pre-configure kubelet for higher pod limit
+# Fail loudly if still not installed
+command -v iptables >/dev/null || { echo "FATAL: iptables install failed after retries"; exit 1; }
+
 mkdir -p /etc/rancher/rke2
 cat <<EOF > /etc/rancher/rke2/config.yaml
 kubelet-arg:
   - max-pods=500
+  - container-log-max-size=50Mi
+  - container-log-max-files=3
 EOF
-    """
+"""
 
 
 def get_rke2_server_user_data_script(domain_name, lb_ip, email):
@@ -136,6 +153,8 @@ tls-san:
   - rancher.{domain_name}
 kubelet-arg:
   - max-pods=500
+  - container-log-max-size=50Mi
+  - container-log-max-files=3
 EOF
 
 systemctl start rke2-server.service

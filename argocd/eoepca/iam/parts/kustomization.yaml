@@ -2,7 +2,7 @@
 resources:
   #- app-keycloak.yaml
   #- app-opal.yaml
-  - app-iam.yaml
+  - app-iam-core.yaml
 #  - pvc-kc-database.yaml
   #- ss-kc-postgres.yaml
   #- ss-keycloak-provider.yaml

@@ -3,10 +3,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: iam
+  name: iam-core
   namespace: argocd
   labels:
-    eoepca/app-name: iam
+    eoepca/app-name: iam-core
 spec:
   project: eoepca
   sources:

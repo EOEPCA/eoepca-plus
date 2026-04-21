@@ -1,0 +1,65 @@
+# Copied from identity-service and adapted
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: iam
+  namespace: argocd
+  labels:
+    eoepca/app-name: iam
+spec:
+  project: eoepca
+  sources:
+    - repoURL: https://eoepca.github.io/helm-charts-dev
+      chart: iam-bb
+      targetRevision: 2.1.0-dev7
+      helm:
+        #releaseName: iam-keycloak
+        valueFiles:
+          - $values/argocd/eoepca/iam/parts/values/iam-values.yaml
+        # For now, all services are disabled by default in iam-values.yaml in order to
+        # allow installing them as separate ArgoCD Applications.
+        # This explicitly enables Keycloak and OPA.
+        # Done: Set enabled flags to true in values-iam.yaml and remove this section
+#        valuesObject:
+#          iam:
+#            keycloak:
+#              enabled: true
+#              # Create Crossplane Provider Config
+#              configuration:
+#                provider:
+#                  create: true
+#            opa:
+#              enabled: true
+#          iam-bb-config:
+#            iam:
+#              keycloak:
+#                enabled: true
+#                configuration:
+#                  provider:
+#                    create: true
+#              opa:
+#                enabled: true
+#          keycloak:
+#            enabled: true
+#          opal:
+#            enabled: true
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: tmp-dd-to-rke2-merge
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: iam
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

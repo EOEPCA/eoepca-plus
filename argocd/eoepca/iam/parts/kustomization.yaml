@@ -1,16 +1,16 @@
 
 resources:
-  - app-keycloak.yaml
-  - app-opal.yaml
+  #- app-keycloak.yaml
+  #- app-opal.yaml
+  - app-iam.yaml
 #  - pvc-kc-database.yaml
-  - ss-kc-postgres.yaml
-  - ss-keycloak-provider.yaml
-  - ss-keycloak-provider-iam.yaml
-  - provider-config-keycloak.yaml
+  #- ss-kc-postgres.yaml
+  #- ss-keycloak-provider.yaml
+  #- ss-keycloak-provider-iam.yaml
+  #- provider-config-keycloak.yaml
   # Preliminary configuration for path-based routing (to be removed later)
   - apisixroute-pathbased.yaml
   # Removing this one as it makes no sense
   # - ingress-pathbased.yaml
-  - naming-workaround.yaml
+  #- naming-workaround.yaml
   - iam-management-ns.yaml
-

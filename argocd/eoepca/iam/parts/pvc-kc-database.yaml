@@ -1,3 +1,4 @@
+# Not used any more
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

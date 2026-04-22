@@ -188,6 +188,8 @@ iam: &iam
     # iam.keycloak.configuration.createSecretStore is set to "auto".
     # Note that this requires External Secrets Operator to be installed.
     propagateSecrets: true
+    # TODO: Remove (temporarily added to work around wrong condition in iam-bb Helm chart)
+    propagateProviderSecret: true
 
 # ----
 

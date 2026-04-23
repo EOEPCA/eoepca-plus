@@ -10,7 +10,7 @@ fi
 DOMAIN="${1:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
 NFS_IP="${2:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
 DNS_API_TOKEN="${3:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
-ARGOCD_VERSION="${4:-6.9.2}"
+ARGOCD_VERSION="${4:-7.8.2}"
 NFS_PROVISIONER_VERSION="4.0.12"
 
 ARGOCD_DOMAIN="argocd.${DOMAIN}"

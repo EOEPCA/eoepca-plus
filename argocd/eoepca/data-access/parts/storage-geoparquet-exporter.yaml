@@ -1,0 +1,9 @@
+apiVersion: pkg.internal/v1beta1
+kind: Storage
+metadata:
+  name: geoparquet-exporter
+  namespace: data-access
+spec:
+  buckets:
+  - bucketName: geoparquet-exporter
+  principal: geoparquet-exporter-s3-credentials

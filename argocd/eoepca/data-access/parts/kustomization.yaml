@@ -1,6 +1,7 @@
 resources:
   - ss-data-access.yaml
   - app-data-access-core.yaml
+  - storage-geoparquet-exporter.yaml
   - iam.yaml
   - route.yaml
   - eso-pgo.yaml

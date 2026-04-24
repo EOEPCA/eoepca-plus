@@ -10,7 +10,7 @@ database:
 
 storage:
   outputPath: "s3://eoapi-geoparquet/geoparquet"
-  existingSecret: "data-access"
+  existingSecret: "geoparquet-exporter-s3-credentials"
   endpoint: "https://eodata.cloudferro.com"
 
 exportConfig:

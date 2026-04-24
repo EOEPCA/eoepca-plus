@@ -51,6 +51,25 @@ spec:
   destination:
     name: in-cluster
     namespace: iam
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: keycloak-provider
+      namespace: iam
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: opa-route
+      namespace: iam
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: postgresql
+      namespace: iam
+      jsonPointers:
+        - /data
   syncPolicy:
     automated:
       prune: true

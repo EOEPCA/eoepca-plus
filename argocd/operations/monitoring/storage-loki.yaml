@@ -6,4 +6,7 @@ metadata:
 spec:
   buckets:
   - bucketName: loki
+  credentialsRollover:
+    interval: none
+    maxToKeep: 1
   principal: loki-s3-credentials

@@ -6,4 +6,7 @@ metadata:
 spec:
   buckets:
   - bucketName: geoparquet-exporter
+  credentialsRollover:
+    interval: none
+    maxToKeep: 1
   principal: geoparquet-exporter-s3-credentials

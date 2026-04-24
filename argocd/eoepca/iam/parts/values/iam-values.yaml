@@ -295,7 +295,7 @@ opal:
           "force_cache": true,
           "force_cache_duration_seconds": 3600 # Cache response for an hour
         })
-        jwks := jwks_request("http://iam-keycloak-operator-service:8080/realms/eoepca/protocol/openid-connect/certs").raw_body
+        jwks := jwks_request("http://iam-core-keycloak-operator-service:8080/realms/eoepca/protocol/openid-connect/certs").raw_body
         echo := input if {
           print(input)
         }

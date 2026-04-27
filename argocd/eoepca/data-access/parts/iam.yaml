@@ -13,7 +13,7 @@ spec:
     standardFlowEnabled: true
     implicitFlowEnabled: false
     directAccessGrantsEnabled: true # allow for now to simplify testing
-    fullScopeAllowed: false
+    fullScopeAllowed: true
     serviceAccountsEnabled: false
     oauth2DeviceAuthorizationGrantEnabled: true
     rootUrl: https://eoapi.develop.eoepca.org
@@ -86,79 +86,3 @@ spec:
       "included.client.audience": "eoapi"
       "access.token.claim": "true"
       "id.token.claim": "false"
----
-apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
-kind: ClientDefaultScopes
-metadata:
-  name: eoapi-default-scopes
-spec:
-  providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
-  forProvider:
-    realmId: eoepca
-    clientIdRef:
-      name: eoapi
-      policy:
-        resolution: Required
-    defaultScopes:
-      - profile
-      - email
-      - roles
-      - web-origins
-      - acr
-      - basic
----
-# Import built-in account client (observe-only, not managed by Crossplane)
-apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
-kind: Client
-metadata:
-  name: account-client
-  annotations:
-    crossplane.io/external-name: account  # The built-in client ID
-spec:
-  deletionPolicy: Orphan
-  managementPolicies: ["Observe"]  # Read-only, don't modify
-  providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
-  forProvider:
-    realmId: eoepca
-    clientId: account
----
-# Import built-in view-profile role from account client (observe-only)
-apiVersion: role.keycloak.crossplane.io/v1alpha1
-kind: Role
-metadata:
-  name: account-view-profile
-  annotations:
-    crossplane.io/external-name: view-profile  # The built-in role name
-spec:
-  deletionPolicy: Orphan
-  managementPolicies: ["Observe"]  # Read-only, don't modify
-  providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
-  forProvider:
-    realmId: eoepca
-    name: view-profile
-    clientIdRef:
-      name: account-client
-      policy:
-        resolution: Required
----
-# Map account view-profile role to eoapi client so users can access /account
-apiVersion: client.keycloak.crossplane.io/v1alpha1
-kind: RoleMapper
-metadata:
-  name: eoapi-account-view-profile-mapper
-spec:
-  providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
-  forProvider:
-    realmId: eoepca
-    clientIdRef:
-      name: eoapi
-      policy:
-        resolution: Required
-    roleIdRef:
-      name: account-view-profile
-      policy:
-        resolution: Required

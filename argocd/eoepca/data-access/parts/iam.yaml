@@ -87,10 +87,10 @@ spec:
       "access.token.claim": "true"
       "id.token.claim": "false"
 ---
-apiVersion: clientscope.keycloak.crossplane.io/v1alpha1
-kind: ClientScope
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: ClientDefaultScopes
 metadata:
-  name: eoapi-account-view-profile
+  name: eoapi-default-scopes
 spec:
   providerConfigRef:
     name: iam-keycloak-keycloak-provider-config
@@ -100,6 +100,10 @@ spec:
       name: eoapi
       policy:
         resolution: Required
-    clientScopeId: account
-    roleIds:
-      - view-profile
+    defaultScopes:
+      - profile
+      - email
+      - rolesr
+      - web-origins
+      - acr
+      - basic

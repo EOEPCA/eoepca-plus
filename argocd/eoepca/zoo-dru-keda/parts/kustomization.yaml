@@ -3,3 +3,4 @@ resources:
   - app-kyverno.yaml
   - app-zoo-dru-keda-core.yaml
   - ingress-zoo.yaml
+  - ss-zoo-workflow-env.yaml

@@ -1,3 +1,4 @@
 
 resources:
   - app-zoo-dru.yaml
+  - ss-zoo-workflow-env.sh

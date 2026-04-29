@@ -24,15 +24,15 @@ apisix:
         http_latency:
           extra_labels:
             - http_method: $request_method
-            - uri: $uri
+            #- uri: $uri
         http_status:
           extra_labels:
             - http_method: $request_method
-            - uri: $uri
+            #- uri: $uri
         bandwidth:
           extra_labels:
             - http_method: $request_method
-            - uri: $uri
+            #- uri: $uri
 
   deployment:
     role: traditional

@@ -76,5 +76,5 @@ webui:
   oidc:
     issuer: "https://iam-auth.develop.eoepca.org/realms/eoepca"
     authVerifyJwksUri: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/certs
-    clientId: demo
-    clientSecret: demo
+    clientId: zoo
+    clientSecret: Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di

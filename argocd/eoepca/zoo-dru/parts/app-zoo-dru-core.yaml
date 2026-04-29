@@ -11,7 +11,7 @@ spec:
   sources:
     - repoURL: https://zoo-project.github.io/charts/
       chart: zoo-project-dru
-      targetRevision: 0.4.14
+      targetRevision: 0.9.7
       helm:
         releaseName: zoo-project-dru
         valueFiles:

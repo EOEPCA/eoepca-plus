@@ -6,14 +6,14 @@ zoo:
     enabled: true
 zoofpm:
   image:
-    tag: eoepca-39b6fc74b6592b4584be5a0b2740dde11a1ffafc
+    tag: eoepca-ad6563d64c564268778263ad41fed9f9d18d07ca
   autoscaling:
     enabled: false
 zookernel:
   env:
     ZOO_OUTPUT_FORMAT: "stac-collection"
   image:
-    tag: eoepca-39b6fc74b6592b4584be5a0b2740dde11a1ffafc
+    tag: eoepca-ad6563d64c564268778263ad41fed9f9d18d07ca
 customConfig:
   main:
     eoepca: |-
@@ -24,11 +24,10 @@ customConfig:
 workflow:
   defaultMaxRam: "1024"
   defaultMaxCores: "2"
+  extraEnvFrom:
+    - secretRef:
+        name: zoo-workflow-env
   inputs:
-    STAGEIN_AWS_SERVICEURL: http://eodata.cloudferro.com
-    STAGEIN_AWS_ACCESS_KEY_ID: 4SMIGZNCR8LM1LSUY1HU
-    STAGEIN_AWS_SECRET_ACCESS_KEY: MBiw2FOddg3Fs2Rm9NoDy10qufvJ4hzjmlQ1qwzV
-    STAGEIN_AWS_REGION: WAW3-2
     STAGEOUT_AWS_SERVICEURL: https://minio.develop.eoepca.org
     STAGEOUT_AWS_ACCESS_KEY_ID: eoepca
     STAGEOUT_AWS_SECRET_ACCESS_KEY: changeme

@@ -69,3 +69,12 @@ documentation:
   enabled: true
 dask:
   enabled: true
+webui:
+  enabled: true
+  url: https://webuistd.develop.eoepca.org
+  port: 443
+  oidc:
+    issuer: "https://iam-auth.develop.eoepca.org/realms/eoepca"
+    authVerifyJwksUri: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/certs
+    clientId: demo
+    clientSecret: demo

@@ -1,0 +1,50 @@
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: webui-route
+  namespace: zoostd
+spec:
+  ingressClassName: apisix
+  http:
+    - name: webuistd-open
+      match:
+        hosts:
+          - webuistd.develop.eoepca.org
+        paths:
+          - /*
+      backends:
+        - serviceName: zoo-project-dru-std-webui
+          servicePort: 3000
+      plugins:
+        # Allow CORS access
+        - name: cors
+          enable: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: webuistd-tls
+spec:
+  dnsNames:
+    - webuistd.develop.eoepca.org
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns-prod
+  secretName: webuistd-tls
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: webuistd
+spec:
+  ingressClassName: apisix
+  hosts:
+    - webuistd.develop.eoepca.org
+  secret:
+    name: webuistd-tls
+    namespace: zoostd

@@ -2,4 +2,5 @@
 resources:
   - app-zoo-dru-core.yaml
   - ingress-zoo.yaml
+  - ingress-webui.yaml
   - ss-zoo-workflow-env.yaml

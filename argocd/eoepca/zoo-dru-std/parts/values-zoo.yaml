@@ -67,3 +67,5 @@ iam:
   enabled: false
 documentation:
   enabled: true
+dask:
+  enabled: true

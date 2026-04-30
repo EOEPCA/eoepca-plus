@@ -15,8 +15,8 @@ customConfig:
       workspace_prefix=ws
       workspace_catalog_register=false
 workflow:
-  defaultMaxRam: 1024
-  defaultMaxCores: 2
+  defaultMaxRam: "1024"
+  defaultMaxCores: "2"
   extraEnvFrom:
     - secretRef:
         name: zoo-workflow-env

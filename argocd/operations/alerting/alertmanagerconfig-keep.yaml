@@ -25,3 +25,8 @@ spec:
           - name: alertname
             value: KubeJobFailed
             matchType: =
+      - receiver: "null"
+        matchers:
+          - name: alertname
+            value: KubePodNotReady
+            matchType: =

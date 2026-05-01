@@ -75,6 +75,8 @@ webui:
   enabled: true
   url: https://webuistd.develop.eoepca.org
   port: 3000
+  image:
+    pullPolicy: Always
   oidc:
     issuer: "https://iam-auth.develop.eoepca.org/realms/eoepca"
     authVerifyJwksUri: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/certs

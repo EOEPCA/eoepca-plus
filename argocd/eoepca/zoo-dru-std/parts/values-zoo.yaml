@@ -73,8 +73,6 @@ dask:
   enabled: true
 webui:
   enabled: true
-  image:
-    tag: 0.1.3
   url: https://webuistd.develop.eoepca.org
   port: 3000
   oidc:

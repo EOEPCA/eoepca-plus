@@ -1,11 +1,34 @@
-from typing import Any, Literal, Optional
+from typing import Literal, Optional
 import dataclasses
 import logging
+import os
 import re
 
 logger = logging.getLogger(__name__)
 
 _SAFE_PREFIX_RE = re.compile(r"^[A-Za-z0-9_\-]+$")
+
+_STAC_EDITOR_ROLE = os.environ.get("STAC_EDITOR_ROLE", "stac_editor").strip()
+_STAC_EDITOR_CLIENT_IDS = frozenset(
+    cid.strip()
+    for cid in os.environ.get("STAC_EDITOR_CLIENT_IDS", "eoapi").split(",")
+    if cid.strip()
+)
+
+
+def _token_has_stac_editor(token: dict) -> bool:
+    """Keycloak client roles live under resource_access.<clientId>.roles."""
+    ra = token.get("resource_access")
+    if not isinstance(ra, dict) or not _STAC_EDITOR_ROLE:
+        return False
+    for client_id in _STAC_EDITOR_CLIENT_IDS:
+        entry = ra.get(client_id)
+        if not isinstance(entry, dict):
+            continue
+        roles = entry.get("roles")
+        if isinstance(roles, list) and _STAC_EDITOR_ROLE in roles:
+            return True
+    return False
 
 
 def get_cql2_filters(
@@ -39,6 +62,16 @@ def get_cql2_filters(
                 ],
             }
         )
+
+    # Client-credentials and other tokens that carry stac_editor are not tied to
+    # preferred_username / groups; allow writes catalog-wide (role is IAM-controlled).
+    if is_write and token and _token_has_stac_editor(token):
+        logger.debug(
+            "Using unrestricted write filter (%s on clients %s)",
+            _STAC_EDITOR_ROLE,
+            ", ".join(sorted(_STAC_EDITOR_CLIENT_IDS)),
+        )
+        return {"op": "=", "args": [1, 1]}
 
     # Private Collections: Authenticated users can access collections based on their username and group memberships
     if token:

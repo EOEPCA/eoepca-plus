@@ -1,7 +1,7 @@
 apiVersion: apisix.apache.org/v2
 kind: ApisixRoute
 metadata:
-  name: registration-harvester-api
+  name: registration-harvester-bpm-engine
   namespace: registration-harvester-api
 spec:
   ingressClassName: apisix

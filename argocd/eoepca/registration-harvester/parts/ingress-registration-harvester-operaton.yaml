@@ -34,6 +34,41 @@ spec:
         - serviceName: registration-harvester-bpm-engine-operaton
           servicePort: 8080
 ---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: registration-harvester-bpm-engine-rest
+  namespace: registration-harvester-api
+spec:
+  ingressClassName: apisix
+  http:
+    # 1. Redirect to /engine-rest/
+    - name: redirect-rest-api
+      match:
+        hosts:
+          - registration-harvester-bpm-engine.develop.eoepca.org
+        paths:
+          - /engine-rest
+      plugins:
+        - name: redirect
+          enable: true
+          config:
+            uri: /engine-rest/
+      backends:  # never hit due to redirect
+        - serviceName: registration-harvester-bpm-engine-operaton
+          servicePort: 8080
+
+    # 2. Main service handler
+    - name: rewrite-operaton-rest-api-path
+      match:
+        hosts:
+          - registration-harvester-bpm-engine.develop.eoepca.org
+        paths:
+          - /engine-rest/*
+      backends:
+        - serviceName: registration-harvester-bpm-engine-operaton
+          servicePort: 8080
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:

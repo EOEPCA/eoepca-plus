@@ -37,7 +37,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: registration-harvester-api-tls
+  name: registration-harvester-bpm-engine-tls
   namespace: registration-harvester-api
 spec:
   dnsNames:
@@ -45,7 +45,7 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-http01-apisix
-  secretName: registration-harvester-api-tls
+  secretName: registration-harvester-bpm-engine-tls
   usages:
     - digital signature
     - key encipherment
@@ -54,12 +54,12 @@ spec:
 apiVersion: apisix.apache.org/v2
 kind: ApisixTls
 metadata:
-  name: registration-harvester-api-tls
+  name: registration-harvester-bpm-engine-tls
   namespace: registration-harvester-api
 spec:
   ingressClassName: apisix
   hosts:
     - registration-harvester-bpm-engine.develop.eoepca.org
   secret:
-    name: registration-harvester-api-tls
+    name: registration-harvester-bpm-engine-tls
     namespace: registration-harvester-api

@@ -16,6 +16,52 @@ _STAC_EDITOR_CLIENT_IDS = frozenset(
 )
 
 
+def _validate_editor_config(
+    role: str,
+    editor_client_ids: frozenset,
+    audiences: frozenset,
+) -> None:
+    """Surface the editor bypass config at startup and warn about misconfigurations.
+
+    The bypass grants catalog-wide writes, so operators should see in startup
+    logs (a) whether it's enabled, and (b) which clients can issue editor
+    tokens. Also warns when an editor client is absent from the proxy's
+    accepted audiences, which means tokens from that client are rejected
+    before reaching this filter — a sign of inconsistent config.
+    """
+    if not role or not editor_client_ids:
+        logger.info("stac_editor write bypass disabled")
+        return
+
+    logger.info(
+        "stac_editor write bypass enabled: role=%r, clients={%s}",
+        role,
+        ", ".join(sorted(editor_client_ids)),
+    )
+
+    if not audiences:
+        return
+
+    dead = editor_client_ids - audiences
+    if dead:
+        logger.warning(
+            "STAC_EDITOR_CLIENT_IDS contains client(s) {%s} not in ALLOWED_JWT_AUDIENCES; "
+            "tokens from those clients are rejected by the proxy before reaching this filter",
+            ", ".join(sorted(dead)),
+        )
+
+
+_validate_editor_config(
+    role=_STAC_EDITOR_ROLE,
+    editor_client_ids=_STAC_EDITOR_CLIENT_IDS,
+    audiences=frozenset(
+        a.strip()
+        for a in os.environ.get("ALLOWED_JWT_AUDIENCES", "").split(",")
+        if a.strip()
+    ),
+)
+
+
 def _token_has_stac_editor(token: dict) -> bool:
     """Keycloak client roles live under resource_access.<clientId>.roles.
 
@@ -75,10 +121,13 @@ def get_cql2_filters(
     # Client-credentials and other tokens that carry stac_editor are not tied to
     # preferred_username / groups; allow writes catalog-wide (role is IAM-controlled).
     if is_write and token and _token_has_stac_editor(token):
-        logger.debug(
-            "Using unrestricted write filter (%s on clients %s)",
-            _STAC_EDITOR_ROLE,
-            ", ".join(sorted(_STAC_EDITOR_CLIENT_IDS)),
+        # Audit-log the token identifiers so a responder can trace which token
+        # granted unrestricted writes (e.g., to revoke a leaked secret).
+        logger.info(
+            "Honoring stac_editor write bypass: azp=%s sub=%s jti=%s",
+            token.get("azp"),
+            token.get("sub"),
+            token.get("jti"),
         )
         return {"op": "=", "args": [1, 1]}
 

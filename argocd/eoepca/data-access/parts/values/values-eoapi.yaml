@@ -124,7 +124,12 @@ stac-auth-proxy:
     COLLECTIONS_FILTER_CLS: stac_auth_proxy.eoepca_filters:CollectionsFilter
     ITEMS_FILTER_CLS: stac_auth_proxy.eoepca_filters:ItemsFilter
     ALLOWED_JWT_AUDIENCES: eoapi
-    # Keycloak client IDs whose JWT may carry stac_editor (client-credentials, etc.)
+    # stac_editor write bypass: tokens whose `azp` is one of these client IDs
+    # AND that carry the STAC_EDITOR_ROLE under resource_access.<azp>.roles get
+    # unrestricted catalog-wide writes. Must be a subset of ALLOWED_JWT_AUDIENCES
+    # (otherwise the proxy rejects the token before it reaches the filter).
+    # SECURITY: only list confidential clients trusted to gate the role
+    # assignment — never a public client where users can self-register.
     STAC_EDITOR_CLIENT_IDS: eoapi
     STAC_EDITOR_ROLE: stac_editor
     PUBLIC_ENDPOINTS: |

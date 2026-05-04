@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 from cql2 import Expr
 
@@ -583,6 +585,27 @@ class TestStacEditorRole:
         ), "missing azp claim must not grant the bypass"
 
     @pytest.mark.asyncio
+    async def test_bypass_logs_token_identifiers_at_info(self, caplog):
+        """When the bypass fires, audit-log azp/sub/jti at INFO so a responder
+        can trace which token granted catalog-wide writes (e.g., to revoke a
+        leaked client-credentials secret)."""
+        token = {
+            "azp": "eoapi",
+            "sub": "service-account-eoapi",
+            "jti": "token-uuid-abc-123",
+            "resource_access": {"eoapi": {"roles": ["stac_editor"]}},
+        }
+        with caplog.at_level(logging.INFO, logger="eoepca_filters"):
+            await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        info_logs = [r for r in caplog.records if r.levelname == "INFO"]
+        assert any(
+            "eoapi" in r.getMessage()
+            and "service-account-eoapi" in r.getMessage()
+            and "token-uuid-abc-123" in r.getMessage()
+            for r in info_logs
+        ), f"expected INFO log naming azp, sub, jti; got {[r.getMessage() for r in info_logs]}"
+
+    @pytest.mark.asyncio
     async def test_role_under_untrusted_azp_is_not_honored(self):
         """A token issued by an untrusted client cannot grant the bypass even
         when that same client carries the editor role.
@@ -710,3 +733,55 @@ class TestStacEditorRole:
         assert not cql2_matches(
             filt, {"id": "any.collection"}
         ), "empty STAC_EDITOR_CLIENT_IDS must disable the bypass"
+
+
+class TestEditorConfigValidation:
+    """Startup logs surface the editor bypass config and flag misconfigurations."""
+
+    def test_warns_when_editor_client_not_in_audiences(self, caplog):
+        """An editor client absent from ALLOWED_JWT_AUDIENCES indicates dead config:
+        tokens from that client are rejected by the proxy before reaching this filter."""
+        with caplog.at_level(logging.WARNING, logger="eoepca_filters"):
+            eoepca_filters._validate_editor_config(
+                role="stac_editor",
+                editor_client_ids=frozenset(["eoapi", "scratch-client"]),
+                audiences=frozenset(["eoapi"]),
+            )
+        warnings = [r for r in caplog.records if r.levelname == "WARNING"]
+        assert any(
+            "scratch-client" in r.getMessage() and "ALLOWED_JWT_AUDIENCES" in r.getMessage()
+            for r in warnings
+        ), f"expected warning naming 'scratch-client' and ALLOWED_JWT_AUDIENCES; got {[r.getMessage() for r in warnings]}"
+
+    def test_no_warning_when_editor_clients_subset_of_audiences(self, caplog):
+        """Editor clients fully covered by audiences → no dead-config warning."""
+        with caplog.at_level(logging.WARNING, logger="eoepca_filters"):
+            eoepca_filters._validate_editor_config(
+                role="stac_editor",
+                editor_client_ids=frozenset(["eoapi"]),
+                audiences=frozenset(["eoapi", "other-app"]),
+            )
+        warnings = [r for r in caplog.records if r.levelname == "WARNING"]
+        assert not warnings, f"unexpected warnings: {[r.getMessage() for r in warnings]}"
+
+    def test_skips_subset_check_when_audiences_unknown(self, caplog):
+        """If ALLOWED_JWT_AUDIENCES is unset (empty), skip the subset check."""
+        with caplog.at_level(logging.WARNING, logger="eoepca_filters"):
+            eoepca_filters._validate_editor_config(
+                role="stac_editor",
+                editor_client_ids=frozenset(["eoapi", "scratch-client"]),
+                audiences=frozenset(),
+            )
+        warnings = [r for r in caplog.records if r.levelname == "WARNING"]
+        assert not warnings, "should not warn when audiences config is unavailable"
+
+    def test_disabled_bypass_emits_no_warning(self, caplog):
+        """When the bypass is disabled (empty role), no warning is emitted."""
+        with caplog.at_level(logging.WARNING, logger="eoepca_filters"):
+            eoepca_filters._validate_editor_config(
+                role="",
+                editor_client_ids=frozenset(["scratch-client"]),
+                audiences=frozenset(["eoapi"]),
+            )
+        warnings = [r for r in caplog.records if r.levelname == "WARNING"]
+        assert not warnings, "disabled bypass should not warn about anything"

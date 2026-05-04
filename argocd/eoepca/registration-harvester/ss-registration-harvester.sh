@@ -23,6 +23,8 @@ CDSE_USER="${5:-${CDSE_USER:-someuser}}"
 CDSE_PASSWORD="${6:-${CDSE_PASSWORD:-somepw}}"
 IAM_CLIENT_ID="${7:-${IAM_CLIENT_ID:-somepw}}"
 IAM_CLIENT_SECRET="${8:-${IAM_CLIENT_SECRET:-somepw}}"
+OPERATON_DB_USERNAME="${9:-${OPERATON_DB_USERNAME:-somepw}}"
+OPERATON_DB_PASSWORD="${10:-${OPERATON_DB_PASSWORD:-somepw}}"
 
 secretYaml() {
   kubectl -n "${NAMESPACE}" create secret generic "${SECRET_NAME}" \
@@ -34,6 +36,8 @@ secretYaml() {
     --from-literal="CDSE_PASSWORD=${CDSE_PASSWORD}" \
     --from-literal="IAM_CLIENT_ID=${IAM_CLIENT_ID}" \
     --from-literal="IAM_CLIENT_SECRET=${IAM_CLIENT_SECRET}" \
+    --from-literal="OPERATON_DB_USERNAME=${OPERATON_DB_USERNAME}" \
+    --from-literal="OPERATON_DB_PASSWORD=${OPERATON_DB_PASSWORD}" \
     --dry-run=client -o yaml
 }
 

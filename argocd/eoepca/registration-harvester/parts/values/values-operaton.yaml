@@ -1,0 +1,30 @@
+# https://github.com/bitnami/charts/tree/main/bitnami/postgresql
+global:
+  defaultStorageClass: managed-nfs-storage-retain
+
+database:
+  credentialsSecretEnabled: true
+  credentialsSecretName: registration-harvester-secret
+  credentialsSecretKeys:
+    username: OPERATON_DB_USERNAME
+    password: OPERATON_DB_PASSWORD
+
+postgres:
+  enabled: true
+  nameOverride: postgres
+  architecture: standalone
+  auth:
+    database: operaton
+    username: operaton
+    existingSecret: registration-harvester-secret
+    secretKeys:
+      userPasswordKey: OPERATON_DB_PASSWORD
+  metrics:
+    enabled: false
+
+bpmEngine:
+  autoDeployment: false
+  historyLevel: ACTIVITY
+  adminUser:
+    username: eoepca
+    password: eoepca

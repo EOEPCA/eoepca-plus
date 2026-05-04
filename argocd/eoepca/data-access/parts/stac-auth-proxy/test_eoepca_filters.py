@@ -9,7 +9,11 @@ _READ_REQ = {"method": "GET", "path": "/collections"}
 _WRITE_REQ = {"method": "POST", "path": "/collections"}
 
 # Default-config token carrying the stac_editor role on the eoapi client.
-_EDITOR_TOKEN = {"resource_access": {"eoapi": {"roles": ["stac_editor"]}}}
+# `azp` matches the configured editor client — required by _token_has_stac_editor.
+_EDITOR_TOKEN = {
+    "azp": "eoapi",
+    "resource_access": {"eoapi": {"roles": ["stac_editor"]}},
+}
 
 
 def cql2_matches(cql2_json: dict, item: dict) -> bool:
@@ -516,9 +520,10 @@ class TestStacEditorRole:
     async def test_editor_role_among_other_roles(self):
         """The role is detected even when the roles list contains other entries."""
         token = {
+            "azp": "eoapi",
             "resource_access": {
                 "eoapi": {"roles": ["uma_protection", "stac_editor", "viewer"]}
-            }
+            },
         }
         filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
         assert cql2_matches(
@@ -548,6 +553,53 @@ class TestStacEditorRole:
         assert not cql2_matches(
             filt, {"id": "any.collection"}
         ), "stac_editor on a non-configured client must not grant writes"
+
+    @pytest.mark.asyncio
+    async def test_token_issued_for_other_client_does_not_grant_bypass(self):
+        """A token whose azp is not a configured editor client must not get the bypass.
+
+        Defends against Keycloak scope-mapper misconfigurations where a token
+        issued for an unrelated client (e.g., a public portal) transitively
+        includes resource_access.eoapi.roles for a user who happens to hold
+        stac_editor on the eoapi client. The role assignment is meant to apply
+        only when the token was actually issued for the editor client.
+        """
+        token = {
+            "azp": "public-portal",
+            "resource_access": {"eoapi": {"roles": ["stac_editor"]}},
+        }
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "transitively-included stac_editor role must not grant the bypass"
+
+    @pytest.mark.asyncio
+    async def test_token_without_azp_does_not_grant_bypass(self):
+        """A token lacking the azp claim cannot prove issuance authority."""
+        token = {"resource_access": {"eoapi": {"roles": ["stac_editor"]}}}
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "missing azp claim must not grant the bypass"
+
+    @pytest.mark.asyncio
+    async def test_role_under_untrusted_azp_is_not_honored(self):
+        """A token issued by an untrusted client cannot grant the bypass even
+        when that same client carries the editor role.
+
+        Without anchoring on _STAC_EDITOR_CLIENT_IDS, a user registered in a
+        public/scratch client where stac_editor was granted by mistake could
+        present a self-consistent token (azp == role-bearing client) and
+        trigger the bypass.
+        """
+        token = {
+            "azp": "untrusted-client",
+            "resource_access": {"untrusted-client": {"roles": ["stac_editor"]}},
+        }
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "bypass must require azp to name a configured editor client"
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
@@ -610,7 +662,10 @@ class TestStacEditorRole:
         """STAC_EDITOR_ROLE customizes which role name triggers the bypass."""
         monkeypatch.setattr(eoepca_filters, "_STAC_EDITOR_ROLE", "custom_admin")
 
-        custom_token = {"resource_access": {"eoapi": {"roles": ["custom_admin"]}}}
+        custom_token = {
+            "azp": "eoapi",
+            "resource_access": {"eoapi": {"roles": ["custom_admin"]}},
+        }
         filt = await CollectionsFilter()({"payload": custom_token, "req": _WRITE_REQ})
         assert cql2_matches(
             filt, {"id": "any.collection"}
@@ -629,7 +684,10 @@ class TestStacEditorRole:
             "_STAC_EDITOR_CLIENT_IDS",
             frozenset(["eoapi", "other-client"]),
         )
-        token = {"resource_access": {"other-client": {"roles": ["stac_editor"]}}}
+        token = {
+            "azp": "other-client",
+            "resource_access": {"other-client": {"roles": ["stac_editor"]}},
+        }
         filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
         assert cql2_matches(
             filt, {"id": "any.collection"}

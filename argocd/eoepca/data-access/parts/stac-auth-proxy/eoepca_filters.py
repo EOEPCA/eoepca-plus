@@ -17,18 +17,27 @@ _STAC_EDITOR_CLIENT_IDS = frozenset(
 
 
 def _token_has_stac_editor(token: dict) -> bool:
-    """Keycloak client roles live under resource_access.<clientId>.roles."""
-    ra = token.get("resource_access")
-    if not isinstance(ra, dict) or not _STAC_EDITOR_ROLE:
+    """Keycloak client roles live under resource_access.<clientId>.roles.
+
+    The role only counts when the token was issued for a configured editor
+    client (i.e., its `azp` claim names that client). Anchoring on `azp`
+    prevents a user who holds the role on the editor client from triggering
+    the bypass via a token issued for some other client whose scope mappers
+    transitively include the editor client's roles.
+    """
+    if not _STAC_EDITOR_ROLE:
         return False
-    for client_id in _STAC_EDITOR_CLIENT_IDS:
-        entry = ra.get(client_id)
-        if not isinstance(entry, dict):
-            continue
-        roles = entry.get("roles")
-        if isinstance(roles, list) and _STAC_EDITOR_ROLE in roles:
-            return True
-    return False
+    azp = token.get("azp")
+    if azp not in _STAC_EDITOR_CLIENT_IDS:
+        return False
+    ra = token.get("resource_access")
+    if not isinstance(ra, dict):
+        return False
+    entry = ra.get(azp)
+    if not isinstance(entry, dict):
+        return False
+    roles = entry.get("roles")
+    return isinstance(roles, list) and _STAC_EDITOR_ROLE in roles
 
 
 def get_cql2_filters(

@@ -38,6 +38,7 @@ spec:
     optionalScopes:
       - profile
       - email
+      - offline_access
 ---
 apiVersion: role.keycloak.crossplane.io/v1alpha1
 kind: Role

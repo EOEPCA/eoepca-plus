@@ -57,7 +57,7 @@ spec:
 
     - repoURL: https://github.com/developmentseed/pgstac-geoparquet-exporter
       path: charts/pgstac-geoparquet-exporter
-      targetRevision: v0.2.1
+      targetRevision: v0.2.2
       helm:
         releaseName: eoapi-geoparquet-export
         valueFiles:

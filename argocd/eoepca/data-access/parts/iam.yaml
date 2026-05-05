@@ -35,8 +35,9 @@ spec:
       name: eoapi
       policy:
         resolution: Required
-    optionalScopes:
+    defaultScopes:
       - profile
+    optionalScopes:
       - email
       - offline_access
 ---

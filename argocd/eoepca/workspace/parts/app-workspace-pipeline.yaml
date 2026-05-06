@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-pipeline
-      targetRevision: 2.0.0
+      targetRevision: 2.1.0-rc.1
       helm:
         releaseName: workspace-pipeline
         values: |
@@ -39,6 +39,10 @@ spec:
               region: eoepca-demo
               secretNamespace: workspace
               type: s3
+              lifecycle:
+                schedule: ""
+            storageClasses:
+              allowed: []
             network:
               serviceCIDR: "10.43.0.0/12"
             packages:
@@ -54,8 +58,13 @@ spec:
               type: none
             defaults:
               quota:
+                memory: ""
                 storage: 8Gi
                 budget: x-large
+              security:
+                policy: ""
+                kubernetesAccess: ""
+                kubernetesRole: ""
             database: 
               gateway:
                 parentName: eoepca-public
@@ -63,6 +72,12 @@ spec:
                 sectionName: https
               storageClassName: ""
               backupStorageClassName: ""
+            mongodb:
+              storageClassName: ""
+            redis:
+              storageClassName: ""
+            qdrant:
+              storageClassName: ""
   destination:
     name: in-cluster
     namespace: workspace

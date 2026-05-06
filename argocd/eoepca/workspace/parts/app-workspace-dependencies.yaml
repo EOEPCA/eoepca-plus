@@ -10,12 +10,12 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-dependencies-csi-rclone
-      targetRevision: 2.0.0
+      targetRevision: 2.1.0-rc.1
       helm:
         releaseName: workspace-dependencies-csi-rclone
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-dependencies-educates
-      targetRevision: 2.0.0
+      targetRevision: 2.1.0-rc.1
       helm:
         releaseName: workspace-dependencies-educates
         values: |
@@ -27,6 +27,12 @@ spec:
   destination:
     name: in-cluster
     namespace: workspace
+  ignoreDifferences:
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: educates-session-manager
+      jsonPointers:
+        - /rules
   syncPolicy:
     automated:
       prune: false # never prune

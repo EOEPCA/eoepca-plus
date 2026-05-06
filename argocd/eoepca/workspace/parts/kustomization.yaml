@@ -8,3 +8,4 @@ resources:
   - iam.yaml
   - secret.yaml
   - certificate.yaml
+  - job.yaml

@@ -1,6 +1,5 @@
 
 resources:
-  - app-workspace-admin.yaml
   - app-workspace-api.yaml
   - app-workspace-dependencies.yaml
   - app-workspace-pipeline.yaml

@@ -8,6 +8,8 @@ resources:
   - strimzi-operator
   - apisix
   - pgo
+  - mongodb-operator
+  - redis-operator
   - gateway
   - eso
   - crossplane

@@ -17,7 +17,7 @@ spec:
       valuesObject:
         fullnameOverride: workspace-api
         image:
-          tag: 2.0.0
+          tag: 2.1.0-rc.1
           pullPolicy: Always
         ingress:
           enabled: false        

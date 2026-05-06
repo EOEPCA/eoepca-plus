@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: qdrant-operator
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: qdrant-operator
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: https://github.com/qdrant-operator/qdrant-operator
+    targetRevision: 0.0.3
+    path: charts/qdrant-operator
+    helm:
+      releaseName: qdrant-operator
+      valuesObject:
+        image:
+          repository: ghcr.io/myinstep/qdrant-operator
+          tag: main
+          pullPolicy: IfNotPresent
+        metrics:
+          enabled: false
+          servicemonitor:
+            enabled: false
+  destination:
+    name: in-cluster
+    namespace: qdrant
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

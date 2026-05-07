@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notifications-wildcard-ingress
+  namespace: knative-serving
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns-prod
+    kubernetes.io/ingress.class: apisix
+spec:
+  ingressClassName: apisix
+  rules:
+  - host: '*.na.develop.eoepca.org'
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: kourier
+            port:
+              number: 80
+  tls:
+    - hosts:
+      - '*.na.develop.eoepca.org'
+      secretName: notifications-wildcard-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: notifications-wildcard-tls
+  namespace: knative-serving
+spec:
+  dnsNames:
+  - '*.na.develop.eoepca.org'
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns-prod
+  secretName: notifications-wildcard-tls

@@ -1,9 +1,9 @@
 resources:
   - namespace-knative-serving.yaml
   - namespace-knative-eventing.yaml
-  - knative-serving.yaml
-  - knative-eventing.yaml
-  - apisix-route.yaml
+#  - knative-serving.yaml
+#  - knative-eventing.yaml
+  - ingress.yaml
   - namespace-notifications.yaml
   - app-notification-automation-helm.yaml
   #- kafka-cluster.yaml

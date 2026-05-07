@@ -29,6 +29,10 @@ spec:
           value: "123abc123"
         - name: webhookSource.sinkBinding.create
           value: "true"
+        - name: webhookSource.nameOverride
+          value: "webhooks"
+        - name: webhookSource.domainMapping.enabled
+          value: "true"
         - name: cloudEventsPlayer.enabled
           value: "true"
         - name: cloudEventsPlayer.subscribeBroker.enabled

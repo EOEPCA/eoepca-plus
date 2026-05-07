@@ -2,13 +2,13 @@
 #---
 # NOTE: This `latest` image seems broken, so reverting to a snapshot image
 # that seems to work (snapshot for eoepca release 2.0-beta2)...
-image: vito-docker.artifactory.vgt.vito.be/openeo-geotrellis-kube
-imageVersion: latest
+image: vito-docker.artifactory.vgt.vito.be/openeo-geotrellis-kube-python311
+imageVersion: 20260428-666
 #image: eoepca/openeo-geotrellis-kube
 #imageVersion: 2.0-beta2
 #---
 imagePullPolicy: Always
-sparkVersion: 3.2.0
+sparkVersion: 4.0.1
 configMaps:
   backendConfig: |
     from pathlib import Path
@@ -283,7 +283,7 @@ driver:
   env:
     KUBE: "true"
     KUBE_OPENEO_API_PORT: "50001"
-    PYTHONPATH: $PYTHONPATH:/opt/tensorflow/python38/2.3.0/:/opt/openeo/lib/python3.8/site-packages/
+    PYTHONPATH: $PYTHONPATH:/opt/openeo/lib/python3.11/site-packages/
     ZOOKEEPERNODES: openeo-geotrellis-zookeeper.openeo-geotrellis.svc.cluster.local:2181
     SWIFT_BUCKET: "openeo-geotrellis-data"
     SWIFT_URL: "https://minio.develop.eoepca.org"
@@ -306,7 +306,7 @@ driver:
     fsGroupChangePolicy: Always
 executor:
   env:
-    PYTHONPATH: $PYTHONPATH:/opt/tensorflow/python38/2.3.0/:/opt/openeo/lib/python3.8/site-packages/
+    PYTHONPATH: $PYTHONPATH:/opt/openeo/lib/python3.11/site-packages/
 existingConfigMaps: false
 fileDependencies:
   - local:///opt/layercatalog.json
@@ -332,7 +332,7 @@ ingress:
 jarDependencies:
   - local:///opt/geotrellis-extensions-static.jar
   - local:///opt/geotrellis-dependencies-static.jar
-mainApplicationFile: local:///opt/openeo/lib64/python3.8/site-packages/openeogeotrellis/deploy/kube.py
+mainApplicationFile: local:///opt/openeo/bin/openeo_kube.py
 sparkConf:
   spark.executorEnv.DRIVER_IMPLEMENTATION_PACKAGE: openeogeotrellis
   spark.appMasterEnv.DRIVER_IMPLEMENTATION_PACKAGE: openeogeotrellis

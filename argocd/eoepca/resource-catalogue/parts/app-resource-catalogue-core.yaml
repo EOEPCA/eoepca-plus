@@ -37,20 +37,20 @@ spec:
             server:
               url: https://resource-catalogue.develop.eoepca.org/
             federatedcatalogues:
-              - id: arctic-sdi-csw
-                type: CSW
-                title: Arctic SDI
-                url: https://catalogue.arctic-sdi.org/csw
-              - id: pycsw-cite-demo
+              - id: fedcat01
                 type: OARec
-                title: pycsw OGC CITE demo and Reference Implementation
-                uresultsrl: https://demo.pycsw.org/cite
-              - id: fedcat03
+                title: WIS2 discovery metadata
+                url: https://wis2-gdc.weather.gc.ca/collections/wis2-discovery-metadata
+              - id: fedcat02
                 type: STAC-API
                 title: Copernicus Data Space Ecosystem (CDSE) asset-level STAC catalogue
                 url: https://stac.dataspace.copernicus.eu/v1
                 collections:
-                  - daymet-annual-pr
+                - ccm-sar
+              - id: arctic-sdi-csw
+                type: CSW
+                title: Arctic SDI
+                url: https://catalogue.arctic-sdi.org/csw
             manager:
               transactions: "true"
               allowed_ips:

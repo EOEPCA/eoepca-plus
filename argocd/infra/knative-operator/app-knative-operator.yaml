@@ -1,18 +1,20 @@
+# Copied from identity-service and adapted
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: knative-operator
   namespace: argocd
   labels:
+    eoepca/app-name: knative-operator
     eoepca/is-root-app: "true"
-    eoepca/app-name: na-knative-operator
+
 spec:
-  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: 'https://knative.github.io/operator'
     chart: knative-operator
-    targetRevision: 1.18.1
+    repoURL: https://knative.github.io/operator
+    targetRevision: v1.19.5
     helm:
       releaseName: knative-operator
   destination:
@@ -26,3 +28,7 @@ spec:
     syncOptions:
       - Validate=true
       - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

@@ -12,7 +12,7 @@ spec:
   sources:
     - repoURL: https://artifactory.vgt.vito.be/artifactory/helm-charts
       chart: spark-operator
-      targetRevision: 2.0.2
+      targetRevision: 2.3.0-forcecrd-pr
       helm:
         releaseName: openeo-geotrellis-sparkoperator
         valueFiles:

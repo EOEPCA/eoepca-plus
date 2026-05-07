@@ -46,7 +46,7 @@ spec:
                 title: Copernicus Data Space Ecosystem (CDSE) asset-level STAC catalogue
                 url: https://stac.dataspace.copernicus.eu/v1
                 collections:
-                - ccm-sar
+                  - ccm-sar
               - id: arctic-sdi-csw
                 type: CSW
                 title: Arctic SDI

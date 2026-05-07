@@ -19,6 +19,8 @@ spec:
           value: "true"
         - name: eventing.install
           value: "true"
+        - name: apiServerSource.enabled # enable the API Server Source to receive events from Kubernetes API
+          value: "true"
         - name: eventing.authenticationOidc
           value: "false"
         - name: webhookSource.enabled

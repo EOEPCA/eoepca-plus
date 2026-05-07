@@ -52,7 +52,9 @@ spec:
                 collections:
                   - daymet-annual-pr
             manager:
-              transactions: "false"
+              transactions: "true"
+              allowed_ips:
+                - '"*"'
             metadata:
               identification:
                 title: EOEPCA+ Resource Catalogue

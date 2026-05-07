@@ -23,6 +23,22 @@ spec:
       - '*'
 ---
 apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: ClientDefaultScopes
+metadata:
+  name: eoapi-default-scopes
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    realmId: eoepca
+    clientIdRef:
+      name: eoapi
+      policy:
+        resolution: Required
+    defaultScopes:
+      - profile
+---
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
 kind: ClientOptionalScopes
 metadata:
   name: eoapi-optional-scopes
@@ -35,8 +51,6 @@ spec:
       name: eoapi
       policy:
         resolution: Required
-    defaultScopes:
-      - profile
     optionalScopes:
       - email
       - offline_access

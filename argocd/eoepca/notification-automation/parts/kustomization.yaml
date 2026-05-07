@@ -1,6 +1,6 @@
 resources:
-  - namespace-knative-serving.yaml
-  - namespace-knative-eventing.yaml
+#  - namespace-knative-serving.yaml
+#  - namespace-knative-eventing.yaml
 #  - knative-serving.yaml
 #  - knative-eventing.yaml
   - ingress.yaml

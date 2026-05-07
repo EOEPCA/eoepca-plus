@@ -4,7 +4,7 @@ resources:
   - registration-api
   - data-access
   - datacube-access
-  - zoo-dru
+  # - zoo-dru
   - zoo-dru-wes
   - zoo-dru-std
   - zoo-dru-keda

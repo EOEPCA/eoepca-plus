@@ -544,7 +544,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(sum(increase(apisix_http_latency_bucket{type=\"request\", route=~\"$route\", http_method=\"GET\", le=\"500.0\"}[30d])) \n/ \nsum(increase(apisix_http_latency_count{type=\"request\", route=~\"$route\", http_method=\"GET\"}[30d]))) * 100",
+          "expr": "clamp_max(\n  (\n    sum(increase(apisix_http_latency_bucket{type=\"request\", route=~\"$route\", http_method=\"GET\", le=\"500.0\"}[30d])) \n  / \n  sum(increase(apisix_http_latency_count{type=\"request\", route=~\"$route\", http_method=\"GET\"}[30d]))\n  ) * 100,\n  100\n)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -613,7 +613,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(\n  (\n    1 - (\n      sum(increase(apisix_http_latency_bucket{type=\"request\", route=~\"$route\", http_method=\"GET\", le=\"500.0\"}[30d])) \n      / \n      sum(increase(apisix_http_latency_count{type=\"request\", route=~\"$route\", http_method=\"GET\"}[30d]))\n    )\n  ) / 0.01\n) * 100",
+          "expr": "clamp_min(\n  (\n    (\n      1 - (\n        sum(increase(apisix_http_latency_bucket{type=\"request\", route=~\"$route\", http_method=\"GET\", le=\"500.0\"}[30d])) \n        / \n        sum(increase(apisix_http_latency_count{type=\"request\", route=~\"$route\", http_method=\"GET\"}[30d]))\n      )\n    ) / 0.01\n  ) * 100,\n  0\n)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -678,7 +678,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(sum(increase(apisix_http_latency_bucket{type=\"request\", route=~\"$route\", http_method=\"POST\", le=\"500.0\"}[30d])) \n/ \nsum(increase(apisix_http_latency_count{type=\"request\", route=~\"$route\", http_method=\"POST\"}[30d]))) * 100",
+          "expr": "clamp_max(\n  (\n    sum(increase(apisix_http_latency_bucket{type=\"request\", route=~\"$route\", http_method=\"POST\", le=\"500.0\"}[30d])) \n    / \n    sum(increase(apisix_http_latency_count{type=\"request\", route=~\"$route\", http_method=\"POST\"}[30d]))\n  ) * 100,\n  100\n)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -747,7 +747,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(\n  (\n    1 - (\n      sum(increase(apisix_http_latency_bucket{type=\"request\", route=~\"$route\", http_method=\"POST\", le=\"500.0\"}[30d])) \n      / \n      sum(increase(apisix_http_latency_count{type=\"request\", route=~\"$route\", http_method=\"POST\"}[30d]))\n    )\n  ) / 0.01\n) * 100",
+          "expr": "clamp_min(\n  (\n    (\n      1 - (\n        sum(increase(apisix_http_latency_bucket{type=\"request\", route=~\"$route\", http_method=\"POST\", le=\"500.0\"}[30d])) \n        / \n        sum(increase(apisix_http_latency_count{type=\"request\", route=~\"$route\", http_method=\"POST\"}[30d]))\n      )\n    ) / 0.01\n  ) * 100,\n  0\n)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -799,6 +799,6 @@
   "timezone": "browser",
   "title": "APISIX Endpoint SLOs",
   "uid": "8dfb46c7-7de5-4033-9c67-02439793bef6",
-  "version": 5,
+  "version": 1,
   "weekStart": ""
 }

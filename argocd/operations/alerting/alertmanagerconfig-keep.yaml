@@ -30,3 +30,18 @@ spec:
           - name: alertname
             value: KubePodNotReady
             matchType: =
+      - receiver: "null"
+        matchers:
+          - name: alertname
+            value: ContainerRestartHigh
+            matchType: =
+      - receiver: "null"
+        matchers:
+          - name: alertname
+            value: KubeDeploymentReplicasMismatch
+            matchType: =
+      - receiver: "null"
+        matchers:
+          - name: alertname
+            value: KubePodCrashLooping
+            matchType: =

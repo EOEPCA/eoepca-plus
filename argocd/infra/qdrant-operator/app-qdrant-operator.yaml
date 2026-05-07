@@ -27,6 +27,22 @@ spec:
   destination:
     name: in-cluster
     namespace: qdrant
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: qdrantclusters.qdrant.io
+      jsonPointers:
+        - /spec
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: qdrantcollectionfieldindexes.qdrant.io
+      jsonPointers:
+        - /spec
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: qdrantcollections.qdrant.io
+      jsonPointers:
+        - /spec
   syncPolicy:
     automated:
       prune: true

@@ -6,10 +6,6 @@ image:
 hook:
   upgradeCrd: true
   forceConflictsCrd: true
-certManager:
-  enable: true
-  duration: 6000h
-  renewBefore: 2000h
 controller:
   logEncoder: json
   batchScheduler:

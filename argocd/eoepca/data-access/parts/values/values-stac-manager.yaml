@@ -19,5 +19,6 @@ primaryColor: "#005ACD"
 secondaryColor: "#048A81"
 
 oidc:
-  authority: https://iam-auth.develop.eoepca.org/realms/eoepca
+  providerUrl: https://iam-auth.develop.eoepca.org
   clientId: eoapi
+  realm: eoepca

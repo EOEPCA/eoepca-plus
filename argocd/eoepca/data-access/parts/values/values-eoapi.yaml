@@ -130,7 +130,7 @@ stac-auth-proxy:
     # (otherwise the proxy rejects the token before it reaches the filter).
     # SECURITY: only list confidential clients trusted to gate the role
     # assignment — never a public client where users can self-register.
-    STAC_EDITOR_CLIENT_IDS: eoapi
+    STAC_EDITOR_CLIENT_IDS: eoapi,registration-harvester
     STAC_EDITOR_ROLE: stac_editor
     PUBLIC_ENDPOINTS: |
       {

@@ -47,12 +47,9 @@ spec:
               mountPath: /app/services
               readOnly: true
 
-    # Pre-release 0.0.14-alpha.1 is not yet published to the helm chart repo
-    # (https://stac-manager.ds.io/), so pull the chart directly from the git
-    # tag. Switch back to repoURL/chart once a stable 0.0.14 is published.
-    - repoURL: https://github.com/developmentseed/stac-manager
-      path: charts/stac-manager
-      targetRevision: stac-manager-0.0.14-alpha.1
+    - repoURL: https://stac-manager.ds.io/
+      chart: stac-manager
+      targetRevision: 0.0.13
       helm:
         releaseName: eoapi-stac-manager
         valueFiles:

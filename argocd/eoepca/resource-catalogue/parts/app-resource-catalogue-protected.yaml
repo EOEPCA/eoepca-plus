@@ -33,7 +33,7 @@ spec:
           configmap_name: resource-catalogue-protected-configmap
           image:
             repository: geopython/pycsw
-            tag: "eoepca-testing"
+            tag: "eoepca-staging"
             pullPolicy: Always
           replicas: 1
           config:

@@ -151,6 +151,8 @@ tls-san:
   - {lb_ip}
   - {domain_name}
   - rancher.{domain_name}
+node-taint:
+  - "CriticalAddonsOnly=true:NoExecute"
 kubelet-arg:
   - max-pods=500
   - container-log-max-size=50Mi

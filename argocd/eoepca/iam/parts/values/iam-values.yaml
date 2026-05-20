@@ -72,6 +72,30 @@ iam: &iam
         # Name of realm to create or of existing realm to create clients in
         name: eoepca
         displayName: EOEPCA
+        # Array of custom clients to create during realm initialization.
+        # This allows creating clients that are not managed by Crossplane.
+        customClients: []
+        # Array of custom users to create during realm initialization.
+        # This allows creating users that are not managed by Crossplane.
+        customUsers: []
+        # Additional custom realm settings. May contain any top-level realm
+        # attributes except those covered by the settings above.
+        customSettings: ~
+          # The following example demonstrates how to configure the SMTP server
+          # for outgoing e-mails:
+          #smtpServer:
+          #  password: "**********"
+          #  replyToDisplayName: ""
+          #  starttls: "true"
+          #  auth: "true"
+          #  port: "587"
+          #  replyTo: ""
+          #  host: "smtp.gmail.com"
+          #  from: "eoepca@gmail.com"
+          #  fromDisplayName: "Eoepca Develop Cluster"
+          #  envelopeFrom: ""
+          #  ssl: "false"
+        #  user: "eoepca@gmail.com"
       provider:
         # Reference to existing ProviderConfig to use (instead of creating own one)
         existingConfigRef: ""
@@ -94,7 +118,6 @@ iam: &iam
           name: "" #keycloak-credentials
           key: "" #credentials
           #namespace: "" #crossplane-system
-    # TODO: Take into account postgres section
     tls:
       # Set to true to use TLS on route from APISIX to Keycloak
       # Make sure to also configure keycloak-operator.keycloak.http.tlsSecret
@@ -189,8 +212,8 @@ iam: &iam
     # iam.keycloak.configuration.createSecretStore is set to "auto".
     # Note that this requires External Secrets Operator to be installed.
     propagateSecrets: true
-    # TODO: Remove (temporarily added to work around wrong condition in iam-bb Helm chart)
-    propagateProviderSecret: true
+#    # TODO: Remove (temporarily added to work around wrong condition in iam-bb Helm chart)
+#    propagateProviderSecret: true
 
 # ----
 
@@ -198,6 +221,8 @@ keycloak-operator:
   operator:
     #enabled: false
     replicaCount: 1
+#    image:
+#      tag: 26.6.2
   keycloak:
     enabled: true
     instances: 1
@@ -220,10 +245,12 @@ keycloak-operator:
     hostname:
       hostname: *kcurl
     ingress:
+      # Deactivate generation of Ingress resource by operator Helm chart
       enabled: false
     proxy:
-      headers: xforwarded # double check your reverse proxy sets and overwrites the X-Forwarded-* headers
+      headers: xforwarded
     realmimport:
+      # Deactivate generation of KeycloakRealmImport resource by operator Helm chart
       enabled: false
 
 opal:

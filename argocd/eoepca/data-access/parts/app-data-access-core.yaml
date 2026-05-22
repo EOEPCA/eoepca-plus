@@ -16,6 +16,7 @@ spec:
       helm:
         releaseName: eoapi
         valueFiles:
+          - values/argocd.yaml  # Upstream ArgoCD sync configuration
           - $values/argocd/eoepca/data-access/parts/values/values-eoapi.yaml
 
     - repoURL: https://github.com/sentinel-hub/titiler-openeo

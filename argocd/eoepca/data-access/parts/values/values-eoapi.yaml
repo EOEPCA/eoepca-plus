@@ -114,7 +114,7 @@ eoapi-notifier:
 stac-auth-proxy:
   enabled: true
   image:
-    tag: "v1.1.0-rc3"
+    tag: "v1.1.0"
   # Custom filters for STAC collections/items filtering
   service:
     port: 8080
@@ -145,7 +145,7 @@ stac-auth-proxy:
     ROOT_PATH: "/stac"
     SWAGGER_UI_INIT_OAUTH: |
       {
-        "clientId": "eoapi", 
+        "clientId": "eoapi",
         "usePkceWithAuthorizationCodeGrant": true
       }
   extraVolumes:

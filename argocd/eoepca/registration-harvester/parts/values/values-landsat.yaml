@@ -2,61 +2,91 @@ harvester:
   image:
     repository: eoepca/registration-harvester
     pullPolicy: Always
-    tag: 2.0.0-rc3
+    tag: 2.1.0-dev6
   secret:
     name: registration-harvester-secret
   config:
-    worker:
-      log_level: INFO
-      flowable:
-        host: https://registration-harvester-api.develop.eoepca.org/flowable-rest
-        tls: true
-        cacert: ./etc/eoepca-ca-chain.pem
-      topics:
-        landsat_discover_data:
-          module: worker.landsat.tasks
-          handler: LandsatDiscoverHandler
-        landsat_continuous_data_discovery:
-          module: worker.landsat.tasks
-          handler: LandsatContinuousDiscoveryHandler
-        landsat_get_download_urls:
-          module: worker.landsat.tasks
-          handler: LandsatGetDownloadUrlHandler
-        landsat_download_data:
-          module: worker.landsat.tasks
-          handler: LandsatDownloadHandler
-        landsat_untar:
-          module: worker.landsat.tasks
-          handler: LandsatUntarHandler 
-        landsat_extract_metadata:
-          module: worker.landsat.tasks
-          handler: LandsatExtractMetadataHandler
-        landsat_register_metadata:
-          module: worker.landsat.tasks
-          handler: LandsatRegisterMetadataHandler
-      handlers:
-        LandsatDiscoverHandler:
-          usgs_api_url: https://landsatlook.usgs.gov/stac-server
-          page_size: 100
-        LandsatContinuousDiscoveryHandler:
-          enabled: false
-          usgs_api_url: https://landsatlook.usgs.gov/stac-server
-          page_size: 100      
-          datetime_property: created
-          timewindow_hours: 1
-          bbox: "8,40,18,60"
-          collections: landsat-c2l2-sr
-        LandsatGetDownloadUrlHandler:
-          m2m_use_token: true
-          m2m_api_url: https://m2m.cr.usgs.gov/api/api/json/stable/
-        LandsatDownloadHandler:
-          subscription:
-            lock_duration: PT30M
-          download_base_dir: "/eodata/landsat"
-          download_timeout: 300
-        LandsatUntarHandler:
-          remove_tar: false
-          create_folder: true
-        LandsatRegisterMetadataHandler:
-          stac_api_url: https://resource-catalogue.develop.eoepca.org/stac/
-          stac_file_deletion: true
+    log_level: INFO
+    bpm_engine:
+      url: https://registration-harvester-bpm-engine.develop.eoepca.org/engine-rest
+      tls: true
+      cacert: ./etc/eoepca-ca-chain.pem
+      lock_duration: 300000  # 5 minutes
+      retries: 3
+      retry_timeout: 30000  # 30 seconds
+      async_response_timeout: 120000 # 2 minutes
+      timeout_delta_millis: 300000 # 5 minutes
+      sleep_seconds: 15
+      http_timeout_millis: 420000 # 7 minutes
+    iam:
+      oidc_token_endpoint_url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/token       
+    topics:
+      landsat_discover_data:
+        module: worker.landsat.tasks
+        handler: LandsatDiscoverHandler
+        lock_duration: 1800000  # 30 minutes
+        workers: 1
+        parallel_tasks: 1
+      landsat_continuous_data_discovery:
+        module: worker.landsat.tasks
+        handler: LandsatContinuousDiscoveryHandler
+        lock_duration: 1800000  # 30 minutes
+        workers: 1
+        parallel_tasks: 1
+      landsat_get_download_urls:
+        module: worker.landsat.tasks
+        handler: LandsatGetDownloadUrlHandler
+        lock_duration: 300000  # 5 minutes
+        workers: 1
+        parallel_tasks: 1
+      landsat_download_data:
+        module: worker.landsat.tasks
+        handler: LandsatDownloadHandler
+        lock_duration: 1800000  # 30 minutes
+        workers: 1
+        parallel_tasks: 1
+      landsat_untar:
+        module: worker.landsat.tasks
+        handler: LandsatUntarHandler
+        lock_duration: 300000  # 5 minutes
+        workers: 1
+        parallel_tasks: 1
+      landsat_extract_metadata:
+        module: worker.landsat.tasks
+        handler: LandsatExtractMetadataHandler
+        lock_duration: 300000  # 5 minutes
+        workers: 1
+        parallel_tasks: 1
+      landsat_register_metadata:
+        module: worker.landsat.tasks
+        handler: LandsatRegisterMetadataHandler
+        lock_duration: 300000  # 5 minutes
+        workers: 1
+        parallel_tasks: 1
+    handlers:
+      LandsatDiscoverHandler:
+        usgs_api_url: https://landsatlook.usgs.gov/stac-server
+        page_size: 100
+      LandsatContinuousDiscoveryHandler:
+        enabled: false
+        usgs_api_url: https://landsatlook.usgs.gov/stac-server
+        page_size: 100      
+        datetime_property: created
+        timewindow_hours: 1
+        bbox: "8,40,18,60"
+        collections: landsat-c2l2-sr
+      LandsatGetDownloadUrlHandler:
+        m2m_use_token: true
+        m2m_api_url: https://m2m.cr.usgs.gov/api/api/json/stable/
+      LandsatDownloadHandler:
+        download_base_dir: "/eodata/landsat"
+        download_timeout: 300
+      LandsatUntarHandler:
+        remove_tar: false
+        create_folder: true
+      LandsatRegisterMetadataHandler:
+        stac_api_url: https://eoapi.develop.eoepca.org/stac/
+        stac_file_deletion: true
+        rewrite_asset_hrefs:
+          prefix_from: ""
+          prefix_to: "file://"

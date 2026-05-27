@@ -15,8 +15,8 @@ source .env 2>/dev/null
 SECRET_NAME="registration-harvester-secret"
 NAMESPACE="registration-harvester-api"
 
-FLOWABLE_USER="${1:-${FLOWABLE_USER:-someuser}}"
-FLOWABLE_PASSWORD="${2:-${FLOWABLE_PASSWORD:-somepw}}"
+OPERATON_REST_USER="${1:-${OPERATON_REST_USER:-someuser}}"
+OPERATON_REST_PASSWORD="${2:-${OPERATON_REST_PASSWORD:-somepw}}"
 M2M_USER="${3:-${M2M_USER:-someuser}}"
 M2M_PASSWORD="${4:-${M2M_PASSWORD:-somepw}}"
 CDSE_USER="${5:-${CDSE_USER:-someuser}}"
@@ -28,8 +28,8 @@ OPERATON_DB_PASSWORD="${10:-${OPERATON_DB_PASSWORD:-somepw}}"
 
 secretYaml() {
   kubectl -n "${NAMESPACE}" create secret generic "${SECRET_NAME}" \
-    --from-literal="FLOWABLE_USER=${FLOWABLE_USER}" \
-    --from-literal="FLOWABLE_PASSWORD=${FLOWABLE_PASSWORD}" \
+    --from-literal="OPERATON_REST_USER=${OPERATON_REST_USER}" \
+    --from-literal="OPERATON_REST_PASSWORD=${OPERATON_REST_PASSWORD}" \
     --from-literal="M2M_USER=${M2M_USER}" \
     --from-literal="M2M_PASSWORD=${M2M_PASSWORD}" \
     --from-literal="CDSE_USER=${CDSE_USER}" \

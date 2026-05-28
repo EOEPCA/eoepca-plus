@@ -2,40 +2,38 @@ harvester:
   image:
     repository: eoepca/registration-harvester
     pullPolicy: Always
-    tag: 2.1.0-dev8
+    tag: 2.1.0-dev10
   secret:
     name: registration-harvester-secret
   config:
     log_level: INFO
     bpm_engine:
       url: https://registration-harvester-bpm-engine.develop.eoepca.org/engine-rest
-      tls: true
-      cacert: ./etc/eoepca-ca-chain.pem
       lock_duration: 300000  # 5 minutes
       retries: 3
       retry_timeout: 30000  # 30 seconds
-      async_response_timeout: 120000 # 2 minutes
+      async_response_timeout: 30000 # 30 seconds
       timeout_delta_millis: 300000 # 5 minutes
       sleep_seconds: 15
       http_timeout_millis: 420000 # 7 minutes
     iam:
       oidc_token_endpoint_url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/token
     topics:
-      stac_publish_catalog:
+      stac_harvest_catalog:
         module: worker.stac.tasks
         handler: StacCatalogHandler
         lock_duration: 6000000   # 10 minutes
         workers: 1
         parallel_tasks: 1
         retries: 5
-      stac_publish_collection:
+      stac_harvest_collection:
         module: worker.stac.tasks
         handler: StacCollectionHandler
         lock_duration: 6000000   # 10 minutes
         workers: 1
         parallel_tasks: 1
         retries: 5
-      stac_publish_item:
+      stac_harvest_item:
         module: worker.stac.tasks
         handler: StacItemHandler
         lock_duration: 6000000   # 10 minutes
@@ -43,14 +41,15 @@ harvester:
         parallel_tasks: 1
         retries: 5
     handlers:
+      StacCatalogHandler:
       StacCollectionHandler:
         timewindow_hours: 1
-        stac_api_url: https://eoapi.develop.eoepca.org/stac
+        stac_api_url: https://eoapi.develop.eoepca.org/stac/
         stac_api_ca_cert: ""
         stac_api_user: ""
         stac_api_pw: ""
       StacItemHandler:
-        stac_api_url: https://eoapi.develop.eoepca.org/stac
+        stac_api_url: https://eoapi.develop.eoepca.org/stac/
         stac_api_ca_cert: ""      
         stac_api_user: ""
         stac_api_pw: ""

@@ -2,38 +2,36 @@ harvester:
   image:
     repository: eoepca/registration-harvester
     pullPolicy: Always
-    tag: 2.1.0-dev8
+    tag: 2.1.0-dev10
   secret:
     name: registration-harvester-secret
   config:
     log_level: INFO
     bpm_engine:
       url: https://registration-harvester-bpm-engine.develop.eoepca.org/engine-rest
-      tls: true
-      cacert: ./etc/eoepca-ca-chain.pem
       lock_duration: 300000  # 5 minutes
       retries: 3
       retry_timeout: 30000  # 30 seconds
-      async_response_timeout: 120000 # 2 minutes
+      async_response_timeout: 30000 # 30 seconds
       timeout_delta_millis: 300000 # 5 minutes
       sleep_seconds: 15
       http_timeout_millis: 420000 # 7 minutes
     iam:
       oidc_token_endpoint_url: https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/token    
     topics:
-      sentinel_discover_data:
+      sentinel_ondemand_discovery:
         module: worker.sentinel.tasks
         handler: SentinelDiscoverHandler
         lock_duration: 6000000   # 10 minutes
         workers: 1
         parallel_tasks: 1
-      sentinel_continuous_data_discovery:
+      sentinel_continuous_discovery:
         module: worker.sentinel.tasks
         handler: SentinelContinuousDiscoveryHandler
         lock_duration: 6000000   # 10 minutes
         workers: 1
         parallel_tasks: 1
-      sentinel_download_data:
+      sentinel_download_scene:
         module: worker.sentinel.tasks
         handler: SentinelDownloadHandler
         lock_duration: 18000000  # 30 minutes
@@ -78,6 +76,7 @@ harvester:
         retryTimeout: 10
       SentinelUnzipHandler:
         remove_zip: false
+      SentinelCheckIntegrityHandler:
       SentinelExtractMetadataHandler:
         collections_dir: ./etc/collections
       SentinelRegisterMetadataHandler:

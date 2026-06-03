@@ -1,0 +1,15 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: iam-keycloak
+  namespace: iam-management
+spec:
+  encryptedData:
+    eoepca-admin-password: AgAM4lZ66jgyOSBtC8bDoyVyKyNLUBomH8BCQE2ouUksmcIM2NDjIyjoXXkcKh7hisLtstj9v7Ynhon08NTO7BgEmxNQjk2aeVgmtPE2Qccyzw7n6iONBXIBN3FDoTgKdnKcscsrwwsA4KX/5NnHif/UfYmZJbUmZu6R2fKObP6XpmZk2b7gOHOF+zUoRmg85fvoawductmd5ABq959TKrJR68d2mDS4UATs/1aktKuBODUrKazkC9a99sW//s2jTCwpE0W28+14qddJVY9brC6s+N/CEI6595WoHX3d/xO+5g5iEOLHTgK6QE3l5+PwFLJ0sILYMyjzgHEFo8GVNHYinbLSxOBfkzaqNmHemx5LAZshLTuY9Cmgk28LOGkbVZkc5uU6kY7wT42FKJ3ETeDKN14udUEvKyETqp8LvKz2+7LYn0uNro6/7zB8K/qiXjrqVqO21vCHf8Amu9l+/73mTR/NAr90UMfaoL7uic/dD8m8Rh1P4zVM7exbVvkwYMNNdHL+CcM4HO4lgI2YH6PeAEGpKj8XYN2KRybZuSpDCQGRh4Q9heLChqD/XE3/OlUYxYj8jlZuxF/b4v33ai2LBIMX5QUi+5JpJ50somZZCRpWy+rGDC1/rtjZhSbmfa9ofmAg4iiGWnScw1mL4n6FOxbSQdJxE6msalz75RstIVLLu8R/Xs/7kTxNjmCcrQo/L+pIKoZLJvKnrivX
+  template:
+    metadata:
+      creationTimestamp: null
+      name: iam-keycloak
+      namespace: iam-management

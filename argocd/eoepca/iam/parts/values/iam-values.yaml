@@ -72,6 +72,12 @@ iam: &iam
         # Name of realm to create or of existing realm to create clients in
         name: eoepca
         displayName: EOEPCA
+        # Declaration of placeholders used in customClients, customUsers and customSettings
+        customPlaceholders:
+          smtp_password:
+            secret:
+              name: eoepca-realm
+              key: smtp_password
         # Array of custom clients to create during realm initialization.
         # This allows creating clients that are not managed by Crossplane.
         customClients: []
@@ -80,22 +86,23 @@ iam: &iam
         customUsers: []
         # Additional custom realm settings. May contain any top-level realm
         # attributes except those covered by the settings above.
-        customSettings: ~
+        customSettings:
+          loginWithEmailAllowed: false
           # The following example demonstrates how to configure the SMTP server
           # for outgoing e-mails:
-          #smtpServer:
-          #  password: "**********"
+          smtpServer:
+          #  password: "${smtp_server_password}"
           #  replyToDisplayName: ""
-          #  starttls: "true"
-          #  auth: "true"
-          #  port: "587"
+            starttls: "true"
+            auth: "true"
+            port: "587"
           #  replyTo: ""
-          #  host: "smtp.gmail.com"
-          #  from: "eoepca@gmail.com"
-          #  fromDisplayName: "Eoepca Develop Cluster"
+            host: "smtp.gmail.com"
+            from: "eoepca@gmail.com"
+            fromDisplayName: "EOEPCA Develop Cluster"
           #  envelopeFrom: ""
           #  ssl: "false"
-        #  user: "eoepca@gmail.com"
+            user: "eoepca@gmail.com"
       provider:
         # Reference to existing ProviderConfig to use (instead of creating own one)
         existingConfigRef: ""

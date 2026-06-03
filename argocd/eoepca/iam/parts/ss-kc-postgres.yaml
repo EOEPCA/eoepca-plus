@@ -1,8 +1,6 @@
----
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
   name: kc-postgres
   namespace: iam
 spec:

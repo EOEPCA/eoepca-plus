@@ -1,3 +1,4 @@
+# Not used any more.
 # Note: This is s workaround for a Bitnami oddity. A full solution does not make sense now, because we want to get rid of Bitnami charts anyway.
 # The Keycloak service should be constructed as "<release_name>-keycloak", which should result in "iam-keycloak-keycloak".
 # However, the Bitnami chart names the service just "iam-keycloak", because the release name contains the string "keycloak".

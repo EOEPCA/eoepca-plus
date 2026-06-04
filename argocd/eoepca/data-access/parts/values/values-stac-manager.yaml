@@ -10,7 +10,7 @@ resources:
     memory: "4Gi"
     cpu: "4"
 image:
-  tag: latest
+  tag: sha-5e42d18
   pullPolicy: Always
 
 publicUrl: https://eoapi.develop.eoepca.org/manager

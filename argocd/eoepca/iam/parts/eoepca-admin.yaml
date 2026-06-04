@@ -53,6 +53,8 @@ spec:
     username: eoepca-admin
     firstName: EOEPCA
     lastName: Admin
+    email: eoepca@gmail.com
+    emailVerified: true
     initialPassword:
       - temporary: false
         valueSecretRef:

@@ -9,7 +9,7 @@ trap onExit EXIT
 source .env 2>/dev/null
 SECRET_NAME="keycloak-provider"
 PROVIDER_CLIENT_SECRET="${1:-${PROVIDER_CLIENT_SECRET:-changeme}}"
-PROVIDER_CLIENT_ID="${2:-${PROVIDER_CLIENT_ID:-}crossplane-keycloak-provider}}"
+PROVIDER_CLIENT_ID="${2:-${PROVIDER_CLIENT_ID:-crossplane-keycloak-provider}}"
 KEYCLOAK_URL=${3:-${KEYCLOAK_URL:-https://iam-auth.rke2.deploybox.co.uk}}
 CREDENTIALS="`cat <<EOF
 {
@@ -26,12 +26,12 @@ sealFor() {
   local outfile="$2"
   kubectl -n "${ns}" create secret generic "${SECRET_NAME}" \
     --from-literal="credentials=${CREDENTIALS}" \
-    --from-literal="client_secret=${CLIENT_SECRET}" \
+    --from-literal="client_secret=${PROVIDER_CLIENT_SECRET}" \
     --dry-run=client -o yaml \
   | kubeseal -o yaml --controller-name sealed-secrets --controller-namespace infra > "${outfile}"
 }
 # Maybe add the following entries above if needed:
-#    --from-literal="client_id=${CLIENT_ID}" \
+#    --from-literal="client_id=${PROVIDER_CLIENT_ID}" \
 #    --from-literal="base_path=" \
 #    --from-literal="realm=eoepca" \
 #    --from-literal="url=${KEYCLOAK_URL}" \

@@ -13,7 +13,7 @@ trap onExit EXIT
 source .env 2>/dev/null
 
 SECRET_NAME="opa-route"
-NAMESPACE="iam-management"
+NAMESPACE="iam"
 
 OPA_CLIENT_SECRET="${1:-${OPA_CLIENT_SECRET:-changeme}}"
 OPA_CLIENT_ID=${2:-${OPA_CLIENT_ID:-opa}}

@@ -1,4 +1,3 @@
-# Currently unused, because the secret is propagated via an external secret.
 ---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret

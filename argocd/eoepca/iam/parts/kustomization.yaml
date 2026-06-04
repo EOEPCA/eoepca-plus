@@ -5,8 +5,8 @@ resources:
   - app-iam-core.yaml
 #  - pvc-kc-database.yaml
   #- ss-kc-postgres.yaml
-  - ss-keycloak-provider.yaml
-  #- ss-keycloak-provider-iam.yaml
+  #- ss-keycloak-provider.yaml
+  - ss-keycloak-provider-iam.yaml
   #- provider-config-keycloak.yaml
   # Preliminary configuration for path-based routing (to be removed later)
   - apisixroute-pathbased.yaml

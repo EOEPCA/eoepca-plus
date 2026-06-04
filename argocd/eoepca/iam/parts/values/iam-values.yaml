@@ -122,7 +122,7 @@ iam: &iam
         clientSecret: ""
         # Reference to existing secret containing Keycloak location and credentials
         secretRef:
-          name: "provider-keycloak"
+          name: "keycloak-provider"
           key: "credentials"
           #namespace: "" #crossplane-system
     tls:

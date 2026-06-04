@@ -233,6 +233,11 @@ keycloak-operator:
   keycloak:
     enabled: true
     instances: 1
+    bootstrapAdmin:
+#      service:
+#        secret: keycloak-admin
+      user:
+        secret: keycloak-admin
     db:
       vendor: postgres
       host: *pgHost

@@ -56,8 +56,8 @@ spec:
     initialPassword:
       - temporary: false
         valueSecretRef:
-          name: iam-keycloak
-          key: eoepca-admin-password
+          name: eoepca-admin-secret
+          key: password
 ---
 apiVersion: user.keycloak.m.crossplane.io/v1alpha1
 kind: Roles

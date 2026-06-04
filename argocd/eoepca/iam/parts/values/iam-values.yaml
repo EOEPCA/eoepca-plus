@@ -122,8 +122,8 @@ iam: &iam
         clientSecret: ""
         # Reference to existing secret containing Keycloak location and credentials
         secretRef:
-          name: "" #keycloak-credentials
-          key: "" #credentials
+          name: "provider-keycloak"
+          key: "credentials"
           #namespace: "" #crossplane-system
     tls:
       # Set to true to use TLS on route from APISIX to Keycloak
@@ -189,7 +189,7 @@ iam: &iam
     # clientSecret: Client secret as plain text (generated internally if omitted)
     clientSecret: ""
     # clientSecretRef: Name of an existing secret that contains the client secret and maybe further values like the client ID
-    clientSecretRef: ""
+    clientSecretRef: "opa-route"
     # OPA image to pull.
     # Note: This does not have an effect if inline OPA is used.
     image:

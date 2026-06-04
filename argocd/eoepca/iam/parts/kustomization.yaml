@@ -5,7 +5,7 @@ resources:
   - app-iam-core.yaml
 #  - pvc-kc-database.yaml
   #- ss-kc-postgres.yaml
-  #- ss-keycloak-provider.yaml
+  - ss-keycloak-provider.yaml
   #- ss-keycloak-provider-iam.yaml
   #- provider-config-keycloak.yaml
   # Preliminary configuration for path-based routing (to be removed later)
@@ -16,3 +16,4 @@ resources:
   - iam-management-ns.yaml
   - eoepca-admin.yaml
   - ss-iam-keycloak.yaml
+  - ss-opa-route.yaml

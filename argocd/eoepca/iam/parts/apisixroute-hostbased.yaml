@@ -30,7 +30,7 @@ spec:
 #            - /
 #            - ^(/iam/auth)(/.*)
 #            - $2
-        enable: true
+#        enable: true
   - name: opa
     match:
       hosts:

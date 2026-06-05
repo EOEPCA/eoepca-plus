@@ -2,12 +2,12 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: apx-all-tls
+  name: apx-main-tls
   namespace: ingress-apisix
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
 spec:
-  secretName: apx-all-tls
+  secretName: apx-main-tls
   duration: 2160h # 90d
   renewBefore: 360h # 15d
   isCA: false
@@ -15,7 +15,7 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.rke2.deploybox.co.uk"
+    - "rke2.deploybox.co.uk"
   issuerRef:
     name: letsencrypt-dns-prod
     kind: ClusterIssuer

@@ -2,7 +2,7 @@
 apiVersion: apisix.apache.org/v2
 kind: ApisixTls
 metadata:
-  name: apx-all-tls
+  name: apx-main-tls
   namespace: ingress-apisix
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: apisix
   hosts:
-    - "*.rke2.deploybox.co.uk"
+    - "rke2.deploybox.co.uk"
   secret:
-    name: apx-all-tls
+    name: apx-main-tls
     namespace: ingress-apisix

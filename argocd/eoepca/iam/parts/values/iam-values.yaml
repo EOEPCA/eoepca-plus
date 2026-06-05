@@ -20,16 +20,17 @@ iam: &iam
     enabled: true
     createRoute: true
     # "Official" Keycloak URL (used everywhere where Keycloak needs to be addressed)
-    url: &kcurl https://iam-auth.rke2.deploybox.co.uk
+    url: &kcurl https://rke2.deploybox.co.uk/iam/auth
     # Deviating "internal" Keycloak URL to use for cluster-internal access
     # (defaults to official URL). Only used for Crossplane provider so far.
     # Useful to prevent Crossplane-related traffic from going through APISIX.
     # Also useful for test environments that do not use official certs.
     internalUrl: ""
     hosts:
-      - iam-auth.rke2.deploybox.co.uk
+      - rke2.deploybox.co.uk
     paths:
-      - /*
+      - /iam/auth
+      - /iam/auth/*
     # Additional configuration to apply to Keycloak.
     # Partially evaluated by the iam-bb-config Helm chart.
     # By default, the EOEPCA realm and a user account for Crossplane
@@ -180,9 +181,12 @@ iam: &iam
     # "Official" OPA URL (used as root URL for the client if one is created)
     url: https://iam-opa.rke2.deploybox.co.uk
     hosts:
-      - iam-opa.rke2.deploybox.co.uk
+      - rke2.deploybox.co.uk
     paths:
-      - /*
+      - /iam/opa
+      - /iam/opa/*
+      - /iam/policies
+      - /iam/policies/*
     # Client credentials:
     # clientId is mandatory if clientSecretRef is *not* specified.
     clientId: opa

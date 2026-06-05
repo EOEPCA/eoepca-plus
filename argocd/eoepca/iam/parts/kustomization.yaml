@@ -9,7 +9,8 @@ resources:
   - ss-keycloak-provider-iam.yaml
   #- provider-config-keycloak.yaml
   # Preliminary configuration for path-based routing (to be removed later)
-  - apisixroute-pathbased.yaml
+  #- apisixroute-pathbased.yaml
+  - apisixroute-hostbased.yaml
   # Removing this one as it makes no sense
   # - ingress-pathbased.yaml
   #- naming-workaround.yaml

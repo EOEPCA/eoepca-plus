@@ -12,6 +12,7 @@ spec:
   ingressClassName: apisix
   hosts:
     - "*.rke2.deploybox.co.uk"
+    - "rke2.deploybox.co.uk"
   secret:
     name: apx-all-tls
     namespace: ingress-apisix

@@ -16,6 +16,7 @@ spec:
     - client auth
   dnsNames:
     - "*.rke2.deploybox.co.uk"
+    - "rke2.deploybox.co.uk"
   issuerRef:
     name: letsencrypt-dns-prod
     kind: ClusterIssuer

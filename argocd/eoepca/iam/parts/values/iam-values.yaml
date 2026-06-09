@@ -20,8 +20,8 @@ iam: &iam
     enabled: true
     createRoute: true
     # "Official" Keycloak URL (used everywhere where Keycloak needs to be addressed)
-#    url: &kcurl https://iam-auth.rke2.deploybox.co.uk
-    url: &kcurl https://rke2.deploybox.co.uk/iam/auth
+    url: &kcurl https://iam-auth.rke2.deploybox.co.uk
+#    url: &kcurl https://rke2.deploybox.co.uk/iam/auth
     # Deviating "internal" Keycloak URL to use for cluster-internal access
     # (defaults to official URL). Only used for Crossplane provider so far.
     # Useful to prevent Crossplane-related traffic from going through APISIX.
@@ -387,6 +387,7 @@ keycloak-operator:
       tlsSecret: *tlsSecretRef
     hostname:
       hostname: *kcurl
+      admin:
     ingress:
       # Deactivate generation of Ingress resource by operator Helm chart
       enabled: false

@@ -2,7 +2,9 @@
 resources:
   - app-apisix-core.yaml
   - apisixtls-apx-all.yaml
+  - apisixtls-apx-main.yaml
   - cert-apx-all.yaml
+  - cert-apx-main.yaml
   - apisixglobalrule-redirect-to-tls.yaml
   - apisixglobalrule-tls-port-correction.yaml
   - apisixglobalrule-prometheus.yaml

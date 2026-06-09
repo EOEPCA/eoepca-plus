@@ -23,7 +23,7 @@ spec:
     backends:
       - serviceName: iam-keycloak-operator-service
         servicePort: 8080
-    plugins:
+#    plugins:
 #      - name: proxy-rewrite
 #        config:
 #          regex_uri:

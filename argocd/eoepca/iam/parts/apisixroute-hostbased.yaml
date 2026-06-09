@@ -20,7 +20,7 @@ spec:
       paths:
         - /*
     backends:
-      - serviceName: iam-keycloak-operator-service
+      - serviceName: iam-core-keycloak-operator-service
         servicePort: 8080
 #    plugins:
 #      - name: proxy-rewrite

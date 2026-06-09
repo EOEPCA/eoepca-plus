@@ -23,15 +23,15 @@ spec:
     backends:
       - serviceName: iam-core-keycloak-operator-service
         servicePort: 8080
-#    plugins:
-#      - name: proxy-rewrite
-#        config:
-#          regex_uri:
-#            - ^(/iam/auth)$
-#            - /
-#            - ^(/iam/auth)(/.*)
-#            - $2
-#        enable: true
+    plugins:
+      - name: proxy-rewrite
+        config:
+          regex_uri:
+            - ^(/iam/auth)$
+            - /
+            - ^(/iam/auth)(/.*)
+            - $2
+        enable: true
   - name: opa
     match:
       hosts:

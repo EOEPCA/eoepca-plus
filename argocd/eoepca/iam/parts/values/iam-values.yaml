@@ -306,7 +306,7 @@ iam: &iam
     inline: false
     createRoute: true
     # "Official" OPA URL (used as root URL for the client if one is created)
-    url: https://iam-opa.rke2.deploybox.co.uk
+    url: https://rke2.deploybox.co.uk/iam/opa
     hosts:
       - iam-opa.rke2.deploybox.co.uk
 #      - rke2.deploybox.co.uk

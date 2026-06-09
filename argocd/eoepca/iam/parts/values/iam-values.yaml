@@ -123,7 +123,7 @@ iam: &iam
             user: "eoepca@gmail.com"
             password: ${smtp_password}
             # Possible identity provider configuration (taken from develop cluster, may be reduced):
-            identityProviders:
+          identityProviders:
 #              {
 #                "alias": "eoiam",
 #                "displayName": "ESA EO IAM",
@@ -166,25 +166,25 @@ iam: &iam
 #                  "passMaxAge": "false"
 #                }
 #              },
-              - alias: "github"
-                displayName: "GitHub"
-                providerId: "github"
-                enabled: true
-                updateProfileFirstLoginMode: "on"
-                trustEmail: false
-                storeToken: false
-                addReadTokenRoleOnCreate: false
-                authenticateByDefault: false
-                linkOnly: false
-                hideOnLogin: false
-                config:
-                  clientId: "Ov23liNXqUxucibgSQ93"
-                  acceptsPromptNoneForwardFromClient: "false"
-                  disableUserInfo: "false"
-                  filteredByClaim: "false"
-                  syncMode: "FORCE"
-                  clientSecret: "${github_client_secret}"
-                  caseSensitiveOriginalUsername: "false"
+            - alias: "github"
+              displayName: "GitHub"
+              providerId: "github"
+              enabled: true
+              updateProfileFirstLoginMode: "on"
+              trustEmail: false
+              storeToken: false
+              addReadTokenRoleOnCreate: false
+              authenticateByDefault: false
+              linkOnly: false
+              hideOnLogin: false
+              config:
+                clientId: "Ov23liNXqUxucibgSQ93"
+                acceptsPromptNoneForwardFromClient: "false"
+                disableUserInfo: "false"
+                filteredByClaim: "false"
+                syncMode: "FORCE"
+                clientSecret: "${github_client_secret}"
+                caseSensitiveOriginalUsername: "false"
 #            identityProviderMappers: [
 #              {
 #                "id": "acc5183d-7cca-4124-89b6-51e04929ef42",

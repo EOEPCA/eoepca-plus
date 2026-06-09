@@ -79,11 +79,16 @@ iam: &iam
         name: eoepca
         displayName: EOEPCA
         # Declaration of placeholders used in customClients, customUsers and customSettings
-        customPlaceholders:
+        customPlaceholders: &placeholders
           smtp_password:
             secret:
               name: eoepca-realm
               key: smtp_password
+          github_client_secret:
+            secret:
+              name: eoepca-realm
+              key: github_client_secret
+        placeholders: *placeholders # TODO: Remove after Helm chart update
 #          eoiam_client_secret:
 #            secret:
 #              name: eoepca-realm
@@ -118,7 +123,7 @@ iam: &iam
             user: "eoepca@gmail.com"
             password: ${smtp_password}
             # Possible identity provider configuration (taken from develop cluster, may be reduced):
-#            identityProviders: [
+            identityProviders:
 #              {
 #                "alias": "eoiam",
 #                "displayName": "ESA EO IAM",
@@ -161,31 +166,26 @@ iam: &iam
 #                  "passMaxAge": "false"
 #                }
 #              },
-#              {
-#                "alias": "github",
-#                "displayName": "GitHub",
-#                "internalId": "0b3fb53b-3064-42ab-86c9-b7799ecbb074",
-#                "providerId": "github",
-#                "enabled": true,
-#                "updateProfileFirstLoginMode": "on",
-#                "trustEmail": false,
-#                "storeToken": false,
-#                "addReadTokenRoleOnCreate": false,
-#                "authenticateByDefault": false,
-#                "linkOnly": false,
-#                "hideOnLogin": false,
-#                "config": {
-#                  "clientId": "Ov23liUYGFVlE779am5e",
-#                  "acceptsPromptNoneForwardFromClient": "false",
-#                  "disableUserInfo": "false",
-#                  "filteredByClaim": "false",
-#                  "syncMode": "FORCE",
-#                  "clientSecret": "${github_client_secret}",
-#                  "caseSensitiveOriginalUsername": "false"
-#                }
-#              }
-#            ],
-#            "identityProviderMappers": [
+              - alias: "github"
+                displayName: "GitHub"
+                providerId: "github"
+                enabled: true
+                updateProfileFirstLoginMode": "on"
+                trustEmail: false
+                storeToken: false
+                addReadTokenRoleOnCreate: false
+                authenticateByDefault: false
+                linkOnly: false
+                hideOnLogin: false
+                config:
+                  clientId: "Ov23liNXqUxucibgSQ93"
+                  acceptsPromptNoneForwardFromClient: "false"
+                  disableUserInfo: "false"
+                  filteredByClaim: "false"
+                  syncMode: "FORCE"
+                  clientSecret: "${github_client_secret}"
+                  caseSensitiveOriginalUsername: "false"
+#            identityProviderMappers: [
 #              {
 #                "id": "acc5183d-7cca-4124-89b6-51e04929ef42",
 #                "name": "given_name",

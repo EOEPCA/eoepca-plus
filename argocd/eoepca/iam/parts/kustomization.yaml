@@ -1,7 +1,5 @@
 
 resources:
-  #- app-keycloak.yaml
-  #- app-opal.yaml
   - app-iam-core.yaml
 #  - pvc-kc-database.yaml
   #- ss-kc-postgres.yaml
@@ -11,11 +9,9 @@ resources:
   # Preliminary configuration for path-based routing (to be removed later)
   - apisixroute-pathbased.yaml
   #- apisixroute-hostbased.yaml
-  # Removing this one as it makes no sense
-  # - ingress-pathbased.yaml
-  #- naming-workaround.yaml
   - iam-management-ns.yaml
   - eoepca-admin.yaml
   - ss-iam-keycloak.yaml
   - ss-opa-route.yaml
   - ss-keycloak-admin.yaml
+  - ss-eoepca-realm.yaml

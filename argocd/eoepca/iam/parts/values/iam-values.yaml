@@ -170,7 +170,7 @@ iam: &iam
                 displayName: "GitHub"
                 providerId: "github"
                 enabled: true
-                updateProfileFirstLoginMode": "on"
+                updateProfileFirstLoginMode: "on"
                 trustEmail: false
                 storeToken: false
                 addReadTokenRoleOnCreate: false

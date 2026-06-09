@@ -8,7 +8,7 @@ onExit() {
 trap onExit EXIT
 source .env 2>/dev/null
 SECRET_NAME="keycloak-provider"
-PROVIDER_CLIENT_SECRET="${1:-${PROVIDER_CLIENT_SECRET:-changeme}}"
+PROVIDER_CLIENT_SECRET="${1:-${PROVIDER_CLIENT_SECRET:-`cat /dev/random|base64|tr -d "/=+-"|head -c 32`}}"
 PROVIDER_CLIENT_ID="${2:-${PROVIDER_CLIENT_ID:-crossplane-keycloak-provider}}"
 KEYCLOAK_URL=${3:-${KEYCLOAK_URL:-https://iam-auth.rke2.deploybox.co.uk}}
 CREDENTIALS="`cat <<EOF

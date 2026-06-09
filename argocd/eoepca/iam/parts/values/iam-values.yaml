@@ -31,7 +31,7 @@ iam: &iam
       - iam-auth.rke2.deploybox.co.uk
 #      - rke2.deploybox.co.uk
     paths:
-      - /
+      - /*
 #      - /iam/auth
 #      - /iam/auth/*
     # Additional configuration to apply to Keycloak.

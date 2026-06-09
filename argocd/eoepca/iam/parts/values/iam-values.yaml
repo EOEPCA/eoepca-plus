@@ -20,8 +20,10 @@ iam: &iam
     enabled: true
     createRoute: true
     # "Official" Keycloak URL (used everywhere where Keycloak needs to be addressed)
-    url: &kcurl https://iam-auth.rke2.deploybox.co.uk
-#    url: &kcurl https://rke2.deploybox.co.uk/iam/auth
+#    url: &kcurl https://iam-auth.rke2.deploybox.co.uk
+    url: &kcurl https://rke2.deploybox.co.uk/iam/auth
+    adminUrl: &kcadminurl ~
+#    adminUrl: &kcadminurl https://rke2.deploybox.co.uk/iam/auth/admin
     # Deviating "internal" Keycloak URL to use for cluster-internal access
     # (defaults to official URL). Only used for Crossplane provider so far.
     # Useful to prevent Crossplane-related traffic from going through APISIX.
@@ -387,7 +389,7 @@ keycloak-operator:
       tlsSecret: *tlsSecretRef
     hostname:
       hostname: *kcurl
-      admin:
+      admin: *kcadminurl
     ingress:
       # Deactivate generation of Ingress resource by operator Helm chart
       enabled: false
@@ -396,7 +398,12 @@ keycloak-operator:
     realmimport:
       # Deactivate generation of KeycloakRealmImport resource by operator Helm chart
       enabled: false
-
+#    additionalOptions:
+#      - name: http-relative-path
+#        value: /iam/auth
+#    env:
+#      - name: KC_HTTP_RELATIVE_PATH
+#        value: /iam/auth
 opal:
   #enabled: true #*opaEnabled
   # Override actual OPAL version to 0.8.0. Unfortunately though, this does not match the chart's app version and might be confusing.

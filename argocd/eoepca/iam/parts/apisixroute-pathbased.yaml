@@ -22,7 +22,7 @@ spec:
         - /iam/auth/*
     backends:
       - serviceName: iam-keycloak-operator-service
-        servicePort: 80
+        servicePort: 8080
     plugins:
       - name: proxy-rewrite
         config:

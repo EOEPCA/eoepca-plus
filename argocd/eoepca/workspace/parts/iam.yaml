@@ -36,3 +36,34 @@ spec:
       name: workspace-api
       policy:
         resolution: Required
+---
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: workspace-oauth2-proxy
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  writeConnectionSecretToRef:
+    name: workspace-oauth2-proxy-oidc
+    namespace: workspace
+  forProvider:
+    realmId: eoepca
+    name: workspace-oauth2-proxy
+    accessType: CONFIDENTIAL
+    clientId: workspace-oauth2-proxy
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://auth.ngx.develop.eoepca.org
+    validRedirectUris:
+      - https://auth.ngx.develop.eoepca.org/oauth2/callback
+    validPostLogoutRedirectUris:
+      - https://auth.ngx.develop.eoepca.org/oauth2/*
+      - https://*.ngx.develop.eoepca.org/*
+    webOrigins:
+      - https://auth.ngx.develop.eoepca.org

@@ -1,0 +1,15 @@
+resources:
+  - data-proxy.yaml
+  - stac-api.yaml
+
+configMapGenerator:
+  - name: eodag-config
+    options:
+      disableNameSuffixHash: true
+    files:
+      - eodag.yml
+
+secretGenerator:
+  - name: cs-container-pull
+    options:
+      disableNameSuffixHash: true

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: data-proxy-api
+  namespace: argocd
+  labels:
+    eoepca/app-name: data-proxy
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://cs-si.github.io/stac-fastapi-eodag
+      targetRevision: 0.3.0
+      helm:
+        releaseName: eodag-stac-api
+        values: |
+          extraEnvVars:
+            DOWNLOAD_BASE_URL: http://release-name-eodag-data-proxy-proxy:8880/
+  destination:
+    name: in-cluster
+    namespace: data-access

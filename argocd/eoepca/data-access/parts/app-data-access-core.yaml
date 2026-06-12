@@ -12,7 +12,7 @@ spec:
 
     - repoURL: https://devseed.com/eoapi-k8s/
       chart: eoapi
-      targetRevision: 0.12.4
+      targetRevision: 0.12.5
       helm:
         releaseName: eoapi
         valueFiles:
@@ -50,7 +50,7 @@ spec:
 
     - repoURL: https://stac-manager.ds.io/
       chart: stac-manager
-      targetRevision: 0.0.14
+      targetRevision: 1.0.1
       helm:
         releaseName: eoapi-stac-manager
         valueFiles:

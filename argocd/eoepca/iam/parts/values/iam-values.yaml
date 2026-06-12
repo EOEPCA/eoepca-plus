@@ -389,10 +389,10 @@ keycloak-operator:
       database: *pgDatabase
       #url: jdbc:postgres
       usernameSecret:
-        name: postgresql
+        name: kc-postgres #postgresql
         key: username
       passwordSecret:
-        name: postgresql
+        name: kc-postgres #postgresql
         key: password
     http:
       #httpPort: 80

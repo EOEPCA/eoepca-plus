@@ -9,9 +9,6 @@ resources:
   limits:
     memory: "4Gi"
     cpu: "4"
-image:
-  tag: 1.0.2
-  pullPolicy: Always
 
 publicUrl: https://eoapi.develop.eoepca.org/manager
 stacApi: https://eoapi.develop.eoepca.org/stac

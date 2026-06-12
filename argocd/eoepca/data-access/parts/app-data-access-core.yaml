@@ -50,7 +50,7 @@ spec:
 
     - repoURL: https://stac-manager.ds.io/
       chart: stac-manager
-      targetRevision: 1.0.2
+      targetRevision: 1.0.3
       helm:
         releaseName: eoapi-stac-manager
         valueFiles:

@@ -19,8 +19,8 @@ spec:
       helm:
         releaseName: workspace-dependencies-educates
         values: |
-          clusterIngressDomain: ngx.develop.eoepca.org
-          clusterIngressClass: nginx
+          clusterIngressDomain: lab.develop.eoepca.org
+          clusterIngressClass: apisix
           tlsCertificateRef:
             name: workspace-tls
             namespace: workspace

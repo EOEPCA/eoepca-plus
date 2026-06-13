@@ -2,12 +2,11 @@
 resources:
   - app-workspace-api.yaml
   - app-workspace-dependencies.yaml
-  - app-workspace-oauth2-proxy.yaml
   - app-workspace-pipeline.yaml
+  - kyverno-rbac-workspace-apisix.yaml
   - kyverno-annotate-educates-ingresses.yaml
   - route.yaml
   - iam.yaml
   - secret.yaml
-  - secret-workspace-oauth2-proxy-cookie.yaml
   - certificate.yaml
   - job.yaml

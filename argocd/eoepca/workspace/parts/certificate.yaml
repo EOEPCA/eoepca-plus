@@ -5,8 +5,7 @@ metadata:
   namespace: workspace
 spec:
   dnsNames:
-  - ngx.develop.eoepca.org
-  - '*.ngx.develop.eoepca.org'
+  - '*.lab.develop.eoepca.org'
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-dns-prod

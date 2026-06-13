@@ -29,8 +29,8 @@ spec:
             iam:
               realm: eoepca
             ingress:
-              class: nginx
-              domain: ngx.develop.eoepca.org
+              class: apisix
+              domain: lab.develop.eoepca.org
               secret: wildcard-tls
             storage:
               endpoint: https://minio.develop.eoepca.org

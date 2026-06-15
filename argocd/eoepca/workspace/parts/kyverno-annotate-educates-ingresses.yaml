@@ -59,6 +59,11 @@ spec:
                   client_secret: ""
                   session:
                     secret: "{{ random('[A-Za-z0-9]{32}') }}"
+              - name: opa
+                enable: true
+                config:
+                  host: http://iam-opa.iam:8181
+                  policy: eoepca/workspace/wsui
     - name: add-apisix-oidc-plugin-config-for-workspace-ingresses
       match:
         any:

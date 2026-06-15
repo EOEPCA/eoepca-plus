@@ -50,8 +50,8 @@ spec:
                   use_jwks: true
                   bearer_only: false
                   scope: openid profile email roles
-                  set_access_token_header: false
-                  access_token_in_authorization_header: false
+                  set_access_token_header: true
+                  access_token_in_authorization_header: true
                   set_id_token_header: false
                   set_userinfo_header: false
                   set_refresh_token_header: false

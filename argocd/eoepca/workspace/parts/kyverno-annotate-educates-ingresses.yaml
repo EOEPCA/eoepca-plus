@@ -49,6 +49,7 @@ spec:
                   discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
                   use_jwks: true
                   bearer_only: false
+                  scope: openid profile email roles
                   set_access_token_header: false
                   access_token_in_authorization_header: false
                   set_id_token_header: false

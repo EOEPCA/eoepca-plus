@@ -90,6 +90,7 @@ spec:
           metadata:
             annotations:
               +(k8s.apisix.apache.org/plugin-config-name): "workspace-oidc-{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}"
+              +(k8s.apisix.apache.org/enable-websocket): "true"
     - name: set-apisix-class-for-workspace-registry-ingresses
       match:
         any:

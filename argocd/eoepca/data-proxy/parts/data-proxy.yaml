@@ -9,7 +9,7 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - chart: eodag-data-proxy
+    - chart: eodag-data-proxy-chart
       repoURL: 643vlk6z.gra7.container-registry.ovh.net/space_applications
       targetRevision: 0.1.0
       helm:

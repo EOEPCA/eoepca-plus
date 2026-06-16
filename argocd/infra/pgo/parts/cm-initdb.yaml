@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: initdb
   namespace: infra
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
 data:
   initdb.sql: |
     \c eoapi

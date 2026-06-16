@@ -20,7 +20,7 @@ spec:
 
           image:
             repository: 643vlk6z.gra7.container-registry.ovh.net/space_applications/eodag-data-proxy
-            tag: main
+            tag: "0.1"
 
           proxyEnv:
             eodagUrl: ""
@@ -38,7 +38,7 @@ spec:
           controlPlane:
             image:
               repository: 643vlk6z.gra7.container-registry.ovh.net/space_applications/eodag-control-plane
-              tag: "main"
+              tag: "0.1"
 
   destination:
     name: in-cluster

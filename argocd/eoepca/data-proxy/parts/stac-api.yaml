@@ -18,6 +18,8 @@ spec:
           extraEnvVars:
             - name: DOWNLOAD_BASE_URL
               value: http://release-name-eodag-data-proxy-proxy:8880/
+          image:
+            tag: main
   destination:
     name: in-cluster
     namespace: data-access

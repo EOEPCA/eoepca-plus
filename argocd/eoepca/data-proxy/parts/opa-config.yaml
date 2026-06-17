@@ -19,4 +19,4 @@ data:
           max_delay_seconds: 60
 kind: ConfigMap
 metadata:
-  name: querier-opa
+  name: opa-config

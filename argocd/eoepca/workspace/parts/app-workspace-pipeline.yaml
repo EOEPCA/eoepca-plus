@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-pipeline
-      targetRevision: 2.1.0
+      targetRevision: 2.1.2
       helm:
         releaseName: workspace-pipeline
         values: |
@@ -29,8 +29,8 @@ spec:
             iam:
               realm: eoepca
             ingress:
-              class: nginx
-              domain: ngx.develop.eoepca.org
+              class: apisix
+              domain: lab.develop.eoepca.org
               secret: wildcard-tls
             storage:
               endpoint: https://minio.develop.eoepca.org

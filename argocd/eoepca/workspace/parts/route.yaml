@@ -71,6 +71,7 @@ spec:
             bearer_only: false
             set_access_token_header: true
             access_token_in_authorization_header: true
+            scope: openid profile email roles
             set_id_token_header: false
             set_userinfo_header: false
             client_id: workspace-api

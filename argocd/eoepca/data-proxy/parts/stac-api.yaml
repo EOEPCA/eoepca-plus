@@ -11,11 +11,15 @@ spec:
   sources:
     - repoURL: https://cs-si.github.io/stac-fastapi-eodag
       targetRevision: 0.3.0
+      chart: stac-fastapi-eodag
       helm:
         releaseName: eodag-stac-api
         values: |
           extraEnvVars:
-            DOWNLOAD_BASE_URL: http://release-name-eodag-data-proxy-proxy:8880/
+            - name: DOWNLOAD_BASE_URL
+              value: http://release-name-eodag-data-proxy-proxy:8880/
+          image:
+            tag: main
   destination:
     name: in-cluster
     namespace: data-access

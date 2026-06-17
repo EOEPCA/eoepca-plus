@@ -1,8 +1,10 @@
-apiVersion: postgres-operator.crunchydata.com/v1beta1
+apiVersion: postgres-operator.crunchydata.com/v1
 kind: PostgresCluster
 metadata:
   name: default
   namespace: infra
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
 spec:
   databaseInitSQL:
     key: initdb.sql

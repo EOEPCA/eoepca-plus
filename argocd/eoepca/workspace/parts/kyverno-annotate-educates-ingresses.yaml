@@ -8,7 +8,7 @@ spec:
   admission: true
   background: false
   rules:
-    - name: add-oauth2-proxy-annotations-for-workspace-ingresses
+    - name: generate-apisix-oidc-plugin-config-for-workspace-ingresses
       match:
         any:
           - resources:
@@ -22,8 +22,64 @@ spec:
         all:
           - key: "{{ request.object.spec.ingressClassName || '' }}"
             operator: Equals
-            value: nginx
-          - key: "{{ (request.object.spec.rules || [])[?host != null && ends_with(host, '.ngx.develop.eoepca.org')] | length(@) }}"
+            value: apisix
+          - key: "{{ (request.object.spec.rules || [])[?host != null && ends_with(host, '.lab.develop.eoepca.org')] | length(@) }}"
+            operator: GreaterThan
+            value: 0
+          - key: "{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" || '' }}"
+            operator: NotEquals
+            value: ""
+      generate:
+        apiVersion: apisix.apache.org/v2
+        kind: ApisixPluginConfig
+        name: "workspace-oidc-{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}"
+        namespace: "{{ request.namespace }}"
+        synchronize: false
+        data:
+          metadata:
+            labels:
+              training.educates.dev/application: workshop
+              training.educates.dev/component: session
+              training.educates.dev/environment.name: "{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}"
+          spec:
+            plugins:
+              - name: openid-connect
+                enable: true
+                config:
+                  discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+                  use_jwks: true
+                  bearer_only: false
+                  scope: openid profile email roles
+                  set_access_token_header: true
+                  access_token_in_authorization_header: true
+                  set_id_token_header: false
+                  set_userinfo_header: false
+                  set_refresh_token_header: false
+                  client_id: "{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}"
+                  client_secret: ""
+                  session:
+                    secret: "{{ random('[A-Za-z0-9]{32}') }}"
+              - name: opa
+                enable: true
+                config:
+                  host: http://iam-opa.iam:8181
+                  policy: eoepca/workspace/wsui
+    - name: add-apisix-oidc-plugin-config-for-workspace-ingresses
+      match:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+              selector:
+                matchLabels:
+                  training.educates.dev/application: workshop
+                  training.educates.dev/component: session
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.ingressClassName || '' }}"
+            operator: Equals
+            value: apisix
+          - key: "{{ (request.object.spec.rules || [])[?host != null && ends_with(host, '.lab.develop.eoepca.org')] | length(@) }}"
             operator: GreaterThan
             value: 0
           - key: "{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" || '' }}"
@@ -33,12 +89,27 @@ spec:
         patchStrategicMerge:
           metadata:
             annotations:
-              nginx.ingress.kubernetes.io/auth-response-headers: Authorization,X-Auth-Request-User,X-Auth-Request-Email,X-Auth-Request-Groups
-              nginx.ingress.kubernetes.io/auth-signin: https://auth.ngx.develop.eoepca.org/oauth2/start?rd=https://$host$request_uri
-              nginx.ingress.kubernetes.io/auth-url: "http://workspace-oauth2-proxy.workspace.svc.cluster.local/oauth2/auth?allowed_groups=role:{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}:ws_access,role:{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}:ws_admin"
-              nginx.ingress.kubernetes.io/configuration-snippet: |
-                auth_request_set $auth_cookie $upstream_http_set_cookie;
-                add_header Set-Cookie $auth_cookie;
-              nginx.ingress.kubernetes.io/proxy-buffer-size: 16k
-              nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
-              nginx.ingress.kubernetes.io/proxy-busy-buffers-size: 32k
+              +(k8s.apisix.apache.org/plugin-config-name): "workspace-oidc-{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}"
+              +(k8s.apisix.apache.org/enable-websocket): "true"
+    - name: set-apisix-class-for-workspace-registry-ingresses
+      match:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+              selector:
+                matchLabels:
+                  training.educates.dev/application: registry
+                  training.educates.dev/component: session
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.ingressClassName || '' }}"
+            operator: NotEquals
+            value: apisix
+          - key: "{{ (request.object.spec.rules || [])[?host != null && ends_with(host, '.lab.develop.eoepca.org')] | length(@) }}"
+            operator: GreaterThan
+            value: 0
+      mutate:
+        patchStrategicMerge:
+          spec:
+            ingressClassName: apisix

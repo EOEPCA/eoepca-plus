@@ -22,6 +22,7 @@ pgstacBootstrap:
     pgstacSettings:
       use_queue: "true"
       update_collection_extent: "false"
+      context: "off"
     envVars:
       KEEP_ALIVE: "false"
   queueProcessor:
@@ -38,6 +39,10 @@ raster:
     envVars:
       AWS_S3_ENDPOINT: "eodata.cloudferro.com"
       AWS_VIRTUAL_HOSTING: "FALSE"
+      # 1×1×1×5 = 5 conn
+      WEB_CONCURRENCY: "1"
+      DB_MIN_CONN_SIZE: "1"
+      DB_MAX_CONN_SIZE: "5"
     envSecrets:
       - data-access
     resources:
@@ -50,6 +55,11 @@ multidim:
     path: "/multidim"
   overrideRootPath: "/"
   settings:
+    envVars:
+      # 1×1×1×5 = 5 conn
+      WEB_CONCURRENCY: "1"
+      DB_MIN_CONN_SIZE: "1"
+      DB_MAX_CONN_SIZE: "5"
     envSecrets:
           - data-access
     resources:
@@ -58,11 +68,22 @@ multidim:
 
 stac:
   enabled: true
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    type: "cpu"
+    targets:
+      cpu: 50
   settings:
     envVars:
       ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
       STAC_FASTAPI_TITLE: "EOEPCA STAC API"
       STAC_FASTAPI_DESCRIPTION: "A STAC Catalog for the Earth Observation Exploitation Platform Common Architecture (EOEPCA)"
+      # replicas×2 workers×2 pools×3 = 24–60 conn (read+write pools when transactions enabled)
+      WEB_CONCURRENCY: "2"
+      DB_MIN_CONN_SIZE: "1"
+      DB_MAX_CONN_SIZE: "3"
     resources:
       limits:
         cpu: "1280m"
@@ -79,9 +100,13 @@ vector:
       requests:
         memory: "1024Mi"
     envVars:
-      # needs to on so we can call /refresh for integration tests
+      # needs to be on so we can call /refresh for integration tests
       TIPG_DEBUG: "True"
       TIPG_CATALOG_TTL: "30"
+      # 1×1×1×5 = 5 conn
+      WEB_CONCURRENCY: "1"
+      DB_MIN_CONN_SIZE: "1"
+      DB_MAX_CONN_SIZE: "5"
 
 eoapi-notifier:
   enabled: true

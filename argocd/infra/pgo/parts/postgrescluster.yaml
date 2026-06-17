@@ -9,9 +9,18 @@ spec:
   databaseInitSQL:
     key: initdb.sql
     name: initdb
+
   instances:
   - name: default
     replicas: 1
+    # Sized for eo2a.3xlarge workers (16 vCPU / 64 GiB); re-derive memory params below if these change.
+    resources:
+      requests:
+        cpu: "2"
+        memory: "16Gi"
+      limits:
+        cpu: "8"
+        memory: "32Gi"
     dataVolumeClaimSpec:
       accessModes:
       - ReadWriteMany
@@ -19,7 +28,9 @@ spec:
         requests:
           storage: 1Gi
       storageClassName: managed-nfs-storage-retain
+
   backups: {}
+
   patroni:
     dynamicConfiguration:
       postgresql:
@@ -30,20 +41,29 @@ spec:
     leaderLeaseDurationSeconds: 30
     port: 8008
     syncPeriodSeconds: 10
+
   config:
     parameters:
-      shared_buffers: 12GB
-      work_mem: 125MB
-      effective_cache_size: 20GB
-      maintenance_work_mem: 3GB
-      random_page_cost: "1.1"
-      temp_buffers: 768MB
+      # Peak ~96 at max STAC scale (60) + other eoAPI services (~36); alert at 80 %.
+      max_connections: "100"
+
+      shared_buffers: 8GB          # 25 % of 32 GiB pod limit
+      effective_cache_size: 24GB   # planner hint: 75 % of pod limit
+      work_mem: 64MB
+      temp_buffers: 256MB
+      maintenance_work_mem: 2GB    # × autovacuum_max_workers 3 = 6 GiB peak
+      autovacuum_max_workers: "3"
+      max_locks_per_transaction: "128"  # PG default (64) is too low for pgSTAC/PostGIS
+      random_page_cost: "1.1"      # NFS-backed SSD
+
   port: 5432
   postGISVersion: "3.5"
   postgresVersion: 17
+
   monitoring:
     pgmonitor:
       exporter: {}
+
   users:
   - databases:
     - eoapi

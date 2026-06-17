@@ -42,4 +42,4 @@ spec:
 
   destination:
     name: in-cluster
-    namespace: data-access
+    namespace: data-proxy

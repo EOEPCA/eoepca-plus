@@ -1,0 +1,22 @@
+apiVersion: v1
+data:
+  config.yaml: |-
+    services:
+      oci-gitlab:
+        url: https://registry.gitlab.si.c-s.fr
+        type: oci
+        credentials:
+          bearer:
+            scheme: "Basic"
+            token: "${GITLAB_TOKEN}"
+
+    bundles:
+      mybundle:
+        service: oci-gitlab
+        resource: registry.gitlab.si.c-s.fr/dedl/data/opa-bundle:main
+        polling:
+          min_delay_seconds: 30
+          max_delay_seconds: 60
+kind: ConfigMap
+metadata:
+  name: querier-opa

@@ -2,6 +2,7 @@ resources:
   - data-proxy.yaml
   - stac-api.yaml
   - ss-cs-container-pull.yaml
+  - opa-config.yaml
 
 configMapGenerator:
   - name: eodag-config

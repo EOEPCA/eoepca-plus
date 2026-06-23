@@ -128,7 +128,6 @@ eoapi-notifier:
       - type: cloudevents
         config:
           source: /eoapi/pgstac
-          event_type: org.eoapi.stac.item
           destination:
             ref:
               apiVersion: eventing.knative.dev/v1

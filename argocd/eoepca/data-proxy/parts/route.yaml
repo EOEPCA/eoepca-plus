@@ -3,48 +3,26 @@ kind: ApisixRoute
 metadata:
   name: data-proxy
   namespace: data-proxy
-  # annotations:
-  #   argocd.argoproj.io/sync-options: skip
 spec:
   ingressClassName: apisix
   http:
-  - name: stac-redirect
-    websocket: true
-    backends:
-    - serviceName: stac-fastapi-eodag
-      servicePort: 8080
-    match:
-      hosts:
-      - eodag-api.develop.eoepca.org
-    plugins:
-    - name: redirect
-      enable: true
-  - name: stac-route
-    websocket: true
-    backends:
-    - serviceName: stac-fastapi-eodag
-      servicePort: 8080
-    match:
-      hosts:
-      - eodag-api.develop.eoepca.org
-    plugins:
-    - name: cors
-      enable: true
+    - name: stac-route
+      websocket: true
+      backends:
+        - serviceName: stac-fastapi-eodag
+          servicePort: 8080
+      match:
+        hosts:
+          - eodag-api.develop.eoepca.org
+        paths:
+          - /
 
-  - name: proxy-redirect
-    backends:
-    - serviceName: eodag-data-proxy
-      servicePort: 8880
-    match:
-      hosts:
-      - eodag-proxy.develop.eoepca.org
-    plugins:
-    - name: redirect
-      enable: true
-  - name: proxy-route
-    backends:
-    - serviceName: eodag-data-proxy
-      servicePort: 8880
-    match:
-      hosts:
-      - eodag-proxy.develop.eoepca.org
+    - name: proxy-route
+      backends:
+        - serviceName: eodag-data-proxy
+          servicePort: 8880
+      match:
+        hosts:
+          - eodag-proxy.develop.eoepca.org
+        paths:
+          - /

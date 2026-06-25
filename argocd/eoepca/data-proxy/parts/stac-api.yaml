@@ -22,4 +22,4 @@ spec:
             tag: main
   destination:
     name: in-cluster
-    namespace: data-access
+    namespace: data-proxy

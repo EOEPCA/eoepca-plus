@@ -11,6 +11,13 @@ spec:
       backends:
         - serviceName: eodag-stac-api-stac-fastapi-eodag
           servicePort: 8080
+      plugins:
+        - name: limit-count
+          enable: true
+          config:
+            count: 2
+            time_window: 10
+            rejected_code: 503
       match:
         hosts:
           - eodag-api.develop.eoepca.org
@@ -21,6 +28,13 @@ spec:
       backends:
         - serviceName: eodag-data-proxy-eodag-data-proxy-chart-proxy
           servicePort: 8880
+      plugins:
+        - name: limit-count
+          enable: true
+          config:
+            count: 2
+            time_window: 10
+            rejected_code: 503
       match:
         hosts:
           - eodag-proxy.develop.eoepca.org

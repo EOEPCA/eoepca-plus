@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: https://github.com/csgroup-oss/sharinghub.git
     path: deploy/helm/sharinghub
-    targetRevision: "0.4.1"
+    targetRevision: "0.4.2"
     helm:
       releaseName: sharinghub
       valuesObject:

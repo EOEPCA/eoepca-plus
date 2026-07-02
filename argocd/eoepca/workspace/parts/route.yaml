@@ -17,7 +17,7 @@ spec:
           - "/ui*"
       backends:
         - serviceName: workspace-api
-          servicePort: 8080
+          servicePort: 8181
       plugins: []
     - name: workspace-api-debug
       match:
@@ -27,7 +27,7 @@ spec:
           - /debug*
       backends:
         - serviceName: workspace-api
-          servicePort: 8080
+          servicePort: 8181
       plugins:
         - name: openid-connect
           enable: true
@@ -52,7 +52,7 @@ spec:
           - /openapi.json*
       backends:
         - serviceName: workspace-api
-          servicePort: 8080
+          servicePort: 8181
     - name: workspace-api-auth
       match:
         hosts:
@@ -61,7 +61,7 @@ spec:
           - /*
       backends:
         - serviceName: workspace-api
-          servicePort: 8080
+          servicePort: 8181
       plugins:
         - name: openid-connect
           enable: true

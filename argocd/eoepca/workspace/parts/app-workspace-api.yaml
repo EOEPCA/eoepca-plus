@@ -16,8 +16,10 @@ spec:
       releaseName: workspace-api
       valuesObject:
         fullnameOverride: workspace-api
+        service:
+          port: 8181
         image:
-          tag: 2.2.0-rc.1
+          tag: 2.2.1
           pullPolicy: Always
         ingress:
           enabled: false        

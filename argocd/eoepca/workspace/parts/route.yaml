@@ -8,7 +8,6 @@ spec:
   ingressClassName: apisix
   http:
     - name: workspace-api-root-redirect
-      priority: 10
       match:
         hosts:
           - workspace-api.develop.eoepca.org
@@ -59,7 +58,6 @@ spec:
             client_secret: ""
             session:
               secret: "17Y56d3w4tnicLSCljwwbP0P"
-
     - name: workspace-api-docs
       match:
         hosts:

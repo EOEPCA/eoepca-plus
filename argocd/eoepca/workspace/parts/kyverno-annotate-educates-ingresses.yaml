@@ -56,9 +56,9 @@ spec:
                   set_userinfo_header: false
                   set_refresh_token_header: false
                   client_id: "{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}"
-                  client_secret: ""
                   session:
                     secret: "{{ random('[A-Za-z0-9]{32}') }}"
+                secretRef: "{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}-oauth2-client"
               - name: opa
                 enable: true
                 config:

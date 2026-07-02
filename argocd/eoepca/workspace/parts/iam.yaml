@@ -36,3 +36,24 @@ spec:
       name: workspace-api
       policy:
         resolution: Required
+---
+apiVersion: client.keycloak.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: workspace-api-audience-mapper
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    clientIdRef:
+      name: workspace-api
+      policy:
+        resolution: Required
+    realmId: eoepca
+    protocol: openid-connect
+    protocolMapper: oidc-audience-mapper
+    name: workspace-api-audience
+    config:
+      included.client.audience: workspace-api
+      access.token.claim: "true"
+      id.token.claim: "false"

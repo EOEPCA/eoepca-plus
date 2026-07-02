@@ -7,6 +7,22 @@ metadata:
 spec:
   ingressClassName: apisix
   http:
+    - name: workspace-api-root-redirect
+      priority: 10
+      match:
+        hosts:
+          - workspace-api.develop.eoepca.org
+        paths:
+          - /
+      plugins:
+        - name: redirect
+          enable: true
+          config:
+            uri: /workspaces
+            ret_code: 302
+      backends:
+        - serviceName: workspace-api
+          servicePort: 8181
     - name: workspace-api-no-auth
       match:
         hosts:

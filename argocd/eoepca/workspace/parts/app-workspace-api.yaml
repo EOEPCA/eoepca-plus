@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://eoepca.github.io/helm-charts
     chart: rm-workspace-api
-    targetRevision: 2.2.0
+    targetRevision: 2.2.1
     helm:
       releaseName: workspace-api
       valuesObject:

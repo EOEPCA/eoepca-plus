@@ -43,6 +43,7 @@ spec:
             client_secret: ""
             session:
               secret: "17Y56d3w4tnicLSCljwwbP0P"
+
     - name: workspace-api-docs
       match:
         hosts:
@@ -78,8 +79,3 @@ spec:
             client_secret: ""
             session:
               secret: "17Y56d3w4tnicLSCljwwbP0P"
-        - name: opa
-          enable: true
-          config:
-            host: http://iam-opa.iam:8181
-            policy: eoepca/workspace/wsapi

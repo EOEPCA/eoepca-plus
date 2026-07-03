@@ -55,10 +55,15 @@ spec:
                   set_id_token_header: false
                   set_userinfo_header: false
                   set_refresh_token_header: false
-                  client_id: "{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}"
+                  client_id: workspace-api
+                  client_secret: ""
                   session:
                     secret: "{{ random('[A-Za-z0-9]{32}') }}"
-                secretRef: "{{ request.object.metadata.labels.\"training.educates.dev/environment.name\" }}-oauth2-client"
+              - name: opa
+                enable: true
+                config:
+                  host: http://iam-opa.iam:8181
+                  policy: eoepca/workspace/wsui
     - name: add-apisix-oidc-plugin-config-for-workspace-ingresses
       match:
         any:

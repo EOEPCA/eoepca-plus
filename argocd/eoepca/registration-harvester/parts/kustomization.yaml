@@ -6,3 +6,33 @@ resources:
   - app-registration-harvester-worker-landsat.yaml
   - app-registration-harvester-worker-sentinel.yaml
   - app-registration-harvester-worker-stac.yaml
+
+patches:
+  - target: {group: bitnami.com, kind: SealedSecret}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "-10"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^registration-harvester-api-core$
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "0"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^registration-harvester-worker-(landsat|sentinel|stac)$
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "10"}
+  - target: {group: ^(apisix.apache.org|cert-manager.io)$}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "20"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: tmp-dd-to-rke2-merge
-    path: argocd/operations/monitoring/alloy
+    path: argocd/eoepca/operations/parts/monitoring/alloy
   destination:
     name: in-cluster
     namespace: operations

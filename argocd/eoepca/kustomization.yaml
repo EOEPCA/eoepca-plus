@@ -1,42 +1,157 @@
 
 resources:
+  - namespaces.yaml
   - resource-catalogue
   - registration-api
   - data-access
   - datacube-access
-  # - zoo-dru
-  # - zoo-dru-wes
+  - zoo-dru
+  - zoo-dru-wes
   - zoo-dru-std
-  # - zoo-dru-keda
+  - zoo-dru-keda
   - workspace
-  # - mlops
+  - mlops
   - application-quality
-  # - portal-v1x
+  - portal-v1x
   - registration-harvester
   - iam
   - application-hub
-  # - operations
-  # - resource-health
-  # - openeo-geotrellis
-  # - openeo-web-editor
-  # - openeofed
-  # - openeo-argoworkflows
-  # - notification-automation
-  # - identity-service
+  - operations
+  - resource-health
+  - openeo-geotrellis
+  - openeo-web-editor
+  - openeofed
+  - openeo-argoworkflows
+  - notification-automation
+  - identity-service
 
 
 patches:
+  # IAM is the first EOEPCA service because most BBs create clients/users via
+  # its Crossplane provider. Later waves contain consumers of those clients.
+  - target:
+      version: v1
+      kind: Namespace
+      name: ^(application-quality-sonarqube|resource-health)$
+    patch: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: eoepca-precreated-namespaces
+        annotations:
+          argocd.argoproj.io/sync-wave: "28"
   - target:
       kind: Application
+      name: ^iam$
     patch: |
-      - op: add
-        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
-        value: "0"
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: iam
+        annotations:
+          argocd.argoproj.io/sync-wave: "10"
+  - target:
+      kind: Application
+      name: ^(data-access|datacube-access|identity-service|notification-automation|operations|resource-catalogue)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-foundations
+        annotations:
+          argocd.argoproj.io/sync-wave: "20"
+  - target:
+      kind: Application
+      name: ^(application-hub|application-quality|application-quality-sonarqube-db|mlops|openeo-argoworkflows|openeo-geotrellis|registration-api|resource-health|workspace)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "30"
+  - target:
+      kind: Application
+      name: ^datacube-access$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: datacube-access
+        annotations:
+          # The configured backend is the Data Access STAC endpoint.
+          argocd.argoproj.io/sync-wave: "21"
+  - target:
+      kind: Application
+      name: ^application-quality-sonarqube$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: application-quality-sonarqube
+        annotations:
+          # SonarQube consumes the database Application from wave 30.
+          argocd.argoproj.io/sync-wave: "31"
+  - target:
+      kind: Application
+      name: ^resource-health$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: resource-health
+        annotations:
+          argocd.argoproj.io/sync-wave: "31"
+  - target:
+      kind: Application
+      name: ^(openeofed|registration-harvester|zoo-project-dru|zoo-project-dru-keda|zoo-project-dru-std|zoo-project-dru-wes)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-dependent-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "40"
+  - target:
+      kind: Application
+      name: ^(openeo-web-editor|portal-v1x)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-frontends
+        annotations:
+          # User-facing frontends come up after their APIs/backends.
+          argocd.argoproj.io/sync-wave: "50"
+  - target:
+      group: bitnami.com
+      kind: SealedSecret
+    patch: |
+      apiVersion: bitnami.com/v1alpha1
+      kind: SealedSecret
+      metadata:
+        name: eoepca-sealed-secrets
+        annotations:
+          argocd.argoproj.io/sync-wave: "29"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: user.keycloak.m.crossplane.io
+      kind: User
+    patch: |
+      apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+      kind: User
+      metadata:
+        name: eoepca-keycloak-users
+        annotations:
+          argocd.argoproj.io/sync-wave: "30"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   - target:
       group: apisix.apache.org
     patch: |
-      - op: add
-        path: /metadata/annotations
-        value:
-          argocd.argoproj.io/sync-wave: "2"
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixRoute
+      metadata:
+        name: eoepca-routes
+        annotations:
+          argocd.argoproj.io/sync-wave: "32"
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

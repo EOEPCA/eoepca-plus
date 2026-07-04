@@ -9,9 +9,11 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
-    repoURL: https://kubernetes.github.io/dashboard/
-    chart: kubernetes-dashboard
-    targetRevision: 7.10.1
+    # The archived project's GitHub Pages Helm index now returns 404. The
+    # tagged chart source remains available from the official repository.
+    repoURL: https://github.com/kubernetes/dashboard.git
+    targetRevision: kubernetes-dashboard-7.10.1
+    path: charts/kubernetes-dashboard
     helm:
       releaseName: workspace-admin
       valuesObject:

@@ -6,3 +6,16 @@ resources:
   - gateway-eoepca-public.yaml
   - route-apisix.yaml
   - route-nginx.yaml
+
+patches:
+  # Argo validates all sync tasks before wave 0 creates the Envoy Gateway
+  # CRDs. Defer discovery validation while retaining each resource's own wave.
+  - target:
+      group: ^(gateway.envoyproxy.io|gateway.networking.k8s.io)$
+    patch: |-
+      apiVersion: gateway.networking.k8s.io/v1
+      kind: Gateway
+      metadata:
+        name: gateway-resources
+        annotations:
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

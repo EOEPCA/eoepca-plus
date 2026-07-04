@@ -3,3 +3,21 @@ resources:
   - app-minio-server.yaml
   - ingress-plugin.yaml
   - ss-minio-auth.yaml
+
+patches:
+  - target:
+      group: bitnami.com
+      kind: SealedSecret
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      group: argoproj.io
+      kind: Application
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "0"

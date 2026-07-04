@@ -5,3 +5,40 @@ resources:
   - clusterissuer-dns01.yaml
   - clusterissuer-http01-apisix.yaml
   - ss-dns-api-token.yaml
+
+patches:
+  - target:
+      group: bitnami.com
+      kind: SealedSecret
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "-20"
+  - target:
+      group: cert-manager.io
+      kind: Issuer
+      name: ^eoepca-selfsigned-issuer$
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      group: cert-manager.io
+      kind: Certificate
+      name: ^eoepca-ca$
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "0"
+  - target:
+      group: cert-manager.io
+      kind: ClusterIssuer
+      name: ^eoepca-ca-clusterissuer$
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "10"

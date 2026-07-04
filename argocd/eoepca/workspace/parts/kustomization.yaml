@@ -8,3 +8,64 @@ resources:
   - iam.yaml
   - secret.yaml
   - certificate.yaml
+
+patches:
+  - target:
+      version: v1
+      kind: Secret
+    patch: |-
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: workspace-registry-secret
+        annotations:
+          argocd.argoproj.io/sync-wave: "-20"
+  - target:
+      group: .*keycloak.m.crossplane.io
+    patch: |-
+      apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+      kind: Client
+      metadata:
+        name: workspace-iam
+        annotations:
+          argocd.argoproj.io/sync-wave: "-10"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^workspace-dependencies$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: workspace-dependencies
+        annotations: {argocd.argoproj.io/sync-wave: "0"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^workspace-(admin|api)$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: workspace-services
+        annotations: {argocd.argoproj.io/sync-wave: "10"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^workspace-pipeline$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: workspace-pipeline
+        annotations: {argocd.argoproj.io/sync-wave: "20"}
+  - target: {group: ^(apisix.apache.org|cert-manager.io)$}
+    patch: |-
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixRoute
+      metadata:
+        name: workspace-routes
+        annotations:
+          argocd.argoproj.io/sync-wave: "30"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

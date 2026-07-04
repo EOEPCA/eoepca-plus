@@ -1,3 +1,16 @@
 
 resources:
   - app-datacube-access-core.yaml
+
+patches:
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^datacube-access-core$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: datacube-access-core
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"

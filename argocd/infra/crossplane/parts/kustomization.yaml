@@ -1,4 +1,5 @@
 resources:
+  - namespace-workspace.yaml
   - app-crossplane-core.yaml
   - mrap.yaml
   - deploymentRuntimeConfigs.yaml
@@ -6,3 +7,16 @@ resources:
   - providerConfigs.yaml
   - functions.yaml
   - rbac.yaml
+
+patches:
+  - target:
+      version: v1
+      kind: Namespace
+      name: ^workspace$
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: workspace
+        annotations:
+          argocd.argoproj.io/sync-wave: "-20"

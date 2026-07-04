@@ -1,4 +1,28 @@
 
 resources:
+  - namespace-trivy-system.yaml
   - app-trivy-operator.yaml
   - extra-trivy-config.yaml
+
+patches:
+  - target: {version: v1, kind: Namespace, name: ^trivy-system$}
+    patch: |-
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: trivy-system
+        annotations: {argocd.argoproj.io/sync-wave: "-20"}
+  - target: {version: v1, kind: ConfigMap}
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: extra-trivy-config
+        annotations: {argocd.argoproj.io/sync-wave: "-10"}
+  - target: {group: argoproj.io, kind: Application}
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: trivy-operator
+        annotations: {argocd.argoproj.io/sync-wave: "0"}

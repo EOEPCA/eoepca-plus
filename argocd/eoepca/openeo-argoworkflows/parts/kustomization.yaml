@@ -4,3 +4,17 @@ kind: Kustomization
 resources:
   - helm-openeo-argoworkflows.yaml
   - ingress-openeo.yaml
+
+patches:
+  - target: {group: argoproj.io, kind: Application}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "0"}
+  - target: {group: ^(apisix.apache.org|cert-manager.io)$}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "10"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

@@ -14,17 +14,75 @@ resources:
   - trivy
 
 patches:
+  # Root application waves express dependencies between independently synced
+  # Applications. File order in this kustomization does not control sync order.
   - target:
       kind: Application
+      name: ^sealed-secrets$
     patch: |
-      - op: add
-        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
-        value: "0"
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: sealed-secrets
+        annotations:
+          argocd.argoproj.io/sync-wave: "-50"
+  - target:
+      kind: Application
+      name: ^cert-manager$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: cert-manager
+        annotations:
+          argocd.argoproj.io/sync-wave: "-40"
+  - target:
+      kind: Application
+      name: ^(crossplane|eso-core|knative-operator|pgo|strimzi-kafka-operator|trivy)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: infrastructure-operators
+        annotations:
+          argocd.argoproj.io/sync-wave: "-20"
+  - target:
+      kind: Application
+      name: ^(apisix|eso)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: infrastructure-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      kind: Application
+      name: ^gateway$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: gateway
+        annotations:
+          argocd.argoproj.io/sync-wave: "-5"
+  - target:
+      kind: Application
+      name: ^(harbor|minio)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: storage-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"
   - target:
       group: apisix.apache.org
     patch: |
-      - op: add
-        path: /metadata/annotations
-        value:
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixRoute
+      metadata:
+        name: apisix-resources
+        annotations:
           argocd.argoproj.io/sync-wave: "2"
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

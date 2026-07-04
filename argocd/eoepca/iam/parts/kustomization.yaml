@@ -15,3 +15,54 @@ resources:
   - ss-opa-route.yaml
   - ss-keycloak-admin.yaml
   - ss-eoepca-realm.yaml
+
+patches:
+  - target:
+      kind: Namespace
+    patch: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: iam-management
+        annotations:
+          argocd.argoproj.io/sync-wave: "-20"
+  - target:
+      group: bitnami.com
+      kind: SealedSecret
+    patch: |
+      apiVersion: bitnami.com/v1alpha1
+      kind: SealedSecret
+      metadata:
+        name: iam-secrets
+        annotations:
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      group: argoproj.io
+      kind: Application
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: iam-core
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"
+  - target:
+      group: .*keycloak.m.crossplane.io
+    patch: |
+      apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+      kind: User
+      metadata:
+        name: iam-managed-resources
+        annotations:
+          argocd.argoproj.io/sync-wave: "10"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: apisix.apache.org
+    patch: |
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixRoute
+      metadata:
+        name: iam-routes
+        annotations:
+          argocd.argoproj.io/sync-wave: "20"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

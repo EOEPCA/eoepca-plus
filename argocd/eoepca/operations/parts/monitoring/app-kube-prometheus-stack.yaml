@@ -16,6 +16,11 @@ spec:
     targetRevision: 83.1.0
     helm:
       values: |
+        # CRDs are owned by the early monitoring-crds root Application. Keeping
+        # them out of this chart avoids duplicate Argo ownership.
+        crds:
+          enabled: false
+
         grafana:
           enabled: true
           defaultDashboardsEnabled: false

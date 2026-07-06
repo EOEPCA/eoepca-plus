@@ -16,21 +16,55 @@ configs:
       url: https://kubernetes-sigs.github.io/metrics-server/
   cm:
     resource.customizations.health.argoproj.io_Application: |
-      hs = {}
-      hs.status = "Progressing"
-      hs.message = ""
+      hs = { status = "Progressing", message = "Waiting for Application status" }
       if obj.status ~= nil then
-        if obj.status.health ~= nil then
-          hs.status = obj.status.health.status
-          if obj.status.health.message ~= nil then
-            hs.message = obj.status.health.message
-          end
+        local health = obj.status.health ~= nil and obj.status.health.status or "Progressing"
+        local sync = obj.status.sync ~= nil and obj.status.sync.status or "Unknown"
+        hs.message = "health=" .. health .. ", sync=" .. sync
+        if obj.status.health ~= nil and obj.status.health.message ~= nil then
+          hs.message = obj.status.health.message .. " (sync=" .. sync .. ")"
+        end
+        if health == "Degraded" or health == "Missing" then
+          hs.status = health
+        elseif health == "Healthy" and sync == "Synced" then
+          hs.status = "Healthy"
         end
       end
       return hs
     # Unknown custom resources are otherwise treated as healthy immediately.
     # Gate later waves on the controllers' observed Ready/Healthy conditions.
     resource.customizations: |
+      bitnami.com/SealedSecret:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for SealedSecret to unseal" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Synced" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                elseif condition.status == "False" then
+                  hs.status = "Degraded"
+                end
+                return hs
+              end
+            end
+          end
+          return hs
+      postgres-operator.crunchydata.com/PostgresCluster:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for PostgresCluster" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "ProxyAvailable" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                end
+              end
+            end
+          end
+          return hs
       "*.keycloak.m.crossplane.io/*":
         health.lua: |
           hs = { status = "Progressing", message = "Waiting for Crossplane Ready condition" }

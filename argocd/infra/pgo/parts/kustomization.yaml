@@ -3,3 +3,18 @@ resources:
   - postgrescluster.yaml
   - cm-initdb.yaml
   - servicemonitor-postgres-exporter.yaml
+
+patches:
+  # The operator Application must be healthy before Argo discovers or applies
+  # the PostgresCluster CR in wave 10.
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^pgo-core$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: pgo-core
+        annotations:
+          argocd.argoproj.io/sync-wave: "-10"

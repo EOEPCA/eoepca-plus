@@ -1,6 +1,9 @@
 
 resources:
   - app-sealed-secrets.yaml
+  # ServiceMonitor and PrometheusRule CRDs are consumed by early infrastructure
+  # Applications, before the full Operations monitoring stack can start.
+  - monitoring-crds
   - cert-manager
   - harbor
   - minio
@@ -26,6 +29,16 @@ patches:
         name: sealed-secrets
         annotations:
           argocd.argoproj.io/sync-wave: "-50"
+  - target:
+      kind: Application
+      name: ^monitoring-crds$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: monitoring-crds
+        annotations:
+          argocd.argoproj.io/sync-wave: "-45"
   - target:
       kind: Application
       name: ^cert-manager$

@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/apache/apisix-helm-chart.git
     targetRevision: apisix-2.13.0
-    path: charts/apisix/charts/apisix-ingress-controller/crds
+    path: charts/apisix-ingress-controller/crds
     directory:
       include: apisixic-crds.yaml
   destination:

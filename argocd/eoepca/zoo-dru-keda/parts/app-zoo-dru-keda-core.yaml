@@ -10,8 +10,6 @@ metadata:
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
-  dependsOn:
-    - name: kyverno
   sources:
     - repoURL: https://zoo-project.github.io/charts/
       chart: zoo-project-dru

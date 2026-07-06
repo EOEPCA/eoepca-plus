@@ -33,8 +33,7 @@ spec:
       kind: CustomResourceDefinition
       jqPathExpressions:
         - .spec.versions[].additionalPrinterColumns[].priority | select(. == 0)
-    - group: ""
-      kind: Secret
+    - kind: Secret
       name: apisix-ingress-controller-webhook-cert
       namespace: ingress-apisix
       jsonPointers:

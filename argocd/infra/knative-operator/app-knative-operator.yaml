@@ -20,6 +20,19 @@ spec:
   destination:
     name: in-cluster
     namespace: knative-operator
+  # The Kubernetes ClusterRole aggregation controller owns these rule lists.
+  # Ignoring only /rules prevents a permanent post-sync drift loop.
+  ignoreDifferences:
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: knative-eventing-operator-aggregated-stable
+      jsonPointers:
+        - /rules
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: knative-serving-operator-aggregated-stable
+      jsonPointers:
+        - /rules
   syncPolicy:
     automated:
       prune: true

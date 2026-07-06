@@ -54,14 +54,19 @@ configs:
       postgres-operator.crunchydata.com/PostgresCluster:
         health.lua: |
           hs = { status = "Progressing", message = "Waiting for PostgresCluster" }
-          if obj.status ~= nil and obj.status.conditions ~= nil then
-            for _, condition in ipairs(obj.status.conditions) do
-              if condition.type == "ProxyAvailable" then
-                hs.message = condition.message or condition.reason or hs.message
-                if condition.status == "True" then
-                  hs.status = "Healthy"
-                end
+          if obj.status ~= nil and obj.status.instances ~= nil and #obj.status.instances > 0 then
+            local ready = true
+            for _, instance in ipairs(obj.status.instances) do
+              local replicas = instance.replicas or 0
+              local readyReplicas = instance.readyReplicas or 0
+              if replicas == 0 or readyReplicas < replicas then
+                ready = false
+                hs.message = "Waiting for ready PostgreSQL instances"
               end
+            end
+            if ready then
+              hs.status = "Healthy"
+              hs.message = "All PostgreSQL instances are ready"
             end
           end
           return hs

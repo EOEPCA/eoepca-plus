@@ -34,6 +34,20 @@ configs:
     # Unknown custom resources are otherwise treated as healthy immediately.
     # Gate later waves on the controllers' observed Ready/Healthy conditions.
     resource.customizations: |
+      networking.k8s.io/Ingress:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Ingress address" }
+          local annotations = obj.metadata ~= nil and obj.metadata.annotations or nil
+          if annotations ~= nil and annotations["argocd.argoproj.io/ignore-healthcheck"] == "true" then
+            hs.status = "Healthy"
+            hs.message = "Ingress health check explicitly disabled"
+            return hs
+          end
+          if obj.status ~= nil and obj.status.loadBalancer ~= nil and obj.status.loadBalancer.ingress ~= nil and #obj.status.loadBalancer.ingress > 0 then
+            hs.status = "Healthy"
+            hs.message = "Ingress has an address"
+          end
+          return hs
       bitnami.com/SealedSecret:
         health.lua: |
           hs = { status = "Progressing", message = "Waiting for SealedSecret to unseal" }

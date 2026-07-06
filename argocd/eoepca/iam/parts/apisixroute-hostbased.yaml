@@ -9,7 +9,9 @@ metadata:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    argocd.argoproj.io/sync-wave: "2"
+    # iam-core's Crossplane provider authenticates through this route, so the
+    # route must not wait for iam-core itself to become Healthy.
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   ingressClassName: apisix
   http:

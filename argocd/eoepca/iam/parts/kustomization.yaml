@@ -58,11 +58,15 @@ patches:
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   - target:
       group: apisix.apache.org
+      kind: ApisixRoute
+      name: iam-hostbased-route
     patch: |
       apiVersion: apisix.apache.org/v2
       kind: ApisixRoute
       metadata:
-        name: iam-routes
+        name: iam-hostbased-route
         annotations:
-          argocd.argoproj.io/sync-wave: "20"
+          # The provider used by iam-core authenticates through this hostname.
+          # Apply the route alongside iam-core to avoid a health-gating cycle.
+          argocd.argoproj.io/sync-wave: "0"
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

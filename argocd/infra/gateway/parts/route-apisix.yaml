@@ -11,14 +11,23 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   parentRefs:
-    - name: eoepca-public
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: eoepca-public
       namespace: gateway
   rules:
     - backendRefs:
-        - name: apisix-gateway
+        - group: ""
+          kind: Service
+          name: apisix-gateway
           port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
 ---
-apiVersion: gateway.networking.k8s.io/v1alpha2
+apiVersion: gateway.networking.k8s.io/v1alpha3
 kind: TLSRoute
 metadata:
   name: apisix
@@ -27,9 +36,14 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   parentRefs:
-    - name: eoepca-public
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: eoepca-public
       namespace: gateway
   rules:
     - backendRefs:
-        - name: apisix-gateway
+        - group: ""
+          kind: Service
+          name: apisix-gateway
           port: 443
+          weight: 1

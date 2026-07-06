@@ -17,7 +17,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/openeofed/values-openeofed.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: tmp-dd-to-rke2-merge
+      targetRevision: rke2-argocd-sync-wave
       ref: values
   destination:
     name: in-cluster

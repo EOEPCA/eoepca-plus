@@ -1,4 +1,5 @@
 *.pyc
 venv/
 resources/sealed-secrets-keys.yaml
+resources/extra-key.yaml
 gateway-helm/

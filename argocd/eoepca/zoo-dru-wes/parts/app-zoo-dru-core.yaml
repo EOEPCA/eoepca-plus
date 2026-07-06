@@ -18,7 +18,7 @@ spec:
           - $values/argocd/eoepca/zoo-dru-wes/parts/values-zoo.yaml
           - $values/argocd/eoepca/zoo-dru-wes/parts/values-stageout.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: tmp-dd-to-rke2-merge
+      targetRevision: rke2-argocd-sync-wave
       ref: values
 
   destination:

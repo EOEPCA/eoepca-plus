@@ -63,7 +63,7 @@ Supply credentials of an admin user...
 Create `eoepca` argocd project...
 
 ```bash
-argocd proj create eoepca -f https://raw.githubusercontent.com/EOEPCA/eoepca-plus/tmp-dd-to-rke2-merge/argocd/project.yaml
+argocd proj create eoepca -f https://raw.githubusercontent.com/EOEPCA/eoepca-plus/rke2-argocd-sync-wave/argocd/project.yaml
 ```
 
 ## App-of-apps
@@ -79,7 +79,7 @@ argocd app create eoepca \
   --dest-server https://kubernetes.default.svc \
   --repo https://github.com/EOEPCA/eoepca-plus \
   --path argocd \
-  --revision tmp-dd-to-rke2-merge \
+  --revision rke2-argocd-sync-wave \
   --sync-policy automated \
   --auto-prune \
   --self-heal \
@@ -102,7 +102,7 @@ spec:
   source:
     path: argocd
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: tmp-dd-to-rke2-merge
+    targetRevision: rke2-argocd-sync-wave
   syncPolicy:
     automated:
       allowEmpty: true

@@ -9,7 +9,7 @@ The values files are referenced using the approach described in the ArgoCD docum
 * The git repo is defined as a `source` for the values...
   ```
   - repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: tmp-dd-to-rke2-merge
+    targetRevision: rke2-argocd-sync-wave
     ref: values
   ```
 * The values files are then referenced from this source...

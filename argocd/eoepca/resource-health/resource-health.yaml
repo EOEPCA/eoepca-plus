@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/EOEPCA/resource-health'
     path: resource-health-reference-deployment
-    targetRevision: tmp-dd-to-rke2-merge
+    targetRevision: rke2-argocd-sync-wave
     helm:
       valuesObject:
         global:

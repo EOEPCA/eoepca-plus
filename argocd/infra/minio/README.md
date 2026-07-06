@@ -13,7 +13,7 @@ Thus, the root `minio` application references the `parts/` subdirectory that def
 ```yaml
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: tmp-dd-to-rke2-merge
+    targetRevision: rke2-argocd-sync-wave
     path: argocd/infra/minio/parts
 ```
 

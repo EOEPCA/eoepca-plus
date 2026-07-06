@@ -17,7 +17,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/registration-harvester/parts/values/values-flowable.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: tmp-dd-to-rke2-merge
+      targetRevision: rke2-argocd-sync-wave
       ref: values
 
   destination:

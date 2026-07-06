@@ -46,7 +46,7 @@ spec:
 #          opal:
 #            enabled: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: tmp-dd-to-rke2-merge
+      targetRevision: rke2-argocd-sync-wave
       ref: values
 
   destination:

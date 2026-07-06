@@ -18,7 +18,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/openeo-geotrellis/parts/values-openeo-geotrellis-sparkoperator.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: tmp-dd-to-rke2-merge
+      targetRevision: rke2-argocd-sync-wave
       ref: values
 
   destination:

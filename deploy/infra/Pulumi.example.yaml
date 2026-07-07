@@ -11,6 +11,7 @@ config:
 
   eoepca-infra:lbMethod: ROUND_ROBIN
   eoepca-infra:floatingIpPool: external
+  eoepca-infra:maintainerEmail: maintainer@example.com
 
   # Config for control plane / etcd flavor
   eoepca-infra:controlPlaneNodeFlavour: eo2a.xlarge

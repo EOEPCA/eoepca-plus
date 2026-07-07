@@ -2,6 +2,7 @@
 venv/
 .pulumi/*
 .pulumi
+.pulumi-known-hosts
 *.pem
 *.pub
 __pycache__/

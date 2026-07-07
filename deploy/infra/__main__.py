@@ -2,6 +2,7 @@ import pulumi
 from pulumi_openstack import loadbalancer
 
 from bastion import bastion
+from cluster import rke2
 from instance import instance
 from keys import keys
 from load_balancer import load_balancer
@@ -9,6 +10,7 @@ from network import network
 from nfs import nfs
 
 config = pulumi.Config()
+
 
 def main():
     # Generate Key Pair
@@ -47,6 +49,7 @@ def main():
             config.require("controlPlaneNodeFlavour"),
             network_instance,
             role="server",
+            load_balancer_ip=load_balancer_floating_ip.address,
         )
         # Add to API pool
         loadbalancer.Member(
@@ -77,11 +80,26 @@ def main():
         )
         worker_nodes.append(node)
 
+    kubeconfig_server = config.get("kubeconfigServer")
+    if not kubeconfig_server:
+        kubeconfig_server = load_balancer_floating_ip.address.apply(
+            lambda ip: f"https://{ip}:6443"
+        )
+
+    rke2_automation = rke2.configure(
+        bastion_instance,
+        control_nodes,
+        worker_nodes,
+        kubeconfig_server,
+    )
+
     # Export for Ansible
     pulumi.export("control_node_ips", [n.access_ip_v4 for n in control_nodes])
     pulumi.export("worker_node_ips", [n.access_ip_v4 for n in worker_nodes])
     pulumi.export("bastion_ip", bastion_instance.bastion_floating_ip_association.floating_ip)
     pulumi.export("load_balancer_ip", load_balancer_floating_ip.address)
+    pulumi.export("kubeconfig_server", rke2_automation.kubeconfig_server)
+    pulumi.export("kubeconfig_path", rke2_automation.kubeconfig_path)
 
     # Export SSH commands
     pulumi.export("ssh_bastion", bastion_instance.bastion_floating_ip_association.floating_ip.apply(

@@ -233,14 +233,17 @@ def attach_floating_ip(instance, pool_name="external", extra_deps=None):
     return floating_ip, floating_ip_assoc
 
 
-def deploy(instance_name, flavour, network_instance, role="worker"):
+def deploy(instance_name, flavour, network_instance, role="worker", load_balancer_ip=None):
     security_groups = get_node_security_groups(instance_name)
 
     if role == "server":
-        user_data = get_rke2_server_user_data_script(
-            config.require("domainName"),
-            config.require("loadBalancerIP"),
-            config.require("maintainerEmail"),
+        lb_ip = load_balancer_ip or config.require("loadBalancerIP")
+        user_data = pulumi.Output.all(lb_ip).apply(
+            lambda args: get_rke2_server_user_data_script(
+                config.require("domainName"),
+                args[0],
+                config.require("maintainerEmail"),
+            )
         )
     else:
         user_data = get_rke2_user_data_script()

@@ -8,46 +8,42 @@ From the Pulumi output you should see the ArgoCD and Rancher on a floating IP an
 
 > You will not be able to access the Rancher dashboard until you have at least one worker node connected to the cluster.
 
-With RKE2 there is a manual step to connect the workers to the cluster.
+Worker connection is automated by the Pulumi stack in `infra/`.
 
-Once the `pulumi up` has completed, SSH into the control node with:
-
-```bash
-ssh -i rke2-generated_key.pem eouser@<YOUR BASTION IP>
-ssh -i ~/.ssh/key.pem eouser@<YOUR CONTROL NODE IP>`
-```
-
-Retrieve the `node token` from the control node.
+Run the infrastructure deployment as normal:
 
 ```bash
-sudo cat /var/lib/rancher/rke2/server/node-token
+cd infra
+pulumi up
 ```
 
-__Optional__ Retrieve the `kubeconfig` file to use with `kubectl` on your local machine.
+Pulumi now waits for the control node to expose its RKE2 node token and kubeconfig, uses the bastion to join each worker node as an RKE2 agent, waits for all Kubernetes nodes to become `Ready`, and writes an updated kubeconfig locally.
+
+The local kubeconfig path is exported as `kubeconfig_path` and defaults to:
 
 ```bash
-sudo cat /etc/rancher/rke2/rke2.yaml
+kubeconfig.yaml
 ```
 
-Exit the control node and SSH into your worker node:
+You can use it with:
 
 ```bash
-ssh -i ~/.ssh/key.pem eouser@<YOUR WORKER NODE IP>
+export KUBECONFIG="$(pulumi stack output kubeconfig_path)"
+kubectl get nodes
 ```
 
-Then modify and run the following:
+The kubeconfig API endpoint defaults to the Kubernetes load balancer floating IP, and can be overridden with:
+
 ```bash
-curl -sfL https://get.rke2.io | INSTALL_RKE2_TYPE="agent" sudo sh -
-sudo mkdir -p /etc/rancher/rke2
-sudo tee /etc/rancher/rke2/config.yaml <<EOF
-server: https://<CONTROL NODE IP>:9345
-token: <THE NODE TOKEN YOU RETRIEVED EARLIER>
-EOF
-
-sudo systemctl enable rke2-agent.service
-sudo systemctl start rke2-agent.service
+pulumi config set kubeconfigServer https://<HOSTNAME-OR-IP>:6443
 ```
 
-This will then connect the worker to the cluster and you should see it in the output of `kubectl get nodes`.
+If you need a different output path:
+
+```bash
+pulumi config set kubeconfigPath kubeconfig.yaml
+```
+
+The RKE2 node token is read directly on the bastion during the Pulumi run and is not exported.
 
 Now proceed to `k8s-resources` directory one level above and run the `scripts/bootstrap-argocd.sh` script to deploy ArgoCD to the cluster.

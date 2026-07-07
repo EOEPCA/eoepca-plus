@@ -10,23 +10,33 @@ fi
 DOMAIN="${1:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
 NFS_IP="${2:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
 DNS_API_TOKEN="${3:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
-ARGOCD_VERSION="${4:-7.8.2}"
+ARGOCD_VERSION="${4:-9.5.12}"
 NFS_PROVISIONER_VERSION="4.0.12"
+SEALED_SECRETS_KEY_BACKUP="${SEALED_SECRETS_KEY_BACKUP:-resources/sealed-secrets-keys.yaml}"
 
 ARGOCD_DOMAIN="argocd.${DOMAIN}"
 
 echo "=== applying sealed secrets keys ==="
 kubectl create namespace infra 2>/dev/null || true
-kubectl apply -f resources/sealed-secrets-keys.yaml
+if [[ -s "${SEALED_SECRETS_KEY_BACKUP}" ]]; then
+    kubectl apply -f "${SEALED_SECRETS_KEY_BACKUP}"
+else
+    echo "ERROR: No Sealed Secrets key backup found at ${SEALED_SECRETS_KEY_BACKUP}."
+    echo "Restore the original keyring before starting the controller; repository SealedSecrets depend on it."
+    exit 1
+fi
 
 echo "=== installing sealed secrets controller ==="
-helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
-# helm repo update
-helm upgrade --install sealed-secrets sealed-secrets/sealed-secrets \
+helm upgrade --install sealed-secrets \
+    https://github.com/bitnami-labs/sealed-secrets/releases/download/helm-v2.16.0/sealed-secrets-2.16.0.tgz \
     --namespace infra \
     --create-namespace \
-    --version 2.16.0 \
     --wait --timeout 3m
+
+# The controller generates a new sealing key when it starts. Back up the full
+# keyring immediately: old SealedSecrets still require their original keys.
+SEALED_SECRETS_KEY_BACKUP="${SEALED_SECRETS_KEY_BACKUP}" \
+    scripts/backup-sealed-secrets-keys.sh
 
 
 echo "=== Installing cert-manager ==="
@@ -42,7 +52,11 @@ echo "=== applying dns-api-token secret ==="
 kubectl create namespace cert-manager-ns 2>/dev/null || true
 kubectl create secret generic dns-api-token \
     --namespace cert-manager-ns \
-    --from-literal=api-token="${DNS_API_TOKEN}"
+    --from-literal=api-token="${DNS_API_TOKEN}" \
+    --dry-run=client -o yaml | \
+    kubectl annotate --local -f - \
+        sealedsecrets.bitnami.com/managed=true \
+        -o yaml | kubectl apply -f -
 
 
 # Also store as a sealed secret for ArgoCD to use in the Git repository
@@ -133,7 +147,7 @@ until kubectl get crd appprojects.argoproj.io &>/dev/null; do
     sleep 5
 done
 
-kubectl create ns ingress-nginx-ns
+kubectl create namespace ingress-nginx-ns --dry-run=client -o yaml | kubectl apply -f -
 
 echo "=== Creating ArgoCD Project and Application ==="
 kubectl apply -f argocd/project.yaml
@@ -147,4 +161,5 @@ echo "Admin username: admin"
 echo "Admin password: $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)"
 echo ""
 echo "Rancher UI: https://rancher.${DOMAIN}"
+echo "Rancher Password: $(kubectl -n cattle-system get secret bootstrap-secret -o jsonpath='{.data.bootstrapPassword}' | base64 -d)"
 echo ""

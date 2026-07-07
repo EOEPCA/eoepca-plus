@@ -45,6 +45,10 @@ spec:
             storageClass: managed-nfs-storage
 
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
     syncOptions:
       - FailOnSharedResource=true
       - CreateNamespace=true

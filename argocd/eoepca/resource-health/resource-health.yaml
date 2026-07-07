@@ -6,9 +6,13 @@ metadata:
 spec:
   project: eoepca
   source:
-    repoURL: 'https://github.com/EOEPCA/resource-health'
-    path: resource-health-reference-deployment
-    targetRevision: deploy-develop
+    # resource-health-reference-deployment was moved out of the
+    # EOEPCA/resource-health repo into helm-charts-dev (and the old repo's
+    # copy deleted), which left this Application permanently unable to
+    # generate manifests ("app path does not exist").
+    repoURL: 'https://github.com/EOEPCA/helm-charts-dev.git'
+    path: charts/resource-health-reference-deployment
+    targetRevision: develop
     helm:
       valuesObject:
         global:

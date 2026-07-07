@@ -17,6 +17,8 @@ spec:
     targetRevision: 0.45.2
     helm:
       releaseName: strimzi-kafka-operator
+      valuesObject:
+        watchAnyNamespace: true
   destination:
     name: in-cluster
     namespace: strimzi-operator

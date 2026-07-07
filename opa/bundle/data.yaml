@@ -1,0 +1,17 @@
+# This file defines the authorization policies for the OPA (Open Policy Agent) integration in the DEDL HDA API.
+# It specifies the access control rules for different user roles and their permissions to discover, search, and download datasets.
+# Empty lists indicate no access for that specific action, while patterns with wildcards allow access to matching datasets.
+
+authz:
+  # Baseline = unauthenticated / anonymous access
+  baseline:
+    discover: ["*"]
+    search: ["*"]
+    download: ["*"]
+  # The following access requires roles that are assigned to users via the OIDC provider
+  # and included in the JWT token claims
+  # roles:
+  #   admin:
+  #     discover: ["*"]
+  #     search: ["*"]
+  #     download: ["*"]

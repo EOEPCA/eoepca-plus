@@ -52,7 +52,7 @@ patches:
           argocd.argoproj.io/sync-wave: "10"
   - target:
       kind: Application
-      name: ^(data-access|datacube-access|identity-service|notification-automation|operations|resource-catalogue)$
+      name: ^(data-access|datacube-access|resource-catalogue)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application
@@ -123,6 +123,23 @@ patches:
         annotations:
           # User-facing frontends come up after their APIs/backends.
           argocd.argoproj.io/sync-wave: "50"
+  - target:
+      kind: Application
+      name: ^(identity-service|notification-automation|operations)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-independent-services
+        annotations:
+          # Nothing else in this repo references identity-service,
+          # notification-automation or operations (no BB reads their
+          # endpoints/secrets/namespaces). Previously they shared wave 20
+          # with data-access/resource-catalogue, so a Degraded app here
+          # blocked every later wave (21-50, ~16 unrelated BBs) from ever
+          # being created. Give them a late wave that has no downstream
+          # dependents so a problem in any one of them stays isolated.
+          argocd.argoproj.io/sync-wave: "45"
   # resource-health and application-quality are the only BBs that inline raw
   # manifests directly into this kustomization instead of isolating them
   # behind their own nested "parts" Application (see their kustomization.yaml

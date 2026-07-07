@@ -1,4 +1,10 @@
 ---
+# Broadcom pulled versioned bitnami/* image tags from Docker Hub's free tier
+# in 2025; the exact same images are preserved under bitnamilegacy/*.
+image:
+  registry: docker.io
+  repository: bitnamilegacy/zookeeper
+  tag: 3.8.1-debian-11-r18
 global:
   storageClass: "managed-nfs-storage-retain"
 replicacount: 1

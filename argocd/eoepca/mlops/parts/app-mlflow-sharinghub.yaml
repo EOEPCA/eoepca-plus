@@ -39,6 +39,13 @@ spec:
           
         postgresql:
           enabled: true
+          # Broadcom pulled versioned bitnami/* image tags from Docker Hub's
+          # free tier in 2025; the same images are preserved under
+          # bitnamilegacy/*.
+          image:
+            registry: docker.io
+            repository: bitnamilegacy/postgresql
+            tag: 16.3.0-debian-12-r23
           auth:
             existingSecret: mlflow-sharinghub-postgres
           global:

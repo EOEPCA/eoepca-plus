@@ -27,6 +27,16 @@ spec:
   destination:
     name: in-cluster
     namespace: workspace
+  # The educates.dev CRDs (vendored, not authored here) omit
+  # additionalPrinterColumns[].priority; the API server defaults it to 0 on
+  # write, which then perpetually shows as OutOfSync against the git source.
+  # That OutOfSync state also propagates up through the custom Application
+  # health check, so this app (and the root eoepca app) never show Healthy.
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      jqPathExpressions:
+        - .spec.versions[].additionalPrinterColumns[].priority
   syncPolicy:
     automated:
       prune: false # never prune

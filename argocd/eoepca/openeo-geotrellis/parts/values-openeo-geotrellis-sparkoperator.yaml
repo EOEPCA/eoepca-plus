@@ -2,8 +2,12 @@
 image:
   registry: vito-docker.artifactory.vgt.vito.be
   repository: spark-operator
-  tag: "v1beta2-2.0.2-3.5.2b"
+  tag: "v1beta2-2.3.0-4.0.0-json"
+hook:
+  upgradeCrd: true
+  forceConflictsCrd: true
 controller:
+  logEncoder: json
   batchScheduler:
     enable: true
   podMonitor:
@@ -14,6 +18,7 @@ controller:
     requests:
       cpu: 200m
 webhook:
+  logEncoder: json
   resources:
     requests:
       cpu: 300m

@@ -54,27 +54,25 @@ The `Gateway` allows to configure [full TLS passthrough](parts/gateway-eoepca-pu
           from: All
 ```
 
-> NOTE that `ingress-nginx` is only retained in support of the Workspace vCluster (Kubernetes API).<br>
-> These can be be migrated from `Ingress` to `TLSRoute` - at which which point `ingress-nginx` and `*.ngx.` can be deprecated.
-
-For example, the Workspace vCluster `Ingress` for user `eoepcauser` can be migrated to...
+For example, the central eoAPI database can be exposed as a PostgreSQL TLS passthrough route for external tooling or operator tasks...
 
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1alpha2
+apiVersion: gateway.networking.k8s.io/v1
 kind: TLSRoute
 metadata:
-  name: vcluster
-  namespace: ws-eoepcauser
+  name: eoapi-db
+  namespace: infra
 spec:
   parentRefs:
     - name: eoepca-public
       namespace: gateway
+      sectionName: https
   hostnames:
-    - ws-eoepcauser.rke2.deploybox.co.uk
+    - eoapi-db.rke2.deploybox.co.uk
   rules:
     - backendRefs:
-        - name: vcluster-ws-eoepcauser
-          port: 443
+        - name: default-primary
+          port: 5432
 ```
-
-> NOTE the `.ngx` is dropped - which may require update of the associated kubeconfig/certs.
+> This allows external access to the central eoAPI database for tooling and operator tasks that need it, while keeping database traffic separate from the HTTP routes handled by APISIX.<br>
+> The same mechanism can also optionally expose databases from user datalabs created by the Workspace BB, allowing users to access them from separate systems such as HPC environments.

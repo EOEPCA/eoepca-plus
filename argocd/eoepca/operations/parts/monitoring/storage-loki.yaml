@@ -1,0 +1,12 @@
+apiVersion: pkg.internal/v1beta1
+kind: Storage
+metadata:
+  name: loki
+  namespace: operations
+spec:
+  buckets:
+  - bucketName: loki
+  credentialsRollover:
+    interval: none
+    maxToKeep: 1
+  principal: loki-s3-credentials

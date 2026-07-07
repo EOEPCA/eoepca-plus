@@ -84,17 +84,18 @@ patches:
         name: kube-prometheus-stack
         annotations: {argocd.argoproj.io/sync-wave: "-10"}
   - target:
-      group: bitnami.com
-      kind: SealedSecret
-      name: ^loki-s3-credentials$
+      group: pkg.internal
+      kind: Storage
+      name: ^loki$
     patch: |-
-      apiVersion: bitnami.com/v1alpha1
-      kind: SealedSecret
+      apiVersion: pkg.internal/v1beta1
+      kind: Storage
       metadata:
-        name: loki-s3-credentials
+        name: loki
         annotations:
-          # Loki reads this via extraEnvFrom; it must exist before the
-          # loki-stack Application (wave 0) starts the singleBinary pod.
+          # This provisions the loki-s3-credentials secret Loki reads via
+          # extraEnvFrom; it must exist before the loki-stack Application
+          # (wave 0) starts the singleBinary pod.
           argocd.argoproj.io/sync-wave: "-10"
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   - target:

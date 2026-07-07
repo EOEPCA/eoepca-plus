@@ -12,10 +12,11 @@ spec:
 
     - repoURL: https://developmentseed.org/eoapi-k8s/
       chart: eoapi
-      targetRevision: 0.12.3
+      targetRevision: 0.13.1
       helm:
         releaseName: eoapi
         valueFiles:
+          - values/argocd.yaml  # Upstream ArgoCD sync configuration
           - $values/argocd/eoepca/data-access/parts/values/values-eoapi.yaml
 
     - repoURL: https://github.com/sentinel-hub/titiler-openeo
@@ -49,7 +50,7 @@ spec:
 
     - repoURL: https://stac-manager.ds.io/
       chart: stac-manager
-      targetRevision: 0.0.13
+      targetRevision: 1.0.3
       helm:
         releaseName: eoapi-stac-manager
         valueFiles:
@@ -57,7 +58,7 @@ spec:
 
     - repoURL: https://github.com/developmentseed/pgstac-geoparquet-exporter
       path: charts/pgstac-geoparquet-exporter
-      targetRevision: pgstac-geoparquet-exporter-v0.2.0
+      targetRevision: v0.2.4
       helm:
         releaseName: eoapi-geoparquet-export
         valueFiles:

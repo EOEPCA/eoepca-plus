@@ -12,6 +12,9 @@ resources:
   - strimzi-operator
   - apisix
   - pgo
+  - mongodb-operator
+  - qdrant-operator
+  - redis-operator
   - gateway
   - eso
   - crossplane

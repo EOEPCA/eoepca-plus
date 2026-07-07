@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: cs-container-pull
+  namespace: data-proxy
+spec:
+  encryptedData:
+    .dockerconfigjson: AgBeIU/+ZDPTGLF8x9Ik01rvT5MhJxeut7uDaDYdxfeHQ2dWUIInmDMHh2ya1YbhQK5UGQcrtK2EjZzXeH5gbwS1V1QmszP6qQKMdSczNJyOO84app5DXpDNqSBu9+Sb6xrieiVzIOY5BKSqVmVbNoU7Xn54J8i9X789esP7A1jyrsVkyTejb4Fy6QE5pCaABRie48CjAIeUnK7f4IsufozbdhjSP2McmO1C9T/uxSDslcfJ9HuRf+8oNQf9/df/8OxMu1WNz4CHiI1txD7BA1YSV6ZI20bl4q22Xe/8dIbE5AMfo19v9WnzgzqqADkPaXFAJBrpQoN2A2uNZwBqJNQCRrQSXH4JFrAbm5cCBc7UzKCuV4EHYTiz7XUWmj7qzAp3cEwQTPpCxkct2BqIEnFNdxOYZJ+ienDR5jcUAImxdu/Ngt9oAZbjflL/CPtIEEnD1db9Gf+9zj/pUi5bZ7ve46HtUMlNZPk/TJThv9eMHKn6w2eWHdsjelg0Ol0CbSmLXdilHE3F/Zrdf31dkYzYyZchFvKXlVbAvpJXAmBxb9hHcpz66rxt9zfeI1aJYW3IXkJ3BFanb90c9Mii8NHhCTRck4B7BZyxaV3cWSUqE8QbBOkuXIK5vspPysbC/aNCwaO4JmtAyWwLkNcQ4PBtTkYCgyyYqikJZwCXKu+YVI+MAazRPJoHVTWqrukV7WCQYFjg28KfkkB0KmMKbOi1eCvFPOe13nG04+Jsf1bgD0t5bxT8yX/HUqWTyNobDitpN0vqXsZSIexgmOskW8xMboI6uXPgdQCB6UU+33+Xqmu6x2CiE3d7a4AvKmfgHOC+WgjljAxxIlnJg+Vmi0JMR6FVO5pPRgyRhPnLAGY3t3M+1ksXEVIWmeaQRQ1HiHfP/3RT/HExm4wOaFf+WV0sW04AgptK0o05nFkgh3SWH5be/6vVwY6yHwCGNepOIHQ2DcEbZa7hrNFP0t3tjGdw+WAc4LOgLhk/s42MKQjBPfaJoMOw2RscbxU4KSuvaCSE42qLubsFW0DqJ1Lh9w==
+  template:
+    metadata:
+      name: cs-container-pull
+      namespace: data-proxy
+    type: kubernetes.io/dockerconfigjson

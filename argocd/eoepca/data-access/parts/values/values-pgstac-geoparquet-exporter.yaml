@@ -9,9 +9,9 @@ database:
   existingSecret: "default-pguser-eoapi"
 
 storage:
-  outputPath: "s3://eoapi-geoparquet/geoparquet"
-  existingSecret: "data-access"
-  endpoint: "https://eodata.cloudferro.com"
+  outputPath: "s3://geoparquet-exporter/geoparquet"
+  existingSecret: "geoparquet-exporter-s3-credentials"
+  endpoint: "https://minio.develop.eoepca.org"
 
 exportConfig:
   exportAll: true

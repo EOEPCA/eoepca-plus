@@ -9,16 +9,23 @@ resources:
   limits:
     memory: "4Gi"
     cpu: "4"
-image:
-  tag: latest
-  pullPolicy: Always
 
 publicUrl: https://eoapi.rke2.deploybox.co.uk/manager
 stacApi: https://eoapi.rke2.deploybox.co.uk/stac
+stacBrowser: https://eoapi.rke2.deploybox.co.uk/browser
 primaryColor: "#005ACD"
 secondaryColor: "#048A81"
+appTitle: "EOEPCA+ STAC Manager"
+appDescription: "Manage STAC collections and items on the EOEPCA+ platform"
 
 oidc:
-  providerUrl: https://iam-auth.rke2.deploybox.co.uk
+  authority: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca
   clientId: eoapi
-  realm: eoepca
+
+volumes:
+  - name: branding
+    configMap:
+      name: stac-manager-branding
+volumeMounts:
+  - name: branding
+    mountPath: /app/packages/client/dist/meta

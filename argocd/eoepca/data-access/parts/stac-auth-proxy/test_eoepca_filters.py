@@ -1,11 +1,21 @@
+import logging
+
 import pytest
 from cql2 import Expr
 
+import eoepca_filters
 from eoepca_filters import CollectionsFilter, ItemsFilter, is_write_request
 
 # Reusable request context fragments
 _READ_REQ = {"method": "GET", "path": "/collections"}
 _WRITE_REQ = {"method": "POST", "path": "/collections"}
+
+# Default-config token carrying the stac_editor role on the eoapi client.
+# `azp` matches the configured editor client — required by _token_has_stac_editor.
+_EDITOR_TOKEN = {
+    "azp": "eoapi",
+    "resource_access": {"eoapi": {"roles": ["stac_editor"]}},
+}
 
 
 def cql2_matches(cql2_json: dict, item: dict) -> bool:
@@ -467,3 +477,311 @@ class TestItemsFilter:
         assert not cql2_matches(
             filt, {"collection": "bob.data"}
         ), "rw group should not grant write access to unrelated collections"
+
+
+class TestStacEditorRole:
+    """The stac_editor role grants unrestricted write access catalog-wide."""
+
+    # --- Unrestricted write access when role is present ---
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "collection_id",
+        [
+            pytest.param("public", id="public"),
+            pytest.param("alice.data", id="other-user-prefix"),
+            pytest.param("org-dss-team.data", id="group-prefix"),
+            pytest.param("anything.goes.here", id="arbitrary-prefix"),
+        ],
+    )
+    async def test_editor_can_write_any_collection(self, collection_id):
+        """A token with stac_editor on the eoapi client can write any collection."""
+        filt = await CollectionsFilter()({"payload": _EDITOR_TOKEN, "req": _WRITE_REQ})
+        assert cql2_matches(
+            filt, {"id": collection_id}
+        ), f"stac_editor should grant write access to {collection_id!r}"
+
+    @pytest.mark.asyncio
+    async def test_editor_can_write_items_in_any_collection(self):
+        """The same bypass applies to items, not just collections."""
+        filt = await ItemsFilter()({"payload": _EDITOR_TOKEN, "req": _WRITE_REQ})
+        assert cql2_matches(
+            filt, {"collection": "anything.goes"}
+        ), "stac_editor should grant item-write access regardless of collection prefix"
+
+    @pytest.mark.asyncio
+    async def test_editor_alongside_username_still_unrestricted(self):
+        """An end-user token that also carries stac_editor gets the same unrestricted writes."""
+        token = {**_EDITOR_TOKEN, "preferred_username": "alice"}
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert cql2_matches(
+            filt, {"id": "bob.private"}
+        ), "stac_editor should override the per-user prefix restriction"
+
+    @pytest.mark.asyncio
+    async def test_editor_role_among_other_roles(self):
+        """The role is detected even when the roles list contains other entries."""
+        token = {
+            "azp": "eoapi",
+            "resource_access": {
+                "eoapi": {"roles": ["uma_protection", "stac_editor", "viewer"]}
+            },
+        }
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "stac_editor should be detected even when surrounded by other roles"
+
+    # --- Bypass is write-only ---
+
+    @pytest.mark.asyncio
+    async def test_editor_does_not_apply_to_reads(self):
+        """The unrestricted bypass is write-only; reads still follow normal rules."""
+        filt = await CollectionsFilter()({"payload": _EDITOR_TOKEN, "req": _READ_REQ})
+        assert cql2_matches(
+            filt, {"id": "public"}
+        ), "public collections remain readable"
+        assert not cql2_matches(
+            filt, {"id": "alice.data"}
+        ), "stac_editor must not grant read access to arbitrary prefixes"
+
+    # --- Bypass does not fire for the wrong role/client/shape ---
+
+    @pytest.mark.asyncio
+    async def test_role_on_non_configured_client_is_ignored(self):
+        """The role only counts on configured client IDs (default: eoapi)."""
+        token = {"resource_access": {"some-other-client": {"roles": ["stac_editor"]}}}
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "stac_editor on a non-configured client must not grant writes"
+
+    @pytest.mark.asyncio
+    async def test_token_issued_for_other_client_does_not_grant_bypass(self):
+        """A token whose azp is not a configured editor client must not get the bypass.
+
+        Defends against Keycloak scope-mapper misconfigurations where a token
+        issued for an unrelated client (e.g., a public portal) transitively
+        includes resource_access.eoapi.roles for a user who happens to hold
+        stac_editor on the eoapi client. The role assignment is meant to apply
+        only when the token was actually issued for the editor client.
+        """
+        token = {
+            "azp": "public-portal",
+            "resource_access": {"eoapi": {"roles": ["stac_editor"]}},
+        }
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "transitively-included stac_editor role must not grant the bypass"
+
+    @pytest.mark.asyncio
+    async def test_token_without_azp_does_not_grant_bypass(self):
+        """A token lacking the azp claim cannot prove issuance authority."""
+        token = {"resource_access": {"eoapi": {"roles": ["stac_editor"]}}}
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "missing azp claim must not grant the bypass"
+
+    @pytest.mark.asyncio
+    async def test_bypass_logs_token_identifiers_at_info(self, caplog):
+        """When the bypass fires, audit-log azp/sub/jti at INFO so a responder
+        can trace which token granted catalog-wide writes (e.g., to revoke a
+        leaked client-credentials secret)."""
+        token = {
+            "azp": "eoapi",
+            "sub": "service-account-eoapi",
+            "jti": "token-uuid-abc-123",
+            "resource_access": {"eoapi": {"roles": ["stac_editor"]}},
+        }
+        with caplog.at_level(logging.INFO, logger="eoepca_filters"):
+            await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        info_logs = [r for r in caplog.records if r.levelname == "INFO"]
+        assert any(
+            "eoapi" in r.getMessage()
+            and "service-account-eoapi" in r.getMessage()
+            and "token-uuid-abc-123" in r.getMessage()
+            for r in info_logs
+        ), f"expected INFO log naming azp, sub, jti; got {[r.getMessage() for r in info_logs]}"
+
+    @pytest.mark.asyncio
+    async def test_role_under_untrusted_azp_is_not_honored(self):
+        """A token issued by an untrusted client cannot grant the bypass even
+        when that same client carries the editor role.
+
+        Without anchoring on _STAC_EDITOR_CLIENT_IDS, a user registered in a
+        public/scratch client where stac_editor was granted by mistake could
+        present a self-consistent token (azp == role-bearing client) and
+        trigger the bypass.
+        """
+        token = {
+            "azp": "untrusted-client",
+            "resource_access": {"untrusted-client": {"roles": ["stac_editor"]}},
+        }
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "bypass must require azp to name a configured editor client"
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "resource_access",
+        [
+            pytest.param("not-a-dict", id="string"),
+            pytest.param(["list", "of", "things"], id="list"),
+            pytest.param(42, id="int"),
+            pytest.param(None, id="none"),
+        ],
+    )
+    async def test_malformed_resource_access_is_ignored(self, resource_access):
+        """A malformed resource_access claim must not crash or grant writes."""
+        token = {"resource_access": resource_access}
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), f"resource_access={resource_access!r} must not grant writes"
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "client_entry",
+        [
+            pytest.param("not-a-dict", id="string"),
+            pytest.param(["list"], id="list"),
+            pytest.param(None, id="none"),
+        ],
+    )
+    async def test_malformed_client_entry_is_ignored(self, client_entry):
+        """A malformed entry under resource_access.<clientId> must not crash."""
+        token = {"resource_access": {"eoapi": client_entry}}
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), f"client entry {client_entry!r} must not grant writes"
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "client_value",
+        [
+            pytest.param({}, id="empty-dict"),
+            pytest.param({"roles": None}, id="roles-none"),
+            pytest.param({"roles": "stac_editor"}, id="roles-string-not-list"),
+            pytest.param({"roles": []}, id="roles-empty-list"),
+            pytest.param({"roles": ["other_role"]}, id="roles-without-editor"),
+        ],
+    )
+    async def test_malformed_or_missing_roles_is_ignored(self, client_value):
+        """Roles must be a list containing the editor role; anything else is ignored."""
+        token = {"resource_access": {"eoapi": client_value}}
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), f"client value {client_value!r} must not grant writes"
+
+    # --- Env-var customization (module constants are read at import time) ---
+
+    @pytest.mark.asyncio
+    async def test_custom_role_name_via_env(self, monkeypatch):
+        """STAC_EDITOR_ROLE customizes which role name triggers the bypass."""
+        monkeypatch.setattr(eoepca_filters, "_STAC_EDITOR_ROLE", "custom_admin")
+
+        custom_token = {
+            "azp": "eoapi",
+            "resource_access": {"eoapi": {"roles": ["custom_admin"]}},
+        }
+        filt = await CollectionsFilter()({"payload": custom_token, "req": _WRITE_REQ})
+        assert cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "custom role from env should grant writes"
+
+        filt = await CollectionsFilter()({"payload": _EDITOR_TOKEN, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "default role must be ignored when a custom role is configured"
+
+    @pytest.mark.asyncio
+    async def test_multiple_client_ids_via_env(self, monkeypatch):
+        """STAC_EDITOR_CLIENT_IDS supports multiple comma-separated client IDs."""
+        monkeypatch.setattr(
+            eoepca_filters,
+            "_STAC_EDITOR_CLIENT_IDS",
+            frozenset(["eoapi", "other-client"]),
+        )
+        token = {
+            "azp": "other-client",
+            "resource_access": {"other-client": {"roles": ["stac_editor"]}},
+        }
+        filt = await CollectionsFilter()({"payload": token, "req": _WRITE_REQ})
+        assert cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "stac_editor on any configured client should grant writes"
+
+    @pytest.mark.asyncio
+    async def test_empty_role_disables_bypass(self, monkeypatch):
+        """An empty STAC_EDITOR_ROLE disables the bypass entirely."""
+        monkeypatch.setattr(eoepca_filters, "_STAC_EDITOR_ROLE", "")
+        filt = await CollectionsFilter()({"payload": _EDITOR_TOKEN, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "empty STAC_EDITOR_ROLE must disable the bypass"
+
+    @pytest.mark.asyncio
+    async def test_empty_client_ids_disables_bypass(self, monkeypatch):
+        """An empty STAC_EDITOR_CLIENT_IDS frozenset disables the bypass entirely."""
+        monkeypatch.setattr(eoepca_filters, "_STAC_EDITOR_CLIENT_IDS", frozenset())
+        filt = await CollectionsFilter()({"payload": _EDITOR_TOKEN, "req": _WRITE_REQ})
+        assert not cql2_matches(
+            filt, {"id": "any.collection"}
+        ), "empty STAC_EDITOR_CLIENT_IDS must disable the bypass"
+
+
+class TestEditorConfigValidation:
+    """Startup logs surface the editor bypass config and flag misconfigurations."""
+
+    def test_warns_when_editor_client_not_in_audiences(self, caplog):
+        """An editor client absent from ALLOWED_JWT_AUDIENCES indicates dead config:
+        tokens from that client are rejected by the proxy before reaching this filter."""
+        with caplog.at_level(logging.WARNING, logger="eoepca_filters"):
+            eoepca_filters._validate_editor_config(
+                role="stac_editor",
+                editor_client_ids=frozenset(["eoapi", "scratch-client"]),
+                audiences=frozenset(["eoapi"]),
+            )
+        warnings = [r for r in caplog.records if r.levelname == "WARNING"]
+        assert any(
+            "scratch-client" in r.getMessage() and "ALLOWED_JWT_AUDIENCES" in r.getMessage()
+            for r in warnings
+        ), f"expected warning naming 'scratch-client' and ALLOWED_JWT_AUDIENCES; got {[r.getMessage() for r in warnings]}"
+
+    def test_no_warning_when_editor_clients_subset_of_audiences(self, caplog):
+        """Editor clients fully covered by audiences → no dead-config warning."""
+        with caplog.at_level(logging.WARNING, logger="eoepca_filters"):
+            eoepca_filters._validate_editor_config(
+                role="stac_editor",
+                editor_client_ids=frozenset(["eoapi"]),
+                audiences=frozenset(["eoapi", "other-app"]),
+            )
+        warnings = [r for r in caplog.records if r.levelname == "WARNING"]
+        assert not warnings, f"unexpected warnings: {[r.getMessage() for r in warnings]}"
+
+    def test_skips_subset_check_when_audiences_unknown(self, caplog):
+        """If ALLOWED_JWT_AUDIENCES is unset (empty), skip the subset check."""
+        with caplog.at_level(logging.WARNING, logger="eoepca_filters"):
+            eoepca_filters._validate_editor_config(
+                role="stac_editor",
+                editor_client_ids=frozenset(["eoapi", "scratch-client"]),
+                audiences=frozenset(),
+            )
+        warnings = [r for r in caplog.records if r.levelname == "WARNING"]
+        assert not warnings, "should not warn when audiences config is unavailable"
+
+    def test_disabled_bypass_emits_no_warning(self, caplog):
+        """When the bypass is disabled (empty role), no warning is emitted."""
+        with caplog.at_level(logging.WARNING, logger="eoepca_filters"):
+            eoepca_filters._validate_editor_config(
+                role="",
+                editor_client_ids=frozenset(["scratch-client"]),
+                audiences=frozenset(["eoapi"]),
+            )
+        warnings = [r for r in caplog.records if r.levelname == "WARNING"]
+        assert not warnings, "disabled bypass should not warn about anything"

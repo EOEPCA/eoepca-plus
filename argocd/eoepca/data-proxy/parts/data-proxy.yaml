@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: data-proxy-proxy
+  namespace: argocd
+  labels:
+    eoepca/app-name: data-proxy
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - chart: eodag-data-proxy-chart
+      repoURL: 643vlk6z.gra7.container-registry.ovh.net/space_applications
+      targetRevision: 0.1.0
+      helm:
+        releaseName: eodag-data-proxy
+        values: |
+          imagePullSecrets:
+            - name: cs-container-pull
+
+          image:
+            repository: 643vlk6z.gra7.container-registry.ovh.net/space_applications/eodag-data-proxy
+            tag: "0.1"
+
+          proxyEnv:
+            eodagUrl: http://eodag-data-proxy-eodag-data-proxy-chart-control-plane:8000
+            authIssuerUrl: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca
+            authAudience: eodag-proxy
+            authJwksUrl: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration
+
+          opa:
+            enabled: true
+            configMap: opa-config
+
+          ingress:
+            enabled: false # APISIX
+
+          controlPlane:
+            image:
+              repository: 643vlk6z.gra7.container-registry.ovh.net/space_applications/eodag-control-plane
+              tag: "0.1"
+
+  destination:
+    name: in-cluster
+    namespace: data-proxy

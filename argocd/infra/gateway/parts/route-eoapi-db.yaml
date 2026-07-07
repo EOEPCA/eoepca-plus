@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: TLSRoute
+metadata:
+  name: eoapi-db
+  namespace: infra
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  parentRefs:
+    - name: eoepca-public
+      namespace: gateway
+      sectionName: https
+  hostnames:
+    - eoapi-db.rke2.deploybox.co.uk
+  rules:
+    - backendRefs:
+        - name: default-primary
+          port: 5432

@@ -1,0 +1,7 @@
+resources:
+  - data-proxy.yaml
+  - stac-api.yaml
+  - ss-cs-container-pull.yaml
+  - opa-config.yaml
+  - route.yaml
+  - iam.yaml

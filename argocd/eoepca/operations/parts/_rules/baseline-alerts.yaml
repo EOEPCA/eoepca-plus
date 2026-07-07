@@ -194,3 +194,21 @@ spec:
             severity: critical
           annotations:
             summary: A persistent volume has less than 5% free space remaining.
+    - name: baseline.postgres
+      rules:
+        - alert: PostgresConnectionsHigh
+          # Warn before max_connections (100) is exhausted; budget is in postgrescluster.yaml.
+          expr: |
+            (
+              ccp_connection_stats_total{namespace="infra"}
+              /
+              ccp_connection_stats_max_connections{namespace="infra"}
+            ) > 0.8
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: >-
+              PostgreSQL connection utilisation is above 80 % for 10 minutes
+              ({{ $value | humanizePercentage }} used).  Check for connection
+              leaks or unexpected traffic spikes.

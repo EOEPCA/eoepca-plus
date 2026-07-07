@@ -54,6 +54,9 @@ metadata:
 spec:
   project: eoepca
   sources:
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      path: argocd/eoepca/application-quality/sonarqube
     - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
       targetRevision: 2026.2.1
       chart: sonarqube

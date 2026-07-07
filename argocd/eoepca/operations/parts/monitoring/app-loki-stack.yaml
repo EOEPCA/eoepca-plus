@@ -31,9 +31,9 @@ spec:
                   period: 24h
           storage:
             bucketNames:
-              chunks: logging
-              ruler: logging
-              admin: logging
+              chunks: loki
+              ruler: loki
+              admin: loki
             type: s3
             s3:
               endpoint: minio.rke2.deploybox.co.uk

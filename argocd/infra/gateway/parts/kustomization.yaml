@@ -5,6 +5,7 @@ resources:
   - envoy-proxy-eoepca-public.yaml
   - gateway-eoepca-public.yaml
   - route-apisix.yaml
+  - route-eoapi-db.yaml
   # APISIX is the selected backend. route-nginx.yaml is an alternative that
   # expects an ingress-nginx controller Service in ingress-nginx-ns.
 

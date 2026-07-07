@@ -1,0 +1,42 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: data-proxy
+  namespace: data-proxy
+spec:
+  ingressClassName: apisix
+  http:
+    - name: stac-route
+      websocket: true
+      backends:
+        - serviceName: eodag-stac-api-stac-fastapi-eodag
+          servicePort: 8080
+      plugins:
+        - name: limit-count
+          enable: true
+          config:
+            count: 100
+            time_window: 60
+            rejected_code: 429
+      match:
+        hosts:
+          - eodag-api.rke2.deploybox.co.uk
+        paths:
+          - /*
+
+    - name: proxy-route
+      backends:
+        - serviceName: eodag-data-proxy-eodag-data-proxy-chart-proxy
+          servicePort: 8880
+      plugins:
+        - name: limit-count
+          enable: true
+          config:
+            count: 100
+            time_window: 60
+            rejected_code: 429
+      match:
+        hosts:
+          - eodag-proxy.rke2.deploybox.co.uk
+        paths:
+          - /data/*

@@ -54,3 +54,8 @@ jdbcOverwrite:
   jdbcUsername: "sonarUser"
   jdbcSecretName: "application-quality-sonarqube-db-secrets"
   jdbcSecretPasswordKey: "password"
+
+plugins:
+  install:
+    - "https://github.com/sonar-auth-oidc/sonar-auth-oidc/releases/download/v3.0.0/sonar-auth-oidc-plugin-3.0.0.jar"
+    - "https://github.com/sbaudoin/sonar-yaml/releases/download/v1.9.1/sonar-yaml-plugin-1.9.1.jar"

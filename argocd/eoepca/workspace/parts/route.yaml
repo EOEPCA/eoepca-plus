@@ -7,6 +7,21 @@ metadata:
 spec:
   ingressClassName: apisix
   http:
+    - name: workspace-api-root-redirect
+      match:
+        hosts:
+          - workspace-api.develop.eoepca.org
+        paths:
+          - /
+      plugins:
+        - name: redirect
+          enable: true
+          config:
+            uri: /workspaces
+            ret_code: 302
+      backends:
+        - serviceName: workspace-api
+          servicePort: 8181
     - name: workspace-api-no-auth
       match:
         hosts:
@@ -17,7 +32,7 @@ spec:
           - "/ui*"
       backends:
         - serviceName: workspace-api
-          servicePort: 8080
+          servicePort: 8181
       plugins: []
     - name: workspace-api-debug
       match:
@@ -27,7 +42,7 @@ spec:
           - /debug*
       backends:
         - serviceName: workspace-api
-          servicePort: 8080
+          servicePort: 8181
       plugins:
         - name: openid-connect
           enable: true
@@ -52,7 +67,7 @@ spec:
           - /openapi.json*
       backends:
         - serviceName: workspace-api
-          servicePort: 8080
+          servicePort: 8181
     - name: workspace-api-auth
       match:
         hosts:
@@ -61,7 +76,7 @@ spec:
           - /*
       backends:
         - serviceName: workspace-api
-          servicePort: 8080
+          servicePort: 8181
       plugins:
         - name: openid-connect
           enable: true
@@ -71,14 +86,10 @@ spec:
             bearer_only: false
             set_access_token_header: true
             access_token_in_authorization_header: true
+            scope: openid roles
             set_id_token_header: false
             set_userinfo_header: false
             client_id: workspace-api
             client_secret: ""
             session:
               secret: "17Y56d3w4tnicLSCljwwbP0P"
-        - name: opa
-          enable: true
-          config:
-            host: http://iam-opa.iam:8181
-            policy: eoepca/workspace/wsapi

@@ -11,13 +11,15 @@ spec:
   source:
     repoURL: https://eoepca.github.io/helm-charts
     chart: rm-workspace-api
-    targetRevision: 2.0.1
+    targetRevision: 2.2.1
     helm:
       releaseName: workspace-api
       valuesObject:
         fullnameOverride: workspace-api
+        service:
+          port: 8181
         image:
-          tag: 2.0.0
+          tag: 2.2.0-rc.1
           pullPolicy: Always
         ingress:
           enabled: false        

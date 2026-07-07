@@ -1,29 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: zoo-project-dru-core
+  name: redis-operator
   namespace: argocd
   labels:
-    eoepca/app-name: zoo-project-dru
+    eoepca/is-root-app: "true"
+    eoepca/app-name: redis-operator
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
-  sources:
-    - repoURL: https://zoo-project.github.io/charts/
-      chart: zoo-project-dru
-      targetRevision: 0.4.14
-      helm:
-        releaseName: zoo-project-dru
-        valueFiles:
-          - $values/argocd/eoepca/zoo-dru/parts/values-zoo.yaml
-          - $values/argocd/eoepca/zoo-dru/parts/values-stageout.yaml
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: rke2-argocd-sync-wave
-      ref: values
-
+  source:
+    repoURL: https://ot-container-kit.github.io/helm-charts/
+    chart: redis-operator
+    targetRevision: 0.23.0
+    helm:
+      releaseName: redis-operator
+      valuesObject:
+        redisOperator:
+          watchNamespace: ""
   destination:
     name: in-cluster
-    namespace: zoo
+    namespace: infra
   syncPolicy:
     automated:
       prune: true
@@ -36,3 +33,4 @@ spec:
       - PruneLast=true
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

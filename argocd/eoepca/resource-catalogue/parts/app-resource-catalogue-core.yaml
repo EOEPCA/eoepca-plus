@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: 'https://eoepca.github.io/helm-charts-dev'
     chart: rm-resource-catalogue
-    targetRevision: 2.0.0-rc4
+    targetRevision: 2.1.0-dev1
     helm:
       releaseName: resource-catalogue
       valuesObject:
@@ -30,14 +30,31 @@ spec:
         pycsw:
           image:
             repository: geopython/pycsw
-            # tag: "eoepca-staging"
-            # pullPolicy: Always
+            tag: "eoepca-staging"
+            pullPolicy: Always
           replicas: 1
           config:
             server:
               url: https://resource-catalogue.rke2.deploybox.co.uk/
+            federatedcatalogues:
+              - id: fedcat01
+                type: OARec
+                title: WIS2 discovery metadata
+                url: https://wis2-gdc.weather.gc.ca/collections/wis2-discovery-metadata
+              - id: fedcat02
+                type: STAC-API
+                title: Copernicus Data Space Ecosystem (CDSE) asset-level STAC catalogue
+                url: https://stac.dataspace.copernicus.eu/v1
+                collections:
+                  - ccm-sar
+              - id: arctic-sdi-csw
+                type: CSW
+                title: Arctic SDI
+                url: https://catalogue.arctic-sdi.org/csw
             manager:
-              transactions: "false"
+              transactions: "true"
+              allowed_ips:
+                - '"*"'
             metadata:
               identification:
                 title: EOEPCA+ Resource Catalogue

@@ -1,6 +1,3 @@
 resources:
   - app-application-quality.yaml
   - app-application-quality-sonarqube.yaml
-  - sonarqube/application-quality-sonarqube-apisixroute.yaml
-  - sonarqube/ss-application-quality-sonarqube-db-secrets.yaml
-  - sonarqube/ss-application-quality-sonarqube-monitoring-passcode.yaml

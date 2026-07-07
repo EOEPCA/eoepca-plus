@@ -1,10 +1,10 @@
 resources:
   - app-kube-prometheus-stack.yaml
   - app-loki-stack.yaml
+  - storage-loki.yaml
   - app-alloy-logs.yaml
   - iam.yaml
   - routes.yaml
-  - ss-loki-s3-credentials.yaml
 
 patches:
   - target:

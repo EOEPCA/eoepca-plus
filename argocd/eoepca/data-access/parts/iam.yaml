@@ -24,6 +24,43 @@ spec:
     validRedirectUris:
       - '*'
 ---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientDefaultScopes
+metadata:
+  name: eoapi-default-scopes
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    clientIdRef:
+      name: eoapi
+      policy:
+        resolution: Required
+    defaultScopes:
+      - profile
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientOptionalScopes
+metadata:
+  name: eoapi-optional-scopes
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    clientIdRef:
+      name: eoapi
+      policy:
+        resolution: Required
+    optionalScopes:
+      - email
+      - offline_access
+---
 apiVersion: role.keycloak.m.crossplane.io/v1alpha1
 kind: Role
 metadata:

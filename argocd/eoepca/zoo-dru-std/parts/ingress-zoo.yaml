@@ -31,7 +31,7 @@ spec:
           - /ogc-api/
           - /ogc-api/api*
           - /swagger-ui*
-          - /conformance*
+          - /ogc-api/conformance*
       backends:
         - serviceName: zoo-project-dru-std-service
           servicePort: 80

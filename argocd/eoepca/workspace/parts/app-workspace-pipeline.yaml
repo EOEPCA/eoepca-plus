@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-pipeline
-      targetRevision: 2.0.0
+      targetRevision: 2.2.0-rc.2
       helm:
         releaseName: workspace-pipeline
         values: |
@@ -28,9 +28,11 @@ spec:
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
             iam:
               realm: eoepca
+              extraAudiences:
+                - workspace-api
             ingress:
-              class: nginx
-              domain: ngx.rke2.deploybox.co.uk
+              class: apisix
+              domain: lab.rke2.deploybox.co.uk
               secret: wildcard-tls
             storage:
               endpoint: https://minio.rke2.deploybox.co.uk
@@ -39,8 +41,19 @@ spec:
               region: eoepca-demo
               secretNamespace: workspace
               type: s3
+              lifecycle:
+                schedule: ""
+            storageClasses:
+              allowed: []
             network:
+              externalEgressCIDRs:
+                - "0.0.0.0/0"
+                - "::/0"
               serviceCIDR: "10.43.0.0/12"
+              podCIDRs:
+                - "10.42.0.0/16"
+              blacklistIPs:
+                - "169.254.169.254/32"
             packages:
               - name: awscli
                 files:
@@ -54,8 +67,14 @@ spec:
               type: none
             defaults:
               quota:
+                memory: ""
                 storage: 8Gi
                 budget: x-large
+              security:
+                policy: ""
+                kubernetesAccess: ""
+                kubernetesRole: ""
+                externalEgress: true
             database: 
               gateway:
                 parentName: eoepca-public
@@ -63,6 +82,12 @@ spec:
                 sectionName: https
               storageClassName: ""
               backupStorageClassName: ""
+            mongodb:
+              storageClassName: ""
+            redis:
+              storageClassName: ""
+            qdrant:
+              storageClassName: ""
   destination:
     name: in-cluster
     namespace: workspace

@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notifications-wildcard-ingress
+  namespace: knative-serving
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns-prod
+    kubernetes.io/ingress.class: apisix
+spec:
+  ingressClassName: apisix
+  rules:
+  - host: '*.na.rke2.deploybox.co.uk'
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: kourier
+            port:
+              number: 80
+  tls:
+    - hosts:
+      - '*.na.rke2.deploybox.co.uk'
+      secretName: notifications-wildcard-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: notifications-wildcard-tls
+  namespace: knative-serving
+spec:
+  dnsNames:
+  - '*.na.rke2.deploybox.co.uk'
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns-prod
+  secretName: notifications-wildcard-tls

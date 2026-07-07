@@ -6,7 +6,37 @@ metadata:
 spec:
   ingressClassName: apisix
   http:
+
+  - name: application-quality-sonarqube-logout-redirect
+    priority: 10
+    match:
+      hosts:
+        - application-quality.develop.eoepca.org
+      paths:
+        - /sonarqube
+        - /sonarqube/
+      # Only match if the user is coming from the logout page
+      exprs:
+        - subject:
+            scope: Header
+            name: Referer
+          op: RegexMatch
+          value: ".*/sonarqube/sessions/logout.*"
+    # Even with a redirect, 'backends' is required by the CRD schema
+    backends:
+      - serviceName: application-quality-sonarqube-sonarqube
+        servicePort: 9000
+    plugins:
+      - enable: true
+        name: redirect
+        config:
+          # Keycloak OIDC logout URL
+          # post_logout_redirect_uri must match exactly one of the "Valid Post Logout Redirect URIs" configured in Keycloak
+          uri: "https://iam-auth.develop.eoepca.org/realms/eoepca/protocol/openid-connect/logout?client_id=application-quality-sonarqube&redirect_uri=https://application-quality.develop.eoepca.org/sonarqube"
+          ret_code: 302
+
   - name: application-quality-sonarqube-route
+    priority: 5
     match:
       hosts:
         - application-quality.rke2.deploybox.co.uk

@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: registration-harvester-bpm-engine
+  namespace: argocd
+  labels:
+    eoepca/app-name: registration-harvester
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  sources:
+    - repoURL: https://dlr-terrabyte.github.io/operaton-helm/
+      chart: operaton
+      targetRevision: 1.0.6
+      helm:
+        releaseName: registration-harvester-bpm-engine
+        valueFiles:
+          - $values/argocd/eoepca/registration-harvester/parts/values/values-operaton.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: rke2-argocd-sync-wave
+      ref: values
+
+  destination:
+    name: in-cluster
+    namespace: registration-harvester-api
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

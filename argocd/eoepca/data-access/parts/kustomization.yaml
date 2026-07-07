@@ -1,6 +1,7 @@
 resources:
   - ss-data-access.yaml
   - app-data-access-core.yaml
+  - storage-geoparquet-exporter.yaml
   - iam.yaml
   - route.yaml
   - eso-pgo.yaml
@@ -22,6 +23,15 @@ configMapGenerator:
       disableNameSuffixHash: true
     files:
       - check-stac.sh=synthetic-api-check/check-stac.sh
+  - name: stac-manager-branding
+    options:
+      disableNameSuffixHash: true
+    files:
+      - icon-512.png=stac-manager/assets/icon-512.png
+      - icon-192.png=stac-manager/assets/icon-192.png
+      - favicon.png=stac-manager/assets/favicon.png
+      - apple-touch-icon.png=stac-manager/assets/apple-touch-icon.png
+      - meta-image.png=stac-manager/assets/meta-image.png
 
 patches:
   - target: {group: bitnami.com, kind: SealedSecret}

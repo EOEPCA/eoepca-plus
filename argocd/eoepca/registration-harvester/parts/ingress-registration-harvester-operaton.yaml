@@ -1,0 +1,100 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: registration-harvester-bpm-engine
+  namespace: registration-harvester-api
+spec:
+  ingressClassName: apisix
+  http:
+    # 1. Redirect to /operaton/
+    - name: redirect-root
+      match:
+        hosts:
+          - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+        paths:
+          - /
+          - /operaton
+      plugins:
+        - name: redirect
+          enable: true
+          config:
+            uri: /operaton/
+      backends:  # never hit due to redirect
+        - serviceName: registration-harvester-bpm-engine-operaton
+          servicePort: 8080
+
+    # 2. Main service handler
+    - name: rewrite-operaton-path
+      match:
+        hosts:
+          - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+        paths:
+          - /operaton/*
+      backends:
+        - serviceName: registration-harvester-bpm-engine-operaton
+          servicePort: 8080
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: registration-harvester-bpm-engine-rest
+  namespace: registration-harvester-api
+spec:
+  ingressClassName: apisix
+  http:
+    # 1. Redirect to /engine-rest/
+    - name: redirect-rest-api
+      match:
+        hosts:
+          - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+        paths:
+          - /engine-rest
+      plugins:
+        - name: redirect
+          enable: true
+          config:
+            uri: /engine-rest/
+      backends:  # never hit due to redirect
+        - serviceName: registration-harvester-bpm-engine-operaton
+          servicePort: 8080
+
+    # 2. Main service handler
+    - name: rewrite-operaton-rest-api-path
+      match:
+        hosts:
+          - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+        paths:
+          - /engine-rest/*
+      backends:
+        - serviceName: registration-harvester-bpm-engine-operaton
+          servicePort: 8080
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: registration-harvester-bpm-engine-tls
+  namespace: registration-harvester-api
+spec:
+  dnsNames:
+    - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-http01-apisix
+  secretName: registration-harvester-bpm-engine-tls
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: registration-harvester-bpm-engine-tls
+  namespace: registration-harvester-api
+spec:
+  ingressClassName: apisix
+  hosts:
+    - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+  secret:
+    name: registration-harvester-bpm-engine-tls
+    namespace: registration-harvester-api

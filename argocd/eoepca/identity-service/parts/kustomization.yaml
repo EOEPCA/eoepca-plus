@@ -2,6 +2,7 @@ resources:
   - app-identity-service-core.yaml
   - pvc-database.yaml
   # - ss-identity-postgres.yaml
+  - iam.yaml
 
 patches:
   - target: {version: v1, kind: PersistentVolumeClaim}

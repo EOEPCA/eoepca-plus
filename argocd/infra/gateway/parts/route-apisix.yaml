@@ -40,6 +40,11 @@ spec:
       kind: Gateway
       name: eoepca-public
       namespace: gateway
+  # Unlike HTTPRoute, this cluster's TLSRoute CRD requires spec.hostnames
+  # (SNI match) to be non-empty; there is no "match everything" form.
+  hostnames:
+    - "rke2.deploybox.co.uk"
+    - "*.rke2.deploybox.co.uk"
   rules:
     - backendRefs:
         - group: ""

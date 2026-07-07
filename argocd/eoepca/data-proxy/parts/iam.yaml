@@ -16,16 +16,14 @@ spec:
     enabled: true
     standardFlowEnabled: false
     implicitFlowEnabled: false
-    directAccessGrantsEnabled: false
+    directAccessGrantsEnabled: true
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
     rootUrl: https://eodag-api.develop.eoepca.org
     validRedirectUris: []
     validPostLogoutRedirectUris: []
-    webOrigins:
-      - https://eodag-api.develop.eoepca.org
-      - https://eodag-proxy.develop.eoepca.org
+    webOrigins: []
 ---
 apiVersion: client.keycloak.crossplane.io/v1alpha1
 kind: ProtocolMapper

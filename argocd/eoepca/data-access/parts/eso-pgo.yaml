@@ -11,28 +11,49 @@ spec:
   target:
     name: default-pguser-eoapi
     creationPolicy: Owner
+    # Matches the server-side defaults ESO adds so this doesn't perpetually
+    # show as OutOfSync.
+    deletionPolicy: Retain
   data:
     - secretKey: dbname
       remoteRef:
         key: default-pguser-eoapi
         property: dbname
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
     - secretKey: host
       remoteRef:
         key: default-pguser-eoapi
         property: host
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
     - secretKey: password
       remoteRef:
         key: default-pguser-eoapi
         property: password
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
     - secretKey: port
       remoteRef:
         key: default-pguser-eoapi
         property: port
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
     - secretKey: uri
       remoteRef:
         key: default-pguser-eoapi
         property: uri
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None
     - secretKey: user
       remoteRef:
         key: default-pguser-eoapi
         property: user
+        conversionStrategy: Default
+        decodingStrategy: None
+        metadataPolicy: None

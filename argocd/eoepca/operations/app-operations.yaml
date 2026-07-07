@@ -6,8 +6,6 @@ metadata:
   labels:
     eoepca/is-root-app: "true"
     eoepca/app-name: operations
-  annotations:
-    argocd.argoproj.io/sync-wave: "10"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:

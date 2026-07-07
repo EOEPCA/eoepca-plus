@@ -1,0 +1,69 @@
+# identity-api-protection (gatekeeper) needs a real Keycloak client to fetch
+# its UMA "PAT" token at startup (config.enable-uma: true), or it crashloops
+# with "invalid_client". identity-service ships its own dedicated Keycloak
+# (identity-keycloak) rather than sharing the platform-wide "iam" one, so
+# this Crossplane provider/client is scoped to that instance specifically -
+# using identity-keycloak's own admin/changeme credentials, not iam's.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: identity-keycloak-provider
+  namespace: um
+type: Opaque
+stringData:
+  credentials: |-
+    {
+      "client_id": "admin-cli",
+      "username": "admin",
+      "password": "changeme",
+      "url": "http://identity-keycloak.um.svc.cluster.local:8080",
+      "base_path": "",
+      "realm": "master"
+    }
+---
+apiVersion: keycloak.m.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: identity-keycloak-provider-config
+  namespace: um
+spec:
+  credentialsSecretRef:
+    name: identity-keycloak-provider
+    key: credentials
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: identity-api-client-secret
+  namespace: um
+type: Opaque
+stringData:
+  # Matches identity-api-gatekeeper.secrets.clientSecret in
+  # values-identity-service.yaml, which is what the identity-api-protection
+  # pod is configured to send.
+  client_secret: changeme
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: identity-api
+  namespace: um
+spec:
+  providerConfigRef:
+    name: identity-keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: master
+    name: identity-api
+    accessType: CONFIDENTIAL
+    clientId: identity-api
+    enabled: true
+    standardFlowEnabled: true
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: true
+    fullScopeAllowed: true
+    clientSecretSecretRef:
+      name: identity-api-client-secret
+      key: client_secret
+    authorization:
+      - keepDefaults: true

@@ -55,6 +55,13 @@ persistence:
   procServicesStorageClass: managed-nfs-storage-retain
   storageClass: managed-nfs-storage-retain
   tmpStorageClass: managed-nfs-storage
+global:
+  security:
+    # bitnamilegacy/* images fail the bitnami charts' built-in
+    # "recognized image" check (it only allow-lists bitnami/*), which makes
+    # helm template hard-fail from rabbitmq's NOTES.txt. The images are
+    # identical, just republished under a different registry path.
+    allowInsecureImages: true
 postgresql:
   # Broadcom pulled versioned bitnami/* image tags from Docker Hub's free
   # tier in 2025; the same images are preserved under bitnamilegacy/*.

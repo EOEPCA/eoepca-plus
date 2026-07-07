@@ -15,10 +15,17 @@ spec:
     helm:
       releaseName: notification-automation
       parameters:
+        # KnativeServing/KnativeEventing are created directly by this BB's
+        # own parts/knative-serving.yaml and parts/knative-eventing.yaml
+        # (with the correct notifications.rke2.deploybox.co.uk domain). The
+        # chart defaults these to false for the same reason; leaving them
+        # "true" here made the chart create a second, conflicting copy of
+        # each CR (wrong domain, different version), and the two Applications
+        # fought over ownership every sync.
         - name: serving.install
-          value: "true"
+          value: "false"
         - name: eventing.install
-          value: "true"
+          value: "false"
         - name: eventing.authenticationOidc
           value: "false"
         - name: webhookSource.enabled

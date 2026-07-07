@@ -4,6 +4,7 @@ resources:
   - app-alloy-logs.yaml
   - iam.yaml
   - routes.yaml
+  - ss-loki-s3-credentials.yaml
 
 patches:
   - target:

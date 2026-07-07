@@ -70,6 +70,13 @@ identity-api-gatekeeper:
     clientSecret: "changeme"
     encryptionKey: "changemechangeme"
   ingress:
+    # This chart's Ingress relies on nginx.ingress.kubernetes.io/configuration-snippet
+    # and server-snippet (the auth_request pattern gatekeeper needs), but this
+    # cluster's ingress-nginx has snippet annotations disabled admin-wide, so
+    # the resource is rejected by the nginx admission webhook on every sync.
+    # Nothing else in the repo references identity-api externally, so disable
+    # it rather than leave identity-service-core permanently OutOfSync.
+    enabled: false
     annotations:
       ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"

@@ -1,0 +1,49 @@
+apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: data-proxy
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  writeConnectionSecretToRef:
+    name: data-proxy-oidc
+    namespace: data-proxy
+  forProvider:
+    realmId: eoepca
+    name: data-proxy
+    accessType: PUBLIC
+    clientId: data-proxy
+    enabled: true
+    standardFlowEnabled: false
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://eodag-api.develop.eoepca.org
+    validRedirectUris: []
+    validPostLogoutRedirectUris: []
+    webOrigins:
+      - https://eodag-api.develop.eoepca.org
+      - https://eodag-proxy.develop.eoepca.org
+---
+apiVersion: client.keycloak.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: data-proxy-audience-mapper
+spec:
+  providerConfigRef:
+    name: iam-keycloak-keycloak-provider-config
+  forProvider:
+    clientIdRef:
+      name: data-proxy
+      policy:
+        resolution: Required
+    realmId: eoepca
+    protocol: openid-connect
+    protocolMapper: oidc-audience-mapper
+    name: data-proxy-audience
+    config:
+      "included.client.audience": "data-proxy"
+      "access.token.claim": "true"
+      "id.token.claim": "false"

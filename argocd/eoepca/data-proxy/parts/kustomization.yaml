@@ -4,3 +4,4 @@ resources:
   - ss-cs-container-pull.yaml
   - opa-config.yaml
   - route.yaml
+  - iam.yaml

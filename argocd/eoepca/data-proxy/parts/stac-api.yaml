@@ -17,7 +17,7 @@ spec:
         values: |
           extraEnvVars:
             - name: DOWNLOAD_BASE_URL
-              value: http://release-name-eodag-data-proxy-proxy:8880/
+              value: https://eodag-proxy.develop.eoepca.org/
           image:
             tag: main
   destination:

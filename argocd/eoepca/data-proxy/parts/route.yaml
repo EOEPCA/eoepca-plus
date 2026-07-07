@@ -15,14 +15,14 @@ spec:
         - name: limit-count
           enable: true
           config:
-            count: 2
-            time_window: 10
-            rejected_code: 503
+            count: 100
+            time_window: 60
+            rejected_code: 429
       match:
         hosts:
           - eodag-api.develop.eoepca.org
         paths:
-          - /
+          - /*
 
     - name: proxy-route
       backends:
@@ -32,11 +32,11 @@ spec:
         - name: limit-count
           enable: true
           config:
-            count: 2
-            time_window: 10
-            rejected_code: 503
+            count: 100
+            time_window: 60
+            rejected_code: 429
       match:
         hosts:
           - eodag-proxy.develop.eoepca.org
         paths:
-          - /
+          - /data/*

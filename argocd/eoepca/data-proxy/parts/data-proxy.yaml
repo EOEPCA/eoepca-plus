@@ -23,10 +23,10 @@ spec:
             tag: "0.1"
 
           proxyEnv:
-            eodagUrl: ""
-            authIssuerUrl: http://localhost:8888
+            eodagUrl: http://eodag-data-proxy-eodag-data-proxy-chart-control-plane:8000
+            authIssuerUrl: https://iam-auth.develop.eoepca.org/realms/eoepca
             authAudience: eodag-proxy
-            authJwksUrl: http://oidc:8888/.well-known/jwks.json
+            authJwksUrl: https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration
 
           opa:
             enabled: true

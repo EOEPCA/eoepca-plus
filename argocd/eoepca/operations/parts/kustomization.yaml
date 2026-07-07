@@ -82,27 +82,47 @@ patches:
       kind: Application
       metadata:
         name: kube-prometheus-stack
-        annotations: {argocd.argoproj.io/sync-wave: "0"}
+        annotations: {argocd.argoproj.io/sync-wave: "-10"}
   - target:
       group: argoproj.io
       kind: Application
-      name: ^(keep|loki-stack)$
+      name: ^loki-stack$
     patch: |-
       apiVersion: argoproj.io/v1alpha1
       kind: Application
       metadata:
-        name: operations-foundations
+        name: loki-stack
         annotations: {argocd.argoproj.io/sync-wave: "0"}
   - target:
       group: argoproj.io
       kind: Application
-      name: ^(alloy-logs|keep-oauth2-proxy)$
+      name: ^keep$
     patch: |-
       apiVersion: argoproj.io/v1alpha1
       kind: Application
       metadata:
-        name: operations-consumers
+        name: keep
         annotations: {argocd.argoproj.io/sync-wave: "10"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^alloy-logs$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: alloy-logs
+        annotations: {argocd.argoproj.io/sync-wave: "10"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^keep-oauth2-proxy$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: keep-oauth2-proxy
+        annotations: {argocd.argoproj.io/sync-wave: "20"}
   - target:
       group: apps
       kind: Deployment
@@ -112,7 +132,7 @@ patches:
       kind: Deployment
       metadata:
         name: keep-alertmanager-relay
-        annotations: {argocd.argoproj.io/sync-wave: "10"}
+        annotations: {argocd.argoproj.io/sync-wave: "20"}
   - target:
       group: apisix.apache.org
     patch: |-
@@ -121,5 +141,5 @@ patches:
       metadata:
         name: operations-routes
         annotations:
-          argocd.argoproj.io/sync-wave: "20"
+          argocd.argoproj.io/sync-wave: "30"
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

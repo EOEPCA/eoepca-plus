@@ -18,3 +18,26 @@ patches:
         name: pgo-core
         annotations:
           argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      version: v1
+      kind: ConfigMap
+      name: ^initdb$
+    patch: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: initdb
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"
+  - target:
+      group: monitoring.coreos.com
+      kind: ServiceMonitor
+      name: ^postgres-exporter$
+    patch: |
+      apiVersion: monitoring.coreos.com/v1
+      kind: ServiceMonitor
+      metadata:
+        name: postgres-exporter
+        annotations:
+          argocd.argoproj.io/sync-wave: "20"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

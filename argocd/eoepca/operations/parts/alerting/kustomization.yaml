@@ -6,3 +6,27 @@ resources:
   - keep-alertmanager-relay.yaml
   - secret-keep-oauth2-proxy-cookie.yaml
   - routes.yaml
+
+patches:
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^keep$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: keep
+        annotations:
+          argocd.argoproj.io/sync-wave: "10"
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^keep-oauth2-proxy$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: keep-oauth2-proxy
+        annotations:
+          argocd.argoproj.io/sync-wave: "20"

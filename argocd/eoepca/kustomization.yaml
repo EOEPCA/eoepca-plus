@@ -62,7 +62,7 @@ patches:
           argocd.argoproj.io/sync-wave: "20"
   - target:
       kind: Application
-      name: ^(application-hub|application-quality|application-quality-sonarqube-db|mlops|openeo-argoworkflows|openeo-geotrellis|registration-api|resource-health|workspace)$
+      name: ^(application-quality|application-quality-sonarqube-db|mlops|openeo-argoworkflows|openeo-geotrellis|registration-api|resource-health|workspace)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application
@@ -125,20 +125,22 @@ patches:
           argocd.argoproj.io/sync-wave: "50"
   - target:
       kind: Application
-      name: ^(identity-service|notification-automation|operations)$
+      name: ^(application-hub|identity-service|notification-automation|operations)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application
       metadata:
         name: eoepca-independent-services
         annotations:
-          # Nothing else in this repo references identity-service,
-          # notification-automation or operations (no BB reads their
-          # endpoints/secrets/namespaces). Previously they shared wave 20
-          # with data-access/resource-catalogue, so a Degraded app here
+          # Nothing else in this repo references application-hub,
+          # identity-service, notification-automation or operations (no BB
+          # reads their endpoints/secrets/namespaces). Previously
+          # identity-service/notification-automation/operations shared wave
+          # 20 with data-access/resource-catalogue, so a Degraded app here
           # blocked every later wave (21-50, ~16 unrelated BBs) from ever
-          # being created. Give them the last wave, after even the
-          # frontends, so a problem in any one of them stays isolated.
+          # being created; application-hub had the same effect from wave 30.
+          # Give them the last wave, after even the frontends, so a problem
+          # in any one of them stays isolated instead of cascading.
           argocd.argoproj.io/sync-wave: "55"
   # resource-health and application-quality are the only BBs that inline raw
   # manifests directly into this kustomization instead of isolating them

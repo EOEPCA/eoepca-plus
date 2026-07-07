@@ -137,9 +137,9 @@ patches:
           # endpoints/secrets/namespaces). Previously they shared wave 20
           # with data-access/resource-catalogue, so a Degraded app here
           # blocked every later wave (21-50, ~16 unrelated BBs) from ever
-          # being created. Give them a late wave that has no downstream
-          # dependents so a problem in any one of them stays isolated.
-          argocd.argoproj.io/sync-wave: "45"
+          # being created. Give them the last wave, after even the
+          # frontends, so a problem in any one of them stays isolated.
+          argocd.argoproj.io/sync-wave: "55"
   # resource-health and application-quality are the only BBs that inline raw
   # manifests directly into this kustomization instead of isolating them
   # behind their own nested "parts" Application (see their kustomization.yaml

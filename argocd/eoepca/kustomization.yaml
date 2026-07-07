@@ -123,9 +123,18 @@ patches:
         annotations:
           # User-facing frontends come up after their APIs/backends.
           argocd.argoproj.io/sync-wave: "50"
+  # resource-health and application-quality are the only BBs that inline raw
+  # manifests directly into this kustomization instead of isolating them
+  # behind their own nested "parts" Application (see their kustomization.yaml
+  # comments). That means their SealedSecret/User/apisix resources land in
+  # this shared build and need an explicit wave here. Scope these patches by
+  # name (not just group/kind) so they can't silently reset the wave of some
+  # future, unrelated resource of the same kind added anywhere else in this
+  # kustomization.
   - target:
       group: bitnami.com
       kind: SealedSecret
+      name: ^(application-quality-sonarqube-db-secrets|application-quality-sonarqube-monitoring-passcode|resource-health-opensearch-admin-secret|resource-health-alerting-user-emails|resource-health-iam-client-credentials|resource-health-notifier-email-credentials)$
     patch: |
       apiVersion: bitnami.com/v1alpha1
       kind: SealedSecret
@@ -137,6 +146,7 @@ patches:
   - target:
       group: user.keycloak.m.crossplane.io
       kind: User
+      name: ^resource-health-opensearch-admin$
     patch: |
       apiVersion: user.keycloak.m.crossplane.io/v1alpha1
       kind: User
@@ -147,6 +157,7 @@ patches:
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   - target:
       group: apisix.apache.org
+      name: ^(resource-health-route-auth-plugin|resource-health-route-browser-auth-plugin|application-quality-sonarqube-route)$
     patch: |
       apiVersion: apisix.apache.org/v2
       kind: ApisixRoute

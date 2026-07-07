@@ -38,7 +38,14 @@ identity-api:
     # Config values that can be passed via env vars
     extraEnv:
       - name: AUTH_SERVER_URL  # see configMap.authServerUrl instead
-        value: https://keycloak-v1x.rke2.deploybox.co.uk
+        # In-cluster service DNS, not the public keycloak-v1x.rke2.deploybox.co.uk
+        # hostname: that Ingress uses ingressClassName nginx, but nothing on
+        # this cluster's public IP routes to the nginx controller for this
+        # domain (only argocd.rke2.deploybox.co.uk does, via a separate
+        # DNS/LB path), so the public URL 404s and identity-api crashlooped
+        # on OIDC discovery at startup. Talking to Keycloak directly sidesteps
+        # that broken external hop entirely.
+        value: http://identity-keycloak.um.svc.cluster.local:8080
       - name: ADMIN_USERNAME
         value: "admin"
       - name: REALM
@@ -50,7 +57,10 @@ identity-api:
 identity-api-gatekeeper:
   config:
     client-id: identity-api
-    discovery-url: https://keycloak-v1x.rke2.deploybox.co.uk/realms/master
+    # Same reasoning as identity-api's AUTH_SERVER_URL above: the public
+    # keycloak-v1x hostname isn't routable, so gatekeeper talks to Keycloak
+    # over the in-cluster service instead.
+    discovery-url: http://identity-keycloak.um.svc.cluster.local:8080/realms/master
     cookie-domain: rke2.deploybox.co.uk
   targetService:
     host: identity-api.rke2.deploybox.co.uk

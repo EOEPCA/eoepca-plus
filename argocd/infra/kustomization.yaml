@@ -1,5 +1,6 @@
 
 resources:
+  - kube-dns-alias.yaml
   - app-sealed-secrets.yaml
   # ServiceMonitor and PrometheusRule CRDs are consumed by early infrastructure
   # Applications, before the full Operations monitoring stack can start.

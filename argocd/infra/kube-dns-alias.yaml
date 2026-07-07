@@ -1,0 +1,28 @@
+# RKE2 names its CoreDNS Service "rke2-coredns-rke2-coredns", not the
+# conventional "kube-dns" that vanilla/kubeadm clusters use. Several BB
+# charts hardcode "kube-dns.kube-system.svc.cluster.local" as an nginx
+# resolver default (observed in operations/loki-stack and application-quality),
+# which then fails to resolve on this cluster and crash-loops. Rather than
+# patch every chart that makes this assumption, alias the conventional name
+# to the real CoreDNS Service so those defaults work unmodified.
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-dns
+  namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "-60"
+spec:
+  selector:
+    app.kubernetes.io/instance: rke2-coredns
+    app.kubernetes.io/name: rke2-coredns
+    k8s-app: kube-dns
+  ports:
+    - name: udp-53
+      port: 53
+      protocol: UDP
+      targetPort: 53
+    - name: tcp-53
+      port: 53
+      protocol: TCP
+      targetPort: 53

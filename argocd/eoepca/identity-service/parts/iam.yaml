@@ -58,7 +58,10 @@ spec:
     accessType: CONFIDENTIAL
     clientId: identity-api
     enabled: true
-    standardFlowEnabled: true
+    # identity-api-gatekeeper.config sets no-redirects: true (it's used as a
+    # token-validating/UMA sidecar, not a browser login flow), so it has no
+    # redirect URI to register; standardFlowEnabled would otherwise require one.
+    standardFlowEnabled: false
     directAccessGrantsEnabled: false
     serviceAccountsEnabled: true
     fullScopeAllowed: true

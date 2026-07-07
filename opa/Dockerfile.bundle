@@ -1,0 +1,2 @@
+FROM scratch
+COPY bundle.tar.gz /bundle.tar.gz

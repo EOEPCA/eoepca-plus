@@ -1,3 +1,4 @@
+import base64
 import shlex
 from dataclasses import dataclass
 from typing import List, Sequence
@@ -24,6 +25,23 @@ def _q(value: str) -> str:
     return shlex.quote(value)
 
 
+def _script_command(script: str) -> str:
+    encoded = base64.b64encode(script.encode()).decode()
+    wrapper = f"""set -euo pipefail
+script_path="$(mktemp /tmp/rke2-pulumi.XXXXXX.sh)"
+cleanup() {{
+  rm -f "${{script_path}}"
+}}
+trap cleanup EXIT
+
+printf %s {_q(encoded)} | base64 -d > "${{script_path}}"
+chmod 700 "${{script_path}}"
+bash "${{script_path}}"
+"""
+
+    return f"bash -lc {_q(wrapper)}"
+
+
 def _bastion_connection(bastion_instance):
     return remote.ConnectionArgs(
         host=bastion_instance.bastion_floating_ip_association.floating_ip,
@@ -34,7 +52,7 @@ def _bastion_connection(bastion_instance):
 
 def _build_control_ready_command(control_ip: str, kubeconfig_server: str) -> str:
     ssh_user = config.require("sshUser")
-    return f"""bash <<'SCRIPT'
+    return _script_command(f"""
 set -euo pipefail
 
 SSH_USER={_q(ssh_user)}
@@ -90,15 +108,18 @@ ssh_control "sudo cat /etc/rancher/rke2/rke2.yaml" \
   | sed -E "s#server: https://[^[:space:]]+:6443#server: ${{KUBECONFIG_SERVER}}#" \
   > "/home/${{SSH_USER}}/kubeconfig.yaml"
 chmod 600 "/home/${{SSH_USER}}/kubeconfig.yaml"
-SCRIPT
-"""
+
+test -s "/home/${{SSH_USER}}/kubeconfig.yaml"
+grep -Fq "server: ${{KUBECONFIG_SERVER}}" "/home/${{SSH_USER}}/kubeconfig.yaml"
+echo "control-ready"
+""")
 
 
 def _build_join_worker_command(control_ip: str, worker_ip: str) -> str:
     ssh_user = config.require("sshUser")
     server_url = f"https://{control_ip}:9345"
 
-    return f"""bash <<'SCRIPT'
+    return _script_command(f"""
 set -euo pipefail
 
 SSH_USER={_q(ssh_user)}
@@ -157,6 +178,11 @@ kubelet-arg:
 CONFIG
 }} | ssh_worker "sudo tee /etc/rancher/rke2/config.yaml >/dev/null"
 
+ssh_worker "sudo test -s /etc/rancher/rke2/config.yaml"
+ssh_worker "sudo grep -q '^server: ' /etc/rancher/rke2/config.yaml"
+ssh_worker "sudo grep -q '^token: ' /etc/rancher/rke2/config.yaml"
+echo "worker-config-ready ${{WORKER_IP}}"
+
 ssh_worker "sudo bash -s" <<'WORKER_SCRIPT'
 set -euo pipefail
 
@@ -169,6 +195,7 @@ systemctl restart rke2-agent.service
 
 for i in $(seq 1 90); do
   if systemctl is-active --quiet rke2-agent.service; then
+    echo "rke2-agent-active"
     exit 0
   fi
   echo "Waiting for rke2-agent.service..."
@@ -179,13 +206,15 @@ echo "Timed out waiting for rke2-agent.service" >&2
 journalctl -u rke2-agent.service --no-pager -n 120 || true
 exit 1
 WORKER_SCRIPT
-SCRIPT
-"""
+
+ssh_worker "sudo systemctl is-active --quiet rke2-agent.service"
+echo "worker-joined ${{WORKER_IP}}"
+""")
 
 
 def _build_cluster_ready_command(control_ip: str, expected_nodes: int) -> str:
     ssh_user = config.require("sshUser")
-    return f"""bash <<'SCRIPT'
+    return _script_command(f"""
 set -euo pipefail
 
 SSH_USER={_q(ssh_user)}
@@ -216,8 +245,7 @@ done
 echo "Timed out waiting for Kubernetes nodes to become Ready" >&2
 ssh_control "sudo /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get nodes -o wide" || true
 exit 1
-SCRIPT
-"""
+""")
 
 
 def _build_fetch_kubeconfig_command(bastion_ip: str, kubeconfig_path: str) -> str:
@@ -244,6 +272,8 @@ done
 
 tmp="$(mktemp "${{KUBECONFIG_PATH}}.XXXXXX")"
 scp ${{SSH_OPTS}} "${{SSH_USER}}@${{BASTION_IP}}:/home/${{SSH_USER}}/kubeconfig.yaml" "${{tmp}}"
+test -s "${{tmp}}"
+grep -q '^    server: ' "${{tmp}}"
 chmod 600 "${{tmp}}"
 mv "${{tmp}}" "${{KUBECONFIG_PATH}}"
 """
@@ -270,7 +300,7 @@ def configure(
         update=pulumi.Output.all(control_node.access_ip_v4, kubeconfig_server).apply(
             lambda args: _build_control_ready_command(args[0], args[1])
         ),
-        triggers=[control_node.access_ip_v4, kubeconfig_server],
+        triggers=["rke2-control-ready-v2", control_node.access_ip_v4, kubeconfig_server],
         opts=ResourceOptions(
             depends_on=[
                 bastion_instance.bastion_instance,
@@ -292,7 +322,11 @@ def configure(
                 connection=_bastion_connection(bastion_instance),
                 create=join_command,
                 update=join_command,
-                triggers=[control_node.access_ip_v4, worker_node.access_ip_v4],
+                triggers=[
+                    "rke2-worker-join-v2",
+                    control_node.access_ip_v4,
+                    worker_node.access_ip_v4,
+                ],
                 opts=ResourceOptions(depends_on=[control_ready, worker_node]),
             )
         )
@@ -310,7 +344,12 @@ def configure(
                 ip, 1 + len(worker_nodes)
             )
         ),
-        triggers=[control_node.access_ip_v4, len(control_nodes), len(worker_nodes)],
+        triggers=[
+            "rke2-cluster-ready-v2",
+            control_node.access_ip_v4,
+            len(control_nodes),
+            len(worker_nodes),
+        ],
         opts=ResourceOptions(depends_on=[control_ready, *worker_joins]),
     )
 
@@ -323,6 +362,7 @@ def configure(
             lambda ip: _build_fetch_kubeconfig_command(ip, kubeconfig_path)
         ),
         triggers=[
+            "rke2-fetch-kubeconfig-v2",
             bastion_instance.bastion_floating_ip_association.floating_ip,
             kubeconfig_server,
             kubeconfig_path,

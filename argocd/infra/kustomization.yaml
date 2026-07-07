@@ -89,13 +89,3 @@ patches:
         name: storage-services
         annotations:
           argocd.argoproj.io/sync-wave: "0"
-  - target:
-      group: apisix.apache.org
-    patch: |
-      apiVersion: apisix.apache.org/v2
-      kind: ApisixRoute
-      metadata:
-        name: apisix-resources
-        annotations:
-          argocd.argoproj.io/sync-wave: "2"
-          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

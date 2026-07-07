@@ -65,6 +65,51 @@ configs:
             end
           end
           return hs
+      k8s.keycloak.org/Keycloak:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Keycloak Ready condition" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Ready" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                elseif condition.status == "False" then
+                  hs.status = "Degraded"
+                end
+                return hs
+              end
+            end
+          end
+          return hs
+      k8s.keycloak.org/KeycloakRealmImport:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Keycloak realm import" }
+          local done = false
+          local hasErrors = false
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.message ~= nil and condition.message ~= "" then
+                hs.message = condition.message
+              end
+              if condition.type == "Done" and condition.status == "True" then
+                done = true
+              end
+              if condition.type == "HasErrors" and condition.status == "True" then
+                hasErrors = true
+              end
+            end
+          end
+          if hasErrors then
+            hs.status = "Degraded"
+            if hs.message == "Waiting for Keycloak realm import" then
+              hs.message = "Realm import reported errors"
+            end
+          elseif done then
+            hs.status = "Healthy"
+            hs.message = "Realm import completed"
+          end
+          return hs
       postgres-operator.crunchydata.com/PostgresCluster:
         health.lua: |
           hs = { status = "Progressing", message = "Waiting for PostgresCluster" }

@@ -5,10 +5,6 @@ data:
       github-opa:
         url: https://ghcr.io
         type: oci
-        credentials:
-          bearer:
-            scheme: "Bearer"
-            token: "${GITHUB_TOKEN}"
 
     bundles:
       mybundle:

@@ -54,6 +54,12 @@ persistence:
   storageClass: managed-nfs-storage-retain
   tmpStorageClass: managed-nfs-storage
 postgresql:
+  # Broadcom pulled versioned bitnami/* image tags from Docker Hub's free
+  # tier in 2025; the same images are preserved under bitnamilegacy/*.
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 17.4.0-debian-12-r11
   primary:
     persistence:
       storageClass: managed-nfs-storage-retain
@@ -61,6 +67,10 @@ postgresql:
     persistence:
       storageClass: managed-nfs-storage-retain
 rabbitmq:
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/rabbitmq
+    tag: 4.0.7-debian-12-r1
   persistence:
     storageClass: managed-nfs-storage-retain
 iam:

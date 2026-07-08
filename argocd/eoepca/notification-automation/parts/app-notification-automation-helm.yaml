@@ -59,6 +59,25 @@ spec:
   destination:
     name: in-cluster
     namespace: na
+  # Knative's defaulting webhook fills in template/traffic defaults, and the
+  # SinkBinding controller injects K_SINK/K_CE_OVERRIDES env vars, none of
+  # which the chart sets, so they'd otherwise show as permanent drift.
+  ignoreDifferences:
+    - group: serving.knative.dev
+      kind: Service
+      jqPathExpressions:
+        - '.spec.template.metadata.creationTimestamp'
+        - '.spec.template.spec.containerConcurrency'
+        - '.spec.template.spec.enableServiceLinks'
+        - '.spec.template.spec.timeoutSeconds'
+        - '.spec.template.spec.containers[].name'
+        - '.spec.template.spec.containers[].readinessProbe.failureThreshold'
+        - '.spec.template.spec.containers[].readinessProbe.successThreshold'
+        - '.spec.template.spec.containers[].readinessProbe.timeoutSeconds'
+        - '.spec.template.spec.containers[].env[] | select(.name == "K_SINK")'
+        - '.spec.template.spec.containers[].env[] | select(.name == "K_CE_OVERRIDES")'
+        - '.spec.traffic[].latestRevision'
+        - '.spec.traffic[].percent'
   syncPolicy:
     automated:
       prune: true

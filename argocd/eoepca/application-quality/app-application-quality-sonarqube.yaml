@@ -25,6 +25,14 @@ spec:
   destination:
     name: in-cluster
     namespace: application-quality-sonarqube
+  # The API server injects apiVersion/kind/volumeMode/status into
+  # StatefulSet volumeClaimTemplates entries that the chart doesn't set,
+  # which otherwise shows as permanent drift.
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - '.spec.volumeClaimTemplates'
   syncPolicy:
     automated:
       prune: true

@@ -760,6 +760,14 @@ spec:
   destination:
     namespace: resource-health
     server: https://kubernetes.default.svc
+  # The API server injects apiVersion/kind/volumeMode/status into
+  # StatefulSet volumeClaimTemplates entries that the chart doesn't set,
+  # which otherwise shows as permanent drift.
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - '.spec.volumeClaimTemplates'
   syncPolicy:
     automated:
       prune: true

@@ -21,7 +21,6 @@ spec:
     backends:
       - serviceName: resource-health-web
         servicePort: 80
-    plugins:
     plugin_config_name: resource-health-route-browser-auth-plugin
   - name: resource-health-telemetry-api-route
     match:

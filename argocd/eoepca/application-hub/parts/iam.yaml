@@ -1,0 +1,28 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: application-hub
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: application-hub-oidc
+  forProvider:
+    realmId: eoepca
+    name: application-hub
+    accessType: CONFIDENTIAL
+    clientId: application-hub
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: true
+    useRefreshTokens: true
+    rootUrl: https://applicationhub.rke2.deploybox.co.uk
+    validRedirectUris:
+      - https://applicationhub.rke2.deploybox.co.uk/*
+    webOrigins:
+      - https://applicationhub.rke2.deploybox.co.uk

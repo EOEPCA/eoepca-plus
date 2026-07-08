@@ -2,6 +2,7 @@
 resources:
   - app-sharinghub.yaml
   - app-gitlab.yaml
+  - iam.yaml
   - ss-sharinghub-oidc.yaml
   - ss-sharinghub-s3.yaml
   - ss-sharinghub.yaml

@@ -1,10 +1,11 @@
 resources:
   - resource-health.yaml
   - iam.yaml
+  - iam-secret-propagation.yaml
   - ingress/ingress.yaml
   - ingress/ingress-auth-plugin.yaml
   - ingress/ingress-browser-auth-plugin.yaml
-  - secrets/resource-health-iam-client-sealedsecret.yaml
+  - secrets/ss-resource-health-session-secret.yaml
   - secrets/resource-health-notifier-email-sealedsecret.yaml
   - secrets/resource-health-alerting-user-emails-sealedsecret.yaml
   - secrets/resource-health-opensearch-admin-sealedsecret.yaml

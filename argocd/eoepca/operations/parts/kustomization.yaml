@@ -1,5 +1,4 @@
 resources:
-  - namespace-operations.yaml
   - _dashboards
   - _rules
   - alerting
@@ -7,16 +6,6 @@ resources:
   - iam-secret-propagation.yaml
 
 patches:
-  - target:
-      version: v1
-      kind: Namespace
-      name: ^operations$
-    patch: |-
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: operations
-        annotations: {argocd.argoproj.io/sync-wave: "-40"}
   - target:
       version: v1
       kind: Secret

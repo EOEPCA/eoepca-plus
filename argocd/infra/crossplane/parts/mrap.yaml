@@ -39,6 +39,7 @@ spec:
     - protocolmappers.client.keycloak.m.crossplane.io
     - groupmembershipprotocolmappers.openidgroup.keycloak.m.crossplane.io
     - roles.role.keycloak.m.crossplane.io
+    - users.user.keycloak.m.crossplane.io
 ---
 apiVersion: apiextensions.crossplane.io/v1alpha1
 kind: ManagedResourceActivationPolicy

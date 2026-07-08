@@ -1,6 +1,7 @@
 
 resources:
   - app-application-hub-core.yaml
+  - iam.yaml
   - ss-application-hub.yaml
   - ingress.yaml
 

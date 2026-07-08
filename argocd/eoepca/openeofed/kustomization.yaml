@@ -1,3 +1,4 @@
 ---
 resources:
   - openeofed.yaml
+  - iam.yaml

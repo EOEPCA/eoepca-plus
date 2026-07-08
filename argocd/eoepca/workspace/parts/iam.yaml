@@ -63,3 +63,62 @@ spec:
       included.client.audience: workspace-api
       access.token.claim: "true"
       id.token.claim: "false"
+---
+apiVersion: client.keycloak.m.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: workspace-api-groups-mapper
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    clientIdRef:
+      name: workspace-api
+      policy:
+        resolution: Required
+    realmId: eoepca
+    protocol: openid-connect
+    protocolMapper: oidc-group-membership-mapper
+    name: groups
+    config:
+      full.path: "true"
+      claim.name: groups
+      access.token.claim: "true"
+      id.token.claim: "true"
+      userinfo.token.claim: "true"
+      multivalued: "true"
+---
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: workspace-admin
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: workspace-admin
+---
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: workspace-admin
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    groupIdRef:
+      name: workspace-admin
+      policy:
+        resolution: Required
+    roleIdsRefs:
+      - name: workspace-api-admin
+        policy:
+          resolution: Required

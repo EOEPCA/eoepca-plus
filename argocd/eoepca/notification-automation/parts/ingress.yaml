@@ -6,6 +6,9 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
     kubernetes.io/ingress.class: apisix
+    # apisix never populates status.loadBalancer, so the custom Ingress health
+    # check would otherwise leave this stuck on "Progressing" forever.
+    argocd.argoproj.io/ignore-healthcheck: "true"
 spec:
   ingressClassName: apisix
   rules:

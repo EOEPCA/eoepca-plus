@@ -59,58 +59,123 @@ SSH_USER={_q(ssh_user)}
 CONTROL_IP={_q(control_ip)}
 KUBECONFIG_SERVER={_q(kubeconfig_server)}
 SSH_KEY="/home/${{SSH_USER}}/.ssh/key.pem"
-SSH_OPTS="-i ${{SSH_KEY}} -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/home/${{SSH_USER}}/.ssh/known_hosts -o ConnectTimeout=10"
+SSH_OPTS=(
+  -i "${{SSH_KEY}}"
+  -o BatchMode=yes
+  -o StrictHostKeyChecking=accept-new
+  -o UserKnownHostsFile="/home/${{SSH_USER}}/.ssh/known_hosts"
+  -o ConnectTimeout=10
+  -o ServerAliveInterval=10
+  -o ServerAliveCountMax=3
+)
 
-wait_for_bastion_key() {{
-  for i in $(seq 1 60); do
-    [ -s "${{SSH_KEY}}" ] && return 0
-    echo "Waiting for bastion SSH key..."
-    sleep 5
-  done
-  echo "Timed out waiting for ${{SSH_KEY}}" >&2
-  return 1
+ssh_control_timeout() {{
+  local seconds="$1"
+  shift
+  timeout "${{seconds}}" ssh "${{SSH_OPTS[@]}}" "${{SSH_USER}}@${{CONTROL_IP}}" "$@"
 }}
 
 ssh_control() {{
-  ssh ${{SSH_OPTS}} "${{SSH_USER}}@${{CONTROL_IP}}" "$@"
+  ssh_control_timeout 45 "$@"
+}}
+
+wait_for_bastion_key() {{
+  for i in $(seq 1 120); do
+    if [ -s "${{SSH_KEY}}" ]; then
+      chmod 600 "${{SSH_KEY}}" || true
+      return 0
+    fi
+    echo "Waiting for bastion SSH key..."
+    sleep 5
+  done
+
+  echo "Timed out waiting for ${{SSH_KEY}}" >&2
+  ls -la "/home/${{SSH_USER}}/.ssh" || true
+  return 1
 }}
 
 wait_for_control_ssh() {{
-  for i in $(seq 1 90); do
+  for i in $(seq 1 120); do
     if ssh_control "true" >/dev/null 2>&1; then
       return 0
     fi
-    echo "Waiting for control node SSH..."
+    echo "Waiting for control node SSH at ${{CONTROL_IP}}..."
     sleep 10
   done
+
   echo "Timed out waiting for control node SSH at ${{CONTROL_IP}}" >&2
   return 1
 }}
 
+wait_for_control_cloud_init() {{
+  if ! ssh_control "command -v cloud-init >/dev/null 2>&1"; then
+    echo "cloud-init not installed on control node; skipping cloud-init wait"
+    return 0
+  fi
+
+  echo "Waiting for control node cloud-init..."
+  if ssh_control_timeout 1800 "sudo cloud-init status --wait"; then
+    return 0
+  fi
+
+  echo "cloud-init did not complete cleanly; continuing to RKE2 readiness checks" >&2
+  ssh_control "sudo cloud-init status --long || true" || true
+  ssh_control "sudo tail -n 160 /var/log/cloud-init-output.log || true" || true
+}}
+
+print_control_diagnostics() {{
+  echo "---- control node diagnostics ----" >&2
+  ssh_control "sudo cloud-init status --long || true" || true
+  ssh_control "sudo systemctl status rke2-server.service --no-pager || true" || true
+  ssh_control "sudo journalctl -u rke2-server.service --no-pager -n 160 || true" || true
+  ssh_control "sudo tail -n 160 /var/log/cloud-init-output.log || true" || true
+  echo "----------------------------------" >&2
+}}
+
 wait_for_rke2_server() {{
-  for i in $(seq 1 120); do
-    if ssh_control "sudo test -s /var/lib/rancher/rke2/server/node-token && sudo test -s /etc/rancher/rke2/rke2.yaml && sudo systemctl is-active --quiet rke2-server.service"; then
+  for i in $(seq 1 180); do
+    if ssh_control "sudo test -s /var/lib/rancher/rke2/server/node-token \
+      && sudo test -s /etc/rancher/rke2/rke2.yaml \
+      && sudo test -x /var/lib/rancher/rke2/bin/kubectl \
+      && sudo systemctl is-active --quiet rke2-server.service \
+      && sudo /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get --raw=/readyz >/dev/null 2>&1 \
+      && sudo /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get nodes >/dev/null 2>&1"; then
       return 0
     fi
-    echo "Waiting for RKE2 server token, kubeconfig and service..."
+
+    echo "Waiting for RKE2 server API, token and kubeconfig..."
     sleep 10
   done
+
   echo "Timed out waiting for RKE2 server readiness" >&2
-  ssh_control "sudo journalctl -u rke2-server.service --no-pager -n 120" || true
+  print_control_diagnostics
   return 1
+}}
+
+write_bastion_kubeconfig() {{
+  local tmp
+  tmp="$(mktemp "/home/${{SSH_USER}}/kubeconfig.yaml.XXXXXX")"
+
+  ssh_control "sudo cat /etc/rancher/rke2/rke2.yaml" \
+    | awk -v server="${{KUBECONFIG_SERVER}}" '
+        /^[[:space:]]*server: https:\\/\\/[^[:space:]]+:6443/ {{
+          sub(/https:\\/\\/[^[:space:]]+:6443/, server)
+        }}
+        {{ print }}
+      ' > "${{tmp}}"
+
+  test -s "${{tmp}}"
+  grep -Fq "server: ${{KUBECONFIG_SERVER}}" "${{tmp}}"
+  chmod 600 "${{tmp}}"
+  mv "${{tmp}}" "/home/${{SSH_USER}}/kubeconfig.yaml"
 }}
 
 wait_for_bastion_key
 wait_for_control_ssh
+wait_for_control_cloud_init
 wait_for_rke2_server
+write_bastion_kubeconfig
 
-ssh_control "sudo cat /etc/rancher/rke2/rke2.yaml" \
-  | sed -E "s#server: https://[^[:space:]]+:6443#server: ${{KUBECONFIG_SERVER}}#" \
-  > "/home/${{SSH_USER}}/kubeconfig.yaml"
-chmod 600 "/home/${{SSH_USER}}/kubeconfig.yaml"
-
-test -s "/home/${{SSH_USER}}/kubeconfig.yaml"
-grep -Fq "server: ${{KUBECONFIG_SERVER}}" "/home/${{SSH_USER}}/kubeconfig.yaml"
 echo "control-ready"
 """)
 
@@ -300,13 +365,14 @@ def configure(
         update=pulumi.Output.all(control_node.access_ip_v4, kubeconfig_server).apply(
             lambda args: _build_control_ready_command(args[0], args[1])
         ),
-        triggers=["rke2-control-ready-v2", control_node.access_ip_v4, kubeconfig_server],
+        triggers=["rke2-control-ready-v3", control_node.access_ip_v4, kubeconfig_server],
         opts=ResourceOptions(
             depends_on=[
                 bastion_instance.bastion_instance,
                 bastion_instance.bastion_floating_ip_association,
                 control_node,
-            ]
+            ],
+            custom_timeouts=pulumi.CustomTimeouts(create="45m", update="45m"),
         ),
     )
 

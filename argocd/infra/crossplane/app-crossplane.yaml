@@ -13,7 +13,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: rke2-argocd-sync-wave
+    targetRevision: merge-from-deploy-develop
     path: argocd/infra/crossplane/parts
   destination:
     name: in-cluster

@@ -12,6 +12,6 @@ Thus, the root `identity-service` application references the `parts/` subdirecto
 ```yaml
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: rke2-argocd-sync-wave
+    targetRevision: merge-from-deploy-develop
     path: argocd/eoepca/identity-service/parts
 ```

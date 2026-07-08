@@ -1,6 +1,7 @@
 
 resources:
   - app-envoy-gateway.yaml
+  - namespace-ingress-apisix.yaml
   - gateway-class-envoy.yaml
   - envoy-proxy-eoepca-public.yaml
   - gateway-eoepca-public.yaml

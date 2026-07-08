@@ -22,7 +22,7 @@ spec:
         # envoy-gateway. The chart's mixed CRD bundle must not own either set.
         skipCrds: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: rke2-argocd-sync-wave
+      targetRevision: merge-from-deploy-develop
       ref: values
 
   destination:

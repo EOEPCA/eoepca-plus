@@ -20,7 +20,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-db-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: rke2-argocd-sync-wave
+      targetRevision: merge-from-deploy-develop
       ref: values
   destination:
     name: in-cluster
@@ -65,7 +65,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: rke2-argocd-sync-wave
+      targetRevision: merge-from-deploy-develop
       ref: values
   destination:
     name: in-cluster

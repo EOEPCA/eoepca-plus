@@ -10,7 +10,7 @@ spec:
 
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: rke2-argocd-sync-wave
+    targetRevision: merge-from-deploy-develop
     path: argocd
 
   destination:

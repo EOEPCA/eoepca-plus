@@ -112,6 +112,9 @@ helm upgrade --install nfs-provisioner-retain nfs-provisioner/nfs-subdir-externa
     --version "${NFS_PROVISIONER_VERSION}" \
     --wait --timeout 3m
 
+kubectl patch storageclass managed-nfs-storage-retain \
+    -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
 echo "=== Installing ArgoCD ==="
 helm repo add argo https://argoproj.github.io/argo-helm
 # helm repo update

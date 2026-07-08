@@ -11,7 +11,9 @@ resources:
   - apisixroute-hostbased.yaml
   - iam-management-ns.yaml
   - eoepca-admin.yaml
+  - eoepca-user.yaml
   - ss-iam-keycloak.yaml
+  - ss-eoepca-user.yaml
   - ss-opa-route.yaml
   - ss-keycloak-admin.yaml
   - ss-eoepca-realm.yaml

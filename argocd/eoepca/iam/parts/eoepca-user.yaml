@@ -1,0 +1,22 @@
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: eoepca-user
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    username: eoepcauser
+    firstName: EOEPCA
+    lastName: User
+    email: eoepcauser@gmail.com
+    enabled: true
+    emailVerified: true
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: eoepca-user
+          key: eoepcauser-password

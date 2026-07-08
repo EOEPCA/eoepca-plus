@@ -1,6 +1,7 @@
 
 resources:
   - app-application-quality-core.yaml
+  - iam.yaml
   - ss-application-quality-auth-client.yaml
   - ss-application-quality-iam-client.yaml
   - ss-grafana-dashboards-admin-creds.yaml

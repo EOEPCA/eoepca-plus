@@ -1,0 +1,24 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: application-quality-bb
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: application-quality-bb
+    accessType: PUBLIC
+    clientId: application-quality-bb
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    rootUrl: https://application-quality.rke2.deploybox.co.uk
+    webOrigins:
+      - https://application-quality.rke2.deploybox.co.uk
+    validRedirectUris:
+      - https://application-quality.rke2.deploybox.co.uk/*

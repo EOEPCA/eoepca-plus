@@ -54,20 +54,12 @@ persistence:
   procServicesStorageClass: managed-nfs-storage-retain
   storageClass: managed-nfs-storage-retain
   tmpStorageClass: managed-nfs-storage
-global:
-  security:
-    # bitnamilegacy/* images fail the bitnami charts' built-in
-    # "recognized image" check (it only allow-lists bitnami/*), which makes
-    # helm template hard-fail from rabbitmq's NOTES.txt. The images are
-    # identical, just republished under a different registry path.
-    allowInsecureImages: true
 postgresql:
-  # Broadcom pulled versioned bitnami/* image tags from Docker Hub's free
-  # tier in 2025; the same images are preserved under bitnamilegacy/*.
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/postgresql
-    tag: 17.2.0-debian-12-r5
+  # No image override: the chart's default (as used by zoo-dru-keda on the
+  # same chart version) works. bitnamilegacy/postgresql was tried as a
+  # workaround for Broadcom pulling bitnami/* images, but that legacy tag
+  # fails with "Permission denied" writing /opt/bitnami/postgresql/conf
+  # under this runAsUser/fsGroup.
   primary:
     persistence:
       storageClass: managed-nfs-storage-retain
@@ -75,10 +67,6 @@ postgresql:
     persistence:
       storageClass: managed-nfs-storage-retain
 rabbitmq:
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/rabbitmq
-    tag: 4.0.5-debian-12-r0
   persistence:
     storageClass: managed-nfs-storage-retain
 iam:

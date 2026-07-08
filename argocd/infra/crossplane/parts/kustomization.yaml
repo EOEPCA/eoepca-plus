@@ -12,11 +12,11 @@ patches:
   - target:
       version: v1
       kind: Namespace
-      name: ^workspace$
+      name: ^(workspace|data-access|operations)$
     patch: |-
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: workspace
+        name: crossplane-providerconfig-namespaces
         annotations:
           argocd.argoproj.io/sync-wave: "-20"

@@ -1,5 +1,6 @@
 resources:
   - resource-health.yaml
+  - iam.yaml
   - ingress/ingress.yaml
   - ingress/ingress-auth-plugin.yaml
   - ingress/ingress-browser-auth-plugin.yaml

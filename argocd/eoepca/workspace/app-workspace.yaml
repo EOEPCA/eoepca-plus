@@ -16,14 +16,16 @@ spec:
   destination:
     name: in-cluster
     namespace: workspace
-  # Kyverno's admission controller fills in emitWarning/validationFailureAction
-  # defaults the manifests don't set, which otherwise shows as permanent drift.
+  # Kyverno's admission controller fills in emitWarning/validationFailureAction/
+  # skipBackgroundRequests defaults the manifests don't set, which otherwise
+  # shows as permanent drift.
   ignoreDifferences:
     - group: kyverno.io
       kind: ClusterPolicy
       jqPathExpressions:
         - '.spec.emitWarning'
         - '.spec.validationFailureAction'
+        - '.spec.rules[].skipBackgroundRequests'
   syncPolicy:
     automated:
       prune: true

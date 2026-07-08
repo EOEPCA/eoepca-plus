@@ -16,9 +16,9 @@ spec:
       releaseName: notification-automation
       parameters:
         - name: serving.install
-          value: "true"
+          value: "false"
         - name: eventing.install
-          value: "true"
+          value: "false"
         - name: apiServerSource.enabled # enable the API Server Source to receive events from Kubernetes API
           value: "true"
         - name: eventing.authenticationOidc

@@ -1,0 +1,15 @@
+apiVersion: operator.knative.dev/v1beta1
+kind: KnativeServing
+metadata:
+  name: knative-serving
+  namespace: knative-serving
+spec:
+  version: "1.17"
+  ingress:
+    kourier:
+      enabled: true
+  config:
+    domain:
+      notifications.rke2.deploybox.co.uk: ""
+    network:
+      ingress-class: "kourier.ingress.networking.knative.dev"

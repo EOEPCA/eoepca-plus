@@ -1,4 +1,5 @@
 resources:
+  - ss-data-proxy-oci-repo.yaml
   - data-proxy.yaml
   - stac-api.yaml
   - ss-cs-container-pull.yaml

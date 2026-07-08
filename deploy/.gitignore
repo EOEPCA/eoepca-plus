@@ -17,3 +17,4 @@ k8s/argocd/dex.yaml
 k8s/argocd/argocd-cm.yaml
 documents/*
 rke2/
+infra/reset-rke2-cluster.*

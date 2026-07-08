@@ -2,12 +2,13 @@ apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: Client
 metadata:
   name: data-proxy
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   writeConnectionSecretToRef:
     name: data-proxy-oidc
-    namespace: data-proxy
   forProvider:
     realmId: eoepca
     name: data-proxy
@@ -29,9 +30,11 @@ apiVersion: client.keycloak.m.crossplane.io/v1alpha1
 kind: ProtocolMapper
 metadata:
   name: data-proxy-audience-mapper
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     clientIdRef:
       name: data-proxy

@@ -41,13 +41,15 @@ spec:
       policy:
         resolution: Required
 ---
-apiVersion: client.keycloak.crossplane.io/v1alpha1
+apiVersion: client.keycloak.m.crossplane.io/v1alpha1
 kind: ProtocolMapper
 metadata:
   name: workspace-api-audience-mapper
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     clientIdRef:
       name: workspace-api

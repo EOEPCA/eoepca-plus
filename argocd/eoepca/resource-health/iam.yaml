@@ -1,0 +1,28 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: resource-health-bb
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: resource-health-oidc
+  forProvider:
+    realmId: eoepca
+    name: resource-health-bb
+    accessType: CONFIDENTIAL
+    clientId: resource-health-bb
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://resource-health.rke2.deploybox.co.uk
+    validRedirectUris:
+      - https://resource-health.rke2.deploybox.co.uk/*
+    webOrigins:
+      - https://resource-health.rke2.deploybox.co.uk

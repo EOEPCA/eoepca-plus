@@ -53,13 +53,18 @@ patches:
           argocd.argoproj.io/sync-wave: "10"
   - target:
       kind: Application
-      name: ^(data-access|datacube-access|resource-catalogue)$
+      name: ^(data-access|data-proxy|datacube-access|resource-catalogue)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application
       metadata:
         name: eoepca-foundations
         annotations:
+          # data-proxy was previously unmatched by any of these patches, so it
+          # defaulted to wave 0 -- earlier than iam's wave 10. Its Client
+          # (data-proxy/parts/iam.yaml) can't reach Ready without
+          # keycloak-provider-config, which iam creates, so the whole root
+          # app deadlocked waiting on Application/data-proxy at wave 0.
           argocd.argoproj.io/sync-wave: "20"
   - target:
       kind: Application

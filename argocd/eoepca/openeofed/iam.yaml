@@ -3,6 +3,15 @@ kind: Client
 metadata:
   name: openeo-default-client
   namespace: iam-management
+  annotations:
+    # openeofed/kustomization.yaml inlines this directly into the root
+    # eoepca app (no app-openeofed.yaml -> parts/ split like other BBs), so
+    # this resource competes in the root app's global wave sequence rather
+    # than openeofed's own. Without an explicit wave it defaults to 0,
+    # earlier than iam's wave 10, which needs to exist first (it creates
+    # keycloak-provider-config). Match openeofed's own Application wave.
+    argocd.argoproj.io/sync-wave: "40"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   providerConfigRef:
     name: keycloak-provider-config

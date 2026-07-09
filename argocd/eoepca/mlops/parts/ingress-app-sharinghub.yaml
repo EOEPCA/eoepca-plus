@@ -22,7 +22,7 @@ spec:
                 name: sharinghub
                 port:
                   number: 8000
-  tls:
-    - hosts:
-        - rke2.deploybox.co.uk
-      secretName: sharinghub-rke2.deploybox.co.uk-tls
+  # No tls block: rke2.deploybox.co.uk already has a cluster-wide SNI cert
+  # registered by infra/apisix/parts/apisixtls-apx-main.yaml. See the
+  # comment in ingress-mlflow-sharinghub.yaml for why this route doesn't
+  # provision its own duplicate certificate.

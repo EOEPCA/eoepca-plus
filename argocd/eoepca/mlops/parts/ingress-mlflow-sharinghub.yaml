@@ -38,33 +38,11 @@ spec:
         headers:
           set:
             X-Script-Name: /mlflow
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: mlflow-sharinghub-tls
-  namespace: sharinghub
-spec:
-  dnsNames:
-    - rke2.deploybox.co.uk
-  issuerRef:
-    kind: ClusterIssuer
-    name: letsencrypt-http01-apisix
-  secretName: sharinghub-rke2.deploybox.co.uk-tls
-  usages:
-    - digital signature
-    - key encipherment
-    - server auth
----
-apiVersion: apisix.apache.org/v2
-kind: ApisixTls
-metadata:
-  name: mlflow-sharinghub-tls
-  namespace: sharinghub
-spec:
-  ingressClassName: apisix
-  hosts:
-    - rke2.deploybox.co.uk
-  secret:
-    name: sharinghub-rke2.deploybox.co.uk-tls
-    namespace: sharinghub
+# No dedicated Certificate/ApisixTls here: rke2.deploybox.co.uk already has
+# a cluster-wide SNI cert (infra/apisix/parts/cert-apx-main.yaml +
+# apisixtls-apx-main.yaml). ApisixTls is a global APISIX SSL object, not
+# scoped to the namespace it lives in, so it already terminates TLS for any
+# route matching this host regardless of which BB's namespace owns the
+# route. A second Certificate for the exact same identifier only burns
+# Let's Encrypt's shared "5 duplicate certs per exact identifier set per
+# 168h" rate limit on every rebuild -- see git history for the incident.

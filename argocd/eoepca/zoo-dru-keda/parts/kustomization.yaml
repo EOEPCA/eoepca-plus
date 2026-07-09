@@ -1,19 +1,10 @@
 
 resources:
-  - app-kyverno.yaml
   - app-zoo-dru-keda-core.yaml
   - ingress-zoo.yaml
   - ss-zoo-workflow-env.yaml
 
 patches:
-  - target:
-      group: argoproj.io
-      kind: Application
-      name: ^kyverno$
-    patch: |-
-      - op: add
-        path: /metadata/annotations
-        value: {argocd.argoproj.io/sync-wave: "-10"}
   - target:
       group: argoproj.io
       kind: Application

@@ -1,0 +1,28 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: application-quality-sonarqube
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: application-quality-sonarqube-oidc
+  forProvider:
+    realmId: eoepca
+    name: application-quality-sonarqube
+    accessType: CONFIDENTIAL
+    clientId: application-quality-sonarqube
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://application-quality.rke2.deploybox.co.uk/sonarqube
+    validRedirectUris:
+      - '/*'
+    webOrigins:
+      - '/*'

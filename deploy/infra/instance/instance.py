@@ -114,7 +114,7 @@ EOF
 
 def get_rke2_server_user_data_script(domain_name, lb_ip, email):
     return f"""#!/bin/bash
-set -e
+set -euo pipefail
 exec > /var/log/rke2-setup.log 2>&1
 
 # Disable swap
@@ -181,33 +181,87 @@ helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 
-# Install cert-manager
-kubectl create namespace cert-manager
-helm install cert-manager jetstack/cert-manager \
-    --namespace cert-manager \
-    --version v1.16.3 \
-    --set crds.enabled=true \
-    --wait --timeout 5m
-
-# Wait for ingress-nginx to be ready
-echo "Waiting for ingress-nginx admission webhook..."
-until kubectl get endpoints -n kube-system rke2-ingress-nginx-controller-admission -o jsonpath='{{.subsets[0].addresses[0].ip}}' 2>/dev/null | grep -q .; do
-    sleep 10
-    echo "Still waiting for ingress-nginx..."
+# Install cert-manager (idempotent, retried: helm can transiently fail
+# right after the apiserver comes up)
+kubectl create namespace cert-manager --dry-run=client -o yaml | kubectl apply -f -
+cert_manager_ok=false
+for i in $(seq 1 5); do
+    if helm upgrade --install cert-manager jetstack/cert-manager \
+        --namespace cert-manager \
+        --version v1.16.3 \
+        --set crds.enabled=true \
+        --wait --timeout 5m; then
+        cert_manager_ok=true
+        break
+    fi
+    echo "cert-manager install attempt $i failed, retrying in 15s"
+    sleep 15
 done
+if [ "$cert_manager_ok" != "true" ]; then
+    echo "FATAL: cert-manager install failed after retries"
+    kubectl get pods -n cert-manager || true
+    exit 1
+fi
+
+# Wait for ingress-nginx to be ready (bounded, was previously an infinite loop
+# that could hang the whole script and block cattle-system from ever being created)
+echo "Waiting for ingress-nginx admission webhook..."
+ingress_ready=false
+for i in $(seq 1 60); do
+    ip="$(kubectl get endpoints -n kube-system rke2-ingress-nginx-controller-admission -o jsonpath='{{.subsets[0].addresses[0].ip}}' 2>/dev/null || true)"
+    if [ -n "$ip" ]; then
+        ingress_ready=true
+        break
+    fi
+    echo "Still waiting for ingress-nginx... ($i/60)"
+    sleep 10
+done
+if [ "$ingress_ready" != "true" ]; then
+    echo "FATAL: ingress-nginx admission webhook not ready after 10m"
+    kubectl get pods -n kube-system -l app.kubernetes.io/name=rke2-ingress-nginx || true
+    exit 1
+fi
 echo "Ingress-nginx is ready"
 sleep 15
 
-# Install Rancher
-kubectl create namespace cattle-system
-helm install rancher rancher-stable/rancher \
-    --namespace cattle-system \
-    --set hostname=rancher.{domain_name} \
-    --set letsEncrypt.email={email} \
-    --set letsEncrypt.ingress.class=nginx \
-    --set ingress.tls.source=letsEncrypt \
-    --set replicas=1 \
-    --wait --timeout 10m
+# Install Rancher (idempotent, retried)
+kubectl create namespace cattle-system --dry-run=client -o yaml | kubectl apply -f -
+rancher_ok=false
+for i in $(seq 1 3); do
+    if helm upgrade --install rancher rancher-stable/rancher \
+        --namespace cattle-system \
+        --set hostname=rancher.{domain_name} \
+        --set letsEncrypt.email={email} \
+        --set letsEncrypt.ingress.class=nginx \
+        --set ingress.tls.source=letsEncrypt \
+        --set replicas=1 \
+        --wait --timeout 10m; then
+        rancher_ok=true
+        break
+    fi
+    echo "Rancher install attempt $i failed, retrying in 30s"
+    sleep 30
+done
+if [ "$rancher_ok" != "true" ]; then
+    echo "FATAL: Rancher install failed after retries"
+    kubectl get pods -n cattle-system || true
+    exit 1
+fi
+
+# Verify the bootstrap secret actually exists before relying on it below
+secret_ok=false
+for i in $(seq 1 30); do
+    if kubectl get secret --namespace cattle-system bootstrap-secret >/dev/null 2>&1; then
+        secret_ok=true
+        break
+    fi
+    echo "Waiting for Rancher bootstrap-secret... ($i/30)"
+    sleep 10
+done
+if [ "$secret_ok" != "true" ]; then
+    echo "FATAL: cattle-system/bootstrap-secret not found after Rancher install"
+    exit 1
+fi
 
 # Save bootstrap password
 kubectl get secret --namespace cattle-system bootstrap-secret \

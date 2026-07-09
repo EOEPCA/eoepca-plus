@@ -28,3 +28,55 @@ spec:
       - https://eoepca.github.io
       - https://editor.rke2.deploybox.co.uk
       - http://localhost:1410
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: openeo-public-demo
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: openeo-public-demo
+    accessType: PUBLIC
+    clientId: openeo-public-demo
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    rootUrl: https://openeo.rke2.deploybox.co.uk
+    validRedirectUris:
+      - https://editor.openeo.org/*
+      - https://openeo.rke2.deploybox.co.uk/*
+    webOrigins:
+      - '/*'
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: openeo-public-test
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: openeo-public-test
+    accessType: PUBLIC
+    clientId: openeo-public-test
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    rootUrl: https://openeo-test.rke2.deploybox.co.uk
+    validRedirectUris:
+      - https://editor.openeo.org/*
+      - https://openeo-test.rke2.deploybox.co.uk/*
+    webOrigins:
+      - '/*'

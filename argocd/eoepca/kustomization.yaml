@@ -33,7 +33,7 @@ patches:
   - target:
       version: v1
       kind: Namespace
-      name: ^(application-quality-sonarqube|resource-health)$
+      name: ^application-quality-sonarqube$
     patch: |
       apiVersion: v1
       kind: Namespace
@@ -87,7 +87,7 @@ patches:
           argocd.argoproj.io/sync-wave: "31"
   - target:
       kind: Application
-      name: ^(application-quality|application-quality-sonarqube-db|mlops|openeo-argoworkflows|openeo-geotrellis|registration-api|resource-health|workspace)$
+      name: ^(application-quality|application-quality-sonarqube-db|mlops|openeo-argoworkflows|openeo-geotrellis|registration-api|workspace)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application
@@ -127,6 +127,11 @@ patches:
       metadata:
         name: resource-health
         annotations:
+          # resource-health-bb's Client needs keycloak-provider-config (iam,
+          # wave 10). resource-health is a normal app-resource-health.yaml
+          # -> parts/ Application now (see its kustomization.yaml comment),
+          # so this wave only controls the wrapper; everything inside parts/
+          # has its own locally-scoped wave sequence.
           argocd.argoproj.io/sync-wave: "31"
   - target:
       kind: Application
@@ -168,18 +173,19 @@ patches:
           # Give them the last wave, after even the frontends, so a problem
           # in any one of them stays isolated instead of cascading.
           argocd.argoproj.io/sync-wave: "55"
-  # resource-health and application-quality are the only BBs that inline raw
+  # application-quality-sonarqube is the only piece left that inlines raw
   # manifests directly into this kustomization instead of isolating them
-  # behind their own nested "parts" Application (see their kustomization.yaml
-  # comments). That means their SealedSecret/User/apisix resources land in
-  # this shared build and need an explicit wave here. Scope these patches by
-  # name (not just group/kind) so they can't silently reset the wave of some
-  # future, unrelated resource of the same kind added anywhere else in this
-  # kustomization.
+  # behind their own nested "parts" Application (see application-quality's
+  # kustomization.yaml comment). resource-health used to as well, but was
+  # restructured to the standard app-X.yaml -> parts/ pattern like every
+  # other BB (see resource-health/kustomization.yaml). Scope these patches
+  # by name (not just group/kind) so they can't silently reset the wave of
+  # some future, unrelated resource of the same kind added anywhere else in
+  # this kustomization.
   - target:
       group: bitnami.com
       kind: SealedSecret
-      name: ^(application-quality-sonarqube-db-secrets|application-quality-sonarqube-monitoring-passcode|resource-health-opensearch-admin-secret|resource-health-alerting-user-emails|resource-health-iam-client-credentials|resource-health-notifier-email-credentials)$
+      name: ^(application-quality-sonarqube-db-secrets|application-quality-sonarqube-monitoring-passcode)$
     patch: |
       apiVersion: bitnami.com/v1alpha1
       kind: SealedSecret
@@ -189,20 +195,8 @@ patches:
           argocd.argoproj.io/sync-wave: "29"
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   - target:
-      group: user.keycloak.m.crossplane.io
-      kind: User
-      name: ^resource-health-opensearch-admin$
-    patch: |
-      apiVersion: user.keycloak.m.crossplane.io/v1alpha1
-      kind: User
-      metadata:
-        name: eoepca-keycloak-users
-        annotations:
-          argocd.argoproj.io/sync-wave: "30"
-          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-  - target:
       group: apisix.apache.org
-      name: ^(resource-health-route-auth-plugin|resource-health-route-browser-auth-plugin|application-quality-sonarqube-route)$
+      name: ^application-quality-sonarqube-route$
     patch: |
       apiVersion: apisix.apache.org/v2
       kind: ApisixRoute

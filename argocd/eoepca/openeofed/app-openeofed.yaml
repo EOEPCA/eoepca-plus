@@ -1,24 +1,18 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: openeofed
   namespace: argocd
   labels:
+    eoepca/is-root-app: "true"
     eoepca/app-name: openeofed
 spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
-  sources:
-    - repoURL: https://artifactory.vgt.vito.be/artifactory/helm-charts
-      chart: openeo-aggregator
-      targetRevision: 0.1.5
-      helm:
-        releaseName: openeofed
-        valueFiles:
-          - $values/argocd/eoepca/openeofed/values-openeofed.yaml
-    - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: merge-from-deploy-develop
-      ref: values
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: merge-from-deploy-develop
+    path: argocd/eoepca/openeofed/parts
   destination:
     name: in-cluster
     namespace: openeofed

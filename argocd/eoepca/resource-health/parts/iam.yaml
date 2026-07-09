@@ -3,13 +3,6 @@ kind: Client
 metadata:
   name: resource-health-bb
   namespace: iam-management
-  annotations:
-    # resource-health inlines its raw resources directly into the root
-    # eoepca app, so this competes in the root app's global wave sequence.
-    # Needs to be after iam (wave 10, creates keycloak-provider-config) and
-    # before resource-health's own SealedSecrets/ExternalSecret/app wave.
-    argocd.argoproj.io/sync-wave: "29"
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   providerConfigRef:
     name: keycloak-provider-config

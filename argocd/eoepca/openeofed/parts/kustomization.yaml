@@ -1,0 +1,3 @@
+resources:
+  - app-openeofed-core.yaml
+  - iam.yaml

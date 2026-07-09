@@ -1,5 +1,6 @@
 
 resources:
+  - iam.yaml
   - ss-registration-harvester-secret.yaml
   - app-registration-harvester-flowable.yaml
   - app-registration-harvester-operaton.yaml

@@ -4,11 +4,16 @@ metadata:
   name: kyverno
   namespace: argocd
   labels:
-    eoepca/app-name: zoo-project-dru-keda
-  annotations:
-    argocd.argoproj.io/sync-wave: "-1"
+    eoepca/is-root-app: "true"
+    eoepca/app-name: kyverno
 spec:
-  # Kyverno for policy management in KEDA deployment
+  # Kyverno for policy management. Originally bundled inside zoo-dru-keda,
+  # but it's a shared infra dependency: workspace-dependencies' educates
+  # chart (baseline/restricted ClusterPolicies) needs it too, and it was
+  # only reaching wave 40 (via zoo-project-dru-keda) while workspace is
+  # wave 30, so workspace-dependencies permanently SyncFailed on missing
+  # ClusterPolicy CRDs. Moved here so it installs during the infra tier,
+  # well before any eoepca BB needs it.
   project: eoepca
   sources:
     - repoURL: https://kyverno.github.io/kyverno/
@@ -17,7 +22,7 @@ spec:
       helm:
         releaseName: kyverno
         valueFiles:
-          - $values/argocd/eoepca/zoo-dru-keda/parts/values-kyverno.yaml
+          - $values/argocd/infra/kyverno/values-kyverno.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: merge-from-deploy-develop
       ref: values

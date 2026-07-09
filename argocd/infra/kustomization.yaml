@@ -15,6 +15,7 @@ resources:
   - mongodb-operator
   - qdrant-operator
   - redis-operator
+  - kyverno
   - gateway
   - eso
   - crossplane
@@ -55,7 +56,7 @@ patches:
           argocd.argoproj.io/sync-wave: "-40"
   - target:
       kind: Application
-      name: ^(crossplane|eso-core|knative-operator|pgo|strimzi-kafka-operator|trivy)$
+      name: ^(crossplane|eso-core|knative-operator|kyverno|pgo|strimzi-kafka-operator|trivy)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application

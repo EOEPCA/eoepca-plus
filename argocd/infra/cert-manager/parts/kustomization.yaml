@@ -4,6 +4,8 @@ resources:
   - cert-manager-ca-issuer.yaml
   - clusterissuer-dns01.yaml
   - clusterissuer-http01-apisix.yaml
+  - clusterissuer-staging.yaml
+  - clusterissuer-dns-staging.yaml
   - ss-dns-api-token.yaml
 
 patches:

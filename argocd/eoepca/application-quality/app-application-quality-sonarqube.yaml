@@ -21,6 +21,15 @@ spec:
           - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-db-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: merge-from-deploy-develop
+      # The postgresql chart needs this secret to exist before it can become
+      # healthy, but it lives alongside the sonarqube app's own manifests
+      # (wave 1). Owning it here directly, ahead of the db pod, avoids a
+      # deadlock where wave 1 never runs because wave 0 never turns healthy.
+      path: argocd/eoepca/application-quality/sonarqube
+      directory:
+        include: "ss-application-quality-sonarqube-db-secrets.yaml"
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: merge-from-deploy-develop
       ref: values
   destination:
     name: in-cluster
@@ -65,6 +74,10 @@ spec:
     - repoURL: https://github.com/EOEPCA/eoepca-plus
       targetRevision: merge-from-deploy-develop
       path: argocd/eoepca/application-quality/sonarqube
+      # Owned by application-quality-sonarqube-db instead (wave 0), so the
+      # postgresql chart doesn't deadlock waiting on this app's later wave.
+      directory:
+        exclude: "ss-application-quality-sonarqube-db-secrets.yaml"
     - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
       targetRevision: 2026.2.1
       chart: sonarqube

@@ -53,7 +53,7 @@ patches:
           argocd.argoproj.io/sync-wave: "10"
   - target:
       kind: Application
-      name: ^(data-access|data-proxy|datacube-access|resource-catalogue)$
+      name: ^(data-proxy|resource-catalogue)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application
@@ -66,6 +66,25 @@ patches:
           # keycloak-provider-config, which iam creates, so the whole root
           # app deadlocked waiting on Application/data-proxy at wave 0.
           argocd.argoproj.io/sync-wave: "20"
+  - target:
+      kind: Application
+      name: ^data-access$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: data-access
+        annotations:
+          # data-access/parts/storage-geoparquet-exporter.yaml is a Storage
+          # (pkg.internal) composite resource. That CRD/XRD is installed by
+          # the workspace-pipeline chart's Configuration packages
+          # (storage-minio, datalab-educates), part of the "workspace" BB at
+          # wave 30 -- not by anything in data-access itself. At wave 20,
+          # data-access tried to create it before the CRD existed, got a
+          # hard SyncFailed (not just a health wait), exhausted its retries,
+          # and permanently deadlocked the root app waiting on
+          # Application/data-access. Must run after workspace (wave 30).
+          argocd.argoproj.io/sync-wave: "31"
   - target:
       kind: Application
       name: ^(application-quality|application-quality-sonarqube-db|mlops|openeo-argoworkflows|openeo-geotrellis|registration-api|resource-health|workspace)$
@@ -85,8 +104,9 @@ patches:
       metadata:
         name: datacube-access
         annotations:
-          # The configured backend is the Data Access STAC endpoint.
-          argocd.argoproj.io/sync-wave: "21"
+          # The configured backend is the Data Access STAC endpoint, so this
+          # must run after data-access (now wave 31, see above).
+          argocd.argoproj.io/sync-wave: "32"
   - target:
       kind: Application
       name: ^application-quality-sonarqube$

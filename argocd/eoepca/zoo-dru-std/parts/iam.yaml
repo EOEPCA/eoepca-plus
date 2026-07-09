@@ -1,0 +1,61 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: zoo
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: zoo-oidc
+  forProvider:
+    realmId: eoepca
+    name: zoo
+    accessType: CONFIDENTIAL
+    clientId: zoo
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: true
+    useRefreshTokens: true
+    rootUrl: https://zoostd.rke2.deploybox.co.uk
+    validRedirectUris:
+      - https://zoostd.rke2.deploybox.co.uk/*
+      - https://zoostd-open.rke2.deploybox.co.uk/*
+      - https://webuistd.rke2.deploybox.co.uk/*
+    webOrigins:
+      - https://zoostd.rke2.deploybox.co.uk
+      - https://zoostd-open.rke2.deploybox.co.uk
+      - https://webuistd.rke2.deploybox.co.uk
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: zoo-webapp
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: zoo-webapp-oidc
+  forProvider:
+    realmId: eoepca
+    name: zoo-webapp
+    accessType: CONFIDENTIAL
+    clientId: zoo-webapp
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://webuistd.rke2.deploybox.co.uk
+    validRedirectUris:
+      - https://webuistd.rke2.deploybox.co.uk/*
+    webOrigins:
+      - https://webuistd.rke2.deploybox.co.uk

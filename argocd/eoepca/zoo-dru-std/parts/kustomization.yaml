@@ -4,6 +4,7 @@ resources:
   - ingress-zoo.yaml
   - ingress-webui.yaml
   - ss-zoo-workflow-env.yaml
+  - iam.yaml
 
 patches:
   - target: {group: argoproj.io, kind: Application}

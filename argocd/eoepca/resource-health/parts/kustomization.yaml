@@ -29,10 +29,11 @@ patches:
       - op: add
         path: /metadata/annotations
         value:
-          # Needs the Client's connection secret (iam.yaml) and the
-          # ClusterSecretStore (iam-secret-propagation.yaml), both default
-          # wave 0, to exist first.
-          argocd.argoproj.io/sync-wave: "1"
+          # Needs the Client's connection secret (iam.yaml, default wave 0),
+          # the ClusterSecretStore (iam-secret-propagation.yaml, default wave
+          # 0), and resource-health-session-secret (a SealedSecret, wave 2)
+          # to all exist first, so this has to run after wave 2.
+          argocd.argoproj.io/sync-wave: "3"
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   - target:
       group: user.keycloak.m.crossplane.io

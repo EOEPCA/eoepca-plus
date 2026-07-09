@@ -12,6 +12,7 @@ resources:
   - iam-management-ns.yaml
   - eoepca-admin.yaml
   - eoepca-user.yaml
+  - realm-roles.yaml
   - ss-iam-keycloak.yaml
   - ss-eoepca-user.yaml
   - ss-opa-route.yaml

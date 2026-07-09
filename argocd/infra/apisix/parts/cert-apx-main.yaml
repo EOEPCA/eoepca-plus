@@ -17,5 +17,7 @@ spec:
   dnsNames:
     - "rke2.deploybox.co.uk"
   issuerRef:
-    name: letsencrypt-dns-prod
+    # staging issuer: letsencrypt-dns-prod is rate-limited (5 certs/168h) for
+    # this exact hostname from repeated cluster teardown/recreate cycles
+    name: letsencrypt-staging
     kind: ClusterIssuer

@@ -22,3 +22,129 @@ spec:
       - https://application-quality.rke2.deploybox.co.uk
     validRedirectUris:
       - https://application-quality.rke2.deploybox.co.uk/*
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: application-quality
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: application-quality
+    accessType: PUBLIC
+    clientId: application-quality
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    rootUrl: https://application-quality.rke2.deploybox.co.uk
+    webOrigins:
+      - '/*'
+    validRedirectUris:
+      - '/*'
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientDefaultScopes
+metadata:
+  name: application-quality-default-scopes
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    clientIdRef:
+      name: application-quality
+      policy:
+        resolution: Required
+    defaultScopes:
+      - roles
+      - profile
+      - email
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: appquality-grafana-admin
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: appquality-grafana-admin
+    description: Admin role for application-quality dashboards
+    clientIdRef:
+      name: application-quality
+      policy:
+        resolution: Required
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: appquality-grafana-editor
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: appquality-grafana-editor
+    description: Editor role for application-quality dashboards
+    clientIdRef:
+      name: application-quality
+      policy:
+        resolution: Required
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: appquality-grafana-viewer
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: appquality-grafana-viewer
+    description: Viewer role for application-quality dashboards
+    clientIdRef:
+      name: application-quality
+      policy:
+        resolution: Required
+---
+apiVersion: client.keycloak.m.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: application-quality-client-roles-mapper
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    clientIdRef:
+      name: application-quality
+      policy:
+        resolution: Required
+    realmId: eoepca
+    protocol: openid-connect
+    protocolMapper: oidc-usermodel-client-role-mapper
+    name: client-roles-mapper
+    config:
+      "access.token.claim": "true"
+      "id.token.claim": "true"
+      "userinfo.token.claim": "true"
+      "multivalued": "true"
+      "claim.name": "roles"
+      "jsonType.label": "String"
+      "usermodel.clientRoleMapping.clientId": "application-quality"

@@ -58,7 +58,7 @@ spec:
         
   destination:
     name: in-cluster
-    namespace: na
+    namespace: notifications
   # Knative's defaulting webhook fills in template/traffic defaults, and the
   # SinkBinding controller injects K_SINK/K_CE_OVERRIDES env vars, none of
   # which the chart sets, so they'd otherwise show as permanent drift.

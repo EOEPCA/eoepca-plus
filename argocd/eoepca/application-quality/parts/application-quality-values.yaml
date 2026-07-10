@@ -62,9 +62,11 @@ application-quality:
   notifications:
     enabled: true
     middleware: "knative"
-    # The Knative Trigger is created in the same namespace as the Broker
+    # The Knative Trigger is created in the same namespace as the Broker.
+    # notification-automation's default Broker lives in the "notifications"
+    # namespace (see notification-automation/parts/namespace-notifications.yaml).
     brokerName: "default"
-    brokerNamespace: "na"
+    brokerNamespace: "notifications"
     # Also used as type prefix for incoming notifications
     channelPrefix: "org.eoepca.application-quality"
     responseSource: "/eoepca/application-quality"

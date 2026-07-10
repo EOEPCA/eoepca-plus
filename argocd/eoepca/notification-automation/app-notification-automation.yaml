@@ -15,7 +15,7 @@ spec:
     path: argocd/eoepca/notification-automation/parts
   destination:
     name: in-cluster
-    namespace: na
+    namespace: notifications
   syncPolicy:
     automated:
       prune: true

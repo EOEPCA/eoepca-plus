@@ -17,5 +17,7 @@ spec:
   dnsNames:
     - "*.rke2.deploybox.co.uk"
   issuerRef:
-    name: letsencrypt-dns-prod
+    # Use the DNS staging issuer while repeated clean-cluster rebuilds would
+    # otherwise hit Let's Encrypt production duplicate-certificate limits.
+    name: letsencrypt-dns-staging
     kind: ClusterIssuer

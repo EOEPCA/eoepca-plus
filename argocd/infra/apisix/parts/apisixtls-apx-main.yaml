@@ -5,7 +5,7 @@ metadata:
   name: apx-main-tls
   namespace: ingress-apisix
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-dns-prod
+    cert-manager.io/cluster-issuer: letsencrypt-dns-staging
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "1"
 spec:

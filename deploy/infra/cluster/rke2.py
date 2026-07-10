@@ -47,6 +47,8 @@ def _bastion_connection(bastion_instance):
         host=bastion_instance.bastion_floating_ip_association.floating_ip,
         user=config.require("sshUser"),
         private_key=bastion_instance.private_key.private_key_pem,
+        dial_error_limit=120,
+        per_dial_timeout=10,
     )
 
 
@@ -107,20 +109,16 @@ wait_for_control_ssh() {{
   return 1
 }}
 
-wait_for_control_cloud_init() {{
+show_control_cloud_init_state() {{
+  # Do not wait for full cloud-init here: the control node user-data also
+  # installs Rancher, so that would block the RKE2 readiness gate.
   if ! ssh_control "command -v cloud-init >/dev/null 2>&1"; then
-    echo "cloud-init not installed on control node; skipping cloud-init wait"
+    echo "cloud-init not installed on control node"
     return 0
   fi
 
-  echo "Waiting for control node cloud-init..."
-  if ssh_control_timeout 1800 "sudo cloud-init status --wait"; then
-    return 0
-  fi
-
-  echo "cloud-init did not complete cleanly; continuing to RKE2 readiness checks" >&2
+  echo "Current control node cloud-init state:"
   ssh_control "sudo cloud-init status --long || true" || true
-  ssh_control "sudo tail -n 160 /var/log/cloud-init-output.log || true" || true
 }}
 
 print_control_diagnostics() {{
@@ -172,7 +170,7 @@ write_bastion_kubeconfig() {{
 
 wait_for_bastion_key
 wait_for_control_ssh
-wait_for_control_cloud_init
+show_control_cloud_init_state
 wait_for_rke2_server
 write_bastion_kubeconfig
 
@@ -365,7 +363,7 @@ def configure(
         update=pulumi.Output.all(control_node.access_ip_v4, kubeconfig_server).apply(
             lambda args: _build_control_ready_command(args[0], args[1])
         ),
-        triggers=["rke2-control-ready-v3", control_node.access_ip_v4, kubeconfig_server],
+        triggers=["rke2-control-ready-v4", control_node.access_ip_v4, kubeconfig_server],
         opts=ResourceOptions(
             depends_on=[
                 bastion_instance.bastion_instance,

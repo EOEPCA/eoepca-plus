@@ -13,6 +13,9 @@ config:
   eoepca-infra:floatingIpPool: external
   eoepca-infra:maintainerEmail: maintainer@example.com
 
+  # Used by deploy/k8s-resources/scripts/bootstrap-argocd.sh for cert-manager.
+  eoepca-infra:cloudflareDnsApiToken: cfut_xxx
+
   # Config for control plane / etcd flavor
   eoepca-infra:controlPlaneNodeFlavour: eo2a.xlarge
 

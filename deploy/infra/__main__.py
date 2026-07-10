@@ -1,3 +1,5 @@
+import shlex
+
 import pulumi
 from pulumi_openstack import loadbalancer
 
@@ -10,6 +12,7 @@ from network import network
 from nfs import nfs
 
 config = pulumi.Config()
+cloudflare_dns_api_token = config.require("cloudflareDnsApiToken")
 
 
 def main():
@@ -39,6 +42,18 @@ def main():
     # Deploy NFS
     nfs_server = nfs.deploy(network_instance)
     pulumi.export("nfs_server_ip", nfs_server.access_ip_v4)
+    pulumi.export("bootstrap_argocd_command", pulumi.Output.all(
+        config.require("domainName"),
+        nfs_server.access_ip_v4,
+    ).apply(
+        lambda args: (
+            "cd ../k8s-resources && "
+            "bash scripts/bootstrap-argocd.sh "
+            f"{shlex.quote(args[0])} "
+            f"{shlex.quote(args[1])} "
+            f"{shlex.quote(cloudflare_dns_api_token)}"
+        )
+    ))
 
     # Deploy Control Nodes (configurable count)
     control_node_count = config.get_int("controlPlaneNodeCount") or 1

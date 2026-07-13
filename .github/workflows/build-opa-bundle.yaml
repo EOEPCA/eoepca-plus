@@ -96,12 +96,12 @@ jobs:
             bundle.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
         if: github.event_name != 'pull_request'
 
-      - name: Push latest tag (main only)
+      - name: Push latest tag
         run: |
           oras push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
             --config config.json:application/vnd.oci.image.config.v1+json \
             bundle.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/deploy-develop' && github.event_name != 'pull_request'
 
       - name: Summary
         run: |

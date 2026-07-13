@@ -1,6 +1,6 @@
-# OPA Bundle Distribution with GitHub Container Registry
+# OPA Bundle Distribution with GitHub Container Registry via ORAS
 
-This setup builds the OPA bundle directly from this repository under `opa/bundle` and publishes it to GitHub Container Registry.
+This setup builds the OPA bundle directly from this repository under `opa/bundle` and publishes it to GitHub Container Registry using ORAS (OCI Registry As Storage).
 
 ## Repository Layout
 
@@ -10,7 +10,7 @@ eoepca-plus/
 │   ├── bundle/
 │   │   ├── data.yaml
 │   │   └── policy/
-│   ├── Dockerfile.bundle
+│   ├── config.json
 │   └── OPA_BUNDLE_DISTRIBUTION.md
 ├── .github/workflows/build-opa-bundle.yaml
 └── argocd/eoepca/data-proxy/parts/opa-config.yaml
@@ -18,23 +18,61 @@ eoepca-plus/
 
 ## CI Workflow
 
-The workflow in `.github/workflows/build-opa-bundle.yaml` builds and pushes OCI image to `ghcr.io/<org>/opa-bundle`.
+The workflow in `.github/workflows/build-opa-bundle.yaml` builds the OPA bundle and pushes it to GitHub Container Registry using ORAS.
 
 Triggers:
-- push on `main` and `develop` when `opa/**` changes
+- push on `main`, `develop`, and `deploy-develop` when `opa/**` changes
 - pull request to `main` when `opa/**` changes (build only)
 - manual dispatch
 
 ## OPA Runtime Configuration
 
-`argocd/eoepca/data-proxy/parts/opa-config.yaml` should point to GHCR:
+`argocd/eoepca/data-proxy/parts/opa-config.yaml` should point to GHCR with the ORAS-compatible OCI image.
 
-## Local Validation
+## Local Validation & Push
+
+### Build the bundle locally
 
 ```bash
 cd eoepca-plus
 opa build -b ./opa/bundle -o ./bundle.tar.gz
 tar -tzf ./bundle.tar.gz | head -20
+```
+
+### Push with ORAS
+
+Install ORAS if not already available:
+```bash
+# Install ORAS (see https://oras.land/)
+curl -sSLO https://github.com/oras-project/oras/releases/download/v1.1.0/oras_1.1.0_linux_amd64.tar.gz
+tar xzf oras_1.1.0_linux_amd64.tar.gz
+export PATH="$(pwd):$PATH"
+```
+
+Create a `config.json` for the OPA bundle:
+```json
+{
+  "mediaType": "application/vnd.oci.image.config.v1+json",
+  "version": "1.0.0",
+  "created": "2024-01-01T00:00:00Z",
+  "description": "OPA Policy Bundle",
+  "org.opencontainers.image.source": "https://github.com/EOEPCA/eoepca-plus"
+}
+```
+
+Push to GHCR:
+```bash
+export REGISTRY=ghcr.io
+export ORG=eoepca
+export BUNDLE_VERSION=1.0.0  # Update as needed
+
+# Log in to GHCR (requires GITHUB_TOKEN with packages:write)
+echo $GITHUB_TOKEN | oras login $REGISTRY -u <username> --password-stdin
+
+# Push the bundle
+oras push $REGISTRY/$ORG/opa-bundle:$BUNDLE_VERSION \
+  --config config.json:application/vnd.oci.image.config.v1+json \
+  bundle.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
 ```
 
 ## Kubernetes Secret
@@ -55,11 +93,16 @@ kubectl create secret generic opa-credentials \
    - Check sidecar logs: `kubectl logs -n data-proxy <pod> -c opa | grep -i bundle`.
    - Verify `GITHUB_TOKEN` is present in namespace `data-proxy`.
 
-3. Image pull issues
-   - Confirm image exists: `docker pull ghcr.io/eoepca/opa-bundle:latest`.
-   - Confirm token has package read access.
-      max_delay_seconds: 0
-```
+3. Bundle push issues
+   - Verify ORAS is installed: `oras version`
+   - Ensure GITHUB_TOKEN has `write:packages` and `read:packages` scopes
+   - Check login: `oras login ghcr.io -u <username>`
+   - Verify bundle exists: `ls -lh bundle.tar.gz`
+
+4. Bundle fetch issues with OPA
+   - OPA supports `oras://` scheme for bundle references
+   - Example: `oras://ghcr.io/eoepca/opa-bundle:1.0.0`
+   - Verify in OPA logs for bundle download errors
 
 ### Bundle Signing (Optional)
 
@@ -71,5 +114,7 @@ For production environments, consider:
 ## Related Documentation
 
 - [OPA Bundle Documentation](https://www.openpolicyagent.org/docs/latest/management-bundles/)
+- [ORAS Documentation](https://oras.land/)
+- [OCI Image Spec](https://github.com/opencontainers/image-spec)
 - [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
 - [Kubernetes Secret Management](https://kubernetes.io/docs/concepts/configuration/secret/)

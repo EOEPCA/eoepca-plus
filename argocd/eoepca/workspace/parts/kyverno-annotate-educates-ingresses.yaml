@@ -47,6 +47,7 @@ spec:
                 enable: true
                 config:
                   discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+                  timeout: 10
                   use_jwks: true
                   bearer_only: false
                   scope: openid roles

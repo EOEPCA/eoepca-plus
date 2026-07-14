@@ -11,7 +11,7 @@ spec:
   sources:
     - repoURL: https://apache.github.io/apisix-helm-chart
       chart: apisix
-      targetRevision: 2.13.0
+      targetRevision: 2.16.0
       helm:
         releaseName: apisix
         valueFiles:

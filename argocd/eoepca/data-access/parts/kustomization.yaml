@@ -6,6 +6,7 @@ resources:
   - route.yaml
   - eso-pgo.yaml
   - deployment-synthetic-api-check.yaml
+  - servicemonitor-stac-auth-proxy.yaml
 
 configMapGenerator:
   - name: stac-auth-proxy-filters

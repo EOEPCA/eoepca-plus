@@ -2,7 +2,7 @@ harvester:
   image:
     repository: eoepca/registration-harvester
     pullPolicy: Always
-    tag: 2.1.0-dev23
+    tag: 2.1.0-dev24
   secret:
     name: registration-harvester-secret
   config:

@@ -108,7 +108,7 @@ def main():
         kubeconfig_server,
     )
 
-    # Export for Ansible
+    # Exports
     pulumi.export("control_node_ips", [n.access_ip_v4 for n in control_nodes])
     pulumi.export("worker_node_ips", [n.access_ip_v4 for n in worker_nodes])
     pulumi.export("bastion_ip", bastion_instance.bastion_floating_ip_association.floating_ip)

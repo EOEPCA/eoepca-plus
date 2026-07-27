@@ -22,5 +22,5 @@ spec:
     # Must stay DNS-01 (not the http01-nginx letsencrypt-staging issuer):
     # this host is routed by apisix, not the nginx ingress controller, so an
     # nginx-solved HTTP-01 challenge 404s.
-    name: letsencrypt-dns-staging
+    name: letsencrypt-dns-prod
     kind: ClusterIssuer

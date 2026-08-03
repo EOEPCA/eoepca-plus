@@ -11,7 +11,7 @@ database:
 storage:
   outputPath: "s3://geoparquet-exporter/geoparquet"
   existingSecret: "geoparquet-exporter-s3-credentials"
-  endpoint: "https://minio.develop.eoepca.org"
+  endpoint: "https://minio.rke2.deploybox.co.uk"
 
 exportConfig:
   exportAll: true

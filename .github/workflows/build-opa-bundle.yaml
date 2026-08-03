@@ -38,6 +38,14 @@ jobs:
           chmod +x opa
           echo "$PWD" >> $GITHUB_PATH
 
+      - name: Setup ORAS
+        run: |
+          mkdir -p .tools
+          cd .tools
+          curl -sSLO https://github.com/oras-project/oras/releases/download/v1.1.0/oras_1.1.0_linux_amd64.tar.gz
+          tar xzf oras_1.1.0_linux_amd64.tar.gz
+          echo "$(pwd)" >> $GITHUB_PATH
+
       - name: Build OPA bundle
         run: |
           test -d opa/bundle
@@ -48,41 +56,52 @@ jobs:
           tar -tzf ./bundle.tar.gz | head -20
           echo "Bundle size: $(du -h ./bundle.tar.gz | cut -f1)"
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Create OCI config
+        run: |
+          cat > config.json <<EOF
+          {
+            "mediaType": "application/vnd.oci.image.config.v1+json",
+            "version": "1.0.0",
+            "created": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+            "description": "OPA Policy Bundle",
+            "org.opencontainers.image.source": "${{ github.server_url }}/${{ github.repository }}",
+            "org.opencontainers.image.revision": "${{ github.sha }}"
+          }
+          EOF
+          cat config.json
+
+      - name: Extract version tag
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            TAG="main"
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            TAG="develop"
+          elif [[ "${{ github.ref }}" == "refs/heads/deploy-develop" ]]; then
+            TAG="deploy-develop"
+          else
+            TAG="${{ github.sha }}"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG" >> $GITHUB_OUTPUT
 
       - name: Log in to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
         run: |
-          TAGS="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-          TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
-          
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main"
-          fi
-          if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            TAGS="$TAGS,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:develop"
-          fi
-          
-          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+          echo "${{ secrets.GITHUB_TOKEN }}" | oras login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
 
-      - name: Build and push OPA bundle image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./opa/Dockerfile.bundle
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: |
-            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
+      - name: Push OPA bundle with ORAS
+        run: |
+          oras push ${{ steps.version.outputs.image }} \
+            --config config.json:application/vnd.oci.image.config.v1+json \
+            bundle.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+        if: github.event_name != 'pull_request'
+
+      - name: Push latest tag
+        run: |
+          oras push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+            --config config.json:application/vnd.oci.image.config.v1+json \
+            bundle.tar.gz:application/vnd.oci.image.layer.v1.tar+gzip
+        if: github.ref == 'refs/heads/deploy-develop' && github.event_name != 'pull_request'
 
       - name: Summary
         run: |
@@ -90,5 +109,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Registry**: ${{ env.REGISTRY }}" >> $GITHUB_STEP_SUMMARY
           echo "**Image**: ${{ env.IMAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Tags**: ${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Tag**: ${{ steps.version.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
           echo "**Source**: ./opa/bundle (local repository)" >> $GITHUB_STEP_SUMMARY
+          echo "**Method**: ORAS push" >> $GITHUB_STEP_SUMMARY

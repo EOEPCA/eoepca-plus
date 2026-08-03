@@ -6,12 +6,12 @@ zoo:
     enabled: true
 zoofpm:
   image:
-    tag: eoepca-ad6563d64c564268778263ad41fed9f9d18d07ca
+    tag: eoepca-f0080845011eb3fad53f49ee577a2e61dd8331f0
 zookernel:
   env:
     ZOO_OUTPUT_FORMAT: "stac-collection"
   image:
-    tag: eoepca-ad6563d64c564268778263ad41fed9f9d18d07ca
+    tag: eoepca-f0080845011eb3fad53f49ee577a2e61dd8331f0
 customConfig:
   main:
     eoepca: |-
@@ -67,6 +67,8 @@ iam:
   enabled: true
   openIdConnectUrl: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration
   realm: eoepca
+  issuer: https://iam-auth.develop.eoepca.org/realms/eoepca
+  audience: account
 documentation:
   enabled: true
 dask:

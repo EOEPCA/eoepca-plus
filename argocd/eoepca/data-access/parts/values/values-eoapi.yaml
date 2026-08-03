@@ -138,7 +138,7 @@ eoapi-notifier:
 stac-auth-proxy:
   enabled: true
   image:
-    tag: "v1.1.0"
+    tag: "v1.2.0"
   # Custom filters for STAC collections/items filtering
   service:
     port: 8080
@@ -167,7 +167,8 @@ stac-auth-proxy:
         "^/conformance$": ["GET"],
         "^/docs/oauth2-redirect": ["GET"],
         "^/healthz": ["GET"],
-        "^/_mgmt/ping": ["GET"]
+        "^/_mgmt/ping": ["GET"],
+        "^/_mgmt/metrics": ["GET"]
       }
     ROOT_PATH: "/stac"
     SWAGGER_UI_INIT_OAUTH: |

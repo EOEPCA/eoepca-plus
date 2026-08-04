@@ -19,7 +19,7 @@ spec:
         values: |
           extraEnvVars:
             - name: DOWNLOAD_BASE_URL
-              value: https://eodag-proxy.rke2.deploybox.co.uk/
+              value: https://eodag-proxy.develop-v2.eoepca.org/
           image:
             tag: main
   destination:

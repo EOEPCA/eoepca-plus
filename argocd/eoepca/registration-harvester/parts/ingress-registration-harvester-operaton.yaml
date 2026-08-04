@@ -10,7 +10,7 @@ spec:
     - name: redirect-root
       match:
         hosts:
-          - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+          - registration-harvester-bpm-engine.develop-v2.eoepca.org
         paths:
           - /
           - /operaton
@@ -27,7 +27,7 @@ spec:
     - name: rewrite-operaton-path
       match:
         hosts:
-          - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+          - registration-harvester-bpm-engine.develop-v2.eoepca.org
         paths:
           - /operaton/*
       backends:
@@ -46,7 +46,7 @@ spec:
     - name: redirect-rest-api
       match:
         hosts:
-          - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+          - registration-harvester-bpm-engine.develop-v2.eoepca.org
         paths:
           - /engine-rest
       plugins:
@@ -62,7 +62,7 @@ spec:
     - name: rewrite-operaton-rest-api-path
       match:
         hosts:
-          - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+          - registration-harvester-bpm-engine.develop-v2.eoepca.org
         paths:
           - /engine-rest/*
       backends:
@@ -76,7 +76,7 @@ metadata:
   namespace: registration-harvester-api
 spec:
   dnsNames:
-    - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+    - registration-harvester-bpm-engine.develop-v2.eoepca.org
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-http01-apisix
@@ -94,7 +94,7 @@ metadata:
 spec:
   ingressClassName: apisix
   hosts:
-    - registration-harvester-bpm-engine.rke2.deploybox.co.uk
+    - registration-harvester-bpm-engine.develop-v2.eoepca.org
   secret:
     name: registration-harvester-bpm-engine-tls
     namespace: registration-harvester-api

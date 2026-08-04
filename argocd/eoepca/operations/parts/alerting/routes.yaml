@@ -9,7 +9,7 @@ spec:
     - name: keep-backend
       match:
         hosts:
-          - alerting.rke2.deploybox.co.uk
+          - alerting.develop-v2.eoepca.org
         paths:
           - /v2/*
       backends:
@@ -21,7 +21,7 @@ spec:
     - name: keep-websocket
       match:
         hosts:
-          - alerting.rke2.deploybox.co.uk
+          - alerting.develop-v2.eoepca.org
         paths:
           - /websocket/*
       backends:
@@ -31,7 +31,7 @@ spec:
     - name: keep-frontend
       match:
         hosts:
-          - alerting.rke2.deploybox.co.uk
+          - alerting.develop-v2.eoepca.org
         paths:
           - /*
       backends:

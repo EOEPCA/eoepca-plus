@@ -3,7 +3,7 @@ fullnameOverride: "eoapi-geoparquet-export"
 image:
   tag: "0.2"
 
-stacApiUrl: "https://eoapi.rke2.deploybox.co.uk/stac"
+stacApiUrl: "https://eoapi.develop-v2.eoepca.org/stac"
 
 database:
   existingSecret: "default-pguser-eoapi"
@@ -11,7 +11,7 @@ database:
 storage:
   outputPath: "s3://geoparquet-exporter/geoparquet"
   existingSecret: "geoparquet-exporter-s3-credentials"
-  endpoint: "https://minio.rke2.deploybox.co.uk"
+  endpoint: "https://minio.develop-v2.eoepca.org"
 
 exportConfig:
   exportAll: true

@@ -12,7 +12,7 @@ spec:
     - name: grafana
       match:
         hosts:
-          - monitoring.rke2.deploybox.co.uk
+          - monitoring.develop-v2.eoepca.org
         paths:
           - /
           - /*

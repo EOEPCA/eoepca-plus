@@ -19,14 +19,14 @@ spec:
           pullPolicy: Always
 
         mlflowSharinghub:
-          sharinghubUrl: https://rke2.deploybox.co.uk/sharinghub
+          sharinghubUrl: https://develop-v2.eoepca.org/sharinghub
           sharinghubStacCollection: ai-model
           sharinghubAuthDefaultToken: false
           artifactsDestination: s3://mlopsbb-mlflow-sharinghub
 
         s3:
           enabled: true
-          endpointUrl: https://minio.rke2.deploybox.co.uk
+          endpointUrl: https://minio.develop-v2.eoepca.org
 
         persistence:
           enabled: false

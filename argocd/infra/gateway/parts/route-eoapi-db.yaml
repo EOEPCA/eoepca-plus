@@ -11,7 +11,7 @@ spec:
       namespace: gateway
       sectionName: https
   hostnames:
-    - eoapi-db.rke2.deploybox.co.uk
+    - eoapi-db.develop-v2.eoepca.org
   rules:
     - backendRefs:
         - name: default-primary

@@ -10,7 +10,7 @@ spec:
     - name: eoepca-public
       namespace: gateway
   hostnames:
-    - "*.ngx.rke2.deploybox.co.uk"
+    - "*.ngx.develop-v2.eoepca.org"
   rules:
     - backendRefs:
         - name: ingress-nginx-controller
@@ -28,7 +28,7 @@ spec:
     - name: eoepca-public
       namespace: gateway
   hostnames:
-    - "*.ngx.rke2.deploybox.co.uk"
+    - "*.ngx.develop-v2.eoepca.org"
   rules:
     - backendRefs:
         - name: ingress-nginx-controller

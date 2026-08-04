@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-BASE_URL="${STAC_BASE_URL:-https://eoapi.rke2.deploybox.co.uk/stac}"
+BASE_URL="${STAC_BASE_URL:-https://eoapi.develop-v2.eoepca.org/stac}"
 TMP_DIR="${TMP_DIR:-/tmp/synthetic-api-check}"
 ITEMS_LIMIT="${SYNTHETIC_API_CHECK_ITEMS_LIMIT:-3}"
 SEARCH_LIMIT="${SYNTHETIC_API_CHECK_SEARCH_LIMIT:-3}"

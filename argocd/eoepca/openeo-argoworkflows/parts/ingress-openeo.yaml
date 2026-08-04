@@ -11,7 +11,7 @@ spec:
     - name: openeo-docs
       match:
         hosts:
-          - openeo-eurac.rke2.deploybox.co.uk
+          - openeo-eurac.develop-v2.eoepca.org
         paths:
           - /*
         exprs:
@@ -31,7 +31,7 @@ spec:
     - name: openeo-protected
       match:
         hosts:
-          - openeo-eurac.rke2.deploybox.co.uk
+          - openeo-eurac.develop-v2.eoepca.org
         paths:
           - /openeo/1.1.0/jobs*
           - /openeo/1.1.0/files*
@@ -80,7 +80,7 @@ metadata:
   namespace: openeo
 spec:
   dnsNames:
-    - openeo-eurac.rke2.deploybox.co.uk
+    - openeo-eurac.develop-v2.eoepca.org
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-dns-prod
@@ -98,7 +98,7 @@ metadata:
 spec:
   ingressClassName: apisix
   hosts:
-    - openeo-eurac.rke2.deploybox.co.uk
+    - openeo-eurac.develop-v2.eoepca.org
   secret:
     name: openeo-tls
     namespace: openeo

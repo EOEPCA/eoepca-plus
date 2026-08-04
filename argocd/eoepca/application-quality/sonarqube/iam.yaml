@@ -21,7 +21,7 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
-    rootUrl: https://application-quality.rke2.deploybox.co.uk/sonarqube
+    rootUrl: https://application-quality.develop-v2.eoepca.org/sonarqube
     validRedirectUris:
       - '/*'
     webOrigins:

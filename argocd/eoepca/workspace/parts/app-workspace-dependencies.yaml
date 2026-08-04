@@ -19,7 +19,7 @@ spec:
       helm:
         releaseName: workspace-dependencies-educates
         values: |
-          clusterIngressDomain: lab.rke2.deploybox.co.uk
+          clusterIngressDomain: lab.develop-v2.eoepca.org
           clusterIngressClass: apisix
           tlsCertificateRef:
             name: workspace-tls

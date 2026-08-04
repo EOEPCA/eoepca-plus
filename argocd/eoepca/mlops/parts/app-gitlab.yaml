@@ -19,7 +19,7 @@ spec:
         global:
           edition: ce
           hosts:
-            domain: rke2.deploybox.co.uk
+            domain: develop-v2.eoepca.org
           ingress:
             configureCertmanager: false
             class: apisix
@@ -76,12 +76,12 @@ spec:
           webservice:
             ingress:
               tls:
-                secretName: gitlab.rke2.deploybox.co.uk-tls
+                secretName: gitlab.develop-v2.eoepca.org-tls
 
           kas:
             ingress:
               tls:
-                secretName: kas.rke2.deploybox.co.uk-tls
+                secretName: kas.develop-v2.eoepca.org-tls
 
           toolbox:
             backups:
@@ -96,12 +96,12 @@ spec:
           enabled: false
           ingress:
             tls: 
-              secretName: registry.rke2.deploybox.co.uk-tls
+              secretName: registry.develop-v2.eoepca.org-tls
 
         minio:
           ingress:
             tls:
-              secretName: minio.rke2.deploybox.co.uk-tls
+              secretName: minio.develop-v2.eoepca.org-tls
 
         certmanager:
           install: false

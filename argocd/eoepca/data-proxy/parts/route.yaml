@@ -20,7 +20,7 @@ spec:
             rejected_code: 429
       match:
         hosts:
-          - eodag-api.rke2.deploybox.co.uk
+          - eodag-api.develop-v2.eoepca.org
         paths:
           - /*
 
@@ -37,6 +37,6 @@ spec:
             rejected_code: 429
       match:
         hosts:
-          - eodag-proxy.rke2.deploybox.co.uk
+          - eodag-proxy.develop-v2.eoepca.org
         paths:
           - /data/*

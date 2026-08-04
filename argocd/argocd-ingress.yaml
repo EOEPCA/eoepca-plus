@@ -15,7 +15,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: argocd.rke2.deploybox.co.uk
+    - host: argocd.develop-v2.eoepca.org
       http:
         paths:
           - path: /
@@ -27,5 +27,5 @@ spec:
                   name: https
   tls:
     - hosts:
-        - argocd.rke2.deploybox.co.uk
+        - argocd.develop-v2.eoepca.org
       secretName: argocd-server-tls # as expected by argocd-server

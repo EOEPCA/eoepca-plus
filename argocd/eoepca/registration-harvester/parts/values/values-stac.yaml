@@ -8,7 +8,7 @@ harvester:
   config:
     log_level: INFO
     bpm_engine:
-      url: https://registration-harvester-bpm-engine.rke2.deploybox.co.uk/engine-rest
+      url: https://registration-harvester-bpm-engine.develop-v2.eoepca.org/engine-rest
       lock_duration: 300000  # 5 minutes
       retries: 3
       retry_timeout: 30000  # 30 seconds
@@ -17,7 +17,7 @@ harvester:
       sleep_seconds: 15
       http_timeout_millis: 420000 # 7 minutes
     iam:
-      oidc_token_endpoint_url: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/protocol/openid-connect/token
+      oidc_token_endpoint_url: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/token
     topics:
       stac_harvest_catalog:
         module: worker.stac.tasks
@@ -44,12 +44,12 @@ harvester:
       StacCatalogHandler:
       StacCollectionHandler:
         timewindow_hours: 1
-        stac_api_url: https://eoapi.rke2.deploybox.co.uk/stac/
+        stac_api_url: https://eoapi.develop-v2.eoepca.org/stac/
         stac_api_ca_cert: ""
         stac_api_user: ""
         stac_api_pw: ""
       StacItemHandler:
-        stac_api_url: https://eoapi.rke2.deploybox.co.uk/stac/
+        stac_api_url: https://eoapi.develop-v2.eoepca.org/stac/
         stac_api_ca_cert: ""      
         stac_api_user: ""
         stac_api_pw: ""

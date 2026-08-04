@@ -15,8 +15,8 @@ zookernel:
 customConfig:
   main:
     eoepca: |-
-      domain=rke2.deploybox.co.uk
-      workspace_url=https://workspace-api.rke2.deploybox.co.uk
+      domain=develop-v2.eoepca.org
+      workspace_url=https://workspace-api.develop-v2.eoepca.org
       workspace_prefix=ws
       workspace_catalog_register=false
 workflow:
@@ -26,7 +26,7 @@ workflow:
     - secretRef:
         name: zoo-workflow-env
   inputs:
-    STAGEOUT_AWS_SERVICEURL: https://minio.rke2.deploybox.co.uk
+    STAGEOUT_AWS_SERVICEURL: https://minio.develop-v2.eoepca.org
     STAGEOUT_AWS_ACCESS_KEY_ID: eoepca
     STAGEOUT_AWS_SECRET_ACCESS_KEY: changeme
     STAGEOUT_AWS_REGION: RegionOne
@@ -35,7 +35,7 @@ workflow:
   storageClass: managed-nfs-storage-retain
 ingress:
   enabled: false
-  hosturl: https://zoostd.rke2.deploybox.co.uk
+  hosturl: https://zoostd.develop-v2.eoepca.org
   annotations:
     kubernetes.io/ingress.class: apisix
     ingress.kubernetes.io/ssl-redirect: "true"
@@ -43,13 +43,13 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
     argocd.argoproj.io/ignore-healthcheck: "true"
   hosts:
-  - host: zoostd.rke2.deploybox.co.uk
+  - host: zoostd.develop-v2.eoepca.org
     paths:
     - path: /
       pathType: ImplementationSpecific
   tls:
   - hosts:
-    - zoostd.rke2.deploybox.co.uk
+    - zoostd.develop-v2.eoepca.org
     secretName: zoostd-tls
 persistence:
   procServicesStorageClass: managed-nfs-storage-retain
@@ -65,9 +65,9 @@ rabbitmq:
     storageClass: managed-nfs-storage-retain
 iam:
   enabled: true
-  openIdConnectUrl: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/.well-known/openid-configuration
+  openIdConnectUrl: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration
   realm: eoepca
-  issuer: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca
+  issuer: https://iam-auth.develop-v2.eoepca.org/realms/eoepca
   audience: account
 documentation:
   enabled: true
@@ -75,12 +75,12 @@ dask:
   enabled: true
 webui:
   enabled: true
-  url: https://webuistd.rke2.deploybox.co.uk
+  url: https://webuistd.develop-v2.eoepca.org
   port: 3000
   image:
     pullPolicy: Always
   oidc:
-    issuer: "https://iam-auth.rke2.deploybox.co.uk/realms/eoepca"
-    authVerifyJwksUri: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/protocol/openid-connect/certs
+    issuer: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca"
+    authVerifyJwksUri: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/certs
     clientId: zoo
     clientSecret: Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di

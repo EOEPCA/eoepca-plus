@@ -21,8 +21,8 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
-    rootUrl: https://gitlab.rke2.deploybox.co.uk/
+    rootUrl: https://gitlab.develop-v2.eoepca.org/
     validRedirectUris:
-      - https://gitlab.rke2.deploybox.co.uk/*
+      - https://gitlab.develop-v2.eoepca.org/*
     webOrigins:
-      - https://gitlab.rke2.deploybox.co.uk
+      - https://gitlab.develop-v2.eoepca.org

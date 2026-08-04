@@ -15,7 +15,7 @@ metadata:
 spec:
   ingressClassName: apisix
   rules:
-    - host: applicationhub.rke2.deploybox.co.uk
+    - host: applicationhub.develop-v2.eoepca.org
       http:
         paths:
           - path: "/"
@@ -27,5 +27,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - applicationhub.rke2.deploybox.co.uk
+        - applicationhub.develop-v2.eoepca.org
       secretName: applicationhub-tls

@@ -35,10 +35,10 @@ spec:
                 oidcConfig:
                   # Must match Keycloak's own configured issuer exactly (its
                   # frontendUrl-based hostname, not the other ApisixRoute host
-                  # iam-auth.rke2.deploybox.co.uk that also reaches it) or
+                  # iam-auth.develop-v2.eoepca.org that also reaches it) or
                   # oauth2-proxy's OIDC discovery rejects it as an issuer
                   # mismatch and the pod crashloops.
-                  issuerURL: https://rke2.deploybox.co.uk/iam/auth/realms/eoepca
+                  issuerURL: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
                 scope: openid email profile roles
             upstreamConfig:
               upstreams:
@@ -67,7 +67,7 @@ spec:
                   - claimSource:
                       claim: groups
         extraArgs:
-          redirect-url: https://alerting.rke2.deploybox.co.uk/oauth2/callback
+          redirect-url: https://alerting.develop-v2.eoepca.org/oauth2/callback
           cookie-secure: "true"
           session-cookie-minimal: "true"
           reverse-proxy: "true"

@@ -35,7 +35,7 @@ spec:
         frontend:
           env:
           - name: NEXTAUTH_URL
-            value: https://alerting.rke2.deploybox.co.uk
+            value: https://alerting.develop-v2.eoepca.org
           - name: NEXTAUTH_URL_INTERNAL
             value: http://keep-frontend.operations.svc.cluster.local:3000
           - name: API_URL_CLIENT

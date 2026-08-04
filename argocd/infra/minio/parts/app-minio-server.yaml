@@ -33,11 +33,11 @@ spec:
             k8s.apisix.apache.org/plugin-config-name: "minio-ingress"
           path: /
           hosts:
-            - minio.rke2.deploybox.co.uk
+            - minio.develop-v2.eoepca.org
           tls:
             - secretName: minio-tls
               hosts:
-                - minio.rke2.deploybox.co.uk
+                - minio.develop-v2.eoepca.org
         consoleIngress:
           enabled: true
           ingressClassName: apisix
@@ -52,11 +52,11 @@ spec:
             k8s.apisix.apache.org/plugin-config-name: "minio-ingress"
           path: /
           hosts:
-            - console.minio.rke2.deploybox.co.uk
+            - console.minio.develop-v2.eoepca.org
           tls:
           - secretName: minio-console-tls
             hosts:
-              - console.minio.rke2.deploybox.co.uk
+              - console.minio.develop-v2.eoepca.org
         resources:
           requests:
             memory: 1Gi

@@ -21,7 +21,7 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
-    rootUrl: https://eodag-api.rke2.deploybox.co.uk
+    rootUrl: https://eodag-api.develop-v2.eoepca.org
     validRedirectUris: []
     validPostLogoutRedirectUris: []
     webOrigins: []

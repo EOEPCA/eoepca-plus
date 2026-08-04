@@ -10,8 +10,8 @@ zookernel:
 customConfig:
   main:
     eoepca: |-
-      domain=rke2.deploybox.co.uk
-      workspace_url=https://workspace-api.rke2.deploybox.co.uk
+      domain=develop-v2.eoepca.org
+      workspace_url=https://workspace-api.develop-v2.eoepca.org
       workspace_prefix=ws
       workspace_catalog_register=false
 workflow:
@@ -21,7 +21,7 @@ workflow:
     - secretRef:
         name: zoo-workflow-env
   inputs:
-    STAGEOUT_AWS_SERVICEURL: https://minio.rke2.deploybox.co.uk
+    STAGEOUT_AWS_SERVICEURL: https://minio.develop-v2.eoepca.org
     STAGEOUT_AWS_ACCESS_KEY_ID: eoepca
     STAGEOUT_AWS_SECRET_ACCESS_KEY: changeme
     STAGEOUT_AWS_REGION: RegionOne
@@ -34,7 +34,7 @@ workflow:
   storageClass: managed-nfs-storage-retain
 ingress:
   enabled: false
-  hosturl: https://zoowes.rke2.deploybox.co.uk
+  hosturl: https://zoowes.develop-v2.eoepca.org
   annotations:
     kubernetes.io/ingress.class: apisix
     ingress.kubernetes.io/ssl-redirect: "true"
@@ -42,13 +42,13 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
     argocd.argoproj.io/ignore-healthcheck: "true"
   hosts:
-  - host: zoowes.rke2.deploybox.co.uk
+  - host: zoowes.develop-v2.eoepca.org
     paths:
     - path: /
       pathType: ImplementationSpecific
   tls:
   - hosts:
-    - zoowes.rke2.deploybox.co.uk
+    - zoowes.develop-v2.eoepca.org
     secretName: zoo-tls
 persistence:
   procServicesStorageClass: managed-nfs-storage-retain

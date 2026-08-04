@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: apisix
   rules:
-    - host: rke2.deploybox.co.uk
+    - host: develop-v2.eoepca.org
       http:
         paths:
           - path: /sharinghub/
@@ -22,7 +22,7 @@ spec:
                 name: sharinghub
                 port:
                   number: 8000
-  # No tls block: rke2.deploybox.co.uk already has a cluster-wide SNI cert
+  # No tls block: develop-v2.eoepca.org already has a cluster-wide SNI cert
   # registered by infra/apisix/parts/apisixtls-apx-main.yaml. See the
   # comment in ingress-mlflow-sharinghub.yaml for why this route doesn't
   # provision its own duplicate certificate.

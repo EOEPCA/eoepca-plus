@@ -20,18 +20,18 @@ iam: &iam
     enabled: true
     createRoute: true
     # "Official" Keycloak URL (used everywhere where Keycloak needs to be addressed)
-#    url: &kcurl https://iam-auth.rke2.deploybox.co.uk
-    url: &kcurl https://rke2.deploybox.co.uk/iam/auth
+#    url: &kcurl https://iam-auth.develop-v2.eoepca.org
+    url: &kcurl https://develop-v2.eoepca.org/iam/auth
     adminUrl: &kcadminurl ~
-#    adminUrl: &kcadminurl https://rke2.deploybox.co.uk/iam/auth/admin
+#    adminUrl: &kcadminurl https://develop-v2.eoepca.org/iam/auth/admin
     # Deviating "internal" Keycloak URL to use for cluster-internal access
     # (defaults to official URL). Only used for Crossplane provider so far.
     # Useful to prevent Crossplane-related traffic from going through APISIX.
     # Also useful for test environments that do not use official certs.
     internalUrl: ""
     hosts:
-#      - iam-auth.rke2.deploybox.co.uk
-      - rke2.deploybox.co.uk
+#      - iam-auth.develop-v2.eoepca.org
+      - develop-v2.eoepca.org
     paths:
 #      - /*
       - /iam/auth
@@ -277,7 +277,7 @@ iam: &iam
       # Allowed origin(s). Can be string or comma-separated list:
       #   - string: "*" or "https://example.org" or "https://a.com,https://b.com"
       #   - list: ["https://a.com", "https://b.com"]
-      allowedOrigins: "https://eoapi.rke2.deploybox.co.uk,https://editor.openeo.org"
+      allowedOrigins: "https://eoapi.develop-v2.eoepca.org,https://editor.openeo.org"
       # Comma-separated list of allowed headers.
       # APISIX constraint: When allowCredentials=true, cannot use "*" for origins, headers, or expose_headers.
       allowedHeaders: "Authorization,Content-Type,Accept,Origin,X-Requested-With"
@@ -312,10 +312,10 @@ iam: &iam
     inline: false
     createRoute: true
     # "Official" OPA URL (used as root URL for the client if one is created)
-    url: https://rke2.deploybox.co.uk/iam/opa
+    url: https://develop-v2.eoepca.org/iam/opa
     hosts:
-#      - iam-opa.rke2.deploybox.co.uk
-      - rke2.deploybox.co.uk
+#      - iam-opa.develop-v2.eoepca.org
+      - develop-v2.eoepca.org
     paths:
  #     - /*
       - /iam/opa

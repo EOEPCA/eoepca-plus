@@ -10,7 +10,7 @@ spec:
     - name: redirect-root
       match:
         hosts:
-          - registration-harvester-api.rke2.deploybox.co.uk
+          - registration-harvester-api.develop-v2.eoepca.org
         paths:
           - /
           - /flowable-rest
@@ -27,7 +27,7 @@ spec:
     - name: rewrite-flowable-path
       match:
         hosts:
-          - registration-harvester-api.rke2.deploybox.co.uk
+          - registration-harvester-api.develop-v2.eoepca.org
         paths:
           - /flowable-rest/*
       backends:
@@ -41,7 +41,7 @@ metadata:
   namespace: registration-harvester-api
 spec:
   dnsNames:
-    - registration-harvester-api.rke2.deploybox.co.uk
+    - registration-harvester-api.develop-v2.eoepca.org
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-http01-apisix
@@ -59,7 +59,7 @@ metadata:
 spec:
   ingressClassName: apisix
   hosts:
-    - registration-harvester-api.rke2.deploybox.co.uk
+    - registration-harvester-api.develop-v2.eoepca.org
   secret:
     name: registration-harvester-api-tls
     namespace: registration-harvester-api

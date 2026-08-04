@@ -9,13 +9,13 @@ ingress:
     k8s.apisix.apache.org/http-to-https: "true"
     argocd.argoproj.io/ignore-healthcheck: "true"
   hosts:
-    - host: datacube-access.rke2.deploybox.co.uk
+    - host: datacube-access.develop-v2.eoepca.org
       paths:
         - path: /
           pathType: Prefix
   tls:
   - hosts:
-      - datacube-access.rke2.deploybox.co.uk
+      - datacube-access.develop-v2.eoepca.org
     secretName: datacube-access-tls
 resources:
   requests:
@@ -25,4 +25,4 @@ resources:
     memory: "512Mi"
     cpu: "500m"
 config:
-  dataBackend: https://eoapi.rke2.deploybox.co.uk/stac/
+  dataBackend: https://eoapi.develop-v2.eoepca.org/stac/

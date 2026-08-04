@@ -18,7 +18,7 @@ spec:
   - name: mlflow-sharinghub
     match:
       hosts:
-      - rke2.deploybox.co.uk
+      - develop-v2.eoepca.org
       paths:
       - /mlflow
       - /mlflow/*
@@ -38,7 +38,7 @@ spec:
         headers:
           set:
             X-Script-Name: /mlflow
-# No dedicated Certificate/ApisixTls here: rke2.deploybox.co.uk already has
+# No dedicated Certificate/ApisixTls here: develop-v2.eoepca.org already has
 # a cluster-wide SNI cert (infra/apisix/parts/cert-apx-main.yaml +
 # apisixtls-apx-main.yaml). ApisixTls is a global APISIX SSL object, not
 # scoped to the namespace it lives in, so it already terminates TLS for any

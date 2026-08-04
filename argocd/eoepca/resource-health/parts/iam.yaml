@@ -21,11 +21,11 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
-    rootUrl: https://resource-health.rke2.deploybox.co.uk
+    rootUrl: https://resource-health.develop-v2.eoepca.org
     validRedirectUris:
-      - https://resource-health.rke2.deploybox.co.uk/*
+      - https://resource-health.develop-v2.eoepca.org/*
     webOrigins:
-      - https://resource-health.rke2.deploybox.co.uk
+      - https://resource-health.develop-v2.eoepca.org
 ---
 apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: Client

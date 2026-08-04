@@ -10,7 +10,7 @@ spec:
     - name: webuistd-open
       match:
         hosts:
-          - webuistd.rke2.deploybox.co.uk
+          - webuistd.develop-v2.eoepca.org
         paths:
           - /*
       backends:
@@ -27,7 +27,7 @@ metadata:
   name: webuistd-tls
 spec:
   dnsNames:
-    - webuistd.rke2.deploybox.co.uk
+    - webuistd.develop-v2.eoepca.org
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-dns-prod
@@ -44,7 +44,7 @@ metadata:
 spec:
   ingressClassName: apisix
   hosts:
-    - webuistd.rke2.deploybox.co.uk
+    - webuistd.develop-v2.eoepca.org
   secret:
     name: webuistd-tls
     namespace: zoostd

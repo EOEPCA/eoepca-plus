@@ -24,7 +24,7 @@ spec:
         ingress:
           enabled: false        
         prefixForName: "ws"
-        endpoint: "https://minio.rke2.deploybox.co.uk"
+        endpoint: "https://minio.develop-v2.eoepca.org"
         region: "eoepca-demo"
         forwardedAllowIps: "*"
         sessionMode: "auto" # "on"

@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: apisix
   rules:
-  - host: '*.notifications.rke2.deploybox.co.uk'
+  - host: '*.notifications.develop-v2.eoepca.org'
     http:
       paths:
       - pathType: Prefix
@@ -24,7 +24,7 @@ spec:
               number: 80
   tls:
     - hosts:
-      - '*.notifications.rke2.deploybox.co.uk'
+      - '*.notifications.develop-v2.eoepca.org'
       secretName: notifications-wildcard-tls
 ---
 apiVersion: cert-manager.io/v1
@@ -34,7 +34,7 @@ metadata:
   namespace: knative-serving
 spec:
   dnsNames:
-  - '*.notifications.rke2.deploybox.co.uk'
+  - '*.notifications.develop-v2.eoepca.org'
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-dns-prod

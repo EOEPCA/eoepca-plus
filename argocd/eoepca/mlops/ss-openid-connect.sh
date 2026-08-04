@@ -14,7 +14,7 @@ NAMESPACE="gitlab"
 
 # Parameters from env
 source .env 2>/dev/null  # Optional local .env file for secret values as env vars
-DOMAIN=${DOMAIN:-rke2.deploybox.co.uk}
+DOMAIN=${DOMAIN:-develop-v2.eoepca.org}
 MLOPS_GITLAB_CLIENT_ID=${MLOPS_GITLAB_CLIENT_ID:-mlopsbb-gitlab}
 MLOPS_GITLAB_CLIENT_SECRET=${MLOPS_GITLAB_CLIENT_SECRET:-changeme}
 

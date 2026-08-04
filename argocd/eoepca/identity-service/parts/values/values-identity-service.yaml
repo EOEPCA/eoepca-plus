@@ -12,14 +12,14 @@ identity-keycloak:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
-      - host: keycloak-v1x.rke2.deploybox.co.uk
+      - host: keycloak-v1x.develop-v2.eoepca.org
         paths:
           - path: /
             pathType: Prefix
     tls:
       - secretName: identity-keycloak-tls
         hosts:
-          - keycloak-v1x.rke2.deploybox.co.uk
+          - keycloak-v1x.develop-v2.eoepca.org
 identity-postgres:
   secrets:
     # Values for secret 'identity-postgres'
@@ -38,10 +38,10 @@ identity-api:
     # Config values that can be passed via env vars
     extraEnv:
       - name: AUTH_SERVER_URL  # see configMap.authServerUrl instead
-        # In-cluster service DNS, not the public keycloak-v1x.rke2.deploybox.co.uk
+        # In-cluster service DNS, not the public keycloak-v1x.develop-v2.eoepca.org
         # hostname: that Ingress uses ingressClassName nginx, but nothing on
         # this cluster's public IP routes to the nginx controller for this
-        # domain (only argocd.rke2.deploybox.co.uk does, via a separate
+        # domain (only argocd.develop-v2.eoepca.org does, via a separate
         # DNS/LB path), so the public URL 404s and identity-api crashlooped
         # on OIDC discovery at startup. Talking to Keycloak directly sidesteps
         # that broken external hop entirely.
@@ -61,9 +61,9 @@ identity-api-gatekeeper:
     # keycloak-v1x hostname isn't routable, so gatekeeper talks to Keycloak
     # over the in-cluster service instead.
     discovery-url: http://identity-keycloak.um.svc.cluster.local:8080/realms/master
-    cookie-domain: rke2.deploybox.co.uk
+    cookie-domain: develop-v2.eoepca.org
   targetService:
-    host: identity-api.rke2.deploybox.co.uk
+    host: identity-api.develop-v2.eoepca.org
   secrets:
     # Values for secret 'identity-api-protection'
     # Note - if ommitted, these can instead be set by creating the secret independently.

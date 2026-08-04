@@ -21,7 +21,7 @@ createUser() {
   user="$1"
   password="changeme"
   tmp/bin/create-user \
-    -a https://iam-auth.rke2.deploybox.co.uk \
+    -a https://iam-auth.develop-v2.eoepca.org \
     -r "eoepca" \
     -u "admin" \
     -p "changeme" \

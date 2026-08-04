@@ -1,4 +1,4 @@
-# Wildcard certificate for preliminary APISIX ingress *.rke2.deploybox.co.uk
+# Wildcard certificate for preliminary APISIX ingress *.develop-v2.eoepca.org
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -15,7 +15,7 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.rke2.deploybox.co.uk"
+    - "*.develop-v2.eoepca.org"
   issuerRef:
     # Use the DNS staging issuer while repeated clean-cluster rebuilds would
     # otherwise hit Let's Encrypt production duplicate-certificate limits.

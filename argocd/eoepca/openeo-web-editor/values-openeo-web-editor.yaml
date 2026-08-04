@@ -17,11 +17,11 @@ ingress:
     k8s.apisix.apache.org/enable-websocket: "true"
     argocd.argoproj.io/ignore-healthcheck: "true"
   hosts:
-    - host: editor.rke2.deploybox.co.uk
+    - host: editor.develop-v2.eoepca.org
       paths:
         - path: /
           pathType: Prefix
   tls:
     - secretName: openeo-web-editor-cert
       hosts:
-        - editor.rke2.deploybox.co.uk
+        - editor.develop-v2.eoepca.org

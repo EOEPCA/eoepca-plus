@@ -21,14 +21,14 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     useRefreshTokens: true
-    rootUrl: https://monitoring.rke2.deploybox.co.uk
+    rootUrl: https://monitoring.develop-v2.eoepca.org
     validRedirectUris:
-      - https://monitoring.rke2.deploybox.co.uk/login/generic_oauth
+      - https://monitoring.develop-v2.eoepca.org/login/generic_oauth
     validPostLogoutRedirectUris:
-      - https://monitoring.rke2.deploybox.co.uk/
-      - https://monitoring.rke2.deploybox.co.uk/login
+      - https://monitoring.develop-v2.eoepca.org/
+      - https://monitoring.develop-v2.eoepca.org/login
     webOrigins:
-      - https://monitoring.rke2.deploybox.co.uk
+      - https://monitoring.develop-v2.eoepca.org
 ---
 apiVersion: role.keycloak.m.crossplane.io/v1alpha1
 kind: Role

@@ -20,14 +20,14 @@ spec:
           enabled: false  # Disable since the chart hard-codes to nginx
           annotations: {}
           hosts:
-            - host: applicationhub.rke2.deploybox.co.uk
+            - host: applicationhub.develop-v2.eoepca.org
               paths:
                 - path: /
                   pathType: ImplementationSpecific
           tls:
             - secretName: applicationhub-tls
               hosts:
-              - applicationhub.rke2.deploybox.co.uk
+              - applicationhub.develop-v2.eoepca.org
           clusterIssuer: "letsencrypt-http01-apisix"
 
         jupyterhub:
@@ -38,11 +38,11 @@ spec:
             extraEnv: 
                 JUPYTERHUB_ENV: "dev"
                 JUPYTERHUB_SINGLE_USER_IMAGE: "eoepca/pde-container:1.0.3"
-                OAUTH_CALLBACK_URL: https://applicationhub.rke2.deploybox.co.uk/hub/oauth_callback
-                OAUTH2_USERDATA_URL: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/protocol/openid-connect/userinfo
-                OAUTH2_TOKEN_URL: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/protocol/openid-connect/token
-                OAUTH2_AUTHORIZE_URL: https://iam-auth.rke2.deploybox.co.uk/realms/eoepca/protocol/openid-connect/auth
-                OAUTH_LOGOUT_REDIRECT_URL: "https://applicationhub.rke2.deploybox.co.uk/hub/home"
+                OAUTH_CALLBACK_URL: https://applicationhub.develop-v2.eoepca.org/hub/oauth_callback
+                OAUTH2_USERDATA_URL: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/userinfo
+                OAUTH2_TOKEN_URL: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/token
+                OAUTH2_AUTHORIZE_URL: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/auth
+                OAUTH_LOGOUT_REDIRECT_URL: "https://applicationhub.develop-v2.eoepca.org/hub/home"
                 OAUTH2_USERNAME_KEY: "preferred_username"
                 APP_HUB_NAMESPACE: "app-hub"
                 STORAGE_CLASS: "managed-nfs-storage-retain"

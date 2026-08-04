@@ -32,10 +32,10 @@ spec:
                 - workspace-api
             ingress:
               class: apisix
-              domain: lab.rke2.deploybox.co.uk
+              domain: lab.develop-v2.eoepca.org
               secret: wildcard-tls
             storage:
-              endpoint: https://minio.rke2.deploybox.co.uk
+              endpoint: https://minio.develop-v2.eoepca.org
               forcePathStyle: true
               provider: Other
               region: eoepca-demo

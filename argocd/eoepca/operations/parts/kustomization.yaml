@@ -82,9 +82,7 @@ patches:
       metadata:
         name: loki
         annotations:
-          # This provisions the loki-s3-credentials secret Loki reads via
-          # extraEnvFrom; it must exist before the loki-stack Application
-          # (wave 0) starts the singleBinary pod.
+          # provisions loki-s3-credentials, needed before loki-stack (wave 0) starts
           argocd.argoproj.io/sync-wave: "-10"
           argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   - target:

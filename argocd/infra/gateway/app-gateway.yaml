@@ -20,9 +20,6 @@ spec:
   destination:
     name: in-cluster
     namespace: gateway
-  # Gateway API's admission webhook fills in optional fields (group/kind on
-  # refs, backendRef weight) that the source manifests omit, which otherwise
-  # shows as permanent drift.
   ignoreDifferences:
     - group: gateway.networking.k8s.io
       kind: TLSRoute

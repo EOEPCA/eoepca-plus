@@ -38,13 +38,8 @@ identity-api:
     # Config values that can be passed via env vars
     extraEnv:
       - name: AUTH_SERVER_URL  # see configMap.authServerUrl instead
-        # In-cluster service DNS, not the public keycloak-v1x.develop-v2.eoepca.org
-        # hostname: that Ingress uses ingressClassName nginx, but nothing on
-        # this cluster's public IP routes to the nginx controller for this
-        # domain (only argocd.develop-v2.eoepca.org does, via a separate
-        # DNS/LB path), so the public URL 404s and identity-api crashlooped
-        # on OIDC discovery at startup. Talking to Keycloak directly sidesteps
-        # that broken external hop entirely.
+        # in-cluster dns, not the public hostname: nothing routes to nginx for this
+        # domain, so the public url 404s and identity-api crashloops on oidc discovery
         value: http://identity-keycloak.um.svc.cluster.local:8080
       - name: ADMIN_USERNAME
         value: "admin"
@@ -57,9 +52,6 @@ identity-api:
 identity-api-gatekeeper:
   config:
     client-id: identity-api
-    # Same reasoning as identity-api's AUTH_SERVER_URL above: the public
-    # keycloak-v1x hostname isn't routable, so gatekeeper talks to Keycloak
-    # over the in-cluster service instead.
     discovery-url: http://identity-keycloak.um.svc.cluster.local:8080/realms/master
     cookie-domain: develop-v2.eoepca.org
   targetService:
@@ -70,12 +62,8 @@ identity-api-gatekeeper:
     clientSecret: "changeme"
     encryptionKey: "changemechangeme"
   ingress:
-    # This chart's Ingress relies on nginx.ingress.kubernetes.io/configuration-snippet
-    # and server-snippet (the auth_request pattern gatekeeper needs), but this
-    # cluster's ingress-nginx has snippet annotations disabled admin-wide, so
-    # the resource is rejected by the nginx admission webhook on every sync.
-    # Nothing else in the repo references identity-api externally, so disable
-    # it rather than leave identity-service-core permanently OutOfSync.
+    # disabled: needs nginx snippet annotations, which are off cluster-wide,
+    # so this ingress can never sync
     enabled: false
     annotations:
       ingress.kubernetes.io/ssl-redirect: "true"

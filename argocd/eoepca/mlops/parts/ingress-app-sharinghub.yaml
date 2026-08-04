@@ -22,7 +22,4 @@ spec:
                 name: sharinghub
                 port:
                   number: 8000
-  # No tls block: develop-v2.eoepca.org already has a cluster-wide SNI cert
-  # registered by infra/apisix/parts/apisixtls-apx-main.yaml. See the
-  # comment in ingress-mlflow-sharinghub.yaml for why this route doesn't
-  # provision its own duplicate certificate.
+  # no tls block: shared wildcard cert already covers this host (see ingress-mlflow-sharinghub.yaml)

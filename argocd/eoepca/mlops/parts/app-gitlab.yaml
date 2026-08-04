@@ -119,9 +119,7 @@ spec:
           install: false
 
         redis:
-          # Broadcom pulled versioned bitnami/* image tags from Docker Hub's
-          # free tier in 2025; the same images are preserved under
-          # bitnamilegacy/*.
+          # bitnami/* pulled from docker hub free tier in 2025; same images under bitnamilegacy/*
           image:
             registry: docker.io
             repository: bitnamilegacy/redis

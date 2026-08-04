@@ -1,7 +1,4 @@
-# Custom realm-level roles present in the live eoepca realm with no single
-# owning building block. No repo config currently assigns these to any
-# user/group/client — declared here so they exist declaratively; grant them
-# to users/groups in the owning building block's iam.yaml as needed.
+# realm roles with no single owning bb; grant to users/groups in the owning bb's iam.yaml
 apiVersion: role.keycloak.m.crossplane.io/v1alpha1
 kind: Role
 metadata:

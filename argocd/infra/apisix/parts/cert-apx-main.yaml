@@ -17,10 +17,7 @@ spec:
   dnsNames:
     - "develop-v2.eoepca.org"
   issuerRef:
-    # staging issuer: letsencrypt-dns-prod is rate-limited (5 certs/168h) for
-    # this exact hostname from repeated cluster teardown/recreate cycles.
-    # Must stay DNS-01 (not the http01-nginx letsencrypt-staging issuer):
-    # this host is routed by apisix, not the nginx ingress controller, so an
-    # nginx-solved HTTP-01 challenge 404s.
+    # must stay dns-01: this host is routed by apisix, not nginx, so an
+    # http-01 challenge via the nginx issuer 404s
     name: letsencrypt-dns-prod
     kind: ClusterIssuer

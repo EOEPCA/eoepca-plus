@@ -17,9 +17,6 @@ spec:
   destination:
     name: in-cluster
     namespace: argocd
-  # external-secrets fills in creationPolicy/deletionPolicy/conversionStrategy/
-  # decodingStrategy/metadataPolicy defaults the manifests don't set, which
-  # otherwise shows as permanent drift.
   ignoreDifferences:
     - group: external-secrets.io
       kind: ExternalSecret

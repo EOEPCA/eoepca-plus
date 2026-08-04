@@ -69,15 +69,10 @@ spec:
           - name: gitlab-backup-storage
           - name: gitlab-tmp-storage
           - name: gitlab-lfs-storage
-          # These two were "mlopbb-..." (missing the 's'), which didn't match
-          # the bucket names the apps actually request (mlopsbb-...), so
-          # mlflow-sharinghub/sharinghub were pointed at buckets that were
-          # never created.
           - name: mlopsbb-mlflow-sharinghub
           - name: mlopsbb-sharinghub
           - name: openeo-geotrellis-data
-          # loki-stack (operations BB) requests all three of its object
-          # stores from this single bucket; it was never created.
+          # loki-stack's 3 object stores all point at this one bucket
           - name: logging
 
   destination:

@@ -1,10 +1,3 @@
-# RKE2 names its CoreDNS Service "rke2-coredns-rke2-coredns", not the
-# conventional "kube-dns" that vanilla/kubeadm clusters use. Several BB
-# charts hardcode "kube-dns.kube-system.svc.cluster.local" as an nginx
-# resolver default (observed in operations/loki-stack and application-quality),
-# which then fails to resolve on this cluster and crash-loops. Rather than
-# patch every chart that makes this assumption, alias the conventional name
-# to the real CoreDNS Service so those defaults work unmodified.
 apiVersion: v1
 kind: Service
 metadata:

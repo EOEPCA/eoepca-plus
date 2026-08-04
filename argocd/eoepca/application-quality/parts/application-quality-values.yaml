@@ -62,9 +62,6 @@ application-quality:
   notifications:
     enabled: true
     middleware: "knative"
-    # The Knative Trigger is created in the same namespace as the Broker.
-    # notification-automation's default Broker lives in the "notifications"
-    # namespace (see notification-automation/parts/namespace-notifications.yaml).
     brokerName: "default"
     brokerNamespace: "notifications"
     # Also used as type prefix for incoming notifications
@@ -75,13 +72,8 @@ application-quality:
   automations:
     enabled: false
 
-  # ACTION: re-enable once a real GitHub PAT (repo:status scope) is sealed
-  # into a "application-quality-github-api-tokens" Secret in the
-  # application-quality namespace. Nothing in eoepca-plus currently
-  # provisions that secret, so with the chart's default (enabled: true)
-  # application-quality-api's envFrom reference fails with
-  # "secret application-quality-github-api-tokens not found" and it
-  # CrashLoopBackOffs permanently. Disabled here to unblock the deploy.
+  # ACTION: re-enable once application-quality-github-api-tokens secret is
+  # provisioned (missing, was crashlooping without it)
   github:
     enabled: false
 

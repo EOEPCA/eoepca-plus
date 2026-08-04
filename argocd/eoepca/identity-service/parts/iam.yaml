@@ -1,9 +1,5 @@
-# identity-api-protection (gatekeeper) needs a real Keycloak client to fetch
-# its UMA "PAT" token at startup (config.enable-uma: true), or it crashloops
-# with "invalid_client". identity-service ships its own dedicated Keycloak
-# (identity-keycloak) rather than sharing the platform-wide "iam" one, so
-# this Crossplane provider/client is scoped to that instance specifically -
-# using identity-keycloak's own admin/changeme credentials, not iam's.
+# identity-service has its own keycloak instance, so this uses its own
+# provider/credentials instead of the shared iam-management one
 apiVersion: v1
 kind: Secret
 metadata:
@@ -38,9 +34,7 @@ metadata:
   namespace: um
 type: Opaque
 stringData:
-  # Matches identity-api-gatekeeper.secrets.clientSecret in
-  # values-identity-service.yaml, which is what the identity-api-protection
-  # pod is configured to send.
+  # must match identity-api-gatekeeper.secrets.clientSecret in values-identity-service.yaml
   client_secret: changeme
 ---
 apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
@@ -58,9 +52,6 @@ spec:
     accessType: CONFIDENTIAL
     clientId: identity-api
     enabled: true
-    # identity-api-gatekeeper.config sets no-redirects: true (it's used as a
-    # token-validating/UMA sidecar, not a browser login flow), so it has no
-    # redirect URI to register; standardFlowEnabled would otherwise require one.
     standardFlowEnabled: false
     directAccessGrantsEnabled: false
     serviceAccountsEnabled: true

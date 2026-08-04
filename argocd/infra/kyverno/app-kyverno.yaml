@@ -7,13 +7,7 @@ metadata:
     eoepca/is-root-app: "true"
     eoepca/app-name: kyverno
 spec:
-  # Kyverno for policy management. Originally bundled inside zoo-dru-keda,
-  # but it's a shared infra dependency: workspace-dependencies' educates
-  # chart (baseline/restricted ClusterPolicies) needs it too, and it was
-  # only reaching wave 40 (via zoo-project-dru-keda) while workspace is
-  # wave 30, so workspace-dependencies permanently SyncFailed on missing
-  # ClusterPolicy CRDs. Moved here so it installs during the infra tier,
-  # well before any eoepca BB needs it.
+  # shared infra dep, workspace needs it too
   project: eoepca
   sources:
     - repoURL: https://kyverno.github.io/kyverno/

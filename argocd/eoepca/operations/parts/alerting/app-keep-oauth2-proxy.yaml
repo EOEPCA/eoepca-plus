@@ -33,11 +33,6 @@ spec:
                   - keep_admin
                   - keep_noc
                 oidcConfig:
-                  # Must match Keycloak's own configured issuer exactly (its
-                  # frontendUrl-based hostname, not the other ApisixRoute host
-                  # iam-auth.develop-v2.eoepca.org that also reaches it) or
-                  # oauth2-proxy's OIDC discovery rejects it as an issuer
-                  # mismatch and the pod crashloops.
                   issuerURL: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
                 scope: openid email profile roles
             upstreamConfig:

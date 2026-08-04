@@ -17,7 +17,5 @@ spec:
   dnsNames:
     - "*.develop-v2.eoepca.org"
   issuerRef:
-    # Use the DNS staging issuer while repeated clean-cluster rebuilds would
-    # otherwise hit Let's Encrypt production duplicate-certificate limits.
     name: letsencrypt-dns-prod
     kind: ClusterIssuer

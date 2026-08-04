@@ -38,11 +38,5 @@ spec:
         headers:
           set:
             X-Script-Name: /mlflow
-# No dedicated Certificate/ApisixTls here: develop-v2.eoepca.org already has
-# a cluster-wide SNI cert (infra/apisix/parts/cert-apx-main.yaml +
-# apisixtls-apx-main.yaml). ApisixTls is a global APISIX SSL object, not
-# scoped to the namespace it lives in, so it already terminates TLS for any
-# route matching this host regardless of which BB's namespace owns the
-# route. A second Certificate for the exact same identifier only burns
-# Let's Encrypt's shared "5 duplicate certs per exact identifier set per
-# 168h" rate limit on every rebuild -- see git history for the incident.
+# no separate cert: apisix's cluster-wide wildcard cert already covers this
+# host, a duplicate just burns letsencrypt's rate limit

@@ -40,15 +40,8 @@ patches:
       metadata:
         name: eoepca-precreated-namespaces
         annotations:
-          # application-quality-core (wave 30/31) creates a Knative Trigger
-          # in the "notifications" namespace, but that namespace is normally
-          # only created by notification-automation's Application at wave 55
-          # (its CreateNamespace=true syncOption). That left the Trigger
-          # permanently SyncError'ing ("namespaces \"notifications\" not
-          # found", retries exhausted) and application-quality-core stuck
-          # Degraded, blocking the root app the same way the other
-          # cross-wave dependency issues documented in this file did.
-          # Precreate it early, same as application-quality-sonarqube above.
+          # precreate: application-quality's knative trigger needs this ns
+          # before notification-automation (wave 55) would otherwise create it
           argocd.argoproj.io/sync-wave: "28"
   - target:
       kind: Application
@@ -69,9 +62,7 @@ patches:
       metadata:
         name: eoepca-foundations
         annotations:
-          # resource-catalogue's Client (resource-catalogue/parts/iam.yaml)
-          # can't reach Ready without keycloak-provider-config, which iam
-          # (wave 10) creates, so this must run after iam.
+          # resource-catalogue's Client needs keycloak-provider-config from iam (wave 10)
           argocd.argoproj.io/sync-wave: "20"
   - target:
       kind: Application
@@ -82,15 +73,7 @@ patches:
       metadata:
         name: data-access
         annotations:
-          # data-access/parts/storage-geoparquet-exporter.yaml is a Storage
-          # (pkg.internal) composite resource. That CRD/XRD is installed by
-          # the workspace-pipeline chart's Configuration packages
-          # (storage-minio, datalab-educates), part of the "workspace" BB at
-          # wave 30 -- not by anything in data-access itself. At wave 20,
-          # data-access tried to create it before the CRD existed, got a
-          # hard SyncFailed (not just a health wait), exhausted its retries,
-          # and permanently deadlocked the root app waiting on
-          # Application/data-access. Must run after workspace (wave 30).
+          # needs the Storage CRD workspace-pipeline installs, must run after workspace (wave 30)
           argocd.argoproj.io/sync-wave: "31"
   - target:
       kind: Application
@@ -134,11 +117,7 @@ patches:
       metadata:
         name: resource-health
         annotations:
-          # resource-health-bb's Client needs keycloak-provider-config (iam,
-          # wave 10). resource-health is a normal app-resource-health.yaml
-          # -> parts/ Application now (see its kustomization.yaml comment),
-          # so this wave only controls the wrapper; everything inside parts/
-          # has its own locally-scoped wave sequence.
+          # needs keycloak-provider-config from iam; parts/ has its own wave sequence
           argocd.argoproj.io/sync-wave: "31"
   - target:
       kind: Application
@@ -170,37 +149,9 @@ patches:
       metadata:
         name: eoepca-independent-services
         annotations:
-          # Nothing else in this repo references application-hub,
-          # identity-service, notification-automation or operations (no BB
-          # reads their endpoints/secrets/namespaces). Previously
-          # identity-service/notification-automation/operations shared wave
-          # 20 with data-access/resource-catalogue, so a Degraded app here
-          # blocked every later wave (21-50, ~16 unrelated BBs) from ever
-          # being created; application-hub had the same effect from wave 30.
-          # Give them the last wave, after even the frontends, so a problem
-          # in any one of them stays isolated instead of cascading.
-          #
-          # data-proxy joined this bucket for the same reason: its
-          # data-proxy-api child (data-proxy/parts/stac-api.yaml) pulls the
-          # stac-fastapi-eodag chart pinned to 0.3.0, but that release's .tgz
-          # 404s on GitHub (as do 0.2.0 and 0.4.0 -- only 0.1.0 currently has
-          # an attached asset), so data-proxy-api can never reach Healthy.
-          # At wave 20 that deadlocked every later wave the same way
-          # data-access/identity-service/application-hub did before. Nothing
-          # else in this repo references data-proxy, so isolating it here is
-          # safe. The broken chart pin itself is a separate issue -- fix by
-          # confirming a working stac-fastapi-eodag release with upstream (or
-          # pinning to 0.1.0) once one is available.
+          # no dependents; last wave so a problem here can't block everyone else
+          # (data-proxy is here too, for a known-broken upstream chart pin, see BB-CHANGES doc)
           argocd.argoproj.io/sync-wave: "55"
-  # application-quality-sonarqube is the only piece left that inlines raw
-  # manifests directly into this kustomization instead of isolating them
-  # behind their own nested "parts" Application (see application-quality's
-  # kustomization.yaml comment). resource-health used to as well, but was
-  # restructured to the standard app-X.yaml -> parts/ pattern like every
-  # other BB (see resource-health/kustomization.yaml). Scope these patches
-  # by name (not just group/kind) so they can't silently reset the wave of
-  # some future, unrelated resource of the same kind added anywhere else in
-  # this kustomization.
   - target:
       group: bitnami.com
       kind: SealedSecret

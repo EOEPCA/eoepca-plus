@@ -13,9 +13,6 @@ spec:
     creationPolicy: Owner
     deletionPolicy: Retain
   data:
-    # conversionStrategy/decodingStrategy/metadataPolicy match the
-    # server-side defaults ESO adds, so this doesn't perpetually show as
-    # OutOfSync.
     - secretKey: username
       remoteRef:
         key: default-pguser-pycsw

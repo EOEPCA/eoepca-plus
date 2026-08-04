@@ -83,14 +83,8 @@ patches:
       metadata:
         name: gateway
         annotations:
-          # Must sync before apisix: envoy-gateway installs the Gateway API
-          # CRDs, and apisix-ingress-controller only registers its
-          # HTTPRoutePolicy targetRefs field indexer if those CRDs already
-          # exist when it starts. If apisix starts first, that indexer never
-          # gets registered and every Ingress reconcile fails forever
-          # ("Index with name field:targetRefs does not exist"), which breaks
-          # all cert-manager HTTP-01 ACME challenges cluster-wide until the
-          # pod is manually restarted.
+          # must sync before apisix: apisix-ingress-controller needs the gateway
+          # api crds present at startup or its route indexer never registers
           argocd.argoproj.io/sync-wave: "-10"
   - target:
       kind: Application

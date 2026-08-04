@@ -31,9 +31,7 @@ spec:
             authJwksUrl: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration
 
           opa:
-            # Chart 0.1.0 hardcodes "opa run --config", but current OPA
-            # images require "--config-file"; disable the sidecar until the
-            # chart exposes args or updates the flag.
+            # disabled: chart 0.1.0 hardcodes "opa run --config", current opa images need "--config-file"
             enabled: false
             configMap: opa-config
 

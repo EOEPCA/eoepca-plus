@@ -55,11 +55,7 @@ persistence:
   storageClass: managed-nfs-storage-retain
   tmpStorageClass: managed-nfs-storage
 postgresql:
-  # No image override: the chart's default (as used by zoo-dru-keda on the
-  # same chart version) works. bitnamilegacy/postgresql was tried as a
-  # workaround for Broadcom pulling bitnami/* images, but that legacy tag
-  # fails with "Permission denied" writing /opt/bitnami/postgresql/conf
-  # under this runAsUser/fsGroup.
+  # no image override: bitnamilegacy/postgresql fails permission checks under this runAsUser
   primary:
     persistence:
       storageClass: managed-nfs-storage-retain

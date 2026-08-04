@@ -73,6 +73,12 @@ application-quality:
   automations:
     enabled: false
 
+  github:
+    enabled: true
+    statusContext: "EOEPCA Application Quality / Quality Check"
+    statusDescription: "Application quality metrics met all threshold guidelines."
+    statusTargetURL: "https://application-quality.develop.eoepca.org"
+
 # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 grafana:
   ingress:

@@ -3,5 +3,6 @@ resources:
   - app-application-quality-core.yaml
   - ss-application-quality-auth-client.yaml
   - ss-application-quality-iam-client.yaml
+  - ss-application-quality-github-api-tokens.yaml
   - ss-grafana-dashboards-admin-creds.yaml
   - ss-grafana-dashboards-oauth-config.yaml

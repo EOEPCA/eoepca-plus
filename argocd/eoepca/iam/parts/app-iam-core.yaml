@@ -1,5 +1,3 @@
-# Copied from identity-service and adapted
-
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -14,8 +12,6 @@ spec:
       chart: iam-bb
       targetRevision: 2.1.0-dev12
       helm:
-        #releaseName: iam-keycloak
-        #skipCrds: true
         valueFiles:
           - $values/argocd/eoepca/iam/parts/values/iam-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus

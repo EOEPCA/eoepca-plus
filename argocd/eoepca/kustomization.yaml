@@ -33,13 +33,22 @@ patches:
   - target:
       version: v1
       kind: Namespace
-      name: ^application-quality-sonarqube$
+      name: ^(application-quality-sonarqube|notifications)$
     patch: |
       apiVersion: v1
       kind: Namespace
       metadata:
         name: eoepca-precreated-namespaces
         annotations:
+          # application-quality-core (wave 30/31) creates a Knative Trigger
+          # in the "notifications" namespace, but that namespace is normally
+          # only created by notification-automation's Application at wave 55
+          # (its CreateNamespace=true syncOption). That left the Trigger
+          # permanently SyncError'ing ("namespaces \"notifications\" not
+          # found", retries exhausted) and application-quality-core stuck
+          # Degraded, blocking the root app the same way the other
+          # cross-wave dependency issues documented in this file did.
+          # Precreate it early, same as application-quality-sonarqube above.
           argocd.argoproj.io/sync-wave: "28"
   - target:
       kind: Application

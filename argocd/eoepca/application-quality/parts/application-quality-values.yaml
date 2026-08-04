@@ -75,6 +75,16 @@ application-quality:
   automations:
     enabled: false
 
+  # ACTION: re-enable once a real GitHub PAT (repo:status scope) is sealed
+  # into a "application-quality-github-api-tokens" Secret in the
+  # application-quality namespace. Nothing in eoepca-plus currently
+  # provisions that secret, so with the chart's default (enabled: true)
+  # application-quality-api's envFrom reference fails with
+  # "secret application-quality-github-api-tokens not found" and it
+  # CrashLoopBackOffs permanently. Disabled here to unblock the deploy.
+  github:
+    enabled: false
+
 # https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 grafana:
   ingress:

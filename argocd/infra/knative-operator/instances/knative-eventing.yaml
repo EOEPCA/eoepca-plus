@@ -5,3 +5,24 @@ metadata:
   namespace: knative-eventing
 spec:
   version: "1.18"
+  deployments:
+    # Default 200m CPU limit is too tight: eventing-webhook is a
+    # single-replica leader for every knative-eventing admission webhook
+    # (defaulting/validation/conversion/configmap/sinkbindings) and serves
+    # every Deployment create/update across the whole cluster. Under the
+    # burst of concurrent reconciles from this GitOps deploy, it got
+    # CPU-throttled long enough to miss its liveness probe (periodSeconds=1,
+    # failureThreshold=3 -- only a 3s budget), causing a permanent
+    # CrashLoopBackOff even though the process itself never errored (logs
+    # show clean leader-election and successful reconciles right up to the
+    # kill). Because the mutating webhook's failurePolicy is Fail, this also
+    # blocked unrelated Deployment patches cluster-wide while it was down.
+    - name: eventing-webhook
+      resources:
+        - container: eventing-webhook
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi

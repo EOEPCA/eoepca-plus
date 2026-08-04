@@ -1,3 +1,14 @@
+server:
+  extensions:
+    enabled: true
+    extensionList:
+      - name: extension-trivy
+        env:
+          - name: EXTENSION_URL
+            value: https://github.com/mziyabo/argocd-trivy-extension/releases/download/v0.2.0/extension-trivy.tar
+          - name: EXTENSION_CHECKSUM_URL
+            value: https://github.com/mziyabo/argocd-trivy-extension/releases/download/v0.2.0/extension-trivy_checksums.txt
+
 configs:
   # Required when Argo renders the archived Kubernetes Dashboard chart from
   # Git: Helm must know each dependency repository before dependency build.

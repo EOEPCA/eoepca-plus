@@ -53,18 +53,16 @@ patches:
           argocd.argoproj.io/sync-wave: "10"
   - target:
       kind: Application
-      name: ^(data-proxy|resource-catalogue)$
+      name: ^resource-catalogue$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application
       metadata:
         name: eoepca-foundations
         annotations:
-          # data-proxy was previously unmatched by any of these patches, so it
-          # defaulted to wave 0 -- earlier than iam's wave 10. Its Client
-          # (data-proxy/parts/iam.yaml) can't reach Ready without
-          # keycloak-provider-config, which iam creates, so the whole root
-          # app deadlocked waiting on Application/data-proxy at wave 0.
+          # resource-catalogue's Client (resource-catalogue/parts/iam.yaml)
+          # can't reach Ready without keycloak-provider-config, which iam
+          # (wave 10) creates, so this must run after iam.
           argocd.argoproj.io/sync-wave: "20"
   - target:
       kind: Application
@@ -156,7 +154,7 @@ patches:
           argocd.argoproj.io/sync-wave: "50"
   - target:
       kind: Application
-      name: ^(application-hub|identity-service|notification-automation|operations)$
+      name: ^(application-hub|data-proxy|identity-service|notification-automation|operations)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application
@@ -172,6 +170,18 @@ patches:
           # being created; application-hub had the same effect from wave 30.
           # Give them the last wave, after even the frontends, so a problem
           # in any one of them stays isolated instead of cascading.
+          #
+          # data-proxy joined this bucket for the same reason: its
+          # data-proxy-api child (data-proxy/parts/stac-api.yaml) pulls the
+          # stac-fastapi-eodag chart pinned to 0.3.0, but that release's .tgz
+          # 404s on GitHub (as do 0.2.0 and 0.4.0 -- only 0.1.0 currently has
+          # an attached asset), so data-proxy-api can never reach Healthy.
+          # At wave 20 that deadlocked every later wave the same way
+          # data-access/identity-service/application-hub did before. Nothing
+          # else in this repo references data-proxy, so isolating it here is
+          # safe. The broken chart pin itself is a separate issue -- fix by
+          # confirming a working stac-fastapi-eodag release with upstream (or
+          # pinning to 0.1.0) once one is available.
           argocd.argoproj.io/sync-wave: "55"
   # application-quality-sonarqube is the only piece left that inlines raw
   # manifests directly into this kustomization instead of isolating them

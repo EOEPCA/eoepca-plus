@@ -1,4 +1,3 @@
-# Wildcard certificate for preliminary APISIX ingress *.develop-v2.eoepca.org
 apiVersion: apisix.apache.org/v2
 kind: ApisixTls
 metadata:

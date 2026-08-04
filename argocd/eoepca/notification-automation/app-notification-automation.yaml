@@ -16,6 +16,11 @@ spec:
   destination:
     name: in-cluster
     namespace: notifications
+  ignoreDifferences:
+    - kind: Namespace
+      name: notifications
+      jsonPointers:
+        - /metadata/annotations
   syncPolicy:
     automated:
       prune: true

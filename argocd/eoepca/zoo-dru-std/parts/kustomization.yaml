@@ -4,6 +4,8 @@ resources:
   - ingress-zoo.yaml
   - ingress-webui.yaml
   - ss-zoo-workflow-env.yaml
+  - secrets/ss-zoo-session-secret.yaml
+  - iam-secret-propagation.yaml
   - iam.yaml
 
 patches:

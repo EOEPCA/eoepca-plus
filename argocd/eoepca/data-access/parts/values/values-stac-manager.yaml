@@ -19,7 +19,7 @@ appTitle: "EOEPCA+ STAC Manager"
 appDescription: "Manage STAC collections and items on the EOEPCA+ platform"
 
 oidc:
-  authority: https://iam-auth.develop-v2.eoepca.org/realms/eoepca
+  authority: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
   clientId: eoapi
 
 volumes:

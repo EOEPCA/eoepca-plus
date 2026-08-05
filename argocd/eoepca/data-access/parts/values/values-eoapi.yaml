@@ -144,7 +144,7 @@ stac-auth-proxy:
     port: 8080
   env:
     UPSTREAM_URL: "http://eoapi-stac.data-access.svc.cluster.local:8080"
-    OIDC_DISCOVERY_URL: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+    OIDC_DISCOVERY_URL: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
     # Use the in-cluster Keycloak service for server-side health/JWKS calls so
     # pods do not need to trust the public Let's Encrypt staging certificate.
     OIDC_DISCOVERY_INTERNAL_URL: "http://iam-core-keycloak-operator-service.iam.svc:8080/realms/eoepca/.well-known/openid-configuration"
@@ -212,7 +212,7 @@ browser:
       url: "https://docs.eoepca.org/"
   authConfig:
     type: "openIdConnect"
-    openIdConnectUrl: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+    openIdConnectUrl: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
     oidcConfig:
       client_id: "eoapi"
       redirect_uri: "https://eoapi.develop-v2.eoepca.org/browser/auth"

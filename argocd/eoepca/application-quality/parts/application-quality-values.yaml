@@ -23,7 +23,7 @@ application-quality:
   oidc:
     enabled: true
     realm: eoepca
-    realmBaseUrl: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca"
+    realmBaseUrl: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca"
     clientId: application-quality-bb
     clientSecret: ""
     postLogoutRedirectUrl: "https://application-quality.develop-v2.eoepca.org/"

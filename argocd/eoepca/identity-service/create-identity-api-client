@@ -33,7 +33,7 @@ sleep 1
 
 # Create the client
 tmp/bin/create-client \
-  -a https://iam-auth.develop-v2.eoepca.org \
+  -a https://develop-v2.eoepca.org/iam/auth \
   -i http://localhost:9876 \
   -r "eoepca" \
   -u "admin" \

@@ -26,9 +26,9 @@ spec:
 
           proxyEnv:
             eodagUrl: http://eodag-data-proxy-eodag-data-proxy-chart-control-plane:8000
-            authIssuerUrl: https://iam-auth.develop-v2.eoepca.org/realms/eoepca
+            authIssuerUrl: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
             authAudience: eodag-proxy
-            authJwksUrl: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration
+            authJwksUrl: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration
 
           opa:
             # disabled: chart 0.1.0 hardcodes "opa run --config", current opa images need "--config-file"

@@ -18,7 +18,7 @@ harvester:
       http_timeout_millis: 420000 # 7 minutes
     iam:
       enabled: true
-      oidc_token_endpoint_url: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/token    
+      oidc_token_endpoint_url: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/protocol/openid-connect/token    
     topics:
       sentinel_ondemand_discovery:
         module: worker.sentinel.tasks

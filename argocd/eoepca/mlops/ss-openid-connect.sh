@@ -27,7 +27,7 @@ args:
   name: openid_connect
   scope: ["openid", "profile", "email"]
   response_type: "code"
-  issuer: "https://iam-auth.${DOMAIN}/realms/eoepca"
+  issuer: "https://${DOMAIN}/iam/auth/realms/eoepca"
   client_auth_method: "query"
   discovery: true
   uid_field: "preferred_username"

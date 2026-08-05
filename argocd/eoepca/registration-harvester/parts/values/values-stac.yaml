@@ -17,7 +17,7 @@ harvester:
       sleep_seconds: 15
       http_timeout_millis: 420000 # 7 minutes
     iam:
-      oidc_token_endpoint_url: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/token
+      oidc_token_endpoint_url: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/protocol/openid-connect/token
     topics:
       stac_harvest_catalog:
         module: worker.stac.tasks

@@ -39,9 +39,9 @@ spec:
                 JUPYTERHUB_ENV: "dev"
                 JUPYTERHUB_SINGLE_USER_IMAGE: "eoepca/pde-container:1.0.3"
                 OAUTH_CALLBACK_URL: https://applicationhub.develop-v2.eoepca.org/hub/oauth_callback
-                OAUTH2_USERDATA_URL: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/userinfo
-                OAUTH2_TOKEN_URL: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/token
-                OAUTH2_AUTHORIZE_URL: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/auth
+                OAUTH2_USERDATA_URL: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/protocol/openid-connect/userinfo
+                OAUTH2_TOKEN_URL: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/protocol/openid-connect/token
+                OAUTH2_AUTHORIZE_URL: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/protocol/openid-connect/auth
                 OAUTH_LOGOUT_REDIRECT_URL: "https://applicationhub.develop-v2.eoepca.org/hub/home"
                 OAUTH2_USERNAME_KEY: "preferred_username"
                 APP_HUB_NAMESPACE: "app-hub"

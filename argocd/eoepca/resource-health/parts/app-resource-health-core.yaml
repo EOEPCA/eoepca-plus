@@ -70,7 +70,7 @@ spec:
                               subject_key: preferred_username
                               roles_key: roles
                               # jwt_header: X-Access-Token
-                              openid_connect_url: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+                              openid_connect_url: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
                           authentication_backend:
                             type: noop
 
@@ -99,7 +99,7 @@ spec:
               - name: FAST_API_ROOT_PATH
                 value: "/api/telemetry"
               - name: OPEN_ID_CONNECT_URL
-                value: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+                value: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
               - name: OPEN_ID_CONNECT_AUDIENCE
                 value: "account"
               - name: RH_TELEMETRY_OPENSEARCH_INDEX
@@ -191,7 +191,7 @@ spec:
               - name: FAST_API_ROOT_PATH
                 value: "/api/healthchecks"
               - name: OPEN_ID_CONNECT_URL
-                value: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+                value: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
               - name: OPEN_ID_CONNECT_AUDIENCE
                 value: "account"
               - name: DEFAULT_COLLECTOR_URL_NO_PROTOCOL
@@ -641,7 +641,7 @@ spec:
               script: "https://github.com/EOEPCA/resource-health/blob/main/pytest-health/lib/BB-examples/iam_tests.py?raw=true"
               env:
                 - name: OPEN_ID_CONFIGURATION_HOST
-                  value: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known
+                  value: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known
                 - name: OPA_ENDPOINT
                   value: http://iam-opa.iam.svc.cluster.local:8181/
                 - name: IDENTITY_API_ENDPOINT

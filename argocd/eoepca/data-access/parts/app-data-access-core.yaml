@@ -37,7 +37,7 @@ spec:
             oidc:
               enabled: true
               clientId: "eoapi"
-              wellKnownUrl: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+              wellKnownUrl: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
               redirectUrl: "https://eoapi.develop-v2.eoepca.org/openeo/"
           extraVolumes:
             - name: services

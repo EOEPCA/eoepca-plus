@@ -27,7 +27,7 @@ spec:
             # tag: "latest"
           secret:
             name: "registration-api-secret"
-          iam_endpoint: "https://iam-auth.develop-v2.eoepca.org"
+          iam_endpoint: "https://develop-v2.eoepca.org/iam/auth"
           iam_realm: "eoepca"
           iam_grant_type: "client_credentials"
           config:

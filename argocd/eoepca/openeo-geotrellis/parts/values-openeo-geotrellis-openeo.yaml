@@ -38,7 +38,7 @@ configMaps:
         OidcProvider(
             id="eoepca-iam",
             title="EOEPCA IAM",
-            issuer="https://iam-auth.develop-v2.eoepca.org/realms/eoepca/",
+            issuer="https://develop-v2.eoepca.org/iam/auth/realms/eoepca/",
             default_clients=[
                 {
                     "id": "openeo-default-client",

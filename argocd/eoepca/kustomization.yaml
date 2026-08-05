@@ -13,7 +13,7 @@ resources:
   - workspace
   - mlops
   - application-quality
-  - portal-v1x
+  # - portal-v1x
   - registration-harvester
   - iam
   - application-hub

@@ -234,3 +234,169 @@ spec:
       - name: eoepca-user
         policy:
           resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationPermission
+metadata:
+  name: zoo-alice-access
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: alice-access
+    type: resource
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    resources:
+      - alice-home
+    policies:
+      - alice-policy
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationPermission
+metadata:
+  name: zoo-bob-access
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: bob-access
+    type: resource
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    resources:
+      - bob-home
+    policies:
+      - bob-policy
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationPermission
+metadata:
+  name: zoo-eric-access
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: eric-access
+    type: resource
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    resources:
+      - eric-home
+    policies:
+      - eric-policy
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationPermission
+metadata:
+  name: zoo-eoepcauser-access
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: eoepcauser-access
+    type: resource
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    resources:
+      - eoepcauser
+    policies:
+      - eoepcauser
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationResource
+metadata:
+  name: zoo-default-resource
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: default-resource
+    uris:
+      - /*
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientUserPolicy
+metadata:
+  name: zoo-default-policy
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: default-policy
+    logic: POSITIVE
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    usersRefs:
+      - name: alice
+        policy:
+          resolution: Required
+      - name: bob
+        policy:
+          resolution: Required
+      - name: eric
+        policy:
+          resolution: Required
+      - name: eoepca-user
+        policy:
+          resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationPermission
+metadata:
+  name: zoo-default-access
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: default-access
+    type: resource
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    resources:
+      - default-resource
+    policies:
+      - default-policy

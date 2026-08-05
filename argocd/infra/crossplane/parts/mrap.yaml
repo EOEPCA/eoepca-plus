@@ -46,6 +46,7 @@ spec:
     - clientauthorizationresources.openidclient.keycloak.m.crossplane.io
     - clientauthorizationpermissions.openidclient.keycloak.m.crossplane.io
     - clientuserpolicies.openidclient.keycloak.m.crossplane.io
+    - clientrolepolicies.openidclient.keycloak.m.crossplane.io
 ---
 apiVersion: apiextensions.crossplane.io/v1alpha1
 kind: ManagedResourceActivationPolicy

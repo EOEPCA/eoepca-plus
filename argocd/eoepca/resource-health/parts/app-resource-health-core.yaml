@@ -644,8 +644,9 @@ spec:
                   value: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known
                 - name: OPA_ENDPOINT
                   value: http://iam-opa.iam.svc.cluster.local:8181/
-                - name: IDENTITY_API_ENDPOINT
-                  value: http://identity-api.iam.svc.cluster.local:8080/
+                # Deprecated?
+                # - name: IDENTITY_API_ENDPOINT
+                #   value: http://identity-api.iam.svc.cluster.local:8080/
               userid: "alice"
               annotations:
                 owner: "alice"

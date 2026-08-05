@@ -24,7 +24,7 @@ resources:
   - openeofed
   - openeo-argoworkflows
   - notification-automation
-  - identity-service
+  # - identity-service  # deprecated. 
 
 
 patches:
@@ -142,7 +142,7 @@ patches:
           argocd.argoproj.io/sync-wave: "50"
   - target:
       kind: Application
-      name: ^(application-hub|data-proxy|identity-service|notification-automation|operations)$
+      name: ^(application-hub|data-proxy|notification-automation|operations)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application

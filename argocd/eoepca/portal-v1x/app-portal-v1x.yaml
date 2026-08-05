@@ -20,7 +20,7 @@ spec:
           identity_url: "https://develop-v2.eoepca.org/iam/auth"
           realm: "master"
           client_id: "eoepca-portal"
-          identity_api_url: "https://identity-api.develop-v2.eoepca.org"
+          # identity_api_url: "https://identity-api.develop-v2.eoepca.org"  # deprecated: identity-service disabled
           ades_url: "https://zoo.develop-v2.eoepca.org/ogc-api/processes"
           resource_catalogue_url: "https://resource-catalogue.develop-v2.eoepca.org"
           data_access_url: "https://eoapi.develop-v2.eoepca.org"

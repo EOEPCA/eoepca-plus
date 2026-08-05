@@ -83,4 +83,4 @@ webui:
     issuer: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca"
     authVerifyJwksUri: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/protocol/openid-connect/certs
     clientId: zoo
-    clientSecret: Fsw9DtGQ52lje15lQtPC8CDxhpwqE8Di
+    clientSecret: C8tV4ijxXVh3Mdcubsedvl1e9uWWyPJ4

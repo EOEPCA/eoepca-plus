@@ -25,6 +25,10 @@ spec:
       - '/*'
     webOrigins:
       - '/*'
+    authorization:
+      - policyEnforcementMode: ENFORCING
+        decisionStrategy: UNANIMOUS
+        keepDefaults: true
 ---
 apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: ClientServiceAccountRole

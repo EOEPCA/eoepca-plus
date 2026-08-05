@@ -2,7 +2,7 @@
 set -euo pipefail
 
 NAMESPACE="${SEALED_SECRETS_NAMESPACE:-infra}"
-BACKUP_FILE="${SEALED_SECRETS_KEY_BACKUP:-resources/sealed-secrets-keys.yaml}"
+BACKUP_FILE="${SEALED_SECRETS_KEY_BACKUP:-resources/sealed-secrets-keys-$(date +%Y-%m-%d).yaml}"
 BACKUP_DIR="$(dirname "${BACKUP_FILE}")"
 
 mkdir -p "${BACKUP_DIR}"

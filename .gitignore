@@ -44,3 +44,4 @@ deploy/k8s-resources/scripts/resources/
 # Pulumi
 .pulumi/
 iam-export/
+BB-CHANGES.md

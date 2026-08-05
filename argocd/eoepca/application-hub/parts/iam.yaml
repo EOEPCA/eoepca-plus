@@ -26,6 +26,10 @@ spec:
       - https://applicationhub.develop-v2.eoepca.org/*
     webOrigins:
       - https://applicationhub.develop-v2.eoepca.org
+    authorization:
+      - policyEnforcementMode: ENFORCING
+        decisionStrategy: UNANIMOUS
+        keepDefaults: true
 ---
 apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: Client
@@ -55,3 +59,8 @@ spec:
       - https://app-hub.test-release.develop-v2.eoepca.org/*
     webOrigins:
       - '*'
+    # fine-grained authz, matching RKE1: keepDefaults recreates keycloak's own permissive default policy/permission
+    authorization:
+      - policyEnforcementMode: ENFORCING
+        decisionStrategy: UNANIMOUS
+        keepDefaults: true

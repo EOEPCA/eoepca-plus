@@ -30,6 +30,10 @@ spec:
       - https://zoostd.develop-v2.eoepca.org
       - https://zoostd-open.develop-v2.eoepca.org
       - https://webuistd.develop-v2.eoepca.org
+    authorization:
+      - policyEnforcementMode: ENFORCING
+        decisionStrategy: UNANIMOUS
+        keepDefaults: true
 ---
 apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: Client

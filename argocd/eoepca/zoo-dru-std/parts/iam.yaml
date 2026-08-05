@@ -63,3 +63,174 @@ spec:
       - https://webuistd.develop-v2.eoepca.org/*
     webOrigins:
       - https://webuistd.develop-v2.eoepca.org
+---
+# crossplane resources
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationResource
+metadata:
+  name: zoo-alice-home
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: alice-home
+    uris:
+      - /alice/*
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationResource
+metadata:
+  name: zoo-bob-home
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: bob-home
+    uris:
+      - /bob/*
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationResource
+metadata:
+  name: zoo-eric-home
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: eric-home
+    uris:
+      - /eric/*
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientAuthorizationResource
+metadata:
+  name: zoo-eoepcauser-home
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: eoepcauser
+    uris:
+      - /eoepcauser/*
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+---
+# crossplane policies
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientUserPolicy
+metadata:
+  name: zoo-alice-policy
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: alice-policy
+    logic: POSITIVE
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    usersRefs:
+      - name: alice
+        policy:
+          resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientUserPolicy
+metadata:
+  name: zoo-bob-policy
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: bob-policy
+    logic: POSITIVE
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    usersRefs:
+      - name: bob
+        policy:
+          resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientUserPolicy
+metadata:
+  name: zoo-eric-policy
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: eric-policy
+    logic: POSITIVE
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    usersRefs:
+      - name: eric
+        policy:
+          resolution: Required
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientUserPolicy
+metadata:
+  name: zoo-eoepcauser-policy
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: eoepcauser
+    logic: POSITIVE
+    decisionStrategy: UNANIMOUS
+    resourceServerIdRef:
+      name: zoo
+      policy:
+        resolution: Required
+    usersRefs:
+      # references the shared eoepcauser account declared in argocd/eoepca/iam/parts/eoepca-user.yaml
+      - name: eoepca-user
+        policy:
+          resolution: Required

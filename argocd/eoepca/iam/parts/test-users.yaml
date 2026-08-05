@@ -1,0 +1,62 @@
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: alice
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    username: alice
+    firstName: Alice
+    lastName: Test
+    enabled: true
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: test-users
+          key: alice-password
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: bob
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    username: bob
+    firstName: Bob
+    lastName: Test
+    enabled: true
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: test-users
+          key: bob-password
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: eric
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    username: eric
+    firstName: Eric
+    lastName: Test
+    enabled: true
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: test-users
+          key: eric-password

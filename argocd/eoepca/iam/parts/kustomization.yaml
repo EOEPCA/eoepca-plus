@@ -12,9 +12,11 @@ resources:
   - iam-management-ns.yaml
   - eoepca-admin.yaml
   - eoepca-user.yaml
+  - test-users.yaml
   - realm-roles.yaml
   - ss-iam-keycloak.yaml
   - ss-eoepca-user.yaml
+  - ss-test-users.yaml
   - ss-opa-route.yaml
   - ss-keycloak-admin.yaml
   - ss-eoepca-realm.yaml

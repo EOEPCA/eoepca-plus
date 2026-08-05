@@ -67,7 +67,7 @@ iam:
   enabled: true
   openIdConnectUrl: https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration
   realm: eoepca
-  issuer: https://iam-auth.develop-v2.eoepca.org/realms/eoepca
+  issuer: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
   audience: account
 documentation:
   enabled: true

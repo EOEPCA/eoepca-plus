@@ -13,7 +13,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: deploy-develop-frozen
     path: argocd/eoepca/iam/parts
   destination:
     name: in-cluster

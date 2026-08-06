@@ -11,7 +11,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: deploy-develop-frozen
     path: argocd/eoepca/registration-harvester/parts
   destination:
     name: in-cluster

@@ -13,7 +13,7 @@ Thus, the root `minio` application references the `parts/` subdirectory that def
 ```yaml
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: deploy-develop-frozen
     path: argocd/infra/minio/parts
 ```
 

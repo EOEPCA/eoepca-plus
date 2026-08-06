@@ -20,7 +20,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-db-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: deploy-develop-frozen
       ref: values
   destination:
     name: in-cluster
@@ -55,7 +55,7 @@ spec:
   project: eoepca
   sources:
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: deploy-develop-frozen
       path: argocd/eoepca/application-quality/sonarqube
     - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
       targetRevision: 2026.2.1
@@ -65,7 +65,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: deploy-develop-frozen
       ref: values
   destination:
     name: in-cluster

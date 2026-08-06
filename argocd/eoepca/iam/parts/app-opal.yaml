@@ -31,7 +31,7 @@ spec:
           opal:
             enabled: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: deploy-develop-frozen
       ref: values
 
   destination:

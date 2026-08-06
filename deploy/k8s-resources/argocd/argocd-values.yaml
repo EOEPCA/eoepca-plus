@@ -10,6 +10,10 @@ server:
             value: https://github.com/mziyabo/argocd-trivy-extension/releases/download/v0.2.0/extension-trivy_checksums.txt
 
 configs:
+  rbac:
+    policy.csv: |
+      g, EOEPCA:developers, role:admin
+    policy.default: ""
   # Required when Argo renders the archived Kubernetes Dashboard chart from
   # Git: Helm must know each dependency repository before dependency build.
   repositories:
@@ -26,6 +30,19 @@ configs:
       type: helm
       url: https://kubernetes-sigs.github.io/metrics-server/
   cm:
+    dex.config: |
+      connectors:
+        - type: github
+          id: github
+          name: GitHub
+          config:
+            clientID: Ov23lijhpWhfaGNegFPX
+            clientSecret: $dex.github.clientSecret
+            teamNameField: slug
+            orgs:
+              - name: EOEPCA
+                teams:
+                  - developers
     resource.customizations.health.argoproj.io_Application: |
       hs = { status = "Progressing", message = "Waiting for Application status" }
       if obj.status ~= nil then

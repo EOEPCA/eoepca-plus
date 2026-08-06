@@ -131,7 +131,7 @@ patches:
           argocd.argoproj.io/sync-wave: "40"
   - target:
       kind: Application
-      name: ^(openeo-web-editor|portal-v1x)$
+      name: ^(openeo-web-editor)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application

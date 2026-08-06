@@ -11,11 +11,18 @@ spec:
   project: eoepca
   sources:
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: merge-from-deploy-develop
       path: argocd/eoepca/workspace/parts
   destination:
     name: in-cluster
     namespace: workspace
+  ignoreDifferences:
+    - group: kyverno.io
+      kind: ClusterPolicy
+      jqPathExpressions:
+        - '.spec.emitWarning'
+        - '.spec.validationFailureAction'
+        - '.spec.rules[].skipBackgroundRequests'
   syncPolicy:
     automated:
       prune: true

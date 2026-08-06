@@ -11,7 +11,7 @@ spec:
       namespace: gateway
       sectionName: https
   hostnames:
-    - eoapi-db.develop.eoepca.org
+    - eoapi-db.develop-v2.eoepca.org
   rules:
     - backendRefs:
         - name: default-primary

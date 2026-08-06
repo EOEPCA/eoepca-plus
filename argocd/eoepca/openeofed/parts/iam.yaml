@@ -1,0 +1,82 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: openeo-default-client
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: openeo-default-client
+    accessType: PUBLIC
+    clientId: openeo-default-client
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    oauth2DeviceAuthorizationGrantEnabled: true
+    validRedirectUris:
+      - https://editor.openeo.org
+      - https://eoepca.github.io/processing-editor
+      - https://editor.develop-v2.eoepca.org
+      - http://localhost:1410/
+    webOrigins:
+      - https://editor.openeo.org
+      - https://eoepca.github.io
+      - https://editor.develop-v2.eoepca.org
+      - http://localhost:1410
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: openeo-public-demo
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: openeo-public-demo
+    accessType: PUBLIC
+    clientId: openeo-public-demo
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    rootUrl: https://openeo.develop-v2.eoepca.org
+    validRedirectUris:
+      - https://editor.openeo.org/*
+      - https://openeo.develop-v2.eoepca.org/*
+    webOrigins:
+      - '/*'
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: openeo-public-test
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: openeo-public-test
+    accessType: PUBLIC
+    clientId: openeo-public-test
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    rootUrl: https://openeo-test.develop-v2.eoepca.org
+    validRedirectUris:
+      - https://editor.openeo.org/*
+      - https://openeo-test.develop-v2.eoepca.org/*
+    webOrigins:
+      - '/*'

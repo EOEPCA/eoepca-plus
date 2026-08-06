@@ -10,7 +10,7 @@ spec:
   project: eoepca
   sources:
 
-    - repoURL: https://devseed.com/eoapi-k8s/
+    - repoURL: https://developmentseed.org/eoapi-k8s/
       chart: eoapi
       targetRevision: 0.13.1
       helm:
@@ -28,7 +28,7 @@ spec:
           image:
             tag: "v0.9.1"
           stac:
-            apiUrl: "https://eoapi.develop.eoepca.org/stac"
+            apiUrl: "https://eoapi.develop-v2.eoepca.org/stac"
             serviceStoreUrl: "/app/services/eoapi.json"
           env:
             TITILER_OPENEO_API_ROOT_PATH: "/openeo/"
@@ -37,8 +37,8 @@ spec:
             oidc:
               enabled: true
               clientId: "eoapi"
-              wellKnownUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
-              redirectUrl: "https://eoapi.develop.eoepca.org/openeo/"
+              wellKnownUrl: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
+              redirectUrl: "https://eoapi.develop-v2.eoepca.org/openeo/"
           extraVolumes:
             - name: services
               configMap:
@@ -65,7 +65,7 @@ spec:
           - $values/argocd/eoepca/data-access/parts/values/values-pgstac-geoparquet-exporter.yaml
 
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: merge-from-deploy-develop
       ref: values
 
   destination:

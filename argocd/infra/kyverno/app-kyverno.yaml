@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kyverno
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: kyverno
+spec:
+  # shared infra dep, workspace needs it too
+  project: eoepca
+  sources:
+    - repoURL: https://kyverno.github.io/kyverno/
+      chart: kyverno
+      targetRevision: "3.5.2"
+      helm:
+        releaseName: kyverno
+        valueFiles:
+          - $values/argocd/infra/kyverno/values-kyverno.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: merge-from-deploy-develop
+      ref: values
+  destination:
+    name: in-cluster
+    namespace: kyverno-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - ServerSideApply=true

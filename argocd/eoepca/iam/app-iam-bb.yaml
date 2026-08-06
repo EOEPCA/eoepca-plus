@@ -13,11 +13,24 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: merge-from-deploy-develop
     path: argocd/eoepca/iam/parts
   destination:
     name: in-cluster
     namespace: iam
+  ignoreDifferences:
+    - group: "openidclient.keycloak.m.crossplane.io"
+      kind: Client
+      name: eoepca-realm-management-client
+      namespace: iam-management
+      jsonPointers:
+        - /metadata/annotations/crossplane.io~1external-name
+    - group: "role.keycloak.m.crossplane.io"
+      kind: Role
+      name: eoepca-realm-admin
+      namespace: iam-management
+      jsonPointers:
+        - /metadata/annotations/crossplane.io~1external-name
   syncPolicy:
     automated:
       prune: true

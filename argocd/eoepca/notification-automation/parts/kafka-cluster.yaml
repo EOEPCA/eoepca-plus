@@ -5,7 +5,9 @@ metadata:
   namespace: notifications
 spec:
   kafka:
-    version: 3.7.0
+    # 3.7.0 isn't supported by the installed Strimzi operator (0.45.2,
+    # supports 3.8.0-3.9.2); the operator refused to reconcile at all.
+    version: 3.9.1
     replicas: 3
     listeners:
       - name: plain

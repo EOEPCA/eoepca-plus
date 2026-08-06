@@ -10,7 +10,7 @@ spec:
   - name: opa
     match:
       hosts:
-      - iam-opa.develop.eoepca.org
+      - iam-opa.develop-v2.eoepca.org
       paths:
       - /*
     backends:
@@ -27,22 +27,22 @@ spec:
             secret: 0123456789abcdef
           #bearer_only: true
           #realm: "eoepca"
-          #redirect_uri: "http://iam-test.develop.eoepca.org/"
+          #redirect_uri: "http://iam-test.develop-v2.eoepca.org/"
           access_token_in_authorization_header: true
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+          discovery: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration"
       - name: authz-keycloak
         enable: true
         config:
           client_id: "opa"
           client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          discovery: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
           #permissions: "Resource all"
           lazy_load_paths: true
           ssl_verify: false
   - name: opa
     match:
       hosts:
-        - iam-opa.develop.eoepca.org
+        - iam-opa.develop-v2.eoepca.org
       paths:
         - /*
     backends:
@@ -57,13 +57,13 @@ spec:
           session:
             secret: 0123456789abcdef
           access_token_in_authorization_header: true
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+          discovery: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/openid-configuration"
       - name: authz-keycloak
         enable: true
         config:
           client_id: "opa"
           client_secret: "RkAUBGEzUCCgKBydiagDGqW5JJeXYdDQ"
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          discovery: "https://iam-auth.develop-v2.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
           #permissions: "Resource all"
           lazy_load_paths: true
           ssl_verify: false

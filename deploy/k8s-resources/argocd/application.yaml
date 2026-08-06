@@ -10,7 +10,7 @@ spec:
 
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: merge-from-deploy-develop
     path: argocd
 
   destination:
@@ -21,9 +21,17 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    retry:
+      limit: 20
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 10m
     syncOptions:
       - CreateNamespace=true
       - Validate=false
+      - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
       - RespectIgnoreDifferences=true

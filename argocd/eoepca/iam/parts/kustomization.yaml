@@ -1,13 +1,77 @@
 
 resources:
-  - app-keycloak.yaml
-  - app-opal.yaml
+  - app-iam-core.yaml
 #  - pvc-kc-database.yaml
   - ss-kc-postgres.yaml
-  - ss-keycloak-provider.yaml
-  - provider-config-keycloak.yaml
+  #- ss-keycloak-provider.yaml
+  - ss-keycloak-provider-iam.yaml
+  #- provider-config-keycloak.yaml
   # Preliminary configuration for path-based routing (to be removed later)
-  - apisixroute-pathbased.yaml
-  # Removing this one as it makes no sense
-  # - ingress-pathbased.yaml
-  - naming-workaround.yaml
+  #- apisixroute-pathbased.yaml
+  - apisixroute-hostbased.yaml
+  - iam-management-ns.yaml
+  - eoepca-admin.yaml
+  - eoepca-user.yaml
+  - test-users.yaml
+  - realm-roles.yaml
+  - ss-iam-keycloak.yaml
+  - ss-eoepca-user.yaml
+  - ss-test-users.yaml
+  - ss-opa-route.yaml
+  - ss-keycloak-admin.yaml
+  - ss-eoepca-realm.yaml
+
+patches:
+  - target:
+      kind: Namespace
+    patch: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: iam-management
+        annotations:
+          argocd.argoproj.io/sync-wave: "-20"
+  - target:
+      group: bitnami.com
+      kind: SealedSecret
+    patch: |
+      apiVersion: bitnami.com/v1alpha1
+      kind: SealedSecret
+      metadata:
+        name: iam-secrets
+        annotations:
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      group: argoproj.io
+      kind: Application
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: iam-core
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"
+  - target:
+      group: .*keycloak.m.crossplane.io
+    patch: |
+      apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+      kind: User
+      metadata:
+        name: iam-managed-resources
+        annotations:
+          argocd.argoproj.io/sync-wave: "10"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: apisix.apache.org
+      kind: ApisixRoute
+      name: iam-hostbased-route
+    patch: |
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixRoute
+      metadata:
+        name: iam-hostbased-route
+        annotations:
+          # The provider used by iam-core authenticates through this hostname.
+          # Apply the route alongside iam-core to avoid a health-gating cycle.
+          argocd.argoproj.io/sync-wave: "0"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

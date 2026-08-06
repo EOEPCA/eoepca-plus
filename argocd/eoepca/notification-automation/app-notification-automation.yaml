@@ -11,11 +11,16 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: merge-from-deploy-develop
     path: argocd/eoepca/notification-automation/parts
   destination:
     name: in-cluster
-    namespace: na
+    namespace: notifications
+  ignoreDifferences:
+    - kind: Namespace
+      name: notifications
+      jsonPointers:
+        - /metadata/annotations
   syncPolicy:
     automated:
       prune: true

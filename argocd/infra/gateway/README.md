@@ -19,8 +19,8 @@ Single public facing IP address `64.225.140.153`.
 Internet
  -> Load-balancer - 64.225.140.153 (Cloudferro)
      -> Envoy Gateway - `NodePort 31080/31443`
-         -> APISIX (default route) - `*.develop.eoepca.org` - full TLS passthrough
-         -> Nginx (specific route) - `*.ngx.develop.eoepca.org` - full TLS passthrough
+         -> APISIX (default route) - `*.develop-v2.eoepca.org` - full TLS passthrough
+         -> Nginx (specific route) - `*.ngx.develop-v2.eoepca.org` - full TLS passthrough
 ```
 
 > NOTE that the second public IP address is no longer required - since the `Gateway` allows to better handle combined traffic destined for APISIX and nginx, without the need to split the traffic with dedicated IPs.
@@ -28,8 +28,8 @@ Internet
 ## DNS records
 
 ```
-*.develop.eoepca.org.  300  IN  CNAME  develop.eoepca.org.
-develop.eoepca.org.    197  IN  A      64.225.140.153
+*.develop-v2.eoepca.org.  300  IN  CNAME  develop-v2.eoepca.org.
+develop-v2.eoepca.org.    197  IN  A      64.225.140.153
 ```
 
 ## TLS Passthrough
@@ -68,7 +68,7 @@ spec:
       namespace: gateway
       sectionName: https
   hostnames:
-    - eoapi-db.develop.eoepca.org
+    - eoapi-db.develop-v2.eoepca.org
   rules:
     - backendRefs:
         - name: default-primary

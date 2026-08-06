@@ -1,5 +1,6 @@
 
 resources:
+  - namespaces.yaml
   - resource-catalogue
   - registration-api
   - data-access
@@ -16,10 +17,159 @@ resources:
   - registration-harvester
   - iam
   - application-hub
+  - operations
   - resource-health
   - openeo-geotrellis
   - openeo-web-editor
   - openeofed
   - openeo-argoworkflows
   - notification-automation
-  # - identity-service
+  # - identity-service  # deprecated. 
+
+
+patches:
+  # IAM is the first EOEPCA service because most BBs create clients/users via
+  # its Crossplane provider. Later waves contain consumers of those clients.
+  - target:
+      version: v1
+      kind: Namespace
+      name: ^(application-quality-sonarqube|notifications)$
+    patch: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: eoepca-precreated-namespaces
+        annotations:
+          # precreate: application-quality's knative trigger needs this ns
+          # before notification-automation (wave 55) would otherwise create it
+          argocd.argoproj.io/sync-wave: "28"
+  - target:
+      kind: Application
+      name: ^iam$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: iam
+        annotations:
+          argocd.argoproj.io/sync-wave: "10"
+  - target:
+      kind: Application
+      name: ^resource-catalogue$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-foundations
+        annotations:
+          # resource-catalogue's Client needs keycloak-provider-config from iam (wave 10)
+          argocd.argoproj.io/sync-wave: "20"
+  - target:
+      kind: Application
+      name: ^data-access$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: data-access
+        annotations:
+          # needs the Storage CRD workspace-pipeline installs, must run after workspace (wave 30)
+          argocd.argoproj.io/sync-wave: "31"
+  - target:
+      kind: Application
+      name: ^(application-quality|application-quality-sonarqube-db|mlops|openeo-argoworkflows|openeo-geotrellis|registration-api|workspace)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "30"
+  - target:
+      kind: Application
+      name: ^datacube-access$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: datacube-access
+        annotations:
+          # The configured backend is the Data Access STAC endpoint, so this
+          # must run after data-access (now wave 31, see above).
+          argocd.argoproj.io/sync-wave: "32"
+  - target:
+      kind: Application
+      name: ^application-quality-sonarqube$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: application-quality-sonarqube
+        annotations:
+          # SonarQube consumes the database Application from wave 30.
+          argocd.argoproj.io/sync-wave: "31"
+  - target:
+      kind: Application
+      name: ^resource-health$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: resource-health
+        annotations:
+          # needs keycloak-provider-config from iam; parts/ has its own wave sequence
+          argocd.argoproj.io/sync-wave: "31"
+  - target:
+      kind: Application
+      name: ^(openeofed|registration-harvester|zoo-project-dru|zoo-project-dru-keda|zoo-project-dru-std|zoo-project-dru-wes)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-dependent-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "40"
+  - target:
+      kind: Application
+      name: ^(openeo-web-editor)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-frontends
+        annotations:
+          # User-facing frontends come up after their APIs/backends.
+          argocd.argoproj.io/sync-wave: "50"
+  - target:
+      kind: Application
+      name: ^(application-hub|data-proxy|notification-automation|operations)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: eoepca-independent-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "55"
+  - target:
+      group: bitnami.com
+      kind: SealedSecret
+      name: ^(application-quality-sonarqube-db-secrets|application-quality-sonarqube-monitoring-passcode)$
+    patch: |
+      apiVersion: bitnami.com/v1alpha1
+      kind: SealedSecret
+      metadata:
+        name: eoepca-sealed-secrets
+        annotations:
+          argocd.argoproj.io/sync-wave: "29"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: apisix.apache.org
+      name: ^application-quality-sonarqube-route$
+    patch: |
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixRoute
+      metadata:
+        name: eoepca-routes
+        annotations:
+          argocd.argoproj.io/sync-wave: "32"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

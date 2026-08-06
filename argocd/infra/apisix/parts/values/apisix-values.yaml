@@ -4,6 +4,13 @@
 # separately in the demo environment and so this file remains relevant.
 # This may change in the future.
 
+service:
+  type: NodePort
+  http:
+    nodePort: 32080
+  tls:
+    nodePort: 32443
+
 apisix:
   enableIPv6: false
   enableServerTokens: false
@@ -77,6 +84,9 @@ ingress-controller:
   enabled: true
   config:
     execADCTimeout: "60s"
+    # Gateway API is provided by Envoy Gateway. APISIX reconciles ApisixRoute
+    # resources and must not require Envoy's CRDs during its earlier root wave.
+    disableGatewayAPI: true
     apisix:
       serviceNamespace: ingress-apisix
 #    kubernetes:
@@ -85,4 +95,3 @@ ingress-controller:
       type: apisix-standalone
   gatewayProxy:
     createDefault: true
-

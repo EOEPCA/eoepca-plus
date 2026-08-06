@@ -6,10 +6,13 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
     kubernetes.io/ingress.class: apisix
+    # apisix never populates status.loadBalancer, so the custom Ingress health
+    # check would otherwise leave this stuck on "Progressing" forever.
+    argocd.argoproj.io/ignore-healthcheck: "true"
 spec:
   ingressClassName: apisix
   rules:
-  - host: '*.na.develop.eoepca.org'
+  - host: '*.notifications.develop-v2.eoepca.org'
     http:
       paths:
       - pathType: Prefix
@@ -21,7 +24,7 @@ spec:
               number: 80
   tls:
     - hosts:
-      - '*.na.develop.eoepca.org'
+      - '*.notifications.develop-v2.eoepca.org'
       secretName: notifications-wildcard-tls
 ---
 apiVersion: cert-manager.io/v1
@@ -31,7 +34,7 @@ metadata:
   namespace: knative-serving
 spec:
   dnsNames:
-  - '*.na.develop.eoepca.org'
+  - '*.notifications.develop-v2.eoepca.org'
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-dns-prod

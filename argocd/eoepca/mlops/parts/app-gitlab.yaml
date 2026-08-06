@@ -19,7 +19,7 @@ spec:
         global:
           edition: ce
           hosts:
-            domain: develop.eoepca.org
+            domain: develop-v2.eoepca.org
           ingress:
             configureCertmanager: false
             class: apisix
@@ -76,12 +76,12 @@ spec:
           webservice:
             ingress:
               tls:
-                secretName: gitlab.develop.eoepca.org-tls
+                secretName: gitlab.develop-v2.eoepca.org-tls
 
           kas:
             ingress:
               tls:
-                secretName: kas.develop.eoepca.org-tls
+                secretName: kas.develop-v2.eoepca.org-tls
 
           toolbox:
             backups:
@@ -96,12 +96,12 @@ spec:
           enabled: false
           ingress:
             tls: 
-              secretName: registry.develop.eoepca.org-tls
+              secretName: registry.develop-v2.eoepca.org-tls
 
         minio:
           ingress:
             tls:
-              secretName: minio.develop.eoepca.org-tls
+              secretName: minio.develop-v2.eoepca.org-tls
 
         certmanager:
           install: false
@@ -119,15 +119,24 @@ spec:
           install: false
 
         redis:
+          # bitnami/* pulled from docker hub free tier in 2025; same images under bitnamilegacy/*
+          image:
+            registry: docker.io
+            repository: bitnamilegacy/redis
+            tag: 6.2.7-debian-11-r11
           global:
             storageClass: managed-nfs-storage-retain
-          metrics: 
+          metrics:
             enabled: false
 
         postgresql:
+          image:
+            registry: docker.io
+            repository: bitnamilegacy/postgresql
+            tag: 14.8.0
           global:
             storageClass: managed-nfs-storage-retain
-          metrics: 
+          metrics:
             enabled: false
 
   syncPolicy:

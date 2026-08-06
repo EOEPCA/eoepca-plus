@@ -8,25 +8,38 @@ metadata:
   labels:
     eoepca/is-root-app: "true"
     eoepca/app-name: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: merge-from-deploy-develop
     path: argocd/infra/gateway/parts
   destination:
     name: in-cluster
     namespace: gateway
+  ignoreDifferences:
+    - group: gateway.networking.k8s.io
+      kind: TLSRoute
+      jqPathExpressions:
+        - '.spec.parentRefs[].group'
+        - '.spec.parentRefs[].kind'
+        - '.spec.rules[].backendRefs[].group'
+        - '.spec.rules[].backendRefs[].kind'
+        - '.spec.rules[].backendRefs[].weight'
   syncPolicy:
     automated:
       prune: true
       selfHeal: false
       allowEmpty: true
     syncOptions:
-      - Validate=true
+      - Validate=false
       - CreateNamespace=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
+      - SkipDryRunOnMissingResource=true
+      - ServerSideApply=true

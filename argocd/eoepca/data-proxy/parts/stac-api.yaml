@@ -3,23 +3,37 @@ kind: Application
 metadata:
   name: data-proxy-api
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
   labels:
     eoepca/app-name: data-proxy
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - repoURL: https://cs-si.github.io/stac-fastapi-eodag
-      targetRevision: 0.3.0
-      chart: stac-fastapi-eodag
+    - repoURL: https://github.com/CS-SI/stac-fastapi-eodag.git
+      targetRevision: stac-fastapi-eodag-0.3.0
+      path: helm/stac-fastapi-eodag
       helm:
         releaseName: eodag-stac-api
         values: |
           extraEnvVars:
             - name: DOWNLOAD_BASE_URL
-              value: https://eodag-proxy.develop.eoepca.org/
+              value: https://eodag-proxy.develop-v2.eoepca.org/
           image:
             tag: main
   destination:
     name: in-cluster
     namespace: data-proxy
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

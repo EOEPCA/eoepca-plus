@@ -11,7 +11,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: merge-from-deploy-develop
     path: argocd/infra/trivy/parts
 
   destination:

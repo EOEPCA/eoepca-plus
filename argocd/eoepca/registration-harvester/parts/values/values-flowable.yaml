@@ -1,6 +1,6 @@
 host:
   # suspect this is not needed since it is only used by the (disabled) ingress
-  external: registration-harvester-api.develop.eoepca.org
+  external: registration-harvester-api.develop-v2.eoepca.org
 
 rest:
   admin:
@@ -16,3 +16,10 @@ ingress:
 # https://github.com/bitnami/charts/tree/postgresql/12.10.0/bitnami/postgresql
 global:
   storageClass: managed-nfs-storage-retain
+
+
+postgres:
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: 12.10.0

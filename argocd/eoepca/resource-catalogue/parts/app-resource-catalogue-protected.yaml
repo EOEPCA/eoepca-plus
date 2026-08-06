@@ -38,7 +38,7 @@ spec:
           replicas: 1
           config:
             server:
-              url: https://resource-catalogue-protected.develop.eoepca.org/
+              url: https://resource-catalogue-protected.develop-v2.eoepca.org/
             manager:
               transactions: "true"
               allowed_ips:

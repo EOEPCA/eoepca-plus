@@ -1,3 +1,4 @@
 
 resources:
   - app-eso.yaml
+  - app-eso-core.yaml

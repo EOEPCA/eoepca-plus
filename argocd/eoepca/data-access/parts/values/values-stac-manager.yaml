@@ -10,16 +10,16 @@ resources:
     memory: "4Gi"
     cpu: "4"
 
-publicUrl: https://eoapi.develop.eoepca.org/manager
-stacApi: https://eoapi.develop.eoepca.org/stac
-stacBrowser: https://eoapi.develop.eoepca.org/browser
+publicUrl: https://eoapi.develop-v2.eoepca.org/manager
+stacApi: https://eoapi.develop-v2.eoepca.org/stac
+stacBrowser: https://eoapi.develop-v2.eoepca.org/browser
 primaryColor: "#005ACD"
 secondaryColor: "#048A81"
 appTitle: "EOEPCA+ STAC Manager"
 appDescription: "Manage STAC collections and items on the EOEPCA+ platform"
 
 oidc:
-  authority: https://iam-auth.develop.eoepca.org/realms/eoepca
+  authority: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
   clientId: eoapi
 
 volumes:

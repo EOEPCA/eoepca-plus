@@ -1,0 +1,19 @@
+apiVersion: operator.knative.dev/v1beta1
+kind: KnativeEventing
+metadata:
+  name: knative-eventing
+  namespace: knative-eventing
+spec:
+  version: "1.18"
+  deployments:
+    # default 200m is too tight for a single-replica webhook serving admission
+    # for the whole cluster; was getting throttled past its liveness probe and crashlooping
+    - name: eventing-webhook
+      resources:
+        - container: eventing-webhook
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi

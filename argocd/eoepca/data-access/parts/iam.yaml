@@ -1,10 +1,12 @@
-apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: Client
 metadata:
   name: eoapi
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     realmId: eoepca
     name: eoapi
@@ -16,19 +18,21 @@ spec:
     fullScopeAllowed: true
     serviceAccountsEnabled: false
     oauth2DeviceAuthorizationGrantEnabled: true
-    rootUrl: https://eoapi.develop.eoepca.org
+    rootUrl: https://eoapi.develop-v2.eoepca.org
     webOrigins:
       - '*'
     validRedirectUris:
       - '*'
 ---
-apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: ClientDefaultScopes
 metadata:
   name: eoapi-default-scopes
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     realmId: eoepca
     clientIdRef:
@@ -38,13 +42,15 @@ spec:
     defaultScopes:
       - profile
 ---
-apiVersion: openidclient.keycloak.crossplane.io/v1alpha1
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: ClientOptionalScopes
 metadata:
   name: eoapi-optional-scopes
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     realmId: eoepca
     clientIdRef:
@@ -55,13 +61,15 @@ spec:
       - email
       - offline_access
 ---
-apiVersion: role.keycloak.crossplane.io/v1alpha1
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
 kind: Role
 metadata:
   name: stac-editor
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     realmId: eoepca
     name: stac_editor
@@ -70,24 +78,28 @@ spec:
       policy:
         resolution: Required
 ---
-apiVersion: group.keycloak.crossplane.io/v1alpha1
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
 kind: Group
 metadata:
   name: data-access-admin
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     realmId: eoepca
     name: data-access-admin
 ---
-apiVersion: group.keycloak.crossplane.io/v1alpha1
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
 kind: Roles
 metadata:
   name: data-access-admin
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     realmId: eoepca
     groupIdRef:
@@ -99,13 +111,15 @@ spec:
         policy:
           resolution: Required
 ---
-apiVersion: client.keycloak.crossplane.io/v1alpha1
+apiVersion: client.keycloak.m.crossplane.io/v1alpha1
 kind: ProtocolMapper
 metadata:
   name: eoapi-audience-mapper
+  namespace: iam-management
 spec:
   providerConfigRef:
-    name: iam-keycloak-keycloak-provider-config
+    name: keycloak-provider-config
+    kind: ProviderConfig
   forProvider:
     clientIdRef:
       name: eoapi

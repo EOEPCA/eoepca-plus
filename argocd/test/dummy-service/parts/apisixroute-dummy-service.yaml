@@ -8,7 +8,7 @@ spec:
   - name: dummy-service
     match:
       hosts:
-        - dummy.develop.eoepca.org
+        - dummy.develop-v2.eoepca.org
       paths:
         - /*
     backends:
@@ -24,19 +24,19 @@ spec:
           session:
             secret: "rYh3Vgs2TpOZpotQcR1XYQ"
           access_token_in_authorization_header: true
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+          discovery: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
       - name: authz-keycloak
         enable: true
         config:
           client_id: "demo-app"
           client_secret: "ldPg7qBvd6mrazngldUlRIQeXaEL1Dtl"
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          discovery: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/uma2-configuration"
           lazy_load_paths: true
           ssl_verify: false
   - name: dummy-service-offline
     match:
       hosts:
-        - dummy-offline.develop.eoepca.org
+        - dummy-offline.develop-v2.eoepca.org
       paths:
         - /*
     backends:
@@ -55,19 +55,19 @@ spec:
           # Try to acquire offline token and pass it to backend
           scope: openid email profile offline_access
           set_refresh_token_header: true
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration"
+          discovery: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
       - name: authz-keycloak
         enable: true
         config:
           client_id: "demo-app"
           client_secret: "ldPg7qBvd6mrazngldUlRIQeXaEL1Dtl"
-          discovery: "https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/uma2-configuration"
+          discovery: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/uma2-configuration"
           lazy_load_paths: true
           ssl_verify: false
   - name: dummy-service-open
     match:
       hosts:
-        - dummy-open.develop.eoepca.org
+        - dummy-open.develop-v2.eoepca.org
       paths:
         - /*
     backends:
@@ -80,9 +80,9 @@ metadata:
   name: dummy-service-tls
 spec:
   dnsNames:
-    - dummy.develop.eoepca.org
-    - dummy-offline.develop.eoepca.org
-    - dummy-open.develop.eoepca.org
+    - dummy.develop-v2.eoepca.org
+    - dummy-offline.develop-v2.eoepca.org
+    - dummy-open.develop-v2.eoepca.org
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-http01-apisix
@@ -99,9 +99,9 @@ metadata:
 spec:
   ingressClassName: apisix
   hosts:
-    - dummy.develop.eoepca.org
-    - dummy-offline.develop.eoepca.org
-    - dummy-open.develop.eoepca.org
+    - dummy.develop-v2.eoepca.org
+    - dummy-offline.develop-v2.eoepca.org
+    - dummy-open.develop-v2.eoepca.org
   secret:
     name: dummy-service-tls
     namespace: test

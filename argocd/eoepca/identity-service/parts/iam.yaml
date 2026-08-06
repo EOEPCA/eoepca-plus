@@ -1,0 +1,63 @@
+# identity-service has its own keycloak instance, so this uses its own
+# provider/credentials instead of the shared iam-management one
+apiVersion: v1
+kind: Secret
+metadata:
+  name: identity-keycloak-provider
+  namespace: um
+type: Opaque
+stringData:
+  credentials: |-
+    {
+      "client_id": "admin-cli",
+      "username": "admin",
+      "password": "changeme",
+      "url": "http://identity-keycloak.um.svc.cluster.local:8080",
+      "base_path": "",
+      "realm": "master"
+    }
+---
+apiVersion: keycloak.m.crossplane.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: identity-keycloak-provider-config
+  namespace: um
+spec:
+  credentialsSecretRef:
+    name: identity-keycloak-provider
+    key: credentials
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: identity-api-client-secret
+  namespace: um
+type: Opaque
+stringData:
+  # must match identity-api-gatekeeper.secrets.clientSecret in values-identity-service.yaml
+  client_secret: changeme
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: identity-api
+  namespace: um
+spec:
+  providerConfigRef:
+    name: identity-keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: master
+    name: identity-api
+    accessType: CONFIDENTIAL
+    clientId: identity-api
+    enabled: true
+    standardFlowEnabled: false
+    directAccessGrantsEnabled: false
+    serviceAccountsEnabled: true
+    fullScopeAllowed: true
+    clientSecretSecretRef:
+      name: identity-api-client-secret
+      key: client_secret
+    authorization:
+      - keepDefaults: true

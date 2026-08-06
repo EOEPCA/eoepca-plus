@@ -27,12 +27,12 @@ spec:
             # tag: "latest"
           secret:
             name: "registration-api-secret"
-          iam_endpoint: "https://iam-auth.develop.eoepca.org"
+          iam_endpoint: "https://develop-v2.eoepca.org/iam/auth"
           iam_realm: "eoepca"
           iam_grant_type: "client_credentials"
           config:
             server:
-              url: https://registration-api.develop.eoepca.org
+              url: https://registration-api.develop-v2.eoepca.org
             logging:
               level: ERROR
               # /tmp/pygeoapi.log

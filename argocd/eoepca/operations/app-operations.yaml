@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: operations
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: operations
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: eoepca
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: merge-from-deploy-develop
+    path: argocd/eoepca/operations/parts
+  destination:
+    name: in-cluster
+    namespace: argocd
+  ignoreDifferences:
+    - group: external-secrets.io
+      kind: ExternalSecret
+      jqPathExpressions:
+        - '.spec.target.creationPolicy'
+        - '.spec.target.deletionPolicy'
+        - '.spec.dataFrom[].extract.conversionStrategy'
+        - '.spec.dataFrom[].extract.decodingStrategy'
+        - '.spec.dataFrom[].extract.metadataPolicy'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      limit: 20
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 10m
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - Validate=false
+      - RespectIgnoreDifferences=true
+      - SkipDryRunOnMissingResource=true

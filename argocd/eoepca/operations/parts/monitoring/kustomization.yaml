@@ -1,0 +1,31 @@
+resources:
+  - app-kube-prometheus-stack.yaml
+  - app-loki-stack.yaml
+  - storage-loki.yaml
+  - app-alloy-logs.yaml
+  - iam.yaml
+  - routes.yaml
+
+patches:
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^loki-stack$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: loki-stack
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^alloy-logs$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: alloy-logs
+        annotations:
+          argocd.argoproj.io/sync-wave: "10"

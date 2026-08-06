@@ -19,8 +19,7 @@ chmod +x tmp/bin/create-client
 
 # Create the client
 tmp/bin/create-client \
-  -a https://iam-auth.develop.eoepca.org \
-  -i https://identity-api.develop.eoepca.org \
+  -a https://develop-v2.eoepca.org/iam/auth \
   -r "eoepca" \
   -u "admin" \
   -p "changeme" \

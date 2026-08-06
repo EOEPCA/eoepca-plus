@@ -4,3 +4,20 @@ resources:
   - ingress-zoo.yaml
   - ingress-webui.yaml
   - ss-zoo-workflow-env.yaml
+  - secrets/ss-zoo-session-secret.yaml
+  - iam-secret-propagation.yaml
+  - iam.yaml
+
+patches:
+  - target: {group: argoproj.io, kind: Application}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "0"}
+  - target: {group: ^(apisix.apache.org|cert-manager.io)$}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "10"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

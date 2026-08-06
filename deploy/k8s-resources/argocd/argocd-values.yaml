@@ -1,0 +1,265 @@
+server:
+  extensions:
+    enabled: true
+    extensionList:
+      - name: extension-trivy
+        env:
+          - name: EXTENSION_URL
+            value: https://github.com/mziyabo/argocd-trivy-extension/releases/download/v0.2.0/extension-trivy.tar
+          - name: EXTENSION_CHECKSUM_URL
+            value: https://github.com/mziyabo/argocd-trivy-extension/releases/download/v0.2.0/extension-trivy_checksums.txt
+
+configs:
+  rbac:
+    policy.csv: |
+      g, EOEPCA:developers, role:admin
+    policy.default: ""
+  # Required when Argo renders the archived Kubernetes Dashboard chart from
+  # Git: Helm must know each dependency repository before dependency build.
+  repositories:
+    dashboard-cert-manager:
+      type: helm
+      url: https://charts.jetstack.io
+    dashboard-ingress-nginx:
+      type: helm
+      url: https://kubernetes.github.io/ingress-nginx
+    dashboard-kong:
+      type: helm
+      url: https://charts.konghq.com
+    dashboard-metrics-server:
+      type: helm
+      url: https://kubernetes-sigs.github.io/metrics-server/
+  cm:
+    dex.config: |
+      connectors:
+        - type: github
+          id: github
+          name: GitHub
+          config:
+            clientID: Ov23lijhpWhfaGNegFPX
+            clientSecret: $dex.github.clientSecret
+            teamNameField: slug
+            orgs:
+              - name: EOEPCA
+                teams:
+                  - developers
+    resource.customizations.health.argoproj.io_Application: |
+      hs = { status = "Progressing", message = "Waiting for Application status" }
+      if obj.status ~= nil then
+        local health = obj.status.health ~= nil and obj.status.health.status or "Progressing"
+        local sync = obj.status.sync ~= nil and obj.status.sync.status or "Unknown"
+        hs.message = "health=" .. health .. ", sync=" .. sync
+        if obj.status.health ~= nil and obj.status.health.message ~= nil then
+          hs.message = obj.status.health.message .. " (sync=" .. sync .. ")"
+        end
+        if health == "Degraded" or health == "Missing" then
+          hs.status = health
+        elseif health == "Healthy" and sync == "Synced" then
+          hs.status = "Healthy"
+        end
+      end
+      return hs
+    # Unknown custom resources are otherwise treated as healthy immediately.
+    # Gate later waves on the controllers' observed Ready/Healthy conditions.
+    resource.customizations: |
+      networking.k8s.io/Ingress:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Ingress address" }
+          local annotations = obj.metadata ~= nil and obj.metadata.annotations or nil
+          if annotations ~= nil and annotations["argocd.argoproj.io/ignore-healthcheck"] == "true" then
+            hs.status = "Healthy"
+            hs.message = "Ingress health check explicitly disabled"
+            return hs
+          end
+          if obj.status ~= nil and obj.status.loadBalancer ~= nil and obj.status.loadBalancer.ingress ~= nil and #obj.status.loadBalancer.ingress > 0 then
+            hs.status = "Healthy"
+            hs.message = "Ingress has an address"
+          end
+          return hs
+      bitnami.com/SealedSecret:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for SealedSecret to unseal" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Synced" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                elseif condition.status == "False" then
+                  hs.status = "Degraded"
+                end
+                return hs
+              end
+            end
+          end
+          return hs
+      k8s.keycloak.org/Keycloak:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Keycloak Ready condition" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Ready" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                elseif condition.status == "False" then
+                  hs.status = "Degraded"
+                end
+                return hs
+              end
+            end
+          end
+          return hs
+      k8s.keycloak.org/KeycloakRealmImport:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Keycloak realm import" }
+          local done = false
+          local hasErrors = false
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.message ~= nil and condition.message ~= "" then
+                hs.message = condition.message
+              end
+              if condition.type == "Done" and condition.status == "True" then
+                done = true
+              end
+              if condition.type == "HasErrors" and condition.status == "True" then
+                hasErrors = true
+              end
+            end
+          end
+          if hasErrors then
+            hs.status = "Degraded"
+            if hs.message == "Waiting for Keycloak realm import" then
+              hs.message = "Realm import reported errors"
+            end
+          elseif done then
+            hs.status = "Healthy"
+            hs.message = "Realm import completed"
+          end
+          return hs
+      postgres-operator.crunchydata.com/PostgresCluster:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for PostgresCluster" }
+          if obj.status ~= nil and obj.status.instances ~= nil and #obj.status.instances > 0 then
+            local ready = true
+            for _, instance in ipairs(obj.status.instances) do
+              local replicas = instance.replicas or 0
+              local readyReplicas = instance.readyReplicas or 0
+              if replicas == 0 or readyReplicas < replicas then
+                ready = false
+                hs.message = "Waiting for ready PostgreSQL instances"
+              end
+            end
+            if ready then
+              hs.status = "Healthy"
+              hs.message = "All PostgreSQL instances are ready"
+            end
+          end
+          return hs
+      "*.keycloak.m.crossplane.io/*":
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Crossplane Ready condition" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Ready" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                end
+                return hs
+              end
+            end
+          end
+          return hs
+      "external-secrets.io/*":
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for External Secrets Ready condition" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Ready" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                end
+                return hs
+              end
+            end
+          end
+          return hs
+      pkg.crossplane.io/Provider:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Crossplane provider" }
+          local installed = false
+          local healthy = false
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Installed" and condition.status == "True" then
+                installed = true
+              end
+              if condition.type == "Healthy" and condition.status == "True" then
+                healthy = true
+              end
+              if condition.message ~= nil then
+                hs.message = condition.message
+              end
+            end
+          end
+          if installed and healthy then
+            hs.status = "Healthy"
+            hs.message = "Provider is installed and healthy"
+          end
+          return hs
+      pkg.crossplane.io/Function:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Crossplane function" }
+          local installed = false
+          local healthy = false
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Installed" and condition.status == "True" then
+                installed = true
+              end
+              if condition.type == "Healthy" and condition.status == "True" then
+                healthy = true
+              end
+              if condition.message ~= nil then
+                hs.message = condition.message
+              end
+            end
+          end
+          if installed and healthy then
+            hs.status = "Healthy"
+            hs.message = "Function is installed and healthy"
+          end
+          return hs
+      "operator.knative.dev/*":
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Knative Ready condition" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Ready" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                end
+                return hs
+              end
+            end
+          end
+          return hs
+      kafka.strimzi.io/Kafka:
+        health.lua: |
+          hs = { status = "Progressing", message = "Waiting for Kafka Ready condition" }
+          if obj.status ~= nil and obj.status.conditions ~= nil then
+            for _, condition in ipairs(obj.status.conditions) do
+              if condition.type == "Ready" then
+                hs.message = condition.message or condition.reason or hs.message
+                if condition.status == "True" then
+                  hs.status = "Healthy"
+                end
+                return hs
+              end
+            end
+          end
+          return hs

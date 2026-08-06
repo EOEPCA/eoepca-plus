@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-apisix
+  annotations:
+    # The gateway app owns APISIX routes in this namespace before the APISIX
+    # app syncs, so create the namespace locally before route wave 3.
+    argocd.argoproj.io/sync-wave: "1"

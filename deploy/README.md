@@ -52,6 +52,7 @@ Make sure you have the following installed:
     
     - Copy `Pulumi.example.yaml` to `Pulumi.dev.yaml` (or edit the example file directly) and update all the required values to match your environment. Key settings in `Pulumi.dev.yaml` (for the `infra` stack) include:
         - `domainName`: The domain name for your platform (e.g. `eoepca.org`).
+        - `cloudflareDnsApiToken`: The Cloudflare DNS API token used by cert-manager during ArgoCD bootstrap.
         - `loadBalancerFloatingIPID`: An existing Floating IP ID for your load balancer. We chose to configure this outside of Pulumi, otherwise the Floating IP would be changed every time the stack is updated.
         - `externalNetworkID`: Your external (public) network ID in OpenStack. Configure this in the dashboard.
 
@@ -63,6 +64,12 @@ Make sure you have the following installed:
     
     ```bash
     pulumi up
+    ```
+
+    After the stack is deployed, Pulumi exports `bootstrap_argocd_command`, which includes the domain, NFS server IP, and Cloudflare token:
+
+    ```bash
+    pulumi stack output bootstrap_argocd_command
     ```
     
 8. **(Optional) Deploy Kubernetes Resources**  

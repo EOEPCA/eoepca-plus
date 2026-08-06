@@ -11,12 +11,21 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   parentRefs:
-    - name: eoepca-public
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: eoepca-public
       namespace: gateway
   rules:
     - backendRefs:
-        - name: apisix-gateway
+        - group: ""
+          kind: Service
+          name: apisix-gateway
           port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: TLSRoute
@@ -27,9 +36,19 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   parentRefs:
-    - name: eoepca-public
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: eoepca-public
       namespace: gateway
+  # Unlike HTTPRoute, this cluster's TLSRoute CRD requires spec.hostnames
+  # (SNI match) to be non-empty; there is no "match everything" form.
+  hostnames:
+    - "develop-v2.eoepca.org"
+    - "*.develop-v2.eoepca.org"
   rules:
     - backendRefs:
-        - name: apisix-gateway
+        - group: ""
+          kind: Service
+          name: apisix-gateway
           port: 443
+          weight: 1

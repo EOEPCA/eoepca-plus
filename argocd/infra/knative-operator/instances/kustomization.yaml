@@ -1,0 +1,39 @@
+resources:
+  - namespace-knative-serving.yaml
+  - namespace-knative-eventing.yaml
+  - knative-serving.yaml
+  - knative-eventing.yaml
+
+patches:
+  - target:
+      version: v1
+      kind: Namespace
+    patch: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: knative-runtime-namespaces
+        annotations:
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      group: operator.knative.dev
+      kind: KnativeServing
+    patch: |
+      apiVersion: operator.knative.dev/v1beta1
+      kind: KnativeServing
+      metadata:
+        name: knative-serving
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: operator.knative.dev
+      kind: KnativeEventing
+    patch: |
+      apiVersion: operator.knative.dev/v1beta1
+      kind: KnativeEventing
+      metadata:
+        name: knative-eventing
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

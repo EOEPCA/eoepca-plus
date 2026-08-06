@@ -1,0 +1,784 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: resource-health-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: resource-health
+spec:
+  project: eoepca
+  source:
+    repoURL: 'https://eoepca.github.io/helm-charts-dev'
+    chart: resource-health-reference-deployment
+    targetRevision: 2.1.1
+    helm:
+      valuesObject:
+        global:
+          defaultInternalIssuerRef:
+            name: eoepca-ca-clusterissuer
+
+        opensearch:
+          securityConfig:
+            config:
+              data:
+                config.yml: |-
+                  _meta:
+                    type: "config"
+                    config_version: 2
+
+                  config:
+                    dynamic:
+                      kibana:
+                        multitenancy_enabled: true
+                        server_username: 'dashboards-client'
+                        index: '.opensearch-dashboards'
+                      do_not_fail_on_forbidden: false
+
+                      http:
+                        anonymous_auth_enabled: false
+                      authc:
+                        basic_internal_auth_domain:
+                          description: "Authenticate via HTTP Basic against internal users database"
+                          http_enabled: true
+                          transport_enabled: true
+                          order: 2
+                          http_authenticator:
+                            type: basic
+                            challenge: true
+                          authentication_backend:
+                            type: intern
+                        clientcert_auth_domain:
+                          description: "Authenticate via SSL client certificates"
+                          http_enabled: true
+                          transport_enabled: false
+                          order: 1
+                          http_authenticator:
+                            type: clientcert
+                            config:
+                              username_attribute: cn
+                            challenge: false
+                          authentication_backend:
+                            type: noop
+                        openid_auth_domain:
+                          http_enabled: true
+                          transport_enabled: true
+                          order: 0
+                          http_authenticator:
+                            type: openid
+                            challenge: false
+                            config:
+                              subject_key: preferred_username
+                              roles_key: roles
+                              # jwt_header: X-Access-Token
+                              openid_connect_url: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
+                          authentication_backend:
+                            type: noop
+
+        opensearch-dashboards:
+          config:
+            opensearch_dashboards.yml:
+              server:
+                basePath: "/dashboards"
+                ssl:
+                  enabled: false
+              opensearch:
+                requestHeadersAllowlist: [ authorization,securitytenant,x-access-token,x-id-token,x-userinfo,x-refresh-token ]
+              opensearch_security:
+                auth:
+                  #type: "basicauth"
+                  type: "jwt"
+                  #multiple_auth_enabled: true
+
+        ## Example health checks to deploy with the resource health BB itself
+        resource-health:
+          telemetry_api:
+            # To avoid proliferation of images during debugging
+            image:
+              pullPolicy: Always
+            environmentFixed:
+              - name: FAST_API_ROOT_PATH
+                value: "/api/telemetry"
+              - name: OPEN_ID_CONNECT_URL
+                value: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
+              - name: OPEN_ID_CONNECT_AUDIENCE
+                value: "account"
+              - name: RH_TELEMETRY_OPENSEARCH_INDEX
+                value: ss4o_traces-default-namespace
+              - name: RH_TELEMETRY_API_DEFAULT_PAGE_SIZE
+                value: "100"
+              - name: RH_TELEMETRY_API_MAX_PAGE_SIZE
+                value: "10000"
+
+            use_hook_configmap: True
+            hooks:
+              oidc_auth_hooks.py: |
+                from fastapi import Request
+                import python_opentelemetry_access.telemetry_hooks.utils as hu
+                from eoepca_security import OIDCProxyScheme, Tokens
+                from typing import TypedDict
+                import os
+
+
+                class UserInfo(TypedDict):
+                    username: str | None
+                    access_token: str
+
+
+                oidc_proxy_scheme = OIDCProxyScheme(
+                    openIdConnectUrl=os.environ["OPEN_ID_CONNECT_URL"],
+                    audience=os.environ["OPEN_ID_CONNECT_AUDIENCE"],
+                    id_token_header="x-id-token",
+                    refresh_token_header="x-refresh-token",
+                    auth_token_header="Authorization",
+                    auth_token_in_authorization=True,
+                    auto_error=True,  ## Set False to allow unauthenticated access!
+                    scheme_name="OIDC behind auth proxy",
+                )
+
+
+                async def get_fastapi_security(request: Request) -> Tokens | None:
+                    return await oidc_proxy_scheme(request)
+
+
+                def on_auth(tokens: Tokens | None) -> UserInfo:
+                    if tokens is None or tokens["auth"] is None:
+                        raise hu.APIForbiddenError(
+                            title="Missing authentication token",
+                            detail="Potentially missing authenticating proxy",
+                        )
+
+                    username_claim = (
+                        os.environ.get("RH_TELEMETRY_USERNAME_CLAIM") or "preferred_username"
+                    )
+
+                    return UserInfo(
+                        username=tokens["id"].decoded[username_claim]
+                        if tokens["id"] is not None and username_claim in tokens["id"].decoded
+                        else tokens["auth"].decoded["payload"].get(username_claim),
+                        access_token=tokens["auth"].raw,
+                    )
+
+
+                ## For the OpenSearch proxy/backend
+
+
+                def get_opensearch_config(userinfo: UserInfo) -> hu.OpensearchConfig:
+                    return hu.OpensearchConfig(
+                        ## Host to connect to
+                        # hosts=[{"host": "localhost", "port": 9200}],
+                        hosts=[{"host": "opensearch-cluster-master-headless", "port": 9200}],
+                        use_ssl=True,
+                        ## For unverified tls
+                        # verify_certs=False,
+                        # ssl_show_warn=False,
+                        ## For verified tls
+                        verify_certs=True,
+                        ssl_show_warn=True,
+                        ca_certs="/certs/ca.crt",
+                        ## For mTLS auth
+                        # client_cert = "/certs/tls.crt"
+                        # client_key = "/certs/tls.key"
+                        # Authenticate by forwarding user token
+                        extra_headers={"Authorization": f"Bearer {userinfo['access_token']}"},
+                    )
+
+
+          check_api:
+            # To avoid proliferation of images during debugging
+            image:
+              pullPolicy: Always
+            environmentFixed:
+              - name: FAST_API_ROOT_PATH
+                value: "/api/healthchecks"
+              - name: OPEN_ID_CONNECT_URL
+                value: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
+              - name: OPEN_ID_CONNECT_AUDIENCE
+                value: "account"
+              - name: DEFAULT_COLLECTOR_URL_NO_PROTOCOL
+                value: "resource-health-opentelemetry-collector:4317"
+              - name: DEFAULT_PROXY_REMOTE_DOMAIN
+                value: "https://opensearch-cluster-master-headless:9200"
+              - name: DEFAULT_TELEMETRY_OPENSEARCH_INDEX
+                value: "ss4o_traces-default-namespace"
+
+            use_hook_configmap: True
+            hooks:
+              disallow_frequent_check_hooks.py: |
+                from datetime import datetime, timedelta
+                from typing import TYPE_CHECKING, Any
+                from cron_converter import Cron
+
+                import check_hooks.hook_utils as hu
+
+                # The hooks are loaded one file at a time, so importing things from one file to another will not work.
+                # This trick ensures that UserInfo is imported only for type checking - and it can only be used for that
+                if TYPE_CHECKING:
+                    from auth_hooks import UserInfo
+                else:
+                    type UserInfo = Any
+
+
+                def on_check_create(userinfo: UserInfo, check: hu.InCheckAttributes) -> None:
+                    print("ON CHECK CREATE from disallow_frequent_check_hooks.py")
+                    min_allowed_days_between_runs = 3
+                    if check.metadata.template_id == "telemetry_access_template":
+                        raise_error_if_schedule_too_frequent(
+                            check.schedule,
+                            min_allowed_days_between_runs=3,
+                            error_detail=f"Check from template {check.metadata.template_id} must run at most once in {min_allowed_days_between_runs} day period.",
+                        )
+
+
+                # This is not a hook
+                def raise_error_if_schedule_too_frequent(
+                    cron_schedule: str, min_allowed_days_between_runs: int, error_detail: str
+                ) -> None:
+                    # For now we don't know if the cron_schedule is valid
+                    # We need to raise something derived from APIException as otherwise user will see
+                    # "500 Internal Server Error"
+                    try:
+                        cron_instance = Cron(cron_schedule)
+                    except ValueError:
+                        raise hu.APIUserInputError(
+                            title="Invalid schedule", detail="Invalid cron expression"
+                        )
+                    error = hu.APIUserInputError(title="Schedule Too Frequent", detail=error_detail)
+                    [minutes, hours, days, months, weekdays] = cron_instance.to_list()
+                    if len(minutes) > 1:
+                        # Means this will sometimes run at twice or more in one hour, which is too frequent
+                        raise error
+                    if len(hours) > 1:
+                        # Means this will sometimes run at twice or more in one day, which is too frequent
+                        raise error
+                    start_date = datetime.now()
+                    schedule = cron_instance.schedule(start_date)
+                    prev_date = schedule.next()
+                    # At this point we know that the schedule is not more frequence than once per day
+                    # This just creates schedules for next year (or more) and checks if any two consecutive
+                    # schedules have enough of a gap between them
+                    for i in range(365):
+                        date = schedule.next()
+                        if date - prev_date < timedelta(days=min_allowed_days_between_runs):
+                            raise error
+                        if date - start_date > timedelta(days=365):
+                            # Haven't found too frequent scheduled times in a year from now, that's enough
+                            return
+                        prev_date = date
+              oidc_auth_hooks.py: |
+                import check_hooks.hook_utils as hu
+
+                from eoepca_security import OIDCProxyScheme, Tokens
+                from typing import TypedDict
+                import os
+                from fastapi import Request
+
+
+                class UserInfo(TypedDict):
+                    userid: str
+                    username: str
+                    access_token: str
+                    refresh_token: str | None
+
+
+                oidc_proxy_scheme = OIDCProxyScheme(
+                    openIdConnectUrl=os.environ["OPEN_ID_CONNECT_URL"],
+                    audience=os.environ["OPEN_ID_CONNECT_AUDIENCE"],
+                    id_token_header="x-id-token",
+                    refresh_token_header="x-refresh-token",
+                    auth_token_header="Authorization",
+                    auth_token_in_authorization=True,
+                    auto_error=True,  ## Set False to allow unauthenticated access!
+                    scheme_name="OIDC behind auth proxy",
+                )
+
+
+                async def get_fastapi_security(request: Request) -> Tokens | None:
+                    return await oidc_proxy_scheme(request)
+
+
+                def on_auth(tokens: Tokens | None) -> UserInfo:
+                    print("ON AUTH")
+
+                    if tokens is None or tokens["auth"] is None:  # or tokens['id'] is None:
+                        hu.APIForbiddenError(
+                            title="Missing authentication or ID token",
+                            detail="Potentially missing authenticating proxy",
+                        )
+
+                    claims = {}
+                    claims.update(tokens["auth"].decoded["payload"])
+                    if tokens["id"] is not None:
+                        claims.update(tokens["id"].decoded)
+
+                    user_id_claim = os.environ.get("RH_CHECK_USER_ID_CLAIM") or "sub"
+                    username_claim = os.environ.get("RH_CHECK_USERNAME_CLAIM") or "preferred_username"
+
+                    user_id = claims.get(user_id_claim)
+                    username = claims.get(username_claim)
+
+                    if user_id is None or username is None:
+                        print(claims)
+                        raise hu.APIUnauthorizedError(
+                            title="Missing user identification",
+                            detail="Username or user id missing",
+                        )
+
+                    return UserInfo(
+                        userid=user_id,
+                        username=username,
+                        access_token=tokens["auth"].raw,
+                        refresh_token=tokens["refresh"].raw if tokens["refresh"] else None,
+                    )
+
+
+                def on_template_access(userinfo: UserInfo, template: hu.CheckTemplate) -> None:
+                    print("ON TEMPLATE_ACCESS")
+
+                    ## Only bob and earthcode can use/access unsafe templates
+                    if userinfo["username"] not in ["bob", "earthcode"] and template.id != "simple_ping":
+                        raise hu.CheckTemplateIdError(template.id)
+
+                    ## Only bob, alice, eric, and earthcode can access the templates
+                    if userinfo["username"] not in ["bob", "alice", "eric", "earthcode"]:
+                        raise hu.CheckTemplateIdError(template.id)
+
+
+                def on_check_create(userinfo: UserInfo, check: hu.InCheckAttributes) -> None:
+                    if userinfo["username"] == "eric" and check.metadata.template_id == "simple_ping":
+                        raise hu.APIForbiddenError(
+                            title="Check creation disallowed",
+                            detail="You are not authorized to create this check",
+                        )
+
+
+                ## For the k8s backend
+
+                async def get_k8s_config(userinfo: UserInfo) -> hu.K8sConfiguration:
+                    return await hu.k8s_config_from_cluster()
+
+
+                def get_k8s_namespace(userinfo: UserInfo) -> str:
+                    return "resource-health"
+
+
+                async def on_k8s_cronjob_access(
+                    userinfo: UserInfo,
+                    check_id: hu.CheckId,
+                    client: hu.K8sClient,
+                    cronjob: hu.K8sCronJob,
+                ) -> None:
+                    print("on_k8s_cronjob_access")
+
+                    if cronjob.metadata.annotations.get("owner") != userinfo["username"]:
+                        raise hu.CheckIdError(check_id)
+
+
+                async def on_k8s_cronjob_create(
+                    userinfo: UserInfo, client: hu.K8sClient, cronjob: hu.K8sCronJob
+                ) -> None:
+                    ## Ensure cronjob is tagged with correct owner
+
+                    if (
+                        "owner" in cronjob.metadata.annotations
+                        and cronjob.metadata.annotations["owner"] != userinfo["username"]
+                    ):
+                        raise hu.APIForbiddenError(
+                            title="Unauthorized check create",
+                            detail="Permission denied to create health check cronjob",
+                        )
+
+                    cronjob.metadata.annotations["owner"] = userinfo["username"]
+
+                    ## Ensure the user has an offline token set
+                    ## Note: Would be more robust to check on every access but use a cache
+                    secret_name = f"resource-health-{userinfo['username']}-offline-secret"
+                    secret_namespace = get_k8s_namespace(userinfo)
+
+                    offline_secret = await hu.lookup_k8s_secret(
+                        client=client,
+                        namespace=secret_namespace,
+                        name=secret_name
+                    )
+
+                    if offline_secret is None:
+                        if userinfo['refresh_token'] is None:
+                            raise hu.APIException(
+                                status="404",
+                                code="MissingOfflineToken",
+                                title="Missing Offline Token",
+                                detail="Missing offline token, please create at least one check using the website",
+                            )
+                        await hu.create_k8s_secret(
+                            client=client,
+                            name=secret_name,
+                            namespace=secret_namespace,
+                            string_data={
+                                "offline_token": userinfo['refresh_token']
+                            }
+                        )
+
+          web:
+            environmentFixed:
+              - name: NEXT_PUBLIC_RELOGIN_URL
+                value: https://resource-health.develop-v2.eoepca.org/login
+              - name: NEXT_PUBLIC_CHECK_MANAGER_ENDPOINT
+                value: https://resource-health.develop-v2.eoepca.org/api/healthchecks/v1
+              - name: NEXT_PUBLIC_TELEMETRY_ENDPOINT
+                value: https://resource-health.develop-v2.eoepca.org/api/telemetry/v1
+              - name: NEXT_PUBLIC_QUERY_PAGE_SIZE
+                value: "1000"
+
+          healthchecks:
+            use_template_configmap: True
+            templates:
+              ping_template.py: |
+                import check_backends.k8s_backend.template_utils as tu
+
+                SIMPLE_PING_SRC = """from os import environ
+                import requests
+
+                GENERIC_ENDPOINT: str = environ["GENERIC_ENDPOINT"]
+                EXPECTED_STATUS_CODE: int = int(environ["EXPECTED_STATUS_CODE"])
+
+
+                def test_ping() -> None:
+                    response = requests.get(
+                        GENERIC_ENDPOINT,
+                    )
+                    assert response.status_code == EXPECTED_STATUS_CODE
+                """
+
+
+                class SimplePingArguments(tu.BaseModel):
+                    model_config = tu.ConfigDict(extra="forbid")
+                    endpoint: str = tu.Field(json_schema_extra={"format": "textarea"})
+                    expected_status_code: int = tu.Field(ge=100, lt=600, default=200)
+
+
+                SimplePing = tu.simple_runner_template(
+                    template_id="simple_ping",
+                    argument_type=SimplePingArguments,
+                    label="Simple ping template",
+                    description="Simple template with preset script for pinging single endpoint.",
+                    script_url=tu.src_to_data_url(SIMPLE_PING_SRC),
+                    runner_env=lambda template_args, userinfo: {
+                        "GENERIC_ENDPOINT": template_args.endpoint,
+                        "EXPECTED_STATUS_CODE": str(template_args.expected_status_code),
+                    },
+                    user_id=lambda template_args, userinfo: userinfo["username"],
+                    otlp_tls_secret="resource-health-healthchecks-certificate",
+                )
+
+              script_template.py: |
+                import check_backends.k8s_backend.template_utils as tu
+
+
+                class ScriptTemplateArguments(tu.BaseModel):
+                    model_config = tu.ConfigDict(extra="forbid")
+                    script: str = tu.Field(json_schema_extra={"format": "textarea"})
+                    requirements: str = tu.Field(json_schema_extra={"format": "textarea"}, default="")
+
+
+                GenericScriptTemplate = tu.simple_runner_template(
+                    template_id="generic_script_template",
+                    argument_type=ScriptTemplateArguments,
+                    label="Generic script template",
+                    description="Runs a user-provided pytest script from a specified remote or data url",
+                    script_url=lambda template_args, userinfo: template_args.script,
+                    requirements_url=lambda template_args, userinfo: template_args.requirements,
+                    user_id=lambda template_args, userinfo: userinfo["username"],
+                    otlp_tls_secret="resource-health-healthchecks-certificate",
+                )
+
+              telemetry_access.py: |
+                import check_backends.k8s_backend.template_utils as tu
+                import os
+
+
+                class TelemetryAccessArguments(tu.BaseModel):
+                    model_config = tu.ConfigDict(extra="forbid")
+                    script: str = tu.Field(json_schema_extra={"format": "textarea"})
+                    requirements: str = tu.Field(json_schema_extra={"format": "textarea"}, default="")
+
+
+                TelemetryAccessTemplate = tu.simple_runner_template(
+                    template_id="telemetry_access_template",
+                    argument_type=TelemetryAccessArguments,
+                    label="Script with telemetry access",
+                    description="Health check template that runs a userscript with telemetry access on localhost:8080",
+                    script_url=lambda template_args, userinfo: template_args.script,
+                    requirements_url=lambda template_args, userinfo: template_args.requirements,
+                    user_id=lambda template_args, userinfo: userinfo["username"],
+                    otlp_tls_secret="resource-health-healthchecks-certificate",
+                    proxy=True,
+                    proxy_oidc_client_secret=(
+                        "resource-health-iam-client-credentials",
+                        "client_id",
+                        "client_secret",
+                    ),
+                    proxy_oidc_refresh_token_secret=lambda template_args, userinfo: (
+                        f"resource-health-{userinfo['username']}-offline-secret",
+                        "offline_token",
+                    ),
+                    proxy_oidc_url=os.environ.get("OPEN_ID_CONNECT_URL"),
+                )
+
+              collection_template.py: |
+                import check_backends.k8s_backend.template_utils as tu
+
+                # Parameterised health check script
+                CODE_SOURCE = """
+                from os import environ
+                import requests
+                from jsonpointer import resolve_pointer
+
+                URL = environ["URL"]
+                COLLECTION_POINTER = environ["COLLECTION_POINTER"]
+                EXPECTED_COUNT = int(environ["EXPECTED_COUNT"])
+
+
+                def test_collections() -> None:
+                    response = requests.get(URL)
+                    assert response.ok
+                    resp_json = response.json()
+                    collection = resolve_pointer(resp_json, COLLECTION_POINTER)
+                    assert isinstance(collection, list)
+                    assert len(collection) >= EXPECTED_COUNT
+                """
+                # Additional Python libraries used by the script above
+                REQUIREMENTS_SOURCE = """
+                jsonpointer==3.0.0
+                """
+
+                # Pydantic model from which the json schema for the health check template arguments is generated
+                # See https://docs.pydantic.dev/latest/concepts/json_schema/
+                class CollectionCheckArguments(tu.BaseModel):
+                    # Additional arguments besides `url`, `collection_pointer`, `expected_count` are
+                    # forbidden
+                    model_config = tu.ConfigDict(extra="forbid")
+
+                    url: str = tu.Field(json_schema_extra={"format": "textarea"})
+                    collection_pointer: str = tu.Field(
+                        description="Json pointer to the collection in the response to inspect",
+                        default="",
+                    )
+                    expected_count: int = tu.Field(gt=0)
+
+
+                CollectionCheck = tu.simple_runner_template(
+                    template_id="collection_check",
+                    argument_type=CollectionCheckArguments,
+                    label="Collection template",
+                    description="To create checks which query an endpoint and check that the returned collection size is not smaller than expected.",
+                    script_url=tu.src_to_data_url(CODE_SOURCE),
+                    requirements_url=tu.src_to_data_url(REQUIREMENTS_SOURCE),
+                    runner_env=lambda template_args, userinfo: {
+                        # Set URL, COLLECTION_POINTER, and EXPECTED_COUNT environment variables
+                        # to the values the user chooses when creating the check
+                        "URL": template_args.url,
+                        "COLLECTION_POINTER": template_args.collection_pointer,
+                        "EXPECTED_COUNT": str(template_args.expected_count),
+                    },
+                    user_id=lambda template_args, userinfo: userinfo["username"],
+                    otlp_tls_secret="resource-health-healthchecks-certificate",
+                )
+
+            checks:
+            - name: hourly-mockapi-check
+              schedule: "@hourly"
+              # This is an empty requirements file
+              requirements: "https://gist.githubusercontent.com/tilowiklundSensmetry/a9fefe2873b731b483f554607a82deaa/raw/1136a82ca3c8f28b1ad4d895871514185927dd1c/requirements.txt"
+              script: "https://raw.githubusercontent.com/EOEPCA/resource-health/refs/tags/v0.1.0-demo/pytest-health/instrumentation/examples/mock_api_check.py"
+              env:
+                - name: MOCK_API_HOST
+                  value: http://resource-health-mock-api:5000
+              userid: "bob"
+              annotations:
+                owner: "bob"
+
+            - name: daily-trivial-check
+              ## Every day at 08:00
+              schedule: "0 8 * * *"
+              # This is an empty requirements file
+              requirements: "https://gist.githubusercontent.com/tilowiklundSensmetry/a9fefe2873b731b483f554607a82deaa/raw/1136a82ca3c8f28b1ad4d895871514185927dd1c/requirements.txt"
+              script: "https://raw.githubusercontent.com/EOEPCA/resource-health/refs/tags/v0.1.0-demo/pytest-health/instrumentation/examples/trivial_check.py"
+              userid: "bob"
+              annotations:
+                owner: "bob"
+
+            - name: hourly-simple-http-check
+              schedule: "@hourly"
+              # This is an empty requirements file
+              requirements: "https://gist.githubusercontent.com/tilowiklundSensmetry/a9fefe2873b731b483f554607a82deaa/raw/1136a82ca3c8f28b1ad4d895871514185927dd1c/requirements.txt"
+              script: "https://gist.githubusercontent.com/tilowiklundSensmetry/b75b3bf435e366b2fd5155a41d8f1cb9/raw/892e0e89d078f1f2683b89a1101e31683f77dcee/health_check.py"
+              userid: "bob"
+              annotations:
+                owner: "bob"
+
+            - name: hourly-simple-openeo-check
+              schedule: "@hourly"
+              requirements: "https://gist.githubusercontent.com/soxofaan/7a634cfb0cc6bc0e8281d152a270ea4e/raw/ef77bc9b2c70cc070259715fea63e288026bb6b8/requirements.txt"
+              script: "https://gist.githubusercontent.com/soxofaan/7a634cfb0cc6bc0e8281d152a270ea4e/raw/ef77bc9b2c70cc070259715fea63e288026bb6b8/test_cdse.py"
+              userid: "alice"
+              annotations:
+                owner: "alice"
+
+            - name: daily-data-access-check
+              schedule: "0 8 * * *"
+              # This is an empty base64 encoding
+              requirements: "data:text/plain;base64,"
+              script: "https://github.com/EOEPCA/resource-health/blob/main/pytest-health/lib/BB-examples/data_access_tests.py?raw=true"
+              env:
+                - name: DATA_ACCESS_HOST
+                  value: https://eoapi.develop-v2.eoepca.org
+              userid: "alice"
+              annotations:
+                owner: "alice"
+
+            - name: daily-iam-check
+              schedule: "0 8 * * *"
+              requirements: "data:text/plain;base64,"
+              script: "https://github.com/EOEPCA/resource-health/blob/main/pytest-health/lib/BB-examples/iam_tests.py?raw=true"
+              env:
+                - name: OPEN_ID_CONFIGURATION_HOST
+                  value: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known
+                - name: OPA_ENDPOINT
+                  value: http://iam-opa.iam.svc.cluster.local:8181/
+                - name: IDENTITY_API_ENDPOINT
+                  value: http://iam-core-keycloak-operator-service.iam.svc.cluster.local:8080/realms/eoepca
+              userid: "alice"
+              annotations:
+                owner: "alice"
+
+            - name: daily-data-mlops-check
+              schedule: "0 8 * * *"
+              requirements: "data:text/plain;base64,"
+              script: "https://github.com/EOEPCA/resource-health/blob/main/pytest-health/lib/BB-examples/mlops_tests.py?raw=true"
+              env:
+                - name: SHARING_HUB_HOST
+                  value: https://develop-v2.eoepca.org/sharinghub
+                - name: MFLOW_SHARING_HUB_HOST
+                  value: https://develop-v2.eoepca.org
+              userid: "alice"
+              annotations:
+                owner: "alice"
+
+            - name: daily-resource-discovery-check
+              schedule: "0 8 * * *"
+              requirements: "data:text/plain;base64,"
+              script: "https://github.com/EOEPCA/resource-health/blob/main/pytest-health/lib/BB-examples/resource_discovery_tests.py?raw=true"
+              env:
+                - name: RESOURCE_CATALOGUE_ENDPOINT
+                  value: https://resource-catalogue.develop-v2.eoepca.org
+              userid: "alice"
+              annotations:
+                owner: "alice"
+
+            - name: daily-resource-registration-check
+              schedule: "0 8 * * *"
+              requirements: "data:text/plain;base64,"
+              script: "https://github.com/EOEPCA/resource-health/blob/main/pytest-health/lib/BB-examples/resource_registration_tests.py?raw=true"
+              env:
+                - name: HARVESTER_WORKFLOW_ENGINE_HOST
+                  value: https://registration-harvester-api.develop-v2.eoepca.org
+                - name: HARVESTER_WORKFLOW_ENGINE_USERNAME
+                  value: "eoepca"
+                - name: HARVESTER_WORKFLOW_ENGINE_PASSWORD
+                  value: "eoepca"
+                - name: REGISTRATION_API_ENDPOINT
+                  value: https://registration-api.develop-v2.eoepca.org/
+              userid: "alice"
+              annotations:
+                owner: "alice"
+
+            - name: daily-workspace-check
+              schedule: "0 8 * * *"
+              requirements: "data:text/plain;base64,"
+              script: "https://github.com/EOEPCA/resource-health/blob/main/pytest-health/lib/BB-examples/workspace_tests.py?raw=true"
+              env:
+                - name: WORKSPACE_HOST
+                  value: https://workspace-api.develop-v2.eoepca.org
+              userid: "eric"
+              annotations:
+                owner: "eric"
+
+            - name: daily-processing-check
+              schedule: "0 8 * * *"
+              requirements: "data:text/plain;base64,"
+              script: "https://github.com/EOEPCA/resource-health/blob/2.0.0-beta2/pytest-health/lib/BB-examples/generic_test.py?raw=true"
+              env:
+                - name: GENERIC_ENDPOINT
+                  value: https://zoo.develop-v2.eoepca.org/swagger-ui/oapip/
+                - name: EXPECTED_STATUS_CODE
+                  value: "200"
+              userid: "eric"
+              annotations:
+                owner: "eric"
+
+          alerting:
+            secretMounts:
+              - name: alert-user-emails
+                secretName: resource-health-alerting-user-emails
+                mountPath: /app/alerting-user-emails
+            environmentFixed:
+              - name: ERROR_TRACES_FILE
+                value: error_traces.sqlite3
+              - name: TRACE_INFOS_FILE
+                value: trace_infos.sqlite3
+              
+              - name: TRACE_RECEIVER_ADDRESS
+                value: "[::]:50051"
+              - name: TRACE_RECEIVER_MAX_WORKERS
+                value: "20"
+              - name: TRACE_RECEIVER_LOG_LEVEL
+                value: INFO
+              
+              - name: EMAIL_COUNTERS
+                value: email_counters.sqlite3
+              - name: MAX_EMAILS_PER_DAY
+                value: "300" # I think gmail allows 500
+              - name: SMTP_MAILER_HOST
+                value: smtp.gmail.com
+              - name: SMTP_MAILER_PORT
+                value: "465"
+              - name: EXECUTE_PERIOD_SECS
+                value: "10"
+              - name: SEND_NOTIF_SECS
+                value: "60"
+              - name: REMOVE_TRACE_SECS
+                value: "600"
+              - name: NOTIFIER_LOG_LEVEL
+                value: DEBUG
+              - name: ALERT_USER_EMAILS
+                value: /app/alerting-user-emails/alert_user_emails.json
+            environmentSecrets:
+              - name: FROM_EMAIL
+                secret: resource-health-notifier-email-credentials
+                key: from_email
+              - name: FROM_EMAIL_PASSWORD
+                secret: resource-health-notifier-email-credentials
+                key: from_email_password
+
+  destination:
+    namespace: resource-health
+    server: https://kubernetes.default.svc
+  # The API server injects apiVersion/kind/volumeMode/status into
+  # StatefulSet volumeClaimTemplates entries that the chart doesn't set,
+  # which otherwise shows as permanent drift.
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - '.spec.volumeClaimTemplates'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

@@ -1,0 +1,16 @@
+# Crossplane ProviderConfigs are namespaced, so create their target namespaces
+# here before the later EOEPCA applications that also deploy into them.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: workspace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: data-access
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: operations

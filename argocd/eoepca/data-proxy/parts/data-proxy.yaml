@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: data-proxy-proxy
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
   labels:
     eoepca/app-name: data-proxy
 spec:
@@ -24,12 +26,13 @@ spec:
 
           proxyEnv:
             eodagUrl: http://eodag-data-proxy-eodag-data-proxy-chart-control-plane:8000
-            authIssuerUrl: https://iam-auth.develop.eoepca.org/realms/eoepca
+            authIssuerUrl: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
             authAudience: eodag-proxy
-            authJwksUrl: https://iam-auth.develop.eoepca.org/realms/eoepca/.well-known/openid-configuration
+            authJwksUrl: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration
 
           opa:
-            enabled: true
+            # disabled: chart 0.1.0 hardcodes "opa run --config", current opa images need "--config-file"
+            enabled: false
             configMap: opa-config
 
           ingress:
@@ -43,3 +46,15 @@ spec:
   destination:
     name: in-cluster
     namespace: data-proxy
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true

@@ -10,7 +10,7 @@ config = pulumi.Config()
 # Function to attach volume to NFS server
 def attach_volume(instance, size_gb):
     nfs_volume = blockstorage.Volume(
-        "nfs_volume",
+        "rke2-nfs-volume",
         size=size_gb,
         volume_type="SSD",
         description="NFS Volume",
@@ -18,7 +18,7 @@ def attach_volume(instance, size_gb):
     )
 
     volume_attachment = compute.VolumeAttach(
-        "nfs_volume_attachment",
+        "rke2-nfs-volume-attachment",
         instance_id=instance.id,
         volume_id=nfs_volume.id,
         device="/dev/sdb",
@@ -40,12 +40,12 @@ def deploy(network_instance):
 
     # Deploy NFS Server using the shared function
     nfs_server = create_instance(
-        "nfs-server",
-        "eoepca-dev-keypair",
+        "rke2-nfs-server",
+        "rke2-eoepca-keypair",
         config.require("nfsFlavour"),
         config.require("nodeImage"),
         [{"uuid": network_instance.id}],
-        get_node_security_groups("nfs-server"),
+        get_node_security_groups("rke2-nfs-server"),
         network_instance,
         user_data=get_user_data_script(),
     )

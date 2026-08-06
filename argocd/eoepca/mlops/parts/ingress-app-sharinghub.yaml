@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: apisix
   rules:
-    - host: develop.eoepca.org
+    - host: develop-v2.eoepca.org
       http:
         paths:
           - path: /sharinghub/
@@ -22,7 +22,4 @@ spec:
                 name: sharinghub
                 port:
                   number: 8000
-  tls:
-    - hosts:
-        - develop.eoepca.org
-      secretName: sharinghub-develop.eoepca.org-tls
+  # no tls block: shared wildcard cert already covers this host (see ingress-mlflow-sharinghub.yaml)

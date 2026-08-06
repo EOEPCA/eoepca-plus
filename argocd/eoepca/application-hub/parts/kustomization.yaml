@@ -1,5 +1,23 @@
 
 resources:
   - app-application-hub-core.yaml
+  - iam.yaml
   - ss-application-hub.yaml
   - ingress.yaml
+
+patches:
+  - target: {group: bitnami.com, kind: SealedSecret}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "-10"}
+  - target: {group: argoproj.io, kind: Application}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "0"}
+  - target: {group: networking.k8s.io, kind: Ingress}
+    patch: |-
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "10"

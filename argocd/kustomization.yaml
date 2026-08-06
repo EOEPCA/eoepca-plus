@@ -2,5 +2,29 @@
 resources:
   - infra
   - eoepca
-  - operations
   - test
+
+patches:
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Application
+      name: ^dummy-service$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: dummy-service
+        annotations:
+          argocd.argoproj.io/sync-wave: "60"
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Application
+    patch: |
+      - op: add
+        path: /spec/syncPolicy/syncOptions/-
+        value: ServerSideApply=true
+      - op: add
+        path: /spec/syncPolicy/syncOptions/-
+        value: RespectIgnoreDifferences=true

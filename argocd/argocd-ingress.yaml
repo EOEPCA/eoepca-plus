@@ -4,16 +4,15 @@ metadata:
   name: argocd-server-ingress
   namespace: argocd
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    # staging issuer: production letsencrypt-prod is rate-limited from repeated
+    # cluster teardown/recreate cycles against this hostname
+    cert-manager.io/cluster-issuer: letsencrypt-staging
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    # If you encounter a redirect loop or are getting a 307 response code
-    # then you need to force the nginx ingress to connect to the backend using HTTPS.
-    #
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   ingressClassName: nginx
   rules:
-    - host: argocd.develop.eoepca.org
+    - host: argocd.develop-v2.eoepca.org
       http:
         paths:
           - path: /
@@ -25,5 +24,5 @@ spec:
                   name: https
   tls:
     - hosts:
-        - argocd.develop.eoepca.org
+        - argocd.develop-v2.eoepca.org
       secretName: argocd-server-tls # as expected by argocd-server

@@ -1,3 +1,4 @@
+# Created by Helm chart
 apiVersion: keycloak.m.crossplane.io/v1beta1
 kind: ProviderConfig
 metadata:

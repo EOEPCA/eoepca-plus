@@ -35,7 +35,7 @@ spec:
           replicas: 1
           config:
             server:
-              url: https://resource-catalogue.develop.eoepca.org/
+              url: https://resource-catalogue.develop-v2.eoepca.org/
             federatedcatalogues:
               - id: fedcat01
                 type: OARec

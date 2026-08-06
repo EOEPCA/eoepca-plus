@@ -7,11 +7,11 @@ global:
 application-quality:
   # Values for deploying the Application Quality Building Block in the EOEPCA Develop cluster.
 
-  publicUrl: "https://application-quality.develop.eoepca.org"
+  publicUrl: "https://application-quality.develop-v2.eoepca.org"
 
   # Application Quality frontend
   web:
-    publicUrl: "https://application-quality.develop.eoepca.org"
+    publicUrl: "https://application-quality.develop-v2.eoepca.org"
 
   persistence:
     enabled: true
@@ -23,12 +23,12 @@ application-quality:
   oidc:
     enabled: true
     realm: eoepca
-    realmBaseUrl: "https://iam-auth.develop.eoepca.org/realms/eoepca"
+    realmBaseUrl: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca"
     clientId: application-quality-bb
     clientSecret: ""
-    postLogoutRedirectUrl: "https://application-quality.develop.eoepca.org/"
-    loginRedirectUrl: "https://application-quality.develop.eoepca.org/"
-    rpRedirectUri: "https://application-quality.develop.eoepca.org/"
+    postLogoutRedirectUrl: "https://application-quality.develop-v2.eoepca.org/"
+    loginRedirectUrl: "https://application-quality.develop-v2.eoepca.org/"
+    rpRedirectUri: "https://application-quality.develop-v2.eoepca.org/"
 
     iam_provisioning:
       enabled: false
@@ -46,7 +46,7 @@ application-quality:
   ingress:
     enabled: true
     className: apisix
-    domain: application-quality.develop.eoepca.org
+    domain: application-quality.develop-v2.eoepca.org
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-http01-apisix
       apisix.ingress.kubernetes.io/use-regex: "true"
@@ -56,15 +56,14 @@ application-quality:
       argocd.argoproj.io/ignore-healthcheck: "true"
     tls:
       - hosts:
-        - application-quality.develop.eoepca.org
+        - application-quality.develop-v2.eoepca.org
         secretName: application-quality-tls
 
   notifications:
     enabled: true
     middleware: "knative"
-    # The Knative Trigger is created in the same namespace as the Broker
     brokerName: "default"
-    brokerNamespace: "na"
+    brokerNamespace: "notifications"
     # Also used as type prefix for incoming notifications
     channelPrefix: "org.eoepca.application-quality"
     responseSource: "/eoepca/application-quality"
@@ -85,7 +84,7 @@ grafana:
     enabled: true
     ingressClassName: apisix
     hosts:
-      - application-quality.develop.eoepca.org
+      - application-quality.develop-v2.eoepca.org
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-http01-apisix
       k8s.apisix.apache.org/rewrite-target-regex: "/dashboards/?(.*)"
@@ -99,7 +98,7 @@ grafana:
     tls:
       - secretName: application-quality-tls
         hosts:
-          - application-quality.develop.eoepca.org
+          - application-quality.develop-v2.eoepca.org
 
   persistence:
     enabled: true
@@ -107,4 +106,4 @@ grafana:
 
   grafana.ini:
     server:
-      root_url: https://application-quality.develop.eoepca.org/dashboards
+      root_url: https://application-quality.develop-v2.eoepca.org/dashboards

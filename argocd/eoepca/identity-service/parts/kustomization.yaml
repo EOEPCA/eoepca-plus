@@ -2,3 +2,20 @@ resources:
   - app-identity-service-core.yaml
   - pvc-database.yaml
   # - ss-identity-postgres.yaml
+  - iam.yaml
+
+patches:
+  - target: {version: v1, kind: PersistentVolumeClaim}
+    patch: |-
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: identity-service
+        annotations: {argocd.argoproj.io/sync-wave: "-10"}
+  - target: {group: argoproj.io, kind: Application}
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: identity-service-core
+        annotations: {argocd.argoproj.io/sync-wave: "0"}

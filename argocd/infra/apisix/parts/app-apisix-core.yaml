@@ -5,6 +5,8 @@ metadata:
   namespace: argocd
   labels:
     eoepca/app-name: apisix
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
@@ -16,9 +18,11 @@ spec:
         releaseName: apisix
         valueFiles:
           - $values/argocd/infra/apisix/parts/values/apisix-values.yaml
+        # APISIX CRDs are owned by apisix-crds; Gateway API CRDs are owned by
+        # envoy-gateway. The chart's mixed CRD bundle must not own either set.
         skipCrds: true
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: merge-from-deploy-develop
       ref: values
 
   destination:
@@ -29,13 +33,12 @@ spec:
       kind: CustomResourceDefinition
       jqPathExpressions:
         - .spec.versions[].additionalPrinterColumns[].priority | select(. == 0)
-    - group: ""
-      kind: Secret
+    - kind: Secret
       name: apisix-ingress-controller-webhook-cert
       namespace: ingress-apisix
       jsonPointers:
         - /data
-    - group: admissionregistration.k8s.io/v1
+    - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
       name: apisix-ingress-controller-webhook
       namespace: ingress-apisix
@@ -54,10 +57,9 @@ spec:
 #      jqPathExpressions:
 #        - '.spec.template.metadata.annotations["checksum/token-secret"]'
   syncPolicy:
-    # automated:
-    #   prune: true
-    #   # selfHeal: false
-    #   allowEmpty: true
+    automated:
+      prune: true
+      allowEmpty: true
     syncOptions:
       - Validate=true
       - CreateNamespace=true
@@ -65,3 +67,4 @@ spec:
       - PruneLast=true
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

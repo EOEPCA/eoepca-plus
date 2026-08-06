@@ -1,0 +1,22 @@
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: resource-health-opensearch-admin
+  namespace: iam-management
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  forProvider:
+    realmId: eoepca
+    username: opensearch-admin
+    firstName: Opensearch
+    lastName: Admin
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: resource-health-opensearch-admin-secret
+          key: password
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig

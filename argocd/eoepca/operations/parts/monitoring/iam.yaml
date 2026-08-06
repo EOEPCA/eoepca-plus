@@ -1,0 +1,85 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: monitoring
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: monitoring-oidc
+  forProvider:
+    realmId: eoepca
+    name: monitoring
+    accessType: CONFIDENTIAL
+    clientId: monitoring
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://monitoring.develop-v2.eoepca.org
+    validRedirectUris:
+      - https://monitoring.develop-v2.eoepca.org/login/generic_oauth
+    validPostLogoutRedirectUris:
+      - https://monitoring.develop-v2.eoepca.org/
+      - https://monitoring.develop-v2.eoepca.org/login
+    webOrigins:
+      - https://monitoring.develop-v2.eoepca.org
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: grafana-admin
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: grafana_admin
+    description: Admin access for monitoring stack
+    clientIdRef:
+      name: monitoring
+      policy:
+        resolution: Required
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: grafana-editor
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: grafana_editor
+    description: Editor access for monitoring stack
+    clientIdRef:
+      name: monitoring
+      policy:
+        resolution: Required
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: grafana-viewer
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: grafana_viewer
+    description: Viewer access for monitoring stack
+    clientIdRef:
+      name: monitoring
+      policy:
+        resolution: Required

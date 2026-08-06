@@ -1,6 +1,10 @@
 
 resources:
+  - kube-dns-alias.yaml
   - app-sealed-secrets.yaml
+  # ServiceMonitor and PrometheusRule CRDs are consumed by early infrastructure
+  # Applications, before the full Operations monitoring stack can start.
+  - monitoring-crds
   - cert-manager
   - harbor
   - minio
@@ -11,7 +15,96 @@ resources:
   - mongodb-operator
   - qdrant-operator
   - redis-operator
+  - kyverno
   - gateway
   - eso
   - crossplane
   - trivy
+
+patches:
+  # Root application waves express dependencies between independently synced
+  # Applications. File order in this kustomization does not control sync order.
+  - target:
+      kind: Application
+      name: ^sealed-secrets$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: sealed-secrets
+        annotations:
+          argocd.argoproj.io/sync-wave: "-50"
+  - target:
+      kind: Application
+      name: ^monitoring-crds$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: monitoring-crds
+        annotations:
+          argocd.argoproj.io/sync-wave: "-45"
+  - target:
+      kind: Application
+      name: ^cert-manager$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: cert-manager
+        annotations:
+          argocd.argoproj.io/sync-wave: "-40"
+  - target:
+      kind: Application
+      name: ^(crossplane|eso-core|knative-operator|kyverno|pgo|strimzi-kafka-operator|trivy)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: infrastructure-operators
+        annotations:
+          argocd.argoproj.io/sync-wave: "-20"
+  - target:
+      kind: Application
+      name: ^eso$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: infrastructure-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      kind: Application
+      name: ^gateway$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: gateway
+        annotations:
+          # must sync before apisix: apisix-ingress-controller needs the gateway
+          # api crds present at startup or its route indexer never registers
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      kind: Application
+      name: ^apisix$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: apisix
+        annotations:
+          # See gateway's sync-wave comment: must come after gateway so its
+          # ingress-controller starts with Gateway API CRDs already present.
+          argocd.argoproj.io/sync-wave: "-5"
+  - target:
+      kind: Application
+      name: ^(harbor|minio)$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: storage-services
+        annotations:
+          argocd.argoproj.io/sync-wave: "0"

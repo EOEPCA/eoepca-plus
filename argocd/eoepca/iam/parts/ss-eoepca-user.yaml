@@ -1,0 +1,15 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: eoepca-user
+  namespace: iam-management
+spec:
+  encryptedData:
+    eoepcauser-password: AgBN84BC/q8AMqA0uyWf9Bv0t+xuArzQ0lsFmx4o3T0+KGfUGPpjT3e3i8pO3zqG2btRNaHR8Aub1DsWC/N8QS6bwhjc4salH56cJmOfY0FAp4ccN/2jmknkCJ8babUf6KpUQBPGUoGrYs3TnBtNgGL1orBhXgF2Gss5zcXf/icpXpyJTQK7qE1pLZUvNZ2t12WWHK9RBsMXtHPSgs8TZtwMxK9O8ITInwn2zWMJqT07GZeeUqQpip0TUrfgH3ZG83rwJriT9pDFujhHOEbeo/Qw/D46gC+61GdKRN7ydeh4x373dSEDT2eWRYasIovMA6TL1YeKD/vBRW6jWv49DjDHE1TBdENGYYIkIJZVzVQ+u//JOE2GceAwHNOSsolYlnBOC8adIvb03v72rvLSFlmE3Ap4a7zJZeamUgcQnGajWn6h2VBgtG40jA0e334c+F0CnEQzjiBs8tT4mYdxirRRZpSQh1id48mo4JQYUyj2JRZkWI79A2zp2wfK2nhTO+n297203OXZo76jRL43/sHG/P0G3lXxEE5kJSRBPEhEcR1UJRS5XBlB8Mq1D5ejTixC8RmPdSuW2tpp12hTHRxSKULOWt8Q68gmLO6/eGbvsA6Kh4bp6GRnqRs81Csi53zG86o86fjkROXrzL8Zxrv9X5rjmDFcJucXssSyXHof8cfYvgltrII2RuAUagygbmuIJhijVtxXqKd1JMw62g==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: eoepca-user
+      namespace: iam-management

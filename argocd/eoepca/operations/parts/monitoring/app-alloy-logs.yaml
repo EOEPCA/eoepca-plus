@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alloy-logs
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: alloy-logs
+spec:
+  project: eoepca
+  source:
+    repoURL: https://github.com/EOEPCA/eoepca-plus
+    targetRevision: merge-from-deploy-develop
+    path: argocd/eoepca/operations/parts/monitoring/alloy
+  destination:
+    name: in-cluster
+    namespace: operations
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

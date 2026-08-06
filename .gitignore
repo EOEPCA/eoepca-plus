@@ -33,6 +33,15 @@ build/
 dist/
 venv/
 .venv/
+k.yaml
+*.crt
+*.key
+documents/*
+eoepca-openrc-2fa.sh
+deploy/sealed-secrets-keys.yaml
+deploy/k8s-resources/scripts/resources/
 
 # Pulumi
 .pulumi/
+iam-export/
+BB-CHANGES.md

@@ -15,14 +15,16 @@ source .env 2>/dev/null
 SECRET_NAME="kc-postgres"
 NAMESPACE="iam"
 
-KC_POSTGRES_PASSWORD="${1:-${KC_POSTGRES_PASSWORD:-changeme}}"
+KC_POSTGRES_PASSWORD="${1:-${KC_POSTGRES_PASSWORD:-`cat /dev/random|base64|tr -d "/=+-"|head -c 16`}}"
+KC_POSTGRES_USERNAME="${2:-${KC_POSTGRES_USERNAME:-keycloak}}"
 
 secretYaml() {
   kubectl -n "${NAMESPACE}" create secret generic "${SECRET_NAME}" \
+    --from-literal="username=${KC_POSTGRES_USERNAME}" \
     --from-literal="password=${KC_POSTGRES_PASSWORD}" \
-    --from-literal="postgres-password=${KC_POSTGRES_PASSWORD}" \
     --dry-run=client -o yaml
 }
+#    --from-literal="postgres-password=${KC_POSTGRES_PASSWORD}" \
 
 # Create Secret and then pipe to kubeseal to create the SealedSecret
 secretYaml \

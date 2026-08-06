@@ -19,7 +19,7 @@ spec:
       helm:
         releaseName: workspace-dependencies-educates
         values: |
-          clusterIngressDomain: lab.develop.eoepca.org
+          clusterIngressDomain: lab.develop-v2.eoepca.org
           clusterIngressClass: apisix
           tlsCertificateRef:
             name: workspace-tls
@@ -28,6 +28,10 @@ spec:
     name: in-cluster
     namespace: workspace
   ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      jqPathExpressions:
+        - .spec.versions[].additionalPrinterColumns[].priority
     - group: rbac.authorization.k8s.io
       kind: ClusterRole
       name: educates-session-manager

@@ -32,10 +32,10 @@ spec:
                 - workspace-api
             ingress:
               class: apisix
-              domain: lab.develop.eoepca.org
+              domain: lab.develop-v2.eoepca.org
               secret: wildcard-tls
             storage:
-              endpoint: https://minio.develop.eoepca.org
+              endpoint: https://minio.develop-v2.eoepca.org
               forcePathStyle: true
               provider: Other
               region: eoepca-demo

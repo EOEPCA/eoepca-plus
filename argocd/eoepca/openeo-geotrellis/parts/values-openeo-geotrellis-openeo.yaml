@@ -38,7 +38,7 @@ configMaps:
         OidcProvider(
             id="eoepca-iam",
             title="EOEPCA IAM",
-            issuer="https://iam-auth.develop.eoepca.org/realms/eoepca/",
+            issuer="https://develop-v2.eoepca.org/iam/auth/realms/eoepca/",
             default_clients=[
                 {
                     "id": "openeo-default-client",
@@ -50,7 +50,7 @@ configMaps:
                     "redirect_urls": [
                         "https://editor.openeo.org",
                         "https://eoepca.github.io/processing-editor",
-                        "https://editor.develop.eoepca.org",
+                        "https://editor.develop-v2.eoepca.org",
                         "http://localhost:1410/",
                     ],
                 }
@@ -72,7 +72,7 @@ configMaps:
                     "redirect_urls": [
                         "https://editor.openeo.org",
                         "https://eoepca.github.io/processing-editor",
-                        "https://editor.develop.eoepca.org",
+                        "https://editor.develop-v2.eoepca.org",
                         "http://localhost:1410/",
                     ],
                 }
@@ -94,7 +94,7 @@ configMaps:
                     "redirect_urls": [
                         "https://editor.openeo.org",
                         "https://eoepca.github.io/processing-editor",
-                        "https://editor.develop.eoepca.org",
+                        "https://editor.develop-v2.eoepca.org",
                         "http://localhost:1410/",
                     ],
                 },
@@ -115,7 +115,7 @@ configMaps:
                     "redirect_urls": [
                         "https://editor.openeo.org",
                         "https://eoepca.github.io/processing-editor",
-                        "https://editor.develop.eoepca.org",
+                        "https://editor.develop-v2.eoepca.org",
                         "http://localhost:1410/",
                     ],
                 }
@@ -286,7 +286,7 @@ driver:
     PYTHONPATH: $PYTHONPATH:/opt/openeo/lib/python3.11/site-packages/
     ZOOKEEPERNODES: openeo-geotrellis-zookeeper.openeo-geotrellis.svc.cluster.local:2181
     SWIFT_BUCKET: "openeo-geotrellis-data"
-    SWIFT_URL: "https://minio.develop.eoepca.org"
+    SWIFT_URL: "https://minio.develop-v2.eoepca.org"
     SWIFT_ACCESS_KEY_ID: "nSwekdG7oR5ax6rIdZ6D"
     EODATA_S3_ENDPOINT: https://eodata.cloudferro.com
     EODATA_ACCESS_KEY_ID: "WGXGQKFBNSLN0FZXRJVG"
@@ -322,12 +322,12 @@ ingress:
     k8s.apisix.apache.org/http-to-https: "true"
     argocd.argoproj.io/ignore-healthcheck: "true"
   hosts:
-    - host: openeo.develop.eoepca.org
+    - host: openeo.develop-v2.eoepca.org
       paths:
         - /
   tls:
     - hosts:
-        - openeo.develop.eoepca.org
+        - openeo.develop-v2.eoepca.org
       secretName: openeo-geotrellis-openeo-sparkapplication-cert
 jarDependencies:
   - local:///opt/geotrellis-extensions-static.jar

@@ -1,0 +1,68 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: registration-harvester
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: registration-harvester-oidc
+  forProvider:
+    realmId: eoepca
+    name: registration-harvester
+    accessType: CONFIDENTIAL
+    clientId: registration-harvester
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: true
+    useRefreshTokens: true
+    validRedirectUris:
+      - '/*'
+    webOrigins:
+      - '/*'
+    authorization:
+      - policyEnforcementMode: ENFORCING
+        decisionStrategy: UNANIMOUS
+        keepDefaults: true
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: ClientServiceAccountRole
+metadata:
+  name: registration-harvester-eoapi-stac-editor
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    clientIdRef:
+      name: eoapi
+      policy:
+        resolution: Required
+    roleRef:
+      name: stac-editor
+      policy:
+        resolution: Required
+    serviceAccountUserClientIdRef:
+      name: registration-harvester
+      policy:
+        resolution: Required
+---
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: resource-registration-admin
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: resource-registration-admin

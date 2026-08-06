@@ -4,13 +4,17 @@ config:
   eoepca-infra:sshUser: eouser # The default user on Openstack instances is eouser.
 
   # Networking
-  eoepca-infra:domainName: develop.eoepca.org
+  eoepca-infra:domainName: develop-v2.eoepca.org
   eoepca-infra:loadBalancerFloatingIPID: "f962cfb1-3125-4a0b-afa0-f0544956486a"
   eoepca-infra:externalNetworkID: 22d18510-faec-4d77-974b-ce4f16825b20
   eoepca-infra:networkCIDR: 192.168.9.0/24
 
   eoepca-infra:lbMethod: ROUND_ROBIN
   eoepca-infra:floatingIpPool: external
+  eoepca-infra:maintainerEmail: maintainer@example.com
+
+  # Used by deploy/k8s-resources/scripts/bootstrap-argocd.sh for cert-manager.
+  eoepca-infra:cloudflareDnsApiToken: cfut_xxx
 
   # Config for control plane / etcd flavor
   eoepca-infra:controlPlaneNodeFlavour: eo2a.xlarge

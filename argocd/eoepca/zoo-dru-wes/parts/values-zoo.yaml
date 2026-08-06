@@ -10,8 +10,8 @@ zookernel:
 customConfig:
   main:
     eoepca: |-
-      domain=develop.eoepca.org
-      workspace_url=https://workspace-api.develop.eoepca.org
+      domain=develop-v2.eoepca.org
+      workspace_url=https://workspace-api.develop-v2.eoepca.org
       workspace_prefix=ws
       workspace_catalog_register=false
 workflow:
@@ -21,7 +21,7 @@ workflow:
     - secretRef:
         name: zoo-workflow-env
   inputs:
-    STAGEOUT_AWS_SERVICEURL: https://minio.develop.eoepca.org
+    STAGEOUT_AWS_SERVICEURL: https://minio.develop-v2.eoepca.org
     STAGEOUT_AWS_ACCESS_KEY_ID: eoepca
     STAGEOUT_AWS_SECRET_ACCESS_KEY: changeme
     STAGEOUT_AWS_REGION: RegionOne
@@ -34,7 +34,7 @@ workflow:
   storageClass: managed-nfs-storage-retain
 ingress:
   enabled: false
-  hosturl: https://zoowes.develop.eoepca.org
+  hosturl: https://zoowes.develop-v2.eoepca.org
   annotations:
     kubernetes.io/ingress.class: apisix
     ingress.kubernetes.io/ssl-redirect: "true"
@@ -42,19 +42,20 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-dns-prod
     argocd.argoproj.io/ignore-healthcheck: "true"
   hosts:
-  - host: zoowes.develop.eoepca.org
+  - host: zoowes.develop-v2.eoepca.org
     paths:
     - path: /
       pathType: ImplementationSpecific
   tls:
   - hosts:
-    - zoowes.develop.eoepca.org
+    - zoowes.develop-v2.eoepca.org
     secretName: zoo-tls
 persistence:
   procServicesStorageClass: managed-nfs-storage-retain
   storageClass: managed-nfs-storage-retain
   tmpStorageClass: managed-nfs-storage
 postgresql:
+  # no image override: bitnamilegacy/postgresql fails permission checks under this runAsUser
   primary:
     persistence:
       storageClass: managed-nfs-storage-retain

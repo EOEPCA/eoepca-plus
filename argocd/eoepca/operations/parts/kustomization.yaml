@@ -1,0 +1,147 @@
+resources:
+  - _dashboards
+  - _rules
+  - alerting
+  - monitoring
+  - iam-secret-propagation.yaml
+
+patches:
+  - target:
+      version: v1
+      kind: Secret
+    patch: |-
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: operations-secrets
+        annotations:
+          argocd.argoproj.io/sync-wave: "-20"
+  - target:
+      group: .*keycloak.m.crossplane.io
+    patch: |-
+      apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+      kind: Client
+      metadata:
+        name: operations-iam
+        annotations:
+          argocd.argoproj.io/sync-wave: "-30"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: rbac.authorization.k8s.io
+    patch: |-
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: Role
+      metadata:
+        name: operations-iam-secret-access
+        annotations: {argocd.argoproj.io/sync-wave: "-20"}
+  - target:
+      version: v1
+      kind: ServiceAccount
+      name: ^operations-iam-secret-reader$
+    patch: |-
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: operations-iam-secret-reader
+        annotations: {argocd.argoproj.io/sync-wave: "-20"}
+  - target:
+      group: external-secrets.io
+      kind: ClusterSecretStore
+    patch: |-
+      apiVersion: external-secrets.io/v1
+      kind: ClusterSecretStore
+      metadata:
+        name: operations-iam
+        annotations: {argocd.argoproj.io/sync-wave: "-20"}
+  - target:
+      group: external-secrets.io
+      kind: ExternalSecret
+    patch: |-
+      apiVersion: external-secrets.io/v1
+      kind: ExternalSecret
+      metadata:
+        name: operations-iam-secrets
+        annotations: {argocd.argoproj.io/sync-wave: "-10"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^kube-prometheus-stack$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: kube-prometheus-stack
+        annotations: {argocd.argoproj.io/sync-wave: "-10"}
+  - target:
+      group: pkg.internal
+      kind: Storage
+      name: ^loki$
+    patch: |-
+      apiVersion: pkg.internal/v1beta1
+      kind: Storage
+      metadata:
+        name: loki
+        annotations:
+          # provisions loki-s3-credentials, needed before loki-stack (wave 0) starts
+          argocd.argoproj.io/sync-wave: "-10"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^loki-stack$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: loki-stack
+        annotations: {argocd.argoproj.io/sync-wave: "0"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^keep$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: keep
+        annotations: {argocd.argoproj.io/sync-wave: "10"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^alloy-logs$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: alloy-logs
+        annotations: {argocd.argoproj.io/sync-wave: "10"}
+  - target:
+      group: argoproj.io
+      kind: Application
+      name: ^keep-oauth2-proxy$
+    patch: |-
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: keep-oauth2-proxy
+        annotations: {argocd.argoproj.io/sync-wave: "20"}
+  - target:
+      group: apps
+      kind: Deployment
+      name: ^keep-alertmanager-relay$
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: keep-alertmanager-relay
+        annotations: {argocd.argoproj.io/sync-wave: "20"}
+  - target:
+      group: apisix.apache.org
+    patch: |-
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixRoute
+      metadata:
+        name: operations-routes
+        annotations:
+          argocd.argoproj.io/sync-wave: "30"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

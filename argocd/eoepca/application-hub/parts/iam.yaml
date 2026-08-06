@@ -1,0 +1,66 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: application-hub
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: application-hub-oidc
+  forProvider:
+    realmId: eoepca
+    name: application-hub
+    accessType: CONFIDENTIAL
+    clientId: application-hub
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: true
+    useRefreshTokens: true
+    rootUrl: https://applicationhub.develop-v2.eoepca.org
+    validRedirectUris:
+      - https://applicationhub.develop-v2.eoepca.org/*
+    webOrigins:
+      - https://applicationhub.develop-v2.eoepca.org
+    authorization:
+      - policyEnforcementMode: ENFORCING
+        decisionStrategy: UNANIMOUS
+        keepDefaults: true
+---
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: release-application-hub
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: release-application-hub-oidc
+  forProvider:
+    realmId: eoepca
+    name: release-application-hub
+    accessType: CONFIDENTIAL
+    clientId: release-application-hub
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: true
+    fullScopeAllowed: true
+    serviceAccountsEnabled: true
+    useRefreshTokens: true
+    rootUrl: https://app-hub.test-release.develop-v2.eoepca.org
+    validRedirectUris:
+      - https://app-hub.test-release.develop-v2.eoepca.org/*
+    webOrigins:
+      - '*'
+    # fine-grained authz, matching RKE1: keepDefaults recreates keycloak's own permissive default policy/permission
+    authorization:
+      - policyEnforcementMode: ENFORCING
+        decisionStrategy: UNANIMOUS
+        keepDefaults: true

@@ -33,11 +33,11 @@ spec:
             k8s.apisix.apache.org/plugin-config-name: "minio-ingress"
           path: /
           hosts:
-            - minio.develop.eoepca.org
+            - minio.develop-v2.eoepca.org
           tls:
             - secretName: minio-tls
               hosts:
-                - minio.develop.eoepca.org
+                - minio.develop-v2.eoepca.org
         consoleIngress:
           enabled: true
           ingressClassName: apisix
@@ -52,11 +52,11 @@ spec:
             k8s.apisix.apache.org/plugin-config-name: "minio-ingress"
           path: /
           hosts:
-            - console.minio.develop.eoepca.org
+            - console.minio.develop-v2.eoepca.org
           tls:
           - secretName: minio-console-tls
             hosts:
-              - console.minio.develop.eoepca.org
+              - console.minio.develop-v2.eoepca.org
         resources:
           requests:
             memory: 1Gi
@@ -69,9 +69,11 @@ spec:
           - name: gitlab-backup-storage
           - name: gitlab-tmp-storage
           - name: gitlab-lfs-storage
-          - name: mlopbb-mlflow-sharinghub
-          - name: mlopbb-sharinghub
+          - name: mlopsbb-mlflow-sharinghub
+          - name: mlopsbb-sharinghub
           - name: openeo-geotrellis-data
+          # loki-stack's 3 object stores all point at this one bucket
+          - name: logging
 
   destination:
     name: in-cluster

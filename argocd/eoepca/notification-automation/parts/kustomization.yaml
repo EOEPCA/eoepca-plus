@@ -6,4 +6,46 @@ resources:
   - ingress.yaml
   - namespace-notifications.yaml
   - app-notification-automation-helm.yaml
-  #- kafka-cluster.yaml
+  - kafka-cluster.yaml
+
+patches:
+  - target:
+      kind: Namespace
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "-10"
+  - target:
+      group: operator.knative.dev
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "0"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: kafka.strimzi.io
+      kind: Kafka
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "0"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: argoproj.io
+      kind: Application
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "10"
+  - target:
+      group: apisix.apache.org
+    patch: |
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "20"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

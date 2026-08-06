@@ -17,7 +17,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/datacube-access/parts/values/values-datacube-access-core.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: merge-from-deploy-develop
       ref: values
 
   destination:

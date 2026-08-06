@@ -1,10 +1,48 @@
 
 resources:
+  # The APISIX subchart bundles its CRDs together with Gateway API CRDs. Keep
+  # only the APISIX CRDs here; Envoy Gateway is the sole Gateway API CRD owner.
+  - app-apisix-crds.yaml
   - app-apisix-core.yaml
   - apisixtls-apx-all.yaml
+  - apisixtls-apx-main.yaml
   - cert-apx-all.yaml
+  - cert-apx-main.yaml
   - apisixglobalrule-redirect-to-tls.yaml
   - apisixglobalrule-tls-port-correction.yaml
   - apisixglobalrule-prometheus.yaml
   - servicemonitor-apisix.yaml
   - servicemonitor-apisix-ingress-controller.yaml
+
+patches:
+  - target:
+      group: monitoring.coreos.com
+      kind: ServiceMonitor
+    patch: |
+      apiVersion: monitoring.coreos.com/v1
+      kind: ServiceMonitor
+      metadata:
+        name: not-used
+        annotations:
+          argocd.argoproj.io/sync-wave: "10"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: apisix.apache.org
+      kind: ApisixGlobalRule
+    patch: |
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixGlobalRule
+      metadata:
+        name: not-used
+        annotations:
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+  - target:
+      group: apisix.apache.org
+      kind: ApisixTls
+    patch: |
+      apiVersion: apisix.apache.org/v2
+      kind: ApisixTls
+      metadata:
+        name: not-used
+        annotations:
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true

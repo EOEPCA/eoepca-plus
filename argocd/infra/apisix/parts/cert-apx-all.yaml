@@ -1,9 +1,10 @@
-# Wildcard certificate for preliminary APISIX ingress *.develop.eoepca.org
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: apx-all-tls
   namespace: ingress-apisix
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
 spec:
   secretName: apx-all-tls
   duration: 2160h # 90d
@@ -13,7 +14,7 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - "*.develop.eoepca.org"
+    - "*.develop-v2.eoepca.org"
   issuerRef:
     name: letsencrypt-dns-prod
     kind: ClusterIssuer

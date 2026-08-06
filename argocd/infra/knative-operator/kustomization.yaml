@@ -1,2 +1,16 @@
 resources:
   - app-knative-operator.yaml
+  - app-knative-instances.yaml
+
+patches:
+  - target:
+      kind: Application
+      name: ^knative-instances$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: knative-instances
+        annotations:
+          # The operator chart installs the operator.knative.dev CRDs first.
+          argocd.argoproj.io/sync-wave: "1"

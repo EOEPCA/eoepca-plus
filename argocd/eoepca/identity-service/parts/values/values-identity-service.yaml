@@ -12,14 +12,14 @@ identity-keycloak:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       cert-manager.io/cluster-issuer: letsencrypt-prod
     hosts:
-      - host: keycloak-v1x.develop.eoepca.org
+      - host: keycloak-v1x.develop-v2.eoepca.org
         paths:
           - path: /
             pathType: Prefix
     tls:
       - secretName: identity-keycloak-tls
         hosts:
-          - keycloak-v1x.develop.eoepca.org
+          - keycloak-v1x.develop-v2.eoepca.org
 identity-postgres:
   secrets:
     # Values for secret 'identity-postgres'
@@ -38,7 +38,9 @@ identity-api:
     # Config values that can be passed via env vars
     extraEnv:
       - name: AUTH_SERVER_URL  # see configMap.authServerUrl instead
-        value: https://keycloak-v1x.develop.eoepca.org
+        # in-cluster dns, not the public hostname: nothing routes to nginx for this
+        # domain, so the public url 404s and identity-api crashloops on oidc discovery
+        value: http://identity-keycloak.um.svc.cluster.local:8080
       - name: ADMIN_USERNAME
         value: "admin"
       - name: REALM
@@ -50,16 +52,19 @@ identity-api:
 identity-api-gatekeeper:
   config:
     client-id: identity-api
-    discovery-url: https://keycloak-v1x.develop.eoepca.org/realms/master
-    cookie-domain: develop.eoepca.org
+    discovery-url: http://identity-keycloak.um.svc.cluster.local:8080/realms/master
+    cookie-domain: develop-v2.eoepca.org
   targetService:
-    host: identity-api.develop.eoepca.org
+    host: identity-api.develop-v2.eoepca.org
   secrets:
     # Values for secret 'identity-api-protection'
     # Note - if ommitted, these can instead be set by creating the secret independently.
     clientSecret: "changeme"
     encryptionKey: "changemechangeme"
   ingress:
+    # disabled: needs nginx snippet annotations, which are off cluster-wide,
+    # so this ingress can never sync
+    enabled: false
     annotations:
       ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"

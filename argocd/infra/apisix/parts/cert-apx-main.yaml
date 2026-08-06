@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: apx-main-tls
+  namespace: ingress-apisix
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  secretName: apx-main-tls
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  isCA: false
+  usages:
+    - server auth
+    - client auth
+  dnsNames:
+    - "develop-v2.eoepca.org"
+  issuerRef:
+    # must stay dns-01: this host is routed by apisix, not nginx, so an
+    # http-01 challenge via the nginx issuer 404s
+    name: letsencrypt-dns-prod
+    kind: ClusterIssuer

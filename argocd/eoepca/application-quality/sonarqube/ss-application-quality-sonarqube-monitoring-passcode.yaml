@@ -1,12 +1,17 @@
+---
+# Regenerate with ./ss-application-quality-sonarqube-monitoring-passcode.sh. Only
+# consumed by sonarqube itself (its /api/monitoring/metrics endpoint), so any value works.
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
+  creationTimestamp: null
   name: application-quality-sonarqube-monitoring-passcode
   namespace: application-quality-sonarqube
 spec:
   encryptedData:
-    passcode: AgAljky3RQQfUUdERnXLHUXwvIdYr4PLFwfa562uerMSRfvxtVzSYbsn8NQ/+UCOQLHcPqw+qNliWC2SEebxQoUDsLsLPtAvn0t2ujxLGjGKx5peVEeM2WdwK2hOUguIcVuk5aGdSagqNwGBRtYNUo5oO4JxkxsEG91RA5PNhB5BHEOoCajqW3g2jHh00lP+PkhX5f8dA5NQy1/N/RtOfPMgY/Mb594NXcVvCyN1gThkaB/6k2feFNnXoe9oYWWDr9put4LfeCg5Qd6T6tG3CB9Rm5V+3sg40j3jyISLZN40V8mmh2KQ1SUgAmtZKXB7/saSY/JKhNCB7hujp5jn/Z0tgOJUlMENVR6MOvMyl0KKqlJSBzGWkLKu0FbNZklWmUbMCd7wmcYMMNSSrLjyl3PMJ8AMwuRpeNS8GwcKCYhVE9VgCn7W6dNFz/x0/DyBeW9/faCcVdnrsAR+iYLjan5qPbQts1jGy9TtRWT10LlJiWksD55IdPIr1i8Y/jMfxgLWokt24fDXNfRiBejjSv1ex0110440wblKhGdR+KHZU+bwOfDvr+fFXWiBO2BDSl4GcsBL1aXy2FkImhI4OingvF4RNbjKUTwZyE1TnizEM9LvZ5vX1mhmcXBSX7mH8tP+6Sk2//wY2koeSj880oAe8xgWNqpuqll28MTnLik9nuzclYH5tN1xEC0adCc2nFuRo+L59T1G3m3NJeWJX9YU3s5wrDcp+RsNzCCWrXk=
+    passcode: AgBHewYVcdHVsfUFZ+rQF4CMh8nuYA/EDSydAfBlMtcVu1b7+XONk7/W6Mgux5/Umas9ysVXFrZrcPx/Tv1QdPMO5wLx3OhBWOado9/zot+WB5tWlqd7GOU877Js7/QHdwjW46X3DmBZrRry+WIHrliCekmYZ6lkj7nZt3tgyQYDCmmXmMj7oE+w39N66MVhIX3Y+8bbhwv1KqCfIxc1C3Vu9aLUenrzm2IRe/vd7eifjstnsKf6PhxyiHUSq8hzUMJDN6E6ayLNl7DI9fkNtN3ZGYHa0VwxYhyXG8u/v1Yb9EPLE8ftjElVf/txHPdGMuh5TwRbjDhmRUE00tpkdR4Fy2sr/PO4h2Lrqvin5lnunwY5yju2s1EbBJ4+M8fJ6AkplQLi5XJ8FjR/abU0jwcwlh08XMqxoiTvMH0DxsrApfq7DeZE9IuYeUy2al2B/qGP5N+gJJBdjutTsMt6bwLBRaEKAVM2EXoZoFvmqFKeAAuhn7t1KtUAAup9W/wtjsruSegYvmNg/Wm2VLf6bhVLa8/D3GMObt/y6P72CNtObMH2OpW/3+/AbuBa5XK7QQyYdZoSuKRh4nb0HQnJZlZVjdhdXY0FfVeTU4axTcvywxheKwIZBdDMDcu3TTT+fUy6sfxovAtMABNVxu8VyLE7ckt8N2Aw5tpBv/HxGxuJASNqboeed1TwmxpXjP8GlY98i7eva+LhSRGpI5JULui/UcQGV7uZwT3f9GNRw6f8vg==
   template:
     metadata:
+      creationTimestamp: null
       name: application-quality-sonarqube-monitoring-passcode
       namespace: application-quality-sonarqube

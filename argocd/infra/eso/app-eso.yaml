@@ -6,12 +6,14 @@ metadata:
   labels:
     eoepca/is-root-app: "true"
     eoepca/app-name: eso
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: deploy-develop
+    targetRevision: merge-from-deploy-develop
     path: argocd/infra/eso/parts
   destination:
     name: in-cluster
@@ -22,9 +24,10 @@ spec:
       selfHeal: true
       allowEmpty: true
     syncOptions:
-      - Validate=true
+      - Validate=false
       - CreateNamespace=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
       - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
+      - SkipDryRunOnMissingResource=true

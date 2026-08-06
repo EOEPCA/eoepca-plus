@@ -1,0 +1,80 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: eoepca-realm-management-client
+  namespace: iam-management
+  annotations:
+    crossplane.io/external-name: eoepca/realm-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: realm-management
+    clientId: realm-management
+  managementPolicies:
+    - Observe
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: eoepca-realm-admin
+  namespace: iam-management
+  annotations:
+    crossplane.io/external-name: eoepca/realm-management/realm-admin
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: realm-admin
+    clientIdRef:
+      name: eoepca-realm-management-client
+      policy:
+        resolution: Required
+  managementPolicies:
+    - Observe
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: eoepca-admin
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    username: eoepca-admin
+    firstName: EOEPCA
+    lastName: Admin
+    email: eoepca@gmail.com
+    emailVerified: true
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: iam-keycloak
+          key: eoepca-admin-password
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: eoepca-admin-roles
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: eoepca-admin
+      policy:
+        resolution: Required
+    roleIdsRefs:
+      - name: eoepca-realm-admin
+        policy:
+          resolution: Required

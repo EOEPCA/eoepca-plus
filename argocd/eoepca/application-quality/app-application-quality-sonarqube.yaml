@@ -20,11 +20,22 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-db-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: merge-from-deploy-develop
+      # owned here (wave 0) so postgresql can be healthy before sonarqube's own wave runs
+      path: argocd/eoepca/application-quality/sonarqube
+      directory:
+        include: "ss-application-quality-sonarqube-db-secrets.yaml"
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: merge-from-deploy-develop
       ref: values
   destination:
     name: in-cluster
     namespace: application-quality-sonarqube
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - '.spec.volumeClaimTemplates'
   syncPolicy:
     automated:
       prune: true
@@ -55,8 +66,12 @@ spec:
   project: eoepca
   sources:
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: merge-from-deploy-develop
       path: argocd/eoepca/application-quality/sonarqube
+      # Owned by application-quality-sonarqube-db instead (wave 0), so the
+      # postgresql chart doesn't deadlock waiting on this app's later wave.
+      directory:
+        exclude: "ss-application-quality-sonarqube-db-secrets.yaml"
     - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
       targetRevision: 2026.2.1
       chart: sonarqube
@@ -65,7 +80,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/application-quality/sonarqube/application-quality-sonarqube-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: deploy-develop
+      targetRevision: merge-from-deploy-develop
       ref: values
   destination:
     name: in-cluster

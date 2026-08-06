@@ -1,8 +1,21 @@
 
 resources:
   - app-application-quality-core.yaml
+  - iam.yaml
   - ss-application-quality-auth-client.yaml
   - ss-application-quality-iam-client.yaml
   - ss-application-quality-github-api-tokens.yaml
   - ss-grafana-dashboards-admin-creds.yaml
   - ss-grafana-dashboards-oauth-config.yaml
+
+patches:
+  - target: {group: bitnami.com, kind: SealedSecret}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "-10"}
+  - target: {group: argoproj.io, kind: Application}
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value: {argocd.argoproj.io/sync-wave: "0"}

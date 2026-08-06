@@ -20,7 +20,7 @@ spec:
         config: |-
           services:
             store:
-              url: https://develop.eoepca.org/sharinghub/api/store
+              url: https://develop-v2.eoepca.org/sharinghub/api/store
               mode: http
 
           server:
@@ -29,23 +29,23 @@ spec:
               - https://eoepca.readthedocs.io
 
           gitlab:
-            url: https://gitlab.develop.eoepca.org
+            url: https://gitlab.develop-v2.eoepca.org
             allow-public: true
 
           docs:
-            url: https://develop.eoepca.org/sharinghub/docs/
+            url: https://develop-v2.eoepca.org/sharinghub/docs/
 
           mlflow:
             type: mlflow-sharinghub
-            url: https://develop.eoepca.org/mlflow
+            url: https://develop-v2.eoepca.org/mlflow
 
           s3:
             bucket: mlopsbb-sharinghub
             region: eu
-            endpoint: https://minio.develop.eoepca.org
+            endpoint: https://minio.develop-v2.eoepca.org
 
           jupyterlab:
-            url: https://applicationhub.develop.eoepca.org
+            url: https://applicationhub.develop-v2.eoepca.org
 
           stac:
             projects:
@@ -58,11 +58,11 @@ spec:
             root:
               id: gitlab
               title: SharingHub brings your data and models closer.
-              description: Your platform for collaborating on ML and NLP projects, integrated with [GitLab](https://gitlab.develop.eoepca.org).
+              description: Your platform for collaborating on ML and NLP projects, integrated with [GitLab](https://gitlab.develop-v2.eoepca.org).
               locales:
                 fr:
                   title: SharingHub rapproche vos données et vos modèles.
-                  description: Votre plateforme de collaboration sur les projets ML et NLP, intégré à [GitLab](https://gitlab.develop.eoepca.org).
+                  description: Votre plateforme de collaboration sur les projets ML et NLP, intégré à [GitLab](https://gitlab.develop-v2.eoepca.org).
             categories:
               - ai-model:
                   title: "AI Models"
@@ -138,7 +138,7 @@ spec:
           external-urls:
             - name: Privacy
               footer: true
-              url: https://develop.eoepca.org/sharinghub/docs/legal/privacy/
+              url: https://develop-v2.eoepca.org/sharinghub/docs/legal/privacy/
               locales:
                 fr:
                   name: Confidentialité

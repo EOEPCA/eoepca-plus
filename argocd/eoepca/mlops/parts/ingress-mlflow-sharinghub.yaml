@@ -18,7 +18,7 @@ spec:
   - name: mlflow-sharinghub
     match:
       hosts:
-      - develop.eoepca.org
+      - develop-v2.eoepca.org
       paths:
       - /mlflow
       - /mlflow/*
@@ -38,33 +38,5 @@ spec:
         headers:
           set:
             X-Script-Name: /mlflow
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: mlflow-sharinghub-tls
-  namespace: sharinghub
-spec:
-  dnsNames:
-    - develop.eoepca.org
-  issuerRef:
-    kind: ClusterIssuer
-    name: letsencrypt-http01-apisix
-  secretName: sharinghub-develop.eoepca.org-tls
-  usages:
-    - digital signature
-    - key encipherment
-    - server auth
----
-apiVersion: apisix.apache.org/v2
-kind: ApisixTls
-metadata:
-  name: mlflow-sharinghub-tls
-  namespace: sharinghub
-spec:
-  ingressClassName: apisix
-  hosts:
-    - develop.eoepca.org
-  secret:
-    name: sharinghub-develop.eoepca.org-tls
-    namespace: sharinghub
+# no separate cert: apisix's cluster-wide wildcard cert already covers this
+# host, a duplicate just burns letsencrypt's rate limit

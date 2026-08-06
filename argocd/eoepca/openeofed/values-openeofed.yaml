@@ -8,7 +8,7 @@ configMaps:
         OidcProvider(
             id="eoepca-iam",
             title="EOEPCA IAM",
-            issuer="https://iam-auth.develop.eoepca.org/realms/eoepca/",
+            issuer="https://develop-v2.eoepca.org/iam/auth/realms/eoepca/",
             default_clients=[
                 {
                     "id": "openeo-default-client",
@@ -20,7 +20,7 @@ configMaps:
                     "redirect_urls": [
                         "https://editor.openeo.org",
                         "https://eoepca.github.io/processing-editor",
-                        "https://editor.develop.eoepca.org",
+                        "https://editor.develop-v2.eoepca.org",
                         "http://localhost:1410/",
                     ],
                 }
@@ -42,7 +42,7 @@ configMaps:
                     "redirect_urls": [
                         "https://editor.openeo.org",
                         "https://eoepca.github.io/processing-editor",
-                        "https://editor.develop.eoepca.org",
+                        "https://editor.develop-v2.eoepca.org",
                         "http://localhost:1410/",
                     ],
                 }
@@ -64,7 +64,7 @@ configMaps:
                     "redirect_urls": [
                         "https://editor.openeo.org",
                         "https://eoepca.github.io/processing-editor",
-                        "https://editor.develop.eoepca.org",
+                        "https://editor.develop-v2.eoepca.org",
                         "http://localhost:1410/",
                     ],
                 },
@@ -86,7 +86,7 @@ configMaps:
                     "redirect_urls": [
                         "https://editor.openeo.org",
                         "https://eoepca.github.io/processing-editor",
-                        "https://editor.develop.eoepca.org",
+                        "https://editor.develop-v2.eoepca.org",
                         "http://localhost:1410/",
                     ],
                 }
@@ -101,7 +101,7 @@ configMaps:
         oidc_providers=oidc_providers,
         aggregator_backends={
             "terrascope": "https://openeo-dev.vito.be/openeo/1.2/",
-            "eoepca": "https://openeo.develop.eoepca.org/openeo/1.2/",
+            "eoepca": "https://openeo.develop-v2.eoepca.org/openeo/1.2/",
             "developmentseed": "https://openeo.ds.io/",
         },
     )
@@ -128,7 +128,7 @@ ingress:
     k8s.apisix.apache.org/http-to-https: "true"
     argocd.argoproj.io/ignore-healthcheck: "true"
   hosts:
-    - host: openeofed.develop.eoepca.org
+    - host: openeofed.develop-v2.eoepca.org
       paths:
         - path: /.well-known/openeo
           pathType: Prefix
@@ -137,4 +137,4 @@ ingress:
   tls:
     - secretName: openeofed-cert
       hosts:
-        - openeofed.develop.eoepca.org
+        - openeofed.develop-v2.eoepca.org

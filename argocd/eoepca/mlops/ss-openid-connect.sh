@@ -14,7 +14,7 @@ NAMESPACE="gitlab"
 
 # Parameters from env
 source .env 2>/dev/null  # Optional local .env file for secret values as env vars
-DOMAIN=${DOMAIN:-develop.eoepca.org}
+DOMAIN=${DOMAIN:-develop-v2.eoepca.org}
 MLOPS_GITLAB_CLIENT_ID=${MLOPS_GITLAB_CLIENT_ID:-mlopsbb-gitlab}
 MLOPS_GITLAB_CLIENT_SECRET=${MLOPS_GITLAB_CLIENT_SECRET:-changeme}
 
@@ -27,7 +27,7 @@ args:
   name: openid_connect
   scope: ["openid", "profile", "email"]
   response_type: "code"
-  issuer: "https://iam-auth.${DOMAIN}/realms/eoepca"
+  issuer: "https://${DOMAIN}/iam/auth/realms/eoepca"
   client_auth_method: "query"
   discovery: true
   uid_field: "preferred_username"

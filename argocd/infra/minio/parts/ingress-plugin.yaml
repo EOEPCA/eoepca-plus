@@ -7,4 +7,5 @@ spec:
     - name: client-control
       enable: true
       config:
-        max_body_size: 0
+        # matches S3's per-part maximum. 0 was causing 413 errors.
+        max_body_size: 5368709120

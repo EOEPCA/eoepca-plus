@@ -1,0 +1,28 @@
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: mlopsbb-gitlab
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  writeConnectionSecretToRef:
+    name: mlopsbb-gitlab-oidc
+  forProvider:
+    realmId: eoepca
+    name: mlopsbb-gitlab
+    accessType: CONFIDENTIAL
+    clientId: mlopsbb-gitlab
+    enabled: true
+    standardFlowEnabled: true
+    implicitFlowEnabled: false
+    directAccessGrantsEnabled: false
+    fullScopeAllowed: true
+    serviceAccountsEnabled: false
+    useRefreshTokens: true
+    rootUrl: https://gitlab.develop-v2.eoepca.org/
+    validRedirectUris:
+      - https://gitlab.develop-v2.eoepca.org/*
+    webOrigins:
+      - https://gitlab.develop-v2.eoepca.org

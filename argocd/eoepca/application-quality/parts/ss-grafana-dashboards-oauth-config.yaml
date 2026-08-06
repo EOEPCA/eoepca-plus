@@ -1,7 +1,6 @@
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
   name: application-quality-grafana-dashboards-oauth-config
   namespace: application-quality
 spec:
@@ -10,6 +9,5 @@ spec:
     GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: AgCP+L16i/RIebN7ADtD6GF2yPKWAjepfcfg+3SxTqSBqQ24nrATLoeCWZj9gSC8oB/ZWapxxrBs8OMMuRCK1Kk9M5Vik7LS84Vhrji/QtBdIynA1eiYDI3lEqZwntfx20EMHWDp/QVoiV79T0xBONTGo/LSffHsYZGc1AZJ9nBp2J0nZw7fEtWTcS/1M0HgS12LxTaV6ZwDJqImzlvptoe8fp4/PNNvlLUeomkxHIqJpmHTK/g0u89VKLSgcaFlQlHGHp9r7RkoCR29WP7JfYGx2qUPW5+cXfATtMd41K+hy2M90WFVzHR75eFW3JHCy6degUpFZdEQ3oI686WtnS9vgiiW8j78piXvwELdWANYISzL8mmqeBmL8aZenNwp2kc8cr+xs7xw7aLG0IcTC2yV3SebYCmXmaI9EwCyeT8X75x1EJ5+vR1FBRskLtl9Z4uZovMA8/XS0S1r0Qqh+Xe9e68pBNIszmuvVzrOeoh4oe+ma2A5FFj+KA0D20F2ZBTL3WAyE0uOXD5LStq64RGsqlq1GitTmE32/mJEzDuzYDdmFN5Ppck3UXoh1TrhI3BMBAgoSIvsk4AW68SK03+yiz0R/l4rIGj24uIWQL2cUr5i7K1UXGVfnKNgftIn3ibGMyBWTT+zNSuG34vAht/PiPy1rnx/KlXT48q2zPhdt7DSRrszCLTFiZR09WhhRJ3CkeqDddfGJ/Y4CCK0qR8+xo213qvYjJQ3jx/oSBJNiQ==
   template:
     metadata:
-      creationTimestamp: null
       name: application-quality-grafana-dashboards-oauth-config
       namespace: application-quality

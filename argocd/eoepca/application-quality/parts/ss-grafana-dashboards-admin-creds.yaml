@@ -1,7 +1,6 @@
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
   name: application-quality-grafana-dashboards-admin-creds
   namespace: application-quality
 spec:
@@ -10,6 +9,5 @@ spec:
     GRAFANA_SECURITY_ADMIN_USER: AgB674VU+fW/54MrxyaD2j/iMq9uo6pTHD+nYYcba0qFzcxXTMJw+FcEFiW3INgXtpaIhzLSDwZTUxex3H3bkph9ttgarPuHdUViBqzLYJ72v3km/HPr0+Hc5UgGGPWFTpxF7cm3OII7duL55qtVPNdYTWZiCHS5I4kFVYWQn5ry/2Fe6ROknn/JXA0f+XAlhi88fk2h2zI3TN2y0Gx1kNSW8JyJgUxYednFPcNQ779QRiA6BioxImllieDD8Bu3b9zEyPGo+rcbUTefGIjMyewXzi1P2iT1O78wqxBr+gmrG3MrUY+omKyH9co86F6Nb1pE8yP62orSLukkvLVWFcgnLiitpSlSowzfSDdT5qgY3UgENPHZnx+gef+Hu2h3lHpcPDIZVNaxHJuS+T6vvfh/H8TgS195h1ojz0reWMKKvpPx8oIOXuQDu06zDv/RMbd3M+CJCsDmmACaijkU1JiYq/vTgu04dWqdbULGL7wjsPd3h4RJny3Et8zVY9LC+0tiRmmPd0VJsVsp3tkK5JoBWkw20PXDNATqd6GjdCb6qWd4YDGY5nQVdtN7h37qGPRcOHF2vt9t6z39OnlMGR7pWXMgUqI1htdflpjEBq+13fN1qIhomoSod7kbiK+sfcbuv7x7WInDpGMtMLzcrmjKVITJT5pr7W63h3ZCExzlQ3yJV8F+0Q9m2kUtWyCxMRyRvPNHsw==
   template:
     metadata:
-      creationTimestamp: null
       name: application-quality-grafana-dashboards-admin-creds
       namespace: application-quality

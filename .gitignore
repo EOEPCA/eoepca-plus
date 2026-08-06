@@ -36,3 +36,10 @@ venv/
 
 # Pulumi
 .pulumi/
+BB-CHANGES.md
+eoepca-openrc-2fa.sh
+deploy/infra/.pulumi-known-hosts
+deploy/infra/reset-rke2-cluster.log
+deploy/infra/reset-rke2-cluster.sh
+deploy/k8s-resources/*
+iam-export/*

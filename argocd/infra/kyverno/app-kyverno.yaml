@@ -18,7 +18,7 @@ spec:
         valueFiles:
           - $values/argocd/infra/kyverno/values-kyverno.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: merge-from-deploy-develop
+      targetRevision: deploy-develop
       ref: values
   destination:
     name: in-cluster

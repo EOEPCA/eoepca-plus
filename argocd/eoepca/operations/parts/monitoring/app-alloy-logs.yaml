@@ -10,7 +10,7 @@ spec:
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: merge-from-deploy-develop
+    targetRevision: deploy-develop
     path: argocd/eoepca/operations/parts/monitoring/alloy
   destination:
     name: in-cluster

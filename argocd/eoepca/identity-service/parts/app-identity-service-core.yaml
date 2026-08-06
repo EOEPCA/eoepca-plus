@@ -17,7 +17,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/identity-service/parts/values/values-identity-service.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: merge-from-deploy-develop
+      targetRevision: deploy-develop
       ref: values
 
   destination:

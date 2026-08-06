@@ -149,8 +149,6 @@ patches:
       metadata:
         name: eoepca-independent-services
         annotations:
-          # no dependents; last wave so a problem here can't block everyone else
-          # (data-proxy is here too, for a known-broken upstream chart pin, see BB-CHANGES doc)
           argocd.argoproj.io/sync-wave: "55"
   - target:
       group: bitnami.com

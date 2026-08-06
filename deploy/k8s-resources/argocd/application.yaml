@@ -10,7 +10,7 @@ spec:
 
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: merge-from-deploy-develop
+    targetRevision: deploy-develop
     path: argocd
 
   destination:

@@ -17,7 +17,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/registration-harvester/parts/values/values-sentinel.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: merge-from-deploy-develop
+      targetRevision: deploy-develop
       ref: values
 
   destination:

@@ -15,7 +15,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/iam/parts/values/iam-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: merge-from-deploy-develop
+      targetRevision: deploy-develop
       ref: values
 
   destination:

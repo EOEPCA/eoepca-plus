@@ -17,7 +17,7 @@ spec:
         valueFiles:
           - $values/argocd/eoepca/application-quality/parts/application-quality-values.yaml
     - repoURL: https://github.com/EOEPCA/eoepca-plus
-      targetRevision: merge-from-deploy-develop
+      targetRevision: deploy-develop
       ref: values
   destination:
     name: in-cluster

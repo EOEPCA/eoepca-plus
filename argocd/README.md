@@ -102,7 +102,7 @@ spec:
   source:
     path: argocd
     repoURL: https://github.com/EOEPCA/eoepca-plus
-    targetRevision: merge-from-deploy-develop
+    targetRevision: deploy-develop
   syncPolicy:
     automated:
       allowEmpty: true

@@ -12,6 +12,8 @@ spec:
     username: alice
     firstName: Alice
     lastName: Test
+    email: alice@example.com
+    emailVerified: true
     enabled: true
     initialPassword:
       - temporary: false
@@ -33,6 +35,8 @@ spec:
     username: bob
     firstName: Bob
     lastName: Test
+    email: bob@example.com
+    emailVerified: true
     enabled: true
     initialPassword:
       - temporary: false
@@ -54,6 +58,8 @@ spec:
     username: eric
     firstName: Eric
     lastName: Test
+    email: eric@example.com
+    emailVerified: true
     enabled: true
     initialPassword:
       - temporary: false

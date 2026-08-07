@@ -1,0 +1,12 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: application-quality-dashboards-iam-client
+  namespace: iam-management
+spec:
+  encryptedData:
+    client_secret: AgAjezBVfGLR78HoJwWCFrx8MF/3YzAXO3zPs95LJlKDDAxi+t8puF9c4yxr61lwfR2fYaDWf11WAMWbQQ7H+U3CK4T48tBA/C05JqjqbqOP2K5f68+ORab3Cbe38dlY2R7rtgz5Hqn0Wip2Lrdcw5q8uZQYJFNhR8ON5Q2pXqYb3pipUUW53SaHEKvaQBJA7AToPWE0c0rKqDPxJndEAofx/lYjnclQkiHCXQIPkdlN3nFxnm6dpJZRHZRyqfAw5txOqt90hvMsLNH+1+TOkpXuStc2eggkbZfd13+Vh0pSj0XKu3/lTD81iC9zSIlmHVI5IbFW9aPnjXo6EJXFYuDRn4QcVjmmdU0dyJ4EfKCh7T7Kdnx4xRllMW8LbP3Ph8bfhoxTr3N417xUpyr+qHa7Ccg0JpmctMWp1pgNcauecEGauCdUg7T4XevRYfUE+IvRRXyZca/DPSXz51bm28HcFXHTOgHMSNqjJw217ZTOdoQy6S978dlyd7lAdKADLYjjJwRgOSNjRoGVSzp138PJpmoc9DkJwYbgrRSq/8g+8tSs3AotiF5wJnGdi8FeA0jtmTWDFbLY6A0inkRAZHT1bEx2l7E7Pjap6RIcnTVD1QRZu3raN4p+HUKnollYM8MoMceyLMU8e7iVVGykE08Hth5HJz6mTMA2uAtHm6DAGMt0S1BHgP+yaF8vfkNedkDJ6OXRYA54SOW+ZHBCHjBf93rnF1LOZRcSC9gMVSKrvVo0bbClDECkO0UuDdarV81aNsHHBKW/0K++AijjhwiD
+  template:
+    metadata:
+      name: application-quality-dashboards-iam-client
+      namespace: iam-management

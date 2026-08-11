@@ -113,6 +113,9 @@ iam: &iam
         # attributes except those covered by the settings above.
         customSettings:
           loginWithEmailAllowed: false
+          # Enable user events and keep them for 30min
+          eventsEnabled: true
+          eventsExpiration: 1800
           # The following example demonstrates how to configure the SMTP server
           # for outgoing e-mails:
           smtpServer:

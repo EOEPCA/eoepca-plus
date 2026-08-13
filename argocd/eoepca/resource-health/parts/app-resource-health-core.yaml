@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: 'https://eoepca.github.io/helm-charts-dev'
     chart: resource-health-reference-deployment
-    targetRevision: 2.1.1
+    targetRevision: 2.1.2
     helm:
       valuesObject:
         global:

@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: 'https://eoepca.github.io/helm-charts-dev'
     chart: resource-health-reference-deployment
-    targetRevision: 2.1.2
+    targetRevision: 2.1.3
     helm:
       valuesObject:
         global:
@@ -96,6 +96,8 @@ spec:
             image:
               pullPolicy: Always
             environmentFixed:
+              - name: RH_TELEMETRY_API_BASE_URL
+                value: "https://resource-health.develop-v2.eoepca.org/api/telemetry/"
               - name: FAST_API_ROOT_PATH
                 value: "/api/telemetry"
               - name: OPEN_ID_CONNECT_URL
@@ -188,6 +190,8 @@ spec:
             image:
               pullPolicy: Always
             environmentFixed:
+              - name: RH_CHECK_API_BASE_URL
+                value: "https://resource-health.develop-v2.eoepca.org/api/healthchecks/"
               - name: FAST_API_ROOT_PATH
                 value: "/api/healthchecks"
               - name: OPEN_ID_CONNECT_URL

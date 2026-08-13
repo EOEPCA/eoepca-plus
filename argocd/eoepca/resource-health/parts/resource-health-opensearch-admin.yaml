@@ -12,6 +12,9 @@ spec:
     username: opensearch-admin
     firstName: Opensearch
     lastName: Admin
+    email: opensearch.admin@example.com
+    emailVerified: true
+    enabled: true
     initialPassword:
       - temporary: false
         valueSecretRef:

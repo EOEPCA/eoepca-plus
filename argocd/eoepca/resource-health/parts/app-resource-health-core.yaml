@@ -204,6 +204,8 @@ spec:
                 value: "https://opensearch-cluster-master-headless:9200"
               - name: DEFAULT_TELEMETRY_OPENSEARCH_INDEX
                 value: "ss4o_traces-default-namespace"
+              - name: RH_CHECK_K8S_DEFAULT_RUNNER_IMAGE
+                value: "docker.io/eoepca/healthcheck_runner:2.0.1-6cbbcf4"
 
             use_hook_configmap: True
             hooks:

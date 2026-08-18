@@ -84,10 +84,27 @@ spec:
       policy:
         resolution: Required
 ---
-apiVersion: user.keycloak.m.crossplane.io/v1alpha1
-kind: Roles
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
 metadata:
-  name: eoepca-admin-monitoring-roles
+  name: eoepca-offline-access
+  namespace: iam-management
+  annotations:
+    crossplane.io/external-name: eoepca/offline_access
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: offline_access
+  managementPolicies:
+    - Observe
+---
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: monitoring-admin
   namespace: iam-management
 spec:
   providerConfigRef:
@@ -95,19 +112,35 @@ spec:
     kind: ProviderConfig
   forProvider:
     realmId: eoepca
-    userIdRef:
-      name: eoepca-admin
+    name: monitoring-admin
+---
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: monitoring-admin
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    groupIdRef:
+      name: monitoring-admin
       policy:
         resolution: Required
     roleIdsRefs:
       - name: grafana-admin
         policy:
           resolution: Required
+      - name: eoepca-offline-access
+        policy:
+          resolution: Required
 ---
-apiVersion: user.keycloak.m.crossplane.io/v1alpha1
-kind: Roles
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Memberships
 metadata:
-  name: eoepca-user-monitoring-roles
+  name: monitoring-admin-members
   namespace: iam-management
 spec:
   providerConfigRef:
@@ -115,11 +148,63 @@ spec:
     kind: ProviderConfig
   forProvider:
     realmId: eoepca
-    userIdRef:
-      name: eoepca-user
+    groupIdRef:
+      name: monitoring-admin
+      policy:
+        resolution: Required
+    members:
+      - eoepca-admin
+---
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Group
+metadata:
+  name: monitoring-editor
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: monitoring-editor
+---
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: monitoring-editor
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    groupIdRef:
+      name: monitoring-editor
       policy:
         resolution: Required
     roleIdsRefs:
       - name: grafana-editor
         policy:
           resolution: Required
+      - name: eoepca-offline-access
+        policy:
+          resolution: Required
+---
+apiVersion: group.keycloak.m.crossplane.io/v1alpha1
+kind: Memberships
+metadata:
+  name: monitoring-editor-members
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    groupIdRef:
+      name: monitoring-editor
+      policy:
+        resolution: Required
+    members:
+      - eoepcauser

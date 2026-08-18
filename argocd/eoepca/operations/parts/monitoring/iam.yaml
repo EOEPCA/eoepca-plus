@@ -83,3 +83,43 @@ spec:
       name: monitoring
       policy:
         resolution: Required
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: eoepca-admin-monitoring-roles
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: eoepca-admin
+      policy:
+        resolution: Required
+    roleIdsRefs:
+      - name: grafana-admin
+        policy:
+          resolution: Required
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: eoepca-user-monitoring-roles
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: eoepca-user
+      policy:
+        resolution: Required
+    roleIdsRefs:
+      - name: grafana-editor
+        policy:
+          resolution: Required

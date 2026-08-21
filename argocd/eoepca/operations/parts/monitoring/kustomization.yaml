@@ -3,6 +3,7 @@ resources:
   - app-loki-stack.yaml
   - storage-loki.yaml
   - app-alloy-logs.yaml
+  - podmonitor-etcd.yaml
   - iam.yaml
   - routes.yaml
 

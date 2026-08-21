@@ -97,6 +97,14 @@ spec:
         prometheus-node-exporter:
           hostPort:
             enabled: false
+          # Custom CriticalAddonsOnly toleration to allow scheduling on the RKE2 control-plane nodes
+          tolerations:
+            - effect: NoSchedule
+              operator: Exists
+            - key: CriticalAddonsOnly
+              operator: Equal
+              value: "true"
+              effect: NoExecute
 
         prometheusOperator:
           scrapeConfig:

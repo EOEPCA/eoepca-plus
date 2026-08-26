@@ -25,9 +25,21 @@ spec:
       namespace: iam-management
       jsonPointers:
         - /metadata/annotations/crossplane.io~1external-name
+    - group: "openidclient.keycloak.m.crossplane.io"
+      kind: Client
+      name: account-console
+      namespace: iam-management
+      jsonPointers:
+        - /metadata/annotations/crossplane.io~1external-name
     - group: "role.keycloak.m.crossplane.io"
       kind: Role
       name: eoepca-realm-admin
+      namespace: iam-management
+      jsonPointers:
+        - /metadata/annotations/crossplane.io~1external-name
+    - group: "role.keycloak.m.crossplane.io"
+      kind: Role
+      name: default-roles-eoepca
       namespace: iam-management
       jsonPointers:
         - /metadata/annotations/crossplane.io~1external-name

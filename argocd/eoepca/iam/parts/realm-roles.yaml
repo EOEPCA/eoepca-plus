@@ -37,3 +37,20 @@ spec:
   forProvider:
     realmId: eoepca
     name: user
+---
+apiVersion: role.keycloak.m.crossplane.io/v1alpha1
+kind: Role
+metadata:
+  name: default-roles-eoepca
+  namespace: iam-management
+  annotations:
+    crossplane.io/external-name: eoepca/default-roles-eoepca
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: default-roles-eoepca
+  managementPolicies:
+    - Observe

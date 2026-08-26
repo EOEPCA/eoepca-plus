@@ -66,3 +66,63 @@ spec:
         valueSecretRef:
           name: test-users
           key: eric-password
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: alice-roles
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: alice
+      policy:
+        resolution: Required
+    roleIdsRefs:
+      - name: default-roles-eoepca
+        policy:
+          resolution: Required
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: bob-roles
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: bob
+      policy:
+        resolution: Required
+    roleIdsRefs:
+      - name: default-roles-eoepca
+        policy:
+          resolution: Required
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: eric-roles
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: eric
+      policy:
+        resolution: Required
+    roleIdsRefs:
+      - name: default-roles-eoepca
+        policy:
+          resolution: Required

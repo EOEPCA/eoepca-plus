@@ -20,3 +20,23 @@ spec:
         valueSecretRef:
           name: eoepca-user
           key: eoepcauser-password
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Roles
+metadata:
+  name: eoepca-user-roles
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: eoepca-user
+      policy:
+        resolution: Required
+    roleIdsRefs:
+      - name: default-roles-eoepca
+        policy:
+          resolution: Required

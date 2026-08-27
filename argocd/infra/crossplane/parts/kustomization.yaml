@@ -5,6 +5,7 @@ resources:
   - deploymentRuntimeConfigs.yaml
   - providers.yaml
   - providerConfigs.yaml
+  - ss-keycloak-secret.yaml
   - ss-minio-secret.yaml
   - functions.yaml
   - rbac.yaml

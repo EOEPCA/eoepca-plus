@@ -44,6 +44,7 @@ spec:
         discovery: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
         use_jwks: true
         bearer_only: false
+        use_pkce: true
         set_access_token_header: true
         access_token_in_authorization_header: true
         set_id_token_header: false

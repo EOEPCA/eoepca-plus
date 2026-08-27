@@ -75,6 +75,9 @@ spec:
       policy:
         resolution: Required
     roleIdsRefs:
+      - name: default-roles-eoepca
+        policy:
+          resolution: Required
       - name: eoepca-realm-admin
         policy:
           resolution: Required

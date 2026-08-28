@@ -19,6 +19,10 @@ spec:
           scanJobsConcurrentLimit: 4  # Default is 10
           clusterSbomCacheEnabled: true
           scanJobTTL: 10m
+        serviceMonitor:
+          enabled: true
+          labels:
+            release: kube-prometheus-stack
         trivyOperator:
           scanJobCustomVolumes:
             - name: extra-trivy-config
@@ -162,7 +166,7 @@ spec:
 
           configFile:
             kubernetes:
-              k8s-version: "1.32.0"
+              k8s-version: "1.35.0"
             rego:
               data:
                 - /extra-trivy-config/trivy-config-data.yaml

@@ -1,0 +1,58 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: security-alerts
+  namespace: operations
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: security.trivy
+      rules:
+        - alert: TrivyCriticalImageVulnerabilities
+          expr: sum(trivy_image_vulnerabilities{severity="Critical"}) > 0
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: Trivy found critical container image vulnerabilities.
+            description: Review the affected VulnerabilityReports and assess whether the vulnerable code is reachable.
+        - alert: TrivyExposedSecrets
+          expr: sum(trivy_image_exposedsecrets{severity=~"Critical|High"}) > 0
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: Trivy found high or critical exposed secrets in container images.
+            description: Review the affected ExposedSecretReports and rotate any real credential before removing it from the image.
+        - alert: TrivyCriticalConfigurationFindings
+          expr: |
+            (
+              (sum(trivy_resource_configaudits{severity="Critical"}) or vector(0))
+              + (sum(trivy_role_rbacassessments{severity="Critical"}) or vector(0))
+              + (sum(trivy_clusterrole_clusterrbacassessments{severity="Critical"}) or vector(0))
+            ) > 0
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: Trivy found critical Kubernetes configuration or RBAC findings.
+            description: Review ConfigAuditReports and RbacAssessmentReports and document any required exception.
+        - alert: TrivyComplianceChecksFailing
+          expr: sum by (title) (trivy_cluster_compliance{status="Fail"}) > 0
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: Trivy reports failed {{ $labels.title }} compliance checks.
+            description: Review the matching ClusterComplianceReport; this report is guidance and is not proof of CIS certification.
+        - alert: TrivyComplianceMetricsMissing
+          expr: absent(trivy_cluster_compliance)
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: Trivy compliance metrics are missing.
+            description: Check the Trivy Operator, its ServiceMonitor, and the ClusterComplianceReports.

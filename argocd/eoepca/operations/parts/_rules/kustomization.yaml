@@ -1,3 +1,4 @@
 resources:
   - baseline-alerts.yaml
+  - security-alerts.yaml
   - stac-alerts.yaml

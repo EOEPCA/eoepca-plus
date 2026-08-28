@@ -30,6 +30,12 @@ configMapGenerator:
         grafana_dashboard: "1"
     files:
       - prometheus-overview.json
+  - name: curated-trivy-security
+    options:
+      labels:
+        grafana_dashboard: "1"
+    files:
+      - trivy-security.json
   - name: curated-stac-slo
     options:
       labels:

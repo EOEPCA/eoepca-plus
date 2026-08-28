@@ -17,6 +17,18 @@ spec:
     name: in-cluster
     namespace: resource-health
   syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/audit: restricted
+        pod-security.kubernetes.io/audit-version: v1.35
+        pod-security.kubernetes.io/warn: restricted
+        pod-security.kubernetes.io/warn-version: v1.35
+        security.eoepca.org/pod-security-exception-required: "true"
+      annotations:
+        security.eoepca.org/pod-security-exception-reason: >-
+          The OpenSearch sysctl init container currently requires privileged access.
+        security.eoepca.org/pod-security-remediation: >-
+          Configure the required sysctl on the hosts and disable the privileged init container.
     automated:
       prune: true
       selfHeal: true

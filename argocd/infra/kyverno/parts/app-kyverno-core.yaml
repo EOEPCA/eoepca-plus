@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kyverno-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: kyverno
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true,IncludeMutationWebhook=true
+    argocd.argoproj.io/sync-wave: "-20"
+spec:
+  project: eoepca
+  source:
+    repoURL: https://kyverno.github.io/kyverno/
+    chart: kyverno
+    targetRevision: 3.7.2
+    helm:
+      releaseName: kyverno
+      values: |
+        crds:
+          install: true
+        admissionController:
+          replicas: 2
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+        backgroundController:
+          replicas: 2
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+        reportsController:
+          replicas: 2
+          podDisruptionBudget:
+            enabled: true
+            minAvailable: 1
+        config:
+          preserve: false
+  destination:
+    name: in-cluster
+    namespace: kyverno-system
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/audit: restricted
+        pod-security.kubernetes.io/audit-version: v1.35
+        pod-security.kubernetes.io/warn: restricted
+        pod-security.kubernetes.io/warn-version: v1.35
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

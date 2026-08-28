@@ -1,18 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kyverno
+  name: kyverno-policies
   namespace: argocd
   labels:
-    eoepca/is-root-app: "true"
     eoepca/app-name: kyverno
+  annotations:
+    argocd.argoproj.io/sync-wave: "-19"
 spec:
-  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   source:
     repoURL: https://github.com/EOEPCA/eoepca-plus
     targetRevision: deploy-develop
-    path: argocd/infra/kyverno/parts
+    path: argocd/infra/kyverno/policies
   destination:
     name: in-cluster
     namespace: kyverno-system
@@ -26,5 +26,6 @@ spec:
       - CreateNamespace=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
-      - RespectIgnoreDifferences=true
       - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true

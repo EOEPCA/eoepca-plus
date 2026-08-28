@@ -4,13 +4,40 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: workspace
+  labels:
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: v1.35
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: v1.35
+    security.eoepca.org/pod-security-exception-required: "true"
+  annotations:
+    security.eoepca.org/pod-security-exception-reason: >-
+      The rclone CSI node plugin currently requires a privileged container and host paths.
+    security.eoepca.org/pod-security-remediation: >-
+      Move the CSI node component to a dedicated storage namespace before enforcing Restricted here.
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: data-access
+  labels:
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: v1.35
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: v1.35
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: operations
+  labels:
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: v1.35
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: v1.35
+    security.eoepca.org/pod-security-exception-required: "true"
+  annotations:
+    security.eoepca.org/pod-security-exception-reason: >-
+      Prometheus node exporter currently requires host networking, host PID, and host paths.
+    security.eoepca.org/pod-security-remediation: >-
+      Isolate the node agent from the otherwise restrictable monitoring workloads before enforcement.

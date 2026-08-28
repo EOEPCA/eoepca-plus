@@ -1,0 +1,3 @@
+resources:
+  - app-kyverno-core.yaml
+  - app-kyverno-policies.yaml

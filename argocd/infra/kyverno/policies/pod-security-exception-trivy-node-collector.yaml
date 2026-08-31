@@ -1,0 +1,40 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: pod-security-trivy-node-collector
+  namespace: kyverno-system
+  annotations:
+    security.eoepca.org/owner: security
+    security.eoepca.org/reason: >-
+      The Trivy node collector requires host PID, root, and read-only host paths
+      to inspect RKE2 node configuration.
+    security.eoepca.org/review-after: "2026-11-28"
+spec:
+  background: true
+  exceptions:
+    - policyName: pod-security-restricted-audit
+      ruleNames:
+        - restricted
+        - autogen-restricted
+  match:
+    any:
+      - resources:
+          kinds:
+            - Pod
+            - Job
+          names:
+            - node-collector-*
+          namespaces:
+            - trivy-system
+  podSecurity:
+    - controlName: Host Namespaces
+    - controlName: HostPath Volumes
+    - controlName: Volume Types
+    - controlName: Running as Non-root
+    - controlName: Running as Non-root
+      images:
+        - "*"
+    - controlName: Running as Non-root user
+    - controlName: Running as Non-root user
+      images:
+        - "*"

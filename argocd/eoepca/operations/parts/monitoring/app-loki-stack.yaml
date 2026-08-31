@@ -49,6 +49,17 @@ spec:
             delete_request_store: s3
             retention_delete_delay: 2h
             compaction_interval: 10m
+          rulerConfig:
+            alertmanager_url: http://kube-prometheus-stack-alertmanager.operations.svc.cluster.local:9093
+            enable_alertmanager_v2: true
+            enable_api: true
+            evaluation_interval: 1m
+            poll_interval: 1m
+            rule_path: /var/loki/ruler-tmp
+            storage:
+              type: local
+              local:
+                directory: /rules
 
         singleBinary:
           replicas: 1
@@ -80,6 +91,16 @@ spec:
 
         resultsCache:
           enabled: false
+
+        sidecar:
+          rules:
+            enabled: true
+            folder: /rules/fake
+            label: loki_rule
+            labelValue: "1"
+            resource: configmap
+            searchNamespace:
+              - operations
 
         monitoring:
           serviceMonitor:

@@ -16,8 +16,12 @@ spec:
   admission: true
   background: true
   emitWarning: true
+  # Audit must stay fail-open. An unavailable policy engine must not block the
+  # workloads that this phase is measuring.
+  failurePolicy: Ignore
   rules:
     - name: restricted
+      skipBackgroundRequests: true
       match:
         any:
           - resources:
@@ -32,6 +36,7 @@ spec:
                 - compliance-operator-system
                 - tigera-operator
       validate:
+        allowExistingViolations: true
         failureAction: Audit
         podSecurity:
           level: restricted

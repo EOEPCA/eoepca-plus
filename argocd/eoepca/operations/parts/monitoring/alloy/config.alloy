@@ -1,66 +1,73 @@
 logging {
-  level  = "info"
-  format = "logfmt"
+	level  = "info"
+	format = "logfmt"
 }
 
 loki.write "default" {
-  endpoint {
-    url = "http://loki-stack-gateway.operations.svc.cluster.local/loki/api/v1/push"
-  }
+	endpoint {
+		url = "http://loki-stack-gateway.operations.svc.cluster.local/loki/api/v1/push"
+	}
+
+	// Persist unsent entries in the component data directory. The DaemonSet
+	// mounts that directory from the node so a pod restart does not lose them.
+	wal {
+		enabled         = true
+		max_segment_age = "2h"
+	}
 }
 
 discovery.kubernetes "pod" {
-  role = "pod"
+	role = "pod"
 
-  // Limit discovery to the local node to keep API and kubelet load bounded.
-  selectors {
-    role  = "pod"
-    field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
-  }
+	// Limit discovery to the local node to keep API and kubelet load bounded.
+	selectors {
+		role  = "pod"
+		field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
+	}
 }
 
 discovery.relabel "pod_logs" {
-  targets = discovery.kubernetes.pod.targets
+	targets = discovery.kubernetes.pod.targets
 
-  rule {
-    source_labels = ["__meta_kubernetes_namespace"]
-    action        = "replace"
-    target_label  = "namespace"
-  }
+	rule {
+		source_labels = ["__meta_kubernetes_namespace"]
+		action        = "replace"
+		target_label  = "namespace"
+	}
 
-  rule {
-    source_labels = ["__meta_kubernetes_pod_name"]
-    action        = "replace"
-    target_label  = "pod"
-  }
+	rule {
+		source_labels = ["__meta_kubernetes_pod_name"]
+		action        = "replace"
+		target_label  = "pod"
+	}
 
-  rule {
-    source_labels = ["__meta_kubernetes_pod_container_name"]
-    action        = "replace"
-    target_label  = "container"
-  }
+	rule {
+		source_labels = ["__meta_kubernetes_pod_container_name"]
+		action        = "replace"
+		target_label  = "container"
+	}
 
-  rule {
-    source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-    action        = "replace"
-    target_label  = "app"
-  }
+	rule {
+		source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+		action        = "replace"
+		target_label  = "app"
+	}
 
-  rule {
-    source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
-    action        = "replace"
-    target_label  = "job"
-    separator     = "/"
-    replacement   = "$1"
-  }
+	rule {
+		source_labels = ["__meta_kubernetes_namespace", "__meta_kubernetes_pod_container_name"]
+		action        = "replace"
+		target_label  = "job"
+		separator     = "/"
+		replacement   = "$1"
+	}
 
-  rule {
-    source_labels = ["__meta_kubernetes_pod_container_id"]
-    action        = "replace"
-    target_label  = "container_runtime"
-    regex         = `^(\S+):\/\/.+$`
-    replacement   = "$1"
-  }
+	rule {
+		source_labels = ["__meta_kubernetes_pod_container_id"]
+		action        = "replace"
+		target_label  = "container_runtime"
+		regex         = `^(\S+):\/\/.+$`
+		replacement   = "$1"
+	}
 }
 
 loki.source.kubernetes "pod_logs" {
@@ -69,11 +76,138 @@ loki.source.kubernetes "pod_logs" {
 }
 
 loki.process "pod_logs" {
-  stage.static_labels {
-    values = {
-      cluster = "eoepca-demo",
-    }
-  }
+	stage.static_labels {
+		values = {
+			cluster = "eoepca-demo",
+		}
+	}
 
-  forward_to = [loki.write.default.receiver]
+	forward_to = [loki.write.default.receiver]
+}
+
+// RKE2 writes API audit events here when an audit policy is enabled. Keep only
+// security-relevant metadata in Loki; request and response objects can contain
+// Secret values and are intentionally not forwarded.
+loki.source.file "rke2_audit" {
+	targets = [{
+		__path__ = "/var/lib/rancher/rke2/server/logs/audit.log",
+		job      = "kube-audit",
+		node     = sys.env("HOSTNAME"),
+	}]
+
+	tail_from_end = true
+	forward_to    = [loki.process.rke2_audit.receiver]
+
+	file_match {
+		enabled     = true
+		sync_period = "10s"
+	}
+}
+
+loki.process "rke2_audit" {
+	stage.json {
+		expressions = {
+			audit_id           = "auditID",
+			actor              = "user.username",
+			api_group          = "objectRef.apiGroup",
+			api_version        = "objectRef.apiVersion",
+			impersonated_actor = "impersonatedUser.username",
+			namespace          = "objectRef.namespace",
+			object_name        = "objectRef.name",
+			request_uri        = "requestURI",
+			resource           = "objectRef.resource",
+			response_code      = "responseStatus.code",
+			source_ip          = "sourceIPs[0]",
+			stage              = "stage",
+			subresource        = "objectRef.subresource",
+			timestamp          = "requestReceivedTimestamp",
+			user_agent         = "userAgent",
+			verb               = "verb",
+		}
+		drop_malformed = true
+	}
+
+	stage.timestamp {
+		source = "timestamp"
+		format = "RFC3339Nano"
+	}
+
+	stage.template {
+		source   = "normalized"
+		template = `audit_id={{ .audit_id | quote }} actor={{ .actor | quote }} impersonated_actor={{ .impersonated_actor | quote }} verb={{ .verb | quote }} namespace={{ .namespace | quote }} api_group={{ .api_group | quote }} api_version={{ .api_version | quote }} resource={{ .resource | quote }} subresource={{ .subresource | quote }} object_name={{ .object_name | quote }} response_code={{ .response_code | quote }} source_ip={{ .source_ip | quote }} stage={{ .stage | quote }} request_uri={{ .request_uri | quote }} user_agent={{ .user_agent | quote }}`
+	}
+
+	stage.output {
+		source = "normalized"
+	}
+
+	stage.static_labels {
+		values = {
+			cluster = "eoepca-demo",
+			job     = "kube-audit",
+		}
+	}
+
+	forward_to = [loki.write.default.receiver]
+}
+
+// Preserve bounded journal context without indexing message content. Alloy
+// stores each journal cursor below --storage.path on the node.
+loki.relabel "journal" {
+	forward_to = []
+
+	rule {
+		source_labels = ["__journal__systemd_unit"]
+		target_label  = "unit"
+	}
+
+	rule {
+		source_labels = ["__journal_syslog_identifier"]
+		target_label  = "syslog_identifier"
+	}
+
+	rule {
+		source_labels = ["__journal_priority_keyword"]
+		target_label  = "level"
+	}
+}
+
+loki.source.journal "rke2_server" {
+	matches       = "_SYSTEMD_UNIT=rke2-server.service"
+	max_age       = "12h"
+	relabel_rules = loki.relabel.journal.rules
+	labels        = {cluster = "eoepca-demo", job = "systemd", node = sys.env("HOSTNAME"), source = "rke2-server"}
+	forward_to    = [loki.write.default.receiver]
+}
+
+loki.source.journal "rke2_agent" {
+	matches       = "_SYSTEMD_UNIT=rke2-agent.service"
+	max_age       = "12h"
+	relabel_rules = loki.relabel.journal.rules
+	labels        = {cluster = "eoepca-demo", job = "systemd", node = sys.env("HOSTNAME"), source = "rke2-agent"}
+	forward_to    = [loki.write.default.receiver]
+}
+
+loki.source.journal "sshd" {
+	matches       = "_SYSTEMD_UNIT=sshd.service"
+	max_age       = "12h"
+	relabel_rules = loki.relabel.journal.rules
+	labels        = {cluster = "eoepca-demo", job = "systemd", node = sys.env("HOSTNAME"), source = "sshd"}
+	forward_to    = [loki.write.default.receiver]
+}
+
+loki.source.journal "auditd" {
+	matches       = "_SYSTEMD_UNIT=auditd.service"
+	max_age       = "12h"
+	relabel_rules = loki.relabel.journal.rules
+	labels        = {cluster = "eoepca-demo", job = "systemd", node = sys.env("HOSTNAME"), source = "auditd"}
+	forward_to    = [loki.write.default.receiver]
+}
+
+loki.source.journal "kernel" {
+	matches       = "_TRANSPORT=kernel"
+	max_age       = "12h"
+	relabel_rules = loki.relabel.journal.rules
+	labels        = {cluster = "eoepca-demo", job = "systemd", node = sys.env("HOSTNAME"), source = "kernel"}
+	forward_to    = [loki.write.default.receiver]
 }

@@ -1,0 +1,40 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: pod-security-alloy-host-observability
+  namespace: kyverno-system
+  annotations:
+    security.eoepca.org/owner: operations
+    security.eoepca.org/reason: >-
+      Alloy must read the node journal and RKE2 audit log and persist its local
+      positions and delivery WAL on each node.
+    security.eoepca.org/review-after: "2026-11-28"
+spec:
+  background: true
+  exceptions:
+    - policyName: pod-security-restricted-audit
+      ruleNames:
+        - restricted
+        - autogen-restricted
+  match:
+    any:
+      - resources:
+          kinds:
+            - Pod
+            - DaemonSet
+          namespaces:
+            - operations
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: alloy-logs
+  podSecurity:
+    - controlName: HostPath Volumes
+    - controlName: Volume Types
+    - controlName: Running as Non-root
+    - controlName: Running as Non-root
+      images:
+        - "*"
+    - controlName: Running as Non-root user
+    - controlName: Running as Non-root user
+      images:
+        - "*"

@@ -36,6 +36,12 @@ configMapGenerator:
         grafana_dashboard: "1"
     files:
       - trivy-security.json
+  - name: curated-kyverno-policy-audit
+    options:
+      labels:
+        grafana_dashboard: "1"
+    files:
+      - kyverno-policy-audit.json
   - name: curated-stac-slo
     options:
       labels:

@@ -1,0 +1,36 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: pod-security-node-exporter-host-metrics
+  namespace: kyverno-system
+  annotations:
+    security.eoepca.org/owner: operations
+    security.eoepca.org/reason: >-
+      Prometheus node exporter requires host namespaces, host filesystems, and
+      its node metrics port to observe the operating system.
+    security.eoepca.org/review-after: "2026-11-28"
+spec:
+  background: true
+  exceptions:
+    - policyName: pod-security-restricted-audit
+      ruleNames:
+        - restricted
+        - autogen-restricted
+  match:
+    any:
+      - resources:
+          kinds:
+            - Pod
+            - DaemonSet
+          namespaces:
+            - operations
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus-node-exporter
+  podSecurity:
+    - controlName: Host Namespaces
+    - controlName: HostPath Volumes
+    - controlName: Host Ports
+      images:
+        - "*"
+    - controlName: Volume Types

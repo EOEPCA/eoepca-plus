@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubernetes-audit-rules
+  namespace: operations
+  labels:
+    loki_rule: "1"
+data:
+  kubernetes-audit.yaml: |
+    groups:
+      - name: kubernetes-audit
+        interval: 1m
+        rules:
+          - alert: KubernetesAuditRBACChange
+            expr: |
+              sum by (actor, namespace, resource, subresource, object_name, source_ip, verb) (
+                count_over_time(
+                  {cluster="eoepca-demo", job="kube-audit"}
+                    | logfmt
+                    | verb=~"create|update|patch|delete"
+                    | resource=~"roles|rolebindings|clusterroles|clusterrolebindings"
+                    | response_code=~"2.." [15m]
+                )
+              ) > 0
+            for: 1m
+            labels:
+              severity: critical
+              scenario: privilege-escalation
+              source: kubernetes-audit
+            annotations:
+              summary: Kubernetes RBAC change by {{ $labels.actor }}
+              description: >-
+                Actor {{ $labels.actor }} from {{ $labels.source_ip }} used
+                {{ $labels.verb }} on {{ $labels.resource }}/{{ $labels.object_name }}
+                in namespace {{ $labels.namespace }}.
+
+          - alert: KubernetesAuditPodExec
+            expr: |
+              sum by (actor, namespace, resource, subresource, object_name, source_ip, verb) (
+                count_over_time(
+                  {cluster="eoepca-demo", job="kube-audit"}
+                    | logfmt
+                    | resource="pods"
+                    | subresource="exec"
+                    | response_code=~"2.." [15m]
+                )
+              ) > 0
+            for: 1m
+            labels:
+              severity: warning
+              scenario: command-execution
+              source: kubernetes-audit
+            annotations:
+              summary: Pod exec by {{ $labels.actor }}
+              description: >-
+                Actor {{ $labels.actor }} from {{ $labels.source_ip }} opened an exec
+                session in pod {{ $labels.namespace }}/{{ $labels.object_name }}.
+
+          - alert: KubernetesAuditImpersonation
+            expr: |
+              sum by (actor, impersonated_actor, namespace, resource, subresource, object_name, source_ip, verb) (
+                count_over_time(
+                  {cluster="eoepca-demo", job="kube-audit"}
+                    | logfmt
+                    | impersonated_actor!=""
+                    | response_code=~"2.." [15m]
+                )
+              ) > 0
+            for: 1m
+            labels:
+              severity: critical
+              scenario: privilege-escalation
+              source: kubernetes-audit
+            annotations:
+              summary: Kubernetes impersonation by {{ $labels.actor }}
+              description: >-
+                Actor {{ $labels.actor }} from {{ $labels.source_ip }} impersonated
+                {{ $labels.impersonated_actor }} for {{ $labels.verb }} on
+                {{ $labels.resource }}/{{ $labels.object_name }} in namespace
+                {{ $labels.namespace }}.
+
+          - alert: KubernetesAuditSecretAccessBurst
+            expr: |
+              sum by (actor, namespace, resource, source_ip, verb) (
+                count_over_time(
+                  {cluster="eoepca-demo", job="kube-audit"}
+                    | logfmt
+                    | resource="secrets"
+                    | verb=~"get|list|watch"
+                    | response_code=~"2.." [15m]
+                )
+              ) > 10
+            for: 1m
+            labels:
+              severity: warning
+              scenario: credential-access
+              source: kubernetes-audit
+            annotations:
+              summary: Secret access burst by {{ $labels.actor }}
+              description: >-
+                Actor {{ $labels.actor }} from {{ $labels.source_ip }} made more than
+                10 successful {{ $labels.verb }} requests for Secrets in namespace
+                {{ $labels.namespace }} within 15 minutes.
+
+          - alert: KubernetesAuditForbiddenRequestBurst
+            expr: |
+              sum by (actor, namespace, resource, subresource, source_ip, verb) (
+                count_over_time(
+                  {cluster="eoepca-demo", job="kube-audit"}
+                    | logfmt
+                    | response_code="403" [15m]
+                )
+              ) > 20
+            for: 2m
+            labels:
+              severity: warning
+              scenario: reconnaissance
+              source: kubernetes-audit
+            annotations:
+              summary: Forbidden Kubernetes API burst by {{ $labels.actor }}
+              description: >-
+                Actor {{ $labels.actor }} from {{ $labels.source_ip }} received more
+                than 20 forbidden responses for {{ $labels.verb }} requests on
+                {{ $labels.resource }} in namespace {{ $labels.namespace }} within
+                15 minutes.

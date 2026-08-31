@@ -24,16 +24,42 @@ spec:
           podDisruptionBudget:
             enabled: true
             minAvailable: 1
+          serviceMonitor:
+            enabled: true
+            additionalLabels:
+              release: kube-prometheus-stack
         backgroundController:
           replicas: 2
           podDisruptionBudget:
             enabled: true
             minAvailable: 1
+          serviceMonitor:
+            enabled: true
+            additionalLabels:
+              release: kube-prometheus-stack
+        cleanupController:
+          serviceMonitor:
+            enabled: true
+            additionalLabels:
+              release: kube-prometheus-stack
         reportsController:
           replicas: 2
           podDisruptionBudget:
             enabled: true
             minAvailable: 1
+          serviceMonitor:
+            enabled: true
+            additionalLabels:
+              release: kube-prometheus-stack
+        grafana:
+          enabled: true
+          namespace: operations
+          labels:
+            grafana_dashboard: "1"
+        features:
+          policyExceptions:
+            enabled: true
+            namespace: kyverno-system
         config:
           preserve: false
   destination:

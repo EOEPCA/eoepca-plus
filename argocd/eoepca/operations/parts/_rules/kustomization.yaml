@@ -1,4 +1,5 @@
 resources:
   - baseline-alerts.yaml
+  - kubernetes-audit-rules.yaml
   - security-alerts.yaml
   - stac-alerts.yaml

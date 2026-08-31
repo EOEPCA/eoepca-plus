@@ -24,6 +24,10 @@ spec:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
           effect: NoSchedule
+        - key: CriticalAddonsOnly
+          operator: Equal
+          value: "true"
+          effect: NoExecute
         - key: hub.jupyter.org/dedicated
           operator: Equal
           value: user
@@ -44,7 +48,8 @@ spec:
           args:
             - run
             - --server.http.listen-addr=0.0.0.0:12345
-            - --storage.path=/var/lib/alloy/data
+            - --storage.path=/var/lib/alloy
+            - --stability.level=experimental
             - --disable-reporting=true
             - /etc/alloy/config.alloy
           env:
@@ -64,16 +69,54 @@ spec:
               memory: 512Mi
           securityContext:
             allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 0
+            runAsUser: 0
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - name: config
               mountPath: /etc/alloy/config.alloy
               subPath: config.alloy
               readOnly: true
             - name: data
-              mountPath: /var/lib/alloy/data
+              mountPath: /var/lib/alloy
+            - name: rke2-audit
+              mountPath: /var/lib/rancher/rke2/server/logs
+              readOnly: true
+            - name: journal
+              mountPath: /var/log/journal
+              readOnly: true
+            - name: run-journal
+              mountPath: /run/log/journal
+              readOnly: true
+            - name: machine-id
+              mountPath: /etc/machine-id
+              readOnly: true
       volumes:
         - name: config
           configMap:
             name: alloy-logs-config
         - name: data
-          emptyDir: {}
+          hostPath:
+            path: /var/lib/alloy-logs
+            type: DirectoryOrCreate
+        - name: rke2-audit
+          hostPath:
+            path: /var/lib/rancher/rke2/server/logs
+            type: DirectoryOrCreate
+        - name: journal
+          hostPath:
+            path: /var/log/journal
+            type: Directory
+        - name: run-journal
+          hostPath:
+            path: /run/log/journal
+            type: Directory
+        - name: machine-id
+          hostPath:
+            path: /etc/machine-id
+            type: File

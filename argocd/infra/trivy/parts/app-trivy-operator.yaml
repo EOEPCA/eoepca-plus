@@ -19,6 +19,16 @@ spec:
           scanJobsConcurrentLimit: 4  # Default is 10
           clusterSbomCacheEnabled: true
           scanJobTTL: 10m
+        nodeCollector:
+          # RKE2 protects the control-plane with this NoExecute taint. The
+          # collector is explicitly meant to inspect that node and otherwise
+          # remains Pending forever, leaving the control-plane compliance scan
+          # incomplete.
+          tolerations:
+            - key: CriticalAddonsOnly
+              operator: Equal
+              value: "true"
+              effect: NoExecute
         serviceMonitor:
           enabled: true
           labels:
@@ -165,6 +175,13 @@ spec:
             }
 
           configFile:
+            # A standalone scan Job runs one Trivy process per workload
+            # container. Those processes share /tmp/trivy/.cache, so the
+            # filesystem backend's BoltDB lock makes multi-container scans fail.
+            # Keep the shared vulnerability DB but make each scan cache local to
+            # its process.
+            cache:
+              backend: memory
             kubernetes:
               k8s-version: "1.35.0"
             rego:

@@ -30,7 +30,10 @@ spec:
           annotations:
             summary: A Prometheus target has been missing for 15 minutes.
         - alert: PrometheusNotIngestingSamples
-          expr: rate(prometheus_tsdb_head_samples_appended_total[5m]) < 1
+          # Prometheus 3 exports a zero-valued native-histogram series alongside
+          # the actively increasing float series. Missing labels also satisfy a
+          # negative matcher, so this remains compatible with older releases.
+          expr: rate(prometheus_tsdb_head_samples_appended_total{type!="histogram"}[5m]) < 1
           for: 15m
           labels:
             severity: warning

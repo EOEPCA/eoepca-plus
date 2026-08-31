@@ -60,6 +60,14 @@ spec:
           policyExceptions:
             enabled: true
             namespace: kyverno-system
+          # PolicyReports are the durable audit signal. Avoid duplicating every
+          # audit result as short-lived Kubernetes Events, which creates several
+          # thousand Event objects per background scan on this cluster.
+          omitEvents:
+            eventTypes:
+              - PolicyApplied
+              - PolicySkipped
+              - PolicyViolation
         config:
           preserve: false
   destination:

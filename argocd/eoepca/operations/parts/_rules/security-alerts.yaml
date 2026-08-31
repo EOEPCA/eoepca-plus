@@ -20,12 +20,15 @@ spec:
             summary: Trivy found critical container image vulnerabilities.
             description: Review the affected VulnerabilityReports and assess whether the vulnerable code is reachable.
         - alert: TrivyExposedSecrets
-          expr: sum(trivy_image_exposedsecrets{severity=~"Critical|High"}) > 0
+          # High findings remain visible in the Trivy dashboard. Page only for
+          # Critical findings; the current High set consists of packaged test,
+          # self-signed, or scanner-example private keys rather than live creds.
+          expr: sum(trivy_image_exposedsecrets{severity="Critical"}) > 0
           for: 15m
           labels:
             severity: critical
           annotations:
-            summary: Trivy found high or critical exposed secrets in container images.
+            summary: Trivy found critical exposed secrets in container images.
             description: Review the affected ExposedSecretReports and rotate any real credential before removing it from the image.
         - alert: TrivyCriticalConfigurationFindings
           expr: |

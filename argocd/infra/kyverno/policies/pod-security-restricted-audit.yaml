@@ -12,10 +12,15 @@ metadata:
       This audit phase collects evidence without rejecting workloads.
     kyverno.io/kyverno-version: 1.17.2
     kyverno.io/kubernetes-version: "1.35"
+    # Keep evidence on workload-owning controllers without duplicating it for
+    # transient ReplicaSets and Jobs. Pods themselves remain covered.
+    pod-policies.kyverno.io/autogen-controllers: DaemonSet,Deployment,StatefulSet,CronJob
 spec:
   admission: true
   background: true
-  emitWarning: true
+  # Native PSA already emits v1.35 admission warnings in the rollout
+  # namespaces. Kyverno supplies the complementary v1.32 PolicyReports.
+  emitWarning: false
   # Audit must stay fail-open. An unavailable policy engine must not block the
   # workloads that this phase is measuring.
   failurePolicy: Ignore
@@ -27,6 +32,11 @@ spec:
           - resources:
               kinds:
                 - Pod
+              namespaceSelector:
+                matchLabels:
+                  # Use the same opt-in boundary as native PSA. This keeps the
+                  # audit actionable and prevents a cluster-wide report flood.
+                  pod-security.kubernetes.io/audit: restricted
       exclude:
         any:
           - resources:

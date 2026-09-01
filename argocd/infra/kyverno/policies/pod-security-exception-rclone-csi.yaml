@@ -1,0 +1,53 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: pod-security-rclone-csi-node-mounts
+  namespace: kyverno-system
+  annotations:
+    security.eoepca.org/owner: workspace
+    security.eoepca.org/reason: >-
+      The rclone CSI node plugin must register with kubelet and perform FUSE
+      mounts in workload pod directories on each node.
+    security.eoepca.org/review-after: "2026-11-28"
+spec:
+  background: true
+  exceptions:
+    - policyName: pod-security-restricted-audit
+      ruleNames:
+        - restricted
+        - autogen-restricted
+  match:
+    any:
+      - resources:
+          kinds:
+            - Pod
+          namespaces:
+            - workspace
+          selector:
+            matchLabels:
+              app: csi-nodeplugin-rclone
+      - resources:
+          kinds:
+            - DaemonSet
+          names:
+            - csi-rclone-nodeplugin
+          namespaces:
+            - workspace
+  podSecurity:
+    - controlName: Privileged Containers
+      images:
+        - ghcr.io/versioneer-tech/csi-rclone:*
+    - controlName: Capabilities
+      images:
+        - ghcr.io/versioneer-tech/csi-rclone:*
+    - controlName: HostPath Volumes
+    - controlName: Volume Types
+    - controlName: Privilege Escalation
+      images:
+        - ghcr.io/versioneer-tech/csi-rclone:*
+    - controlName: Running as Non-root
+      images:
+        - ghcr.io/versioneer-tech/csi-rclone:*
+    - controlName: Running as Non-root user
+      images:
+        - ghcr.io/versioneer-tech/csi-rclone:*

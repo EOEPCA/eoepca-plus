@@ -2,4 +2,5 @@ resources:
   - pod-security-restricted-audit.yaml
   - pod-security-exception-alloy.yaml
   - pod-security-exception-node-exporter.yaml
+  - pod-security-exception-rclone-csi.yaml
   - pod-security-exception-trivy-node-collector.yaml

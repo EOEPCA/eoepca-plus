@@ -35,6 +35,8 @@ spec:
           value: "webhooks"
         - name: webhookSource.domainMapping.enabled
           value: "true"
+        - name: webhookSource.domainMapping.domain
+          value: "webhooks.notifications.develop-v2.eoepca.org"
         - name: cloudEventsPlayer.enabled
           value: "true"
         - name: cloudEventsPlayer.subscribeBroker.enabled

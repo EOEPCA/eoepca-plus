@@ -69,6 +69,13 @@ spec:
         defaultRules:
           create: false
 
+        kubeControllerManager:
+          enabled: false
+        kubeEtcd:
+          enabled: false
+        kubeScheduler:
+          enabled: false
+
         alertmanager:
           enabled: true
           alertmanagerSpec:

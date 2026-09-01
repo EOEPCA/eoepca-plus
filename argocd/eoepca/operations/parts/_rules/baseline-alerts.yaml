@@ -137,12 +137,19 @@ spec:
           annotations:
             summary: A pod is crash looping.
         - alert: KubePodNotReady
-          expr: kube_pod_status_ready{condition="false"} == 1
+          # Terminal Job Pods report Ready=false after successful completion.
+          # Keep the alert on active Pod phases only.
+          expr: |
+            (kube_pod_status_ready{condition="false"} == 1)
+            and on (namespace, pod)
+            max by (namespace, pod) (
+              kube_pod_status_phase{phase=~"Pending|Running|Unknown"} == 1
+            )
           for: 15m
           labels:
             severity: warning
           annotations:
-            summary: A pod has not been ready for 15 minutes.
+            summary: An active pod has not been ready for 15 minutes.
         - alert: KubeDeploymentReplicasMismatch
           expr: kube_deployment_spec_replicas > kube_deployment_status_replicas_available
           for: 15m
@@ -158,12 +165,17 @@ spec:
           annotations:
             summary: A StatefulSet does not have the expected number of ready replicas.
         - alert: KubeJobFailed
-          expr: kube_job_status_failed > 0
+          # Retained failed Jobs keep their failure condition indefinitely.
+          # Alert only for a terminal failure on a Job created in the last day.
+          expr: |
+            (kube_job_failed{condition="true"} == 1)
+            and on (namespace, job_name)
+            ((time() - kube_job_created) < 86400)
           for: 15m
           labels:
             severity: warning
           annotations:
-            summary: A Kubernetes Job has failed.
+            summary: A recently created Kubernetes Job has failed.
         - alert: ContainerRestartHigh
           expr: increase(kube_pod_container_status_restarts_total[1h]) > 3
           for: 15m

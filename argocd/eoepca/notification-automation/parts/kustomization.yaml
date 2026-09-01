@@ -4,6 +4,7 @@ resources:
 #  - knative-serving.yaml
 #  - knative-eventing.yaml
   - ingress.yaml
+  - cluster-domain-claim.yaml
   - namespace-notifications.yaml
   - app-notification-automation-helm.yaml
   - kafka-cluster.yaml

@@ -21,6 +21,11 @@ spec:
           install: true
         admissionController:
           replicas: 2
+          container:
+            # Keep only results which need review. PolicyExceptions remain the
+            # source of truth for approved skips.
+            extraArgs:
+              allowedResults: fail,error,warn
           podDisruptionBudget:
             enabled: true
             minAvailable: 1
@@ -30,6 +35,8 @@ spec:
               release: kube-prometheus-stack
         backgroundController:
           replicas: 2
+          extraArgs:
+            allowedResults: fail,error,warn
           podDisruptionBudget:
             enabled: true
             minAvailable: 1
@@ -44,6 +51,8 @@ spec:
               release: kube-prometheus-stack
         reportsController:
           replicas: 2
+          extraArgs:
+            allowedResults: fail,error,warn
           podDisruptionBudget:
             enabled: true
             minAvailable: 1

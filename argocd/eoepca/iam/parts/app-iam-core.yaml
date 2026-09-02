@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: https://eoepca.github.io/helm-charts-dev
       chart: iam-bb
-      targetRevision: 2.1.0-dev12
+      targetRevision: 2.1.0-dev15
       helm:
         valueFiles:
           - $values/argocd/eoepca/iam/parts/values/iam-values.yaml

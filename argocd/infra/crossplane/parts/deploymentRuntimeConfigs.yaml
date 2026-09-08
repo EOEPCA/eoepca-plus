@@ -20,8 +20,16 @@ spec:
           labels:
             runtime: provider-minio
         spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
           - name: package-runtime
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
             resources:
               requests:
                 cpu: 100m
@@ -53,8 +61,16 @@ spec:
             runtime: provider-kubernetes
         spec:
           serviceAccountName: provider-kubernetes
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
           - name: package-runtime
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
             # args:
             # - --debug
             resources:
@@ -87,8 +103,16 @@ spec:
           labels:
             runtime: provider-keycloak
         spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
           - name: package-runtime
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
             resources:
               requests:
                 cpu: 100m
@@ -119,8 +143,16 @@ spec:
           labels:
             runtime: provider-helm
         spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
           containers:
           - name: package-runtime
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
             resources:
               requests:
                 cpu: 100m
@@ -128,3 +160,102 @@ spec:
               limits:
                 cpu: 500m
                 memory: 512Mi
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: function-environment-configs
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: function-environment-configs
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: function-environment-configs
+      template:
+        metadata:
+          labels:
+            runtime: function-environment-configs
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+          - name: package-runtime
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: function-python
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: function-python
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: function-python
+      template:
+        metadata:
+          labels:
+            runtime: function-python
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+          - name: package-runtime
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: function-auto-ready
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: function-auto-ready
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: function-auto-ready
+      template:
+        metadata:
+          labels:
+            runtime: function-auto-ready
+        spec:
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+          - name: package-runtime
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL

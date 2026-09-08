@@ -18,6 +18,20 @@ spec:
       valuesObject:
         redisOperator:
           watchNamespace: ""
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 65532
+          runAsGroup: 65532
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          runAsUser: 65532
+          runAsGroup: 65532
   destination:
     name: in-cluster
     namespace: infra

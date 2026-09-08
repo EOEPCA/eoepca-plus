@@ -35,9 +35,25 @@ spec:
       labels:
         app: keep-alertmanager-relay
     spec:
+      securityContext:
+        fsGroup: 101
+        runAsGroup: 101
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: nginx
-          image: nginx:1.27-alpine
+          image: nginxinc/nginx-unprivileged:1.29-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 101
+            runAsNonRoot: true
+            runAsUser: 101
           ports:
             - containerPort: 8080
               name: http
@@ -45,10 +61,23 @@ spec:
             - name: config
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: run
+              mountPath: /run
       volumes:
         - name: config
           configMap:
             name: keep-alertmanager-relay-config
+        - name: tmp
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

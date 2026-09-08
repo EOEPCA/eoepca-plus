@@ -2,6 +2,23 @@ nameOverride: "eoapi-stac-manager"
 
 ingress:
   enabled: false
+
+podSecurityContext:
+  fsGroup: 1000
+  runAsGroup: 1000
+  runAsNonRoot: true
+  runAsUser: 1000
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  runAsGroup: 1000
+  runAsNonRoot: true
+  runAsUser: 1000
+
 resources:
   requests:
     memory: "1Gi"

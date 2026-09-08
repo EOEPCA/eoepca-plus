@@ -8,6 +8,13 @@ stacApiUrl: "https://eoapi.develop-v2.eoepca.org/stac"
 database:
   existingSecret: "default-pguser-eoapi"
 
+podSecurityContext:
+  fsGroup: 1000
+  runAsNonRoot: true
+  runAsUser: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
 storage:
   outputPath: "s3://geoparquet-exporter/geoparquet"
   existingSecret: "geoparquet-exporter-s3-credentials"

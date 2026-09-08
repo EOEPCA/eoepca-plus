@@ -18,6 +18,14 @@ spec:
 
         loki:
           auth_enabled: false
+          podSecurityContext:
+            fsGroup: 10001
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 10001
+            runAsNonRoot: true
+            runAsUser: 10001
+            seccompProfile:
+              type: RuntimeDefault
           commonConfig:
             replication_factor: 1
           schemaConfig:
@@ -107,6 +115,15 @@ spec:
             enabled: true
             labels:
               release: kube-prometheus-stack
+
+        gateway:
+          podSecurityContext:
+            fsGroup: 101
+            runAsGroup: 101
+            runAsNonRoot: true
+            runAsUser: 101
+            seccompProfile:
+              type: RuntimeDefault
   destination:
     name: in-cluster
     namespace: operations

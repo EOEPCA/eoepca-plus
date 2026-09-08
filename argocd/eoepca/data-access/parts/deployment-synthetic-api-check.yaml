@@ -16,10 +16,26 @@ spec:
         app.kubernetes.io/name: synthetic-api-check
     spec:
       restartPolicy: Always
+      securityContext:
+        fsGroup: 102
+        runAsGroup: 102
+        runAsNonRoot: true
+        runAsUser: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: checker
           image: quay.io/curl/curl:8.12.1
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 102
+            runAsNonRoot: true
+            runAsUser: 101
           resources:
             requests:
               cpu: 50m
@@ -44,8 +60,12 @@ spec:
               mountPath: /opt/synthetic-api-check/check-stac.sh
               subPath: check-stac.sh
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: synthetic-api-check-script
           configMap:
             name: synthetic-api-check-script
             defaultMode: 0755
+        - name: tmp
+          emptyDir: {}

@@ -1,5 +1,6 @@
 
 resources:
+  - namespace-infra.yaml
   - kube-dns-alias.yaml
   - app-sealed-secrets.yaml
   # ServiceMonitor and PrometheusRule CRDs are consumed by early infrastructure

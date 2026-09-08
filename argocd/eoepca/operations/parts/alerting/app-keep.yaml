@@ -16,6 +16,21 @@ spec:
       releaseName: keep
       values: |
         backend:
+          podSecurityContext:
+            fsGroup: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
           env:
           - name: AUTH_TYPE
             value: OAUTH2PROXY
@@ -33,6 +48,21 @@ spec:
             value: keep_webhook
           envFromSecret: keep-auth-secrets
         frontend:
+          podSecurityContext:
+            fsGroup: 65533
+            runAsGroup: 65533
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 65533
+            runAsNonRoot: true
+            runAsUser: 1001
           env:
           - name: NEXTAUTH_URL
             value: https://alerting.develop-v2.eoepca.org
@@ -48,6 +78,41 @@ spec:
             value: x-forwarded-email
           - name: KEEP_OAUTH2_PROXY_ROLE_HEADER
             value: x-forwarded-groups
+        websocket:
+          podSecurityContext:
+            fsGroup: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+        database:
+          mysql:
+            image:
+              tag: "26.7.0"
+          podSecurityContext:
+            fsGroup: 999
+            runAsGroup: 999
+            runAsNonRoot: true
+            runAsUser: 999
+            seccompProfile:
+              type: RuntimeDefault
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 999
+            runAsNonRoot: true
+            runAsUser: 999
         global:
           ingress:
             enabled: false

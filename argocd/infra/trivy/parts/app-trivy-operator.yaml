@@ -19,6 +19,22 @@ spec:
           scanJobsConcurrentLimit: 4  # Default is 10
           clusterSbomCacheEnabled: true
           scanJobTTL: 10m
+        compliance:
+          # Replace only the obsolete generic CIS profile. Keep the other
+          # compliance reports enabled with their chart-default schedule.
+          specs:
+            - rke2-cis-1.24
+            - k8s-nsa-1.0
+            - k8s-pss-baseline-0.1
+            - k8s-pss-restricted-0.1
+        podSecurityContext:
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
+          # The image already runs as UID/GID 10000. Declare the constraint so
+          # Kubernetes prevents a future image from silently running as root.
+          runAsNonRoot: true
         nodeCollector:
           # RKE2 protects the control-plane with this NoExecute taint. The
           # collector is explicitly meant to inspect that node and otherwise

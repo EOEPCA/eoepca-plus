@@ -104,6 +104,19 @@ spec:
         prometheus-node-exporter:
           hostPort:
             enabled: false
+          securityContext:
+            fsGroup: 65534
+            runAsGroup: 65534
+            runAsNonRoot: true
+            runAsUser: 65534
+            seccompProfile:
+              type: RuntimeDefault
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
           # Custom CriticalAddonsOnly toleration to allow scheduling on the RKE2 control-plane nodes
           tolerations:
             - effect: NoSchedule

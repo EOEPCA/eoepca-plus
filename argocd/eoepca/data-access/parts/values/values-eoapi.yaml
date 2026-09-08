@@ -110,6 +110,9 @@ vector:
 
 eoapi-notifier:
   enabled: true
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
   config:
     sources:
       - type: pgstac
@@ -137,6 +140,9 @@ eoapi-notifier:
 
 stac-auth-proxy:
   enabled: true
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
   image:
     tag: "v1.2.0"
   # Custom filters for STAC collections/items filtering

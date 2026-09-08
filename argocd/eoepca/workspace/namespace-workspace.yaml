@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: workspace
+  labels:
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: v1.35
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: v1.35
+    security.eoepca.org/pod-security-exception-required: "true"
+  annotations:
+    argocd.argoproj.io/sync-wave: "-30"
+    security.eoepca.org/pod-security-exception-reason: >-
+      The rclone CSI node plugin currently requires a privileged container and host paths.
+    security.eoepca.org/pod-security-remediation: >-
+      Move the CSI node component to a dedicated storage namespace before enforcing Restricted here.

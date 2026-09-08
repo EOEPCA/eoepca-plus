@@ -1,2 +1,3 @@
 resources:
+  - namespace-operations.yaml
   - app-operations.yaml

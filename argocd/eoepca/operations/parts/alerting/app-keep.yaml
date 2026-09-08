@@ -16,6 +16,12 @@ spec:
       releaseName: keep
       values: |
         backend:
+          # The chart's built-in BusyBox database-wait init container exposes
+          # no securityContext and violates Restricted Pod Security. Keep's
+          # restart policy handles transient database startup until the chart
+          # exposes a hardened waitForDatabase container configuration.
+          waitForDatabase:
+            enabled: false
           podSecurityContext:
             fsGroup: 1000
             runAsGroup: 1000

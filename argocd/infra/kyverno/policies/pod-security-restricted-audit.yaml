@@ -18,8 +18,8 @@ metadata:
 spec:
   admission: true
   background: true
-  # Native PSA already emits v1.35 admission warnings in the rollout
-  # namespaces. Kyverno supplies the complementary v1.32 PolicyReports.
+  # Native PSA emits v1.35 admission warnings in the rollout namespaces.
+  # Kyverno supplies complementary reports with its newest bundled PSS profile.
   emitWarning: false
   # Audit must stay fail-open. An unavailable policy engine must not block the
   # workloads that this phase is measuring.
@@ -50,6 +50,6 @@ spec:
         failureAction: Audit
         podSecurity:
           level: restricted
-          # Kyverno 1.17.2 supports version-pinned PSS checks through v1.32.
-          # Native PSA namespace labels below cover the cluster's v1.35 rules.
-          version: v1.32
+          # The legacy Kyverno API cannot pin a PSS release newer than v1.32.
+          # Use its newest bundled profile; native PSA stays pinned to v1.35.
+          version: latest

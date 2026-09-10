@@ -175,6 +175,8 @@ spec:
       enable: true
       config:
         uri: /openeo/
+    - name: cors
+      enable: true
   - name: openeo-route
     backends:
     - serviceName: eoapi-titiler-openeo
@@ -191,6 +193,8 @@ spec:
         regex_uri:
         - ^(/openeo)($|/.*)
         - $2
+      enable: true
+    - name: cors
       enable: true
   - name: stac-redirect
     priority: 100

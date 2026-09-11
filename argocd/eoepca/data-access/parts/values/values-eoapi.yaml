@@ -19,6 +19,28 @@ postgrescluster:
 pgstacBootstrap:
   enabled: true
   settings:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+    initContainerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 65534
+      runAsGroup: 65534
     pgstacSettings:
       use_queue: "true"
       update_collection_extent: "false"
@@ -36,6 +58,20 @@ raster:
     path: "/raster"
   overrideRootPath: "/"
   settings:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
     envVars:
       AWS_S3_ENDPOINT: "eodata.cloudferro.com"
       AWS_VIRTUAL_HOSTING: "FALSE"
@@ -55,6 +91,20 @@ multidim:
     path: "/multidim"
   overrideRootPath: "/"
   settings:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
     envVars:
       # 1×1×1×5 = 5 conn
       WEB_CONCURRENCY: "1"
@@ -76,6 +126,20 @@ stac:
     targets:
       cpu: 50
   settings:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
     envVars:
       ENABLE_TRANSACTIONS_EXTENSIONS: "TRUE"
       STAC_FASTAPI_TITLE: "EOEPCA STAC API"
@@ -94,6 +158,20 @@ stac:
 vector:
   enabled: true
   settings:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 65532
+      runAsGroup: 65532
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 65532
+      runAsGroup: 65532
     resources:
       limits:
         memory: "1536Mi"
@@ -204,6 +282,21 @@ stac-auth-proxy:
     failureThreshold: 3
 
 browser:
+  settings:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 101
+      runAsGroup: 101
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 101
+      runAsGroup: 101
   catalogUrl: "https://eoapi.develop-v2.eoepca.org/stac"
   catalogTitle: "EOEPCA Data Catalog"
   catalogImage: "https://eoepca.org/media_portal/images/eoepca_logo_no_bg.original.png"
@@ -218,3 +311,25 @@ browser:
     oidcConfig:
       client_id: "eoapi"
       redirect_uri: "https://eoapi.develop-v2.eoepca.org/browser/auth"
+
+docServer:
+  # Pin the tested nginx image instead of using the chart default tag.
+  image:
+    name: nginxinc/nginx-unprivileged
+    digest: sha256:a6c3ec0c0d249d68b0682df854d4a9e222b90fb607dc3fcf2f1d2fcbc85d347e
+    pullPolicy: IfNotPresent
+  settings:
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 101
+      runAsGroup: 101
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 101
+      runAsGroup: 101

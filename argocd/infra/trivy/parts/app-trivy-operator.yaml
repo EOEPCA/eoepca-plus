@@ -18,7 +18,15 @@ spec:
         operator:
           scanJobsConcurrentLimit: 4  # Default is 10
           clusterSbomCacheEnabled: true
-          scanJobTTL: 10m
+          # Completed scan Jobs count against the concurrency limit until they
+          # are deleted. Keep the reports for 24 hours, but retain the Jobs for
+          # only one minute so queued scans continue promptly.
+          scanJobTTL: 1m
+          # Large images can take longer than the chart's five-minute default.
+          scanJobTimeout: 15m
+          # Use one shared scanner service. Standalone multi-container Jobs
+          # share /tmp and can remove each other's cache files.
+          builtInTrivyServer: true
         compliance:
           # Replace only the obsolete generic CIS profile. Keep the other
           # compliance reports enabled with their chart-default schedule.
@@ -60,6 +68,17 @@ spec:
         trivy:
           severity: UNKNOWN,MEDIUM,HIGH,CRITICAL
           ignoreUnfixed: false
+          timeout: 15m0s
+          server:
+            podSecurityContext:
+              runAsGroup: 65534
+              seccompProfile:
+                type: RuntimeDefault
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
           # The ignore policies are currently not working in the cluster but work when run
           # locally with, for example,
           #    trivy k8s --ignore-policy ignore-seccomp.rego --scanners misconfig

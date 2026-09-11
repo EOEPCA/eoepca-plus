@@ -19,11 +19,11 @@
   "panels": [
     {
       "datasource": {"type": "grafana", "uid": "-- Grafana --"},
-      "description": "This dashboard shows current namespaced compliance state. Kyverno PolicyReports and Trivy report timestamps come from kube-state-metrics, and finding totals come from Trivy Operator. The final cluster-wide section is intentionally not affected by the namespace filter. Native PSA is not shown because its metrics do not identify the evaluated namespace.",
+      "description": "This dashboard shows the latest stored security state for one or more selected namespaces. Kyverno stores policy outcomes in PolicyReports, and kube-state-metrics converts those reports and PolicyExceptions into Prometheus metrics. Trivy Operator provides finding totals, while kube-state-metrics provides report update times. The final row is cluster-wide and ignores the namespace filter. Native Kubernetes Pod Security Admission is not included because its metrics do not identify the evaluated namespace.",
       "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
       "id": 1,
       "options": {
-        "content": "## Namespace security compliance\nCurrent violations, declared exceptions, scanner findings, freshness, and report coverage for **$namespace**. A green finding count is meaningful only when freshness and coverage are also healthy. The final row contains cluster-wide Trivy signals and ignores this namespace selection.",
+        "content": "## Current namespace security compliance\nShowing the latest stored results for **$namespace**. Start with violations and findings, then check freshness and coverage before deciding that a namespace is clean. Values refresh every 30 seconds; this view is not an archive of complete historical reports. The final row contains cluster-wide Trivy checks and does not use the namespace selection.",
         "mode": "markdown"
       },
       "pluginVersion": "12.4.2",
@@ -40,7 +40,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Current failed results stored in Kyverno PolicyReports for the selected namespace. This is state, not an event count.",
+      "description": "Number of failed policy-rule results currently stored by Kyverno for the selected namespace. This is a current snapshot, not a rate or a count of failures over time. One Kubernetes resource can fail several rules and therefore be counted more than once.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 0, "y": 5},
       "id": 3,
@@ -51,7 +51,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Distinct Kyverno PolicyException objects whose match rules target the selected namespace.",
+      "description": "Number of distinct Kyverno PolicyException objects whose match rules target the selected namespace. An exception is a declared waiver and does not mean that a matching violation currently exists. Use the table below to identify the exception, policy, namespace, and resource kind; inspect the PolicyException object for its complete match rules.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "blue", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 8, "y": 5},
       "id": 4,
@@ -62,7 +62,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Critical vulnerabilities in available Trivy VulnerabilityReports. Review coverage before treating zero as clean.",
+      "description": "Number of critical vulnerability occurrences in the available Trivy VulnerabilityReports for the selected namespace. The same vulnerability can be counted more than once when it occurs in different images or packages. Treat zero as clean only when report freshness and coverage are also healthy.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 16, "y": 5},
       "id": 5,
@@ -73,7 +73,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "High vulnerabilities in available Trivy VulnerabilityReports.",
+      "description": "Number of high-severity vulnerability occurrences in the available Trivy VulnerabilityReports for the selected namespace. The value counts findings, not unique vulnerability IDs or affected images. Review report freshness and coverage before using it as the namespace total.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 0, "y": 9},
       "id": 6,
@@ -84,7 +84,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "High or critical exposed-secret findings in available Trivy reports.",
+      "description": "Number of high or critical exposed-secret findings in the available Trivy reports for the selected namespace. Any non-zero value needs investigation because Trivy found secret-like content in a scanned image. A zero is reliable only when the secret reports are current and coverage is complete.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 8, "y": 9},
       "id": 7,
@@ -95,7 +95,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "High or critical configuration and namespaced Role findings. ClusterRole findings are intentionally excluded because they cannot be attributed to one namespace.",
+      "description": "Combined number of high or critical configuration findings and namespaced Role findings for the selected namespace. This counts individual findings rather than affected Kubernetes resources. ClusterRole findings are shown separately in the cluster-wide row because they cannot be assigned to one namespace.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 16, "y": 9},
       "id": 8,
@@ -114,7 +114,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Current PolicyReport results older than 90 minutes. Kyverno background scans run hourly, with a 30-minute allowance. This includes pass and skip outcomes so a clean namespace still has a freshness signal.",
+      "description": "Number of stored Kyverno policy-rule results older than 90 minutes. Kyverno normally runs a background scan every hour, and this panel allows another 30 minutes for processing. A non-zero value means the displayed policy state may no longer match the current resources; pass and skip results are included so a clean namespace still has a freshness check.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 0, "y": 14},
       "id": 10,
@@ -125,7 +125,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "VulnerabilityReports older than the configured 24-hour scanner-report TTL plus a two-hour allowance.",
+      "description": "Number of Trivy VulnerabilityReports older than 26 hours for the selected namespace. The configured report lifetime is 24 hours, with a two-hour allowance for scanning and processing. A stale report means the scan evidence is old; it does not add another vulnerability finding.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 8, "y": 14},
       "id": 11,
@@ -136,7 +136,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "ExposedSecretReports older than the configured 24-hour scanner-report TTL plus a two-hour allowance.",
+      "description": "Number of Trivy ExposedSecretReports older than 26 hours for the selected namespace. The configured report lifetime is 24 hours, with a two-hour allowance for scanning and processing. A stale report means the secret-scan result is old, not that a secret was found.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 16, "y": 14},
       "id": 12,
@@ -147,7 +147,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Current Kyverno PolicyReport results by outcome. Pass and skip are retained so this acts as both a compliance denominator and a report-coverage signal.",
+      "description": "Current Kyverno PolicyReport results grouped as pass, fail, warning, error, or skip. Each value counts policy-rule results rather than Kubernetes resources. Pass results show that successful evaluations are being stored, while skip results should be compared with the declared exceptions and rule conditions.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": 0}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 0, "y": 18},
       "id": 13,
@@ -158,7 +158,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Distinct containers currently present in Pods. Compare with report objects as a coverage indicator; the scopes are not identical because Trivy also scans controller templates and CronJobs.",
+      "description": "Number of distinct containers currently present in Pods in the selected namespace. Compare this with the number of vulnerability report objects to spot possible scan gaps. The values are not expected to match exactly because Trivy also scans controller templates and CronJobs.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": 0}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 8, "y": 18},
       "id": 14,
@@ -169,7 +169,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Distinct Trivy VulnerabilityReport objects represented in metrics. A large gap from active containers requires investigation; exact equality is not expected because report and Pod scopes differ.",
+      "description": "Number of distinct Trivy VulnerabilityReport objects represented in Prometheus for the selected namespace. One report does not always correspond to one active Pod container, so exact equality is not expected. A large gap from the active-container count needs investigation, and zero findings with poor coverage does not mean the namespace is clean.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": 0}]}}, "overrides": []},
       "gridPos": {"h": 4, "w": 8, "x": 16, "y": 18},
       "id": 15,
@@ -188,7 +188,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Current failed, warning, error, and skipped results from namespaced Kyverno PolicyReports. Skips show the report outcomes affected by exceptions.",
+      "description": "Detailed list of current failed, warning, error, and skipped results from Kyverno PolicyReports in the selected namespace. Each row identifies the resource, policy, rule, severity, and outcome behind the summary numbers. A skip can be caused by an exception or another rule condition, so compare it with the exception table instead of assuming it is waived.",
       "fieldConfig": {"defaults": {"custom": {"align": "auto", "cellOptions": {"type": "auto"}, "inspect": false}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 9, "w": 14, "x": 0, "y": 23},
       "id": 17,
@@ -199,7 +199,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Declared Kyverno PolicyException match branches targeting the selected namespace. Multiple branches of one exception are shown separately.",
+      "description": "Summary of Kyverno PolicyException match branches that target the selected namespace. One exception can appear in several rows when it contains several match branches. The table shows the exception, policy, namespace, and resource kind, but not every selector; inspect the PolicyException object for its complete rules and remember that declaration does not prove current use.",
       "fieldConfig": {"defaults": {"custom": {"align": "auto", "cellOptions": {"type": "auto"}, "inspect": false}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}]}}, "overrides": []},
       "gridPos": {"h": 9, "w": 10, "x": 14, "y": 23},
       "id": 18,
@@ -218,7 +218,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Available Trivy image, configuration, secret, and namespaced RBAC findings grouped by severity.",
+      "description": "Available Trivy image, configuration, exposed-secret, and namespaced RBAC findings grouped by severity for the selected namespace. The values count finding occurrences, not unique vulnerability IDs or affected resources. Use the freshness and coverage panels to decide whether the totals are complete enough to trust.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 9, "w": 24, "x": 0, "y": 33},
       "id": 21,
@@ -242,7 +242,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Age in hours of every available namespaced Trivy report. Config-audit and RBAC reports are event-driven, so age is context rather than an automatic failure; vulnerability and exposed-secret reports should normally remain within their scanner-report TTL.",
+      "description": "Age in hours of every available Trivy report in the selected namespace. Vulnerability and exposed-secret reports should normally remain within their configured lifetime, while configuration and RBAC reports are updated when related resources change. Use the report and resource labels in this table to find the exact object behind a stale summary value; an old event-driven report is context, not automatically a failure.",
       "fieldConfig": {"defaults": {"custom": {"align": "auto", "cellOptions": {"type": "auto"}, "inspect": false}, "decimals": 1, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 26}]}, "unit": "h"}, "overrides": []},
       "gridPos": {"h": 8, "w": 24, "x": 0, "y": 43},
       "id": 23,
@@ -261,7 +261,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Failed checks from Trivy ClusterComplianceReports, grouped by control title. These reports are cluster-scoped, so the namespace filter does not apply.",
+      "description": "Number of failed checks in each Trivy ClusterComplianceReport, grouped by compliance profile title. This shows failed CIS, NSA, or Pod Security controls across the whole cluster, not the number of failing namespaces or resources. These reports are cluster-scoped, so the namespace filter does not apply.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 52},
       "id": 25,
@@ -272,7 +272,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Critical findings from Trivy ClusterRbacAssessmentReports. ClusterRoles are cluster-scoped, so the namespace filter does not apply.",
+      "description": "Number of critical RBAC finding occurrences in Trivy ClusterRbacAssessmentReports. This is not the number of ClusterRoles because one ClusterRole can produce several findings. ClusterRoles are cluster-scoped, so the namespace filter does not apply.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 8, "w": 6, "x": 12, "y": 52},
       "id": 26,
@@ -283,7 +283,7 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Age of the oldest Trivy ClusterComplianceReport. Reports are scheduled every six hours; orange indicates the schedule plus a one-hour allowance, and red indicates two missed cycles plus the allowance.",
+      "description": "Age in hours of the oldest Trivy ClusterComplianceReport. Reports are scheduled every six hours: green is at most seven hours old, orange indicates one delayed or missed update, and red indicates more than two expected cycles without an update. An old value, or No data, indicates a scanner or reporting problem rather than an additional compliance failure.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "decimals": 1, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 7}, {"color": "red", "value": 13}]}, "unit": "h"}, "overrides": []},
       "gridPos": {"h": 8, "w": 6, "x": 18, "y": 52},
       "id": 27,
@@ -317,7 +317,7 @@
     ]
   },
   "time": {"from": "now-24h", "to": "now"},
-  "timepicker": {},
+  "timepicker": {"hidden": true},
   "timezone": "browser",
   "title": "EOEPCA / Security Compliance by Namespace",
   "uid": "eoepca-security-compliance-namespace",

@@ -101,7 +101,7 @@ spec:
         thanosRuler:
           enabled: false
 
-        # Export current namespaced security-report state and report freshness.
+        # Export current security-report state and report freshness.
         # The chart adds CRD discovery permissions when customResourceState is
         # enabled; these extra rules grant read-only access to the selected CRs.
         kube-state-metrics:
@@ -128,6 +128,7 @@ spec:
                   - configauditreports
                   - exposedsecretreports
                   - rbacassessmentreports
+                  - clustercompliancereports
                 verbs:
                   - list
                   - watch
@@ -261,6 +262,20 @@ spec:
                           type: Gauge
                           gauge:
                             path: [report, updateTimestamp]
+                  - groupVersionKind:
+                      group: aquasecurity.github.io
+                      version: v1alpha1
+                      kind: ClusterComplianceReport
+                    metricNamePrefix: security_trivy_clustercompliancereport
+                    labelsFromPath:
+                      report: [metadata, name]
+                    metrics:
+                      - name: updated_timestamp_seconds
+                        help: Unix update timestamp of a Trivy ClusterComplianceReport.
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [status, updateTimestamp]
 
         prometheus-node-exporter:
           hostPort:

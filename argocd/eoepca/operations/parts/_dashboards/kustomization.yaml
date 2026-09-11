@@ -34,20 +34,6 @@ configMapGenerator:
         grafana_dashboard: "1"
     files:
       - prometheus-overview.json
-  - name: curated-trivy-security
-    options:
-      labels:
-        eoepca/dashboard-category: compliance
-        grafana_dashboard: "1"
-    files:
-      - trivy-security.json
-  - name: curated-kyverno-policy-audit
-    options:
-      labels:
-        eoepca/dashboard-category: compliance
-        grafana_dashboard: "1"
-    files:
-      - kyverno-policy-audit.json
   - name: curated-security-compliance
     options:
       labels:

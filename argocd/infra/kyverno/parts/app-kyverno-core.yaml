@@ -65,10 +65,9 @@ spec:
             additionalLabels:
               release: kube-prometheus-stack
         grafana:
-          enabled: true
-          namespace: operations
-          labels:
-            grafana_dashboard: "1"
+          # Compliance state is shown in the curated namespace dashboard.
+          # Do not provision the chart's controller-activity dashboard.
+          enabled: false
         features:
           policyExceptions:
             enabled: true

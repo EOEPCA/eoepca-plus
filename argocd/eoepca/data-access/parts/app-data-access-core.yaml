@@ -56,6 +56,17 @@ spec:
             runAsGroup: 1000
             runAsNonRoot: true
             runAsUser: 65532
+          initContainerSecurityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 65532
+            runAsNonRoot: true
+            runAsUser: 65532
+            seccompProfile:
+              type: RuntimeDefault
           extraVolumes:
             - name: services
               configMap:

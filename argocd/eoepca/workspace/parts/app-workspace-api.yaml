@@ -21,6 +21,30 @@ spec:
         image:
           tag: 2.2.0
           pullPolicy: Always
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+        # The application writes Gunicorn worker state and multiprocess
+        # Prometheus metrics at runtime. Keep those temporary files on the
+        # container's writable in-memory filesystem so the root filesystem can
+        # remain read-only.
+        extraEnv:
+          - name: TMPDIR
+            value: /dev/shm
+          - name: PROMETHEUS_MULTIPROC_DIR
+            value: /dev/shm
         ingress:
           enabled: false        
         prefixForName: "ws"

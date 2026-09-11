@@ -25,7 +25,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Critical vulnerabilities reported across all scanned container images.",
+      "description": "Critical finding rows reported across all available container-image reports. This is not a count of unique vulnerability IDs, and it is only as complete as current report coverage.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -81,7 +81,7 @@
           "refId": "A"
         }
       ],
-      "title": "Critical image vulnerabilities",
+      "title": "Critical image findings",
       "type": "stat"
     },
     {
@@ -89,7 +89,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "High or critical secrets detected in scanned container images.",
+      "description": "High or critical exposed-secret finding rows in available image reports.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -145,7 +145,7 @@
           "refId": "A"
         }
       ],
-      "title": "High or critical exposed secrets",
+      "title": "High or critical secret findings",
       "type": "stat"
     },
     {
@@ -153,7 +153,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Critical configuration and RBAC findings reported by Trivy.",
+      "description": "Critical configuration, namespaced Role, and cluster-wide ClusterRole finding rows reported by Trivy.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -217,7 +217,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Failed controls from each Trivy ClusterComplianceReport.",
+      "description": "Failed controls from each cluster-scoped Trivy ClusterComplianceReport. These scheduled summaries cannot be attributed to one namespace.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -282,7 +282,7 @@
           "refId": "A"
         }
       ],
-      "title": "Failed compliance checks",
+      "title": "Failed cluster compliance controls",
       "type": "bargauge"
     },
     {
@@ -290,7 +290,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Critical findings over time. Changes normally follow workload scans or report refreshes.",
+      "description": "Snapshots of report finding totals over time. These are current-state gauges, not discovery-event counters; changes follow report creation, refresh, or expiry.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -373,13 +373,13 @@
         },
         {
           "editorMode": "code",
-          "expr": "sum(trivy_role_rbacassessments{severity=\"Critical\"}) + sum(trivy_clusterrole_clusterrbacassessments{severity=\"Critical\"})",
+          "expr": "(sum(trivy_role_rbacassessments{severity=\"Critical\"}) or vector(0)) + (sum(trivy_clusterrole_clusterrbacassessments{severity=\"Critical\"}) or vector(0))",
           "legendFormat": "Critical RBAC findings",
           "range": true,
           "refId": "D"
         }
       ],
-      "title": "Critical security findings over time",
+      "title": "Security report findings over time",
       "type": "timeseries"
     },
     {
@@ -387,7 +387,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Namespaces with the most high or critical image vulnerabilities.",
+      "description": "Namespaces with the most high or critical image finding rows. Counts are not deduplicated vulnerability IDs.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -532,9 +532,7 @@
   "refresh": "5m",
   "schemaVersion": 42,
   "tags": [
-    "operations",
-    "security",
-    "trivy"
+    "compliance"
   ],
   "templating": {
     "list": []

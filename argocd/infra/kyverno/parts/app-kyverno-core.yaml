@@ -51,8 +51,12 @@ spec:
               release: kube-prometheus-stack
         reportsController:
           replicas: 2
+          # Background scans must retain compliant outcomes as well as
+          # violations. Otherwise a filtered pass cannot replace an older
+          # stored failure and PolicyReports cease to represent current state.
+          # Retain skip so approved PolicyExceptions are visible too.
           extraArgs:
-            allowedResults: fail,error,warn
+            allowedResults: pass,fail,error,warn,skip
           podDisruptionBudget:
             enabled: true
             minAvailable: 1

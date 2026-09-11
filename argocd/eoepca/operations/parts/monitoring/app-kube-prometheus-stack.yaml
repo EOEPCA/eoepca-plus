@@ -101,6 +101,167 @@ spec:
         thanosRuler:
           enabled: false
 
+        # Export current namespaced security-report state and report freshness.
+        # The chart adds CRD discovery permissions when customResourceState is
+        # enabled; these extra rules grant read-only access to the selected CRs.
+        kube-state-metrics:
+          rbac:
+            extraRules:
+              - apiGroups:
+                  - wgpolicyk8s.io
+                resources:
+                  - policyreports
+                verbs:
+                  - list
+                  - watch
+              - apiGroups:
+                  - kyverno.io
+                resources:
+                  - policyexceptions
+                verbs:
+                  - list
+                  - watch
+              - apiGroups:
+                  - aquasecurity.github.io
+                resources:
+                  - vulnerabilityreports
+                  - configauditreports
+                  - exposedsecretreports
+                  - rbacassessmentreports
+                verbs:
+                  - list
+                  - watch
+          customResourceState:
+            enabled: true
+            config:
+              kind: CustomResourceStateMetrics
+              spec:
+                resources:
+                  - groupVersionKind:
+                      group: wgpolicyk8s.io
+                      version: v1alpha2
+                      kind: PolicyReport
+                    metricNamePrefix: security_policyreport
+                    labelsFromPath:
+                      namespace: [metadata, namespace]
+                      report: [metadata, name]
+                      resource_kind: [scope, kind]
+                      resource_name: [scope, name]
+                    metrics:
+                      - name: result_info
+                        help: Current result stored in a namespaced Kyverno PolicyReport.
+                        each:
+                          type: Info
+                          info:
+                            path: [results]
+                            labelsFromPath:
+                              policy: [policy]
+                              rule: [rule]
+                              result: [result]
+                              severity: [severity]
+                      - name: result_timestamp_seconds
+                        help: Unix timestamp of a result stored in a namespaced Kyverno PolicyReport.
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [results]
+                            valueFrom: [timestamp, seconds]
+                            labelsFromPath:
+                              policy: [policy]
+                              rule: [rule]
+                              result: [result]
+                              severity: [severity]
+                  - groupVersionKind:
+                      group: kyverno.io
+                      version: v2
+                      kind: PolicyException
+                    metricNamePrefix: security_policyexception
+                    labelsFromPath:
+                      exception: [metadata, name]
+                      policy: [spec, exceptions, "0", policyName]
+                    metrics:
+                      - name: match_info
+                        help: Namespace and resource kind selected by a Kyverno PolicyException match branch.
+                        each:
+                          type: Info
+                          info:
+                            path: [spec, match, any]
+                            labelsFromPath:
+                              target_namespace: [resources, namespaces, "0"]
+                              resource_kind: [resources, kinds, "0"]
+                  - groupVersionKind:
+                      group: aquasecurity.github.io
+                      version: v1alpha1
+                      kind: VulnerabilityReport
+                    metricNamePrefix: security_trivy_vulnerabilityreport
+                    labelsFromPath:
+                      namespace: [metadata, namespace]
+                      report: [metadata, name]
+                      resource_kind: [metadata, labels, trivy-operator.resource.kind]
+                      resource_name: [metadata, labels, trivy-operator.resource.name]
+                      resource_spec_hash: [metadata, labels, resource-spec-hash]
+                    metrics:
+                      - name: updated_timestamp_seconds
+                        help: Unix update timestamp of a Trivy VulnerabilityReport.
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [report, updateTimestamp]
+                  - groupVersionKind:
+                      group: aquasecurity.github.io
+                      version: v1alpha1
+                      kind: ConfigAuditReport
+                    metricNamePrefix: security_trivy_configauditreport
+                    labelsFromPath:
+                      namespace: [metadata, namespace]
+                      report: [metadata, name]
+                      resource_kind: [metadata, labels, trivy-operator.resource.kind]
+                      resource_name: [metadata, labels, trivy-operator.resource.name]
+                      resource_spec_hash: [metadata, labels, resource-spec-hash]
+                    metrics:
+                      - name: updated_timestamp_seconds
+                        help: Unix update timestamp of a Trivy ConfigAuditReport.
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [report, updateTimestamp]
+                  - groupVersionKind:
+                      group: aquasecurity.github.io
+                      version: v1alpha1
+                      kind: ExposedSecretReport
+                    metricNamePrefix: security_trivy_exposedsecretreport
+                    labelsFromPath:
+                      namespace: [metadata, namespace]
+                      report: [metadata, name]
+                      resource_kind: [metadata, labels, trivy-operator.resource.kind]
+                      resource_name: [metadata, labels, trivy-operator.resource.name]
+                      resource_spec_hash: [metadata, labels, resource-spec-hash]
+                    metrics:
+                      - name: updated_timestamp_seconds
+                        help: Unix update timestamp of a Trivy ExposedSecretReport.
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [report, updateTimestamp]
+                  - groupVersionKind:
+                      group: aquasecurity.github.io
+                      version: v1alpha1
+                      kind: RbacAssessmentReport
+                    metricNamePrefix: security_trivy_rbacassessmentreport
+                    labelsFromPath:
+                      namespace: [metadata, namespace]
+                      report: [metadata, name]
+                      resource_kind: [metadata, labels, trivy-operator.resource.kind]
+                      resource_name: [metadata, labels, trivy-operator.resource.name]
+                      resource_spec_hash: [metadata, labels, resource-spec-hash]
+                    metrics:
+                      - name: updated_timestamp_seconds
+                        help: Unix update timestamp of a Trivy RbacAssessmentReport.
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [report, updateTimestamp]
+
         prometheus-node-exporter:
           hostPort:
             enabled: false

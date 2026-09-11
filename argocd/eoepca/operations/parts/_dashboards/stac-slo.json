@@ -39,7 +39,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "If the `upstream` line spikes backend application or database is choking. If the `apisix` line spikes the ingress controller or Kubernetes networking is failing.",
+      "description": "The upstream and APISIX series are p99 latency. The database series is mean latency and is supporting context, not a directly comparable percentile.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -154,7 +154,7 @@
           "refId": "C"
         }
       ],
-      "title": "P99 Latency Breakdown",
+      "title": "Request latency signals",
       "type": "timeseries"
     },
     {
@@ -550,7 +550,7 @@
           "refId": "A"
         }
       ],
-      "title": "GET Uptime",
+      "title": "GET latency compliance (≤500 ms)",
       "type": "stat"
     },
     {
@@ -684,7 +684,7 @@
           "refId": "A"
         }
       ],
-      "title": "POST Uptime",
+      "title": "POST latency compliance (≤500 ms)",
       "type": "stat"
     },
     {
@@ -760,7 +760,7 @@
   "preload": false,
   "schemaVersion": 42,
   "tags": [
-    "slo"
+    "eo"
   ],
   "templating": {
     "list": [
@@ -797,7 +797,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "APISIX Endpoint SLOs",
+  "title": "EOEPCA / STAC Endpoint SLOs",
   "uid": "8dfb46c7-7de5-4033-9c67-02439793bef6",
   "version": 1,
   "weekStart": ""

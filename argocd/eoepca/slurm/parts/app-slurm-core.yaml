@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: slurm-core
+  namespace: argocd
+  labels:
+    eoepca/app-name: slurm
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  # Chart from the Slinky registry, values kept in this repository
+  # (multi-source pattern, see zoo-dru-wes).
+  project: eoepca
+  sources:
+    - repoURL: ghcr.io/slinkyproject/charts
+      chart: slurm
+      targetRevision: "1.2.0"
+      helm:
+        releaseName: slurm
+        valueFiles:
+          - $values/argocd/eoepca/slurm/parts/values-slurm.yaml
+    - repoURL: https://github.com/EOEPCA/eoepca-plus
+      targetRevision: deploy-develop
+      ref: values
+  destination:
+    name: in-cluster
+    namespace: slurm
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true

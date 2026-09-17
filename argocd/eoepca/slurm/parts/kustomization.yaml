@@ -1,0 +1,4 @@
+resources:
+  - app-slurm-core.yaml
+  - ss-slurm-auth-key.yaml
+  - ss-slurm-auth-jwt.yaml

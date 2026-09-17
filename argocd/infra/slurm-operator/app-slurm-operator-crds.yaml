@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: slurm-operator-crds
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: slurm-operator
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  # Slinky ships its CRDs as a separate chart that must be applied before the
+  # operator. Sync wave is set centrally in argocd/infra/kustomization.yaml.
+  project: eoepca
+  source:
+    repoURL: ghcr.io/slinkyproject/charts
+    chart: slurm-operator-crds
+    targetRevision: "1.2.0"
+  destination:
+    name: in-cluster
+    namespace: slinky
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true

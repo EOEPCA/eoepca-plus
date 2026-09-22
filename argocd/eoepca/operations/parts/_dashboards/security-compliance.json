@@ -19,11 +19,11 @@
   "panels": [
     {
       "datasource": {"type": "grafana", "uid": "-- Grafana --"},
-      "description": "This dashboard shows the latest stored security state for one or more selected namespaces. Kyverno stores policy outcomes in PolicyReports, and kube-state-metrics converts those reports and PolicyExceptions into Prometheus metrics. Trivy Operator provides finding totals, while kube-state-metrics provides report update times. The final row is cluster-wide and ignores the namespace filter. Native Kubernetes Pod Security Admission is not included because its metrics do not identify the evaluated namespace.",
+      "description": "This dashboard shows the latest stored audit state for one or more selected namespaces. In namespaces opted in through the Restricted Pod Security Admission audit label, Kyverno writes policy outcomes to PolicyReports and declared waivers to PolicyExceptions; kube-state-metrics converts these objects to Prometheus metrics. Trivy Operator scans all namespaces and supplies image, secret, configuration, RBAC, and cluster-compliance findings through its reports and Prometheus metrics. Native Kubernetes Pod Security Admission is not included because its metrics do not identify the evaluated namespace. The final row is cluster-wide and ignores the namespace filter.",
       "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
       "id": 1,
       "options": {
-        "content": "## Current namespace security compliance\nShowing the latest stored results for **$namespace**. Start with violations and findings, then check freshness and coverage before deciding that a namespace is clean. Values refresh every 30 seconds; this view is not an archive of complete historical reports. The final row contains cluster-wide Trivy checks and does not use the namespace selection.",
+        "content": "## Audit evidence for **$namespace**\nIn opted-in namespaces, **Kyverno** PolicyReports and PolicyExceptions → **kube-state-metrics** → **Prometheus**. **Trivy Operator** scans all namespaces and sends image, secret, configuration, RBAC, and cluster-compliance report metrics to **Prometheus**. This is current stored evidence, not enforcement or full history. Check findings, then freshness and coverage. Native PSA is not shown because its metrics have no namespace label; the last row is cluster-wide.",
         "mode": "markdown"
       },
       "pluginVersion": "12.4.2",

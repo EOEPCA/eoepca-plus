@@ -226,6 +226,11 @@ spec:
   destination:
     name: in-cluster
     namespace: trivy-system
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - '.spec.volumeClaimTemplates[]?.spec.storageClassName'
   syncPolicy:
     automated:
       prune: true

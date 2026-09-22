@@ -1,0 +1,3 @@
+resources:
+  - app-slurm-operator-crds.yaml
+  - app-slurm-operator.yaml

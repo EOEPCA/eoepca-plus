@@ -24,6 +24,7 @@ resources:
   - openeofed
   - openeo-argoworkflows
   - notification-automation
+  - slurm
   # - identity-service  # deprecated. 
 
 
@@ -150,6 +151,19 @@ patches:
         name: eoepca-independent-services
         annotations:
           argocd.argoproj.io/sync-wave: "55"
+  - target:
+      kind: Application
+      name: ^slurm$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: slurm
+        annotations:
+          # after the infrastructure operators (slurm-operator, infra wave -20);
+          # no dependency on the IAM chain, clear of the wave-30 group and the
+          # wave-40 ZOO deployments
+          argocd.argoproj.io/sync-wave: "35"
   - target:
       group: bitnami.com
       kind: SealedSecret

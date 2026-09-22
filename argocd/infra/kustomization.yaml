@@ -21,6 +21,7 @@ resources:
   - eso
   - crossplane
   - trivy
+  - slurm-operator
 
 patches:
   # Root application waves express dependencies between independently synced
@@ -109,3 +110,26 @@ patches:
         name: storage-services
         annotations:
           argocd.argoproj.io/sync-wave: "0"
+  - target:
+      kind: Application
+      name: ^slurm-operator-crds$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: slurm-operator-crds
+        annotations:
+          # Slinky CRDs must exist before the operator's webhook starts
+          argocd.argoproj.io/sync-wave: "-25"
+  - target:
+      kind: Application
+      name: ^slurm-operator$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: slurm-operator
+        annotations:
+          # after cert-manager (-40) and its own CRDs (-25), alongside the
+          # other infrastructure operators
+          argocd.argoproj.io/sync-wave: "-20"

@@ -2,3 +2,11 @@ resources:
   - app-slurm-core.yaml
   - ss-slurm-auth-key.yaml
   - ss-slurm-auth-jwt.yaml
+  - deployment-synthetic-slurm-check.yaml
+
+configMapGenerator:
+  - name: synthetic-slurm-check-script
+    options:
+      disableNameSuffixHash: true
+    files:
+      - check-slurm.sh=synthetic-slurm-check/check-slurm.sh

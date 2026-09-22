@@ -1,0 +1,140 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synthetic-slurm-check
+  namespace: slurm
+  labels:
+    argocd.argoproj.io/instance: slurm
+  annotations:
+    # Wait until the nested Slurm application is healthy before this client
+    # starts to submit jobs.
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: synthetic-slurm-check
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: synthetic-slurm-check
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 401
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 401
+        runAsNonRoot: true
+        runAsUser: 401
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        # sackd supplies the local auth socket used by the Slurm client. This
+        # follows the configless client pattern used by Slinky's LoginSet.
+        - name: sackd
+          image: ghcr.io/slinkyproject/sackd:26.05-ubuntu26.04
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -ec
+          args:
+            - |
+              mkdir -p /run/slurm
+              exec /usr/sbin/sackd \
+                -D \
+                --conf-server slurm-controller:6817 \
+                --key-file /mnt/slurm/slurm.key
+          readinessProbe:
+            exec:
+              command:
+                - test
+                - -S
+                - /run/slurm/sack.socket
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 6
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: slurm-auth
+              mountPath: /mnt/slurm
+              readOnly: true
+            - name: sackd-run
+              mountPath: /run
+            - name: tmp
+              mountPath: /tmp
+        - name: checker
+          image: ghcr.io/slinkyproject/sackd:26.05-ubuntu26.04
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - /opt/synthetic-slurm-check/check-slurm.sh
+          env:
+            - name: SYNTHETIC_SLURM_CHECK_PARTITION
+              value: all
+            - name: SYNTHETIC_SLURM_CHECK_SLEEP_SECONDS
+              value: "60"
+          readinessProbe:
+            exec:
+              command:
+                - test
+                - -f
+                - /tmp/synthetic-slurm-check/healthy
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 401
+            runAsNonRoot: true
+            runAsUser: 401
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: synthetic-slurm-check-script
+              mountPath: /opt/synthetic-slurm-check/check-slurm.sh
+              subPath: check-slurm.sh
+              readOnly: true
+            - name: sackd-run
+              mountPath: /run
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: synthetic-slurm-check-script
+          configMap:
+            name: synthetic-slurm-check-script
+            defaultMode: 0755
+        - name: slurm-auth
+          secret:
+            defaultMode: 0440
+            secretName: slurm-auth-key
+            items:
+              - key: slurm.key
+                path: slurm.key
+        - name: sackd-run
+          emptyDir:
+            medium: Memory
+        - name: tmp
+          emptyDir: {}

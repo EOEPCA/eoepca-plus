@@ -13,7 +13,9 @@ spec:
   source:
     repoURL: https://kyverno.github.io/kyverno/
     chart: kyverno
-    targetRevision: 3.7.2
+    # Kyverno 1.19 is the final line that supports the (current) legacy policies
+    # but already fully support the new CEL policies...
+    targetRevision: 3.9.1
     helm:
       releaseName: kyverno
       values: |

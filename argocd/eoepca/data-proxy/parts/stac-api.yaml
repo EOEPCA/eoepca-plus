@@ -20,6 +20,8 @@ spec:
           extraEnvVars:
             - name: DOWNLOAD_BASE_URL
               value: https://eodag-proxy.develop-v2.eoepca.org/
+            - name: FETCH_PROVIDERS
+              value: "True"
   destination:
     name: in-cluster
     namespace: data-proxy

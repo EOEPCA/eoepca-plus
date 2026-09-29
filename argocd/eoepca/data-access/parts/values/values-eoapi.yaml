@@ -54,6 +54,13 @@ pgstacBootstrap:
 
 raster:
   enabled: true
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      additionalLabels:
+        release: kube-prometheus-stack  # match kube-prometheus-stack Prometheus serviceMonitorSelector
   ingress:
     path: "/raster"
   overrideRootPath: "/"
@@ -118,6 +125,13 @@ multidim:
 
 stac:
   enabled: true
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      additionalLabels:
+        release: kube-prometheus-stack  # match kube-prometheus-stack Prometheus serviceMonitorSelector
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -157,6 +171,13 @@ stac:
 
 vector:
   enabled: true
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      additionalLabels:
+        release: kube-prometheus-stack  # match kube-prometheus-stack Prometheus serviceMonitorSelector
   settings:
     podSecurityContext:
       runAsNonRoot: true

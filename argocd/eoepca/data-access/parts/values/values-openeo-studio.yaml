@@ -1,0 +1,30 @@
+fullnameOverride: "eoapi-openeo-studio"
+
+image:
+  tag: "1.0.0"
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "50m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+
+env:
+  OPENEO_API_URL: https://eoapi.develop-v2.eoepca.org/openeo
+  # The container derives its path prefix (/studio) from BASE_URL and handles
+  # the rewrite itself, so the APISIX route must not strip the prefix.
+  BASE_URL: https://eoapi.develop-v2.eoepca.org/studio
+  APP_TITLE: "EOEPCA+ openEO Studio"
+  APP_DESCRIPTION: "Interactive openEO processing on the EOEPCA+ platform"
+  AUTH_AUTHORITY: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
+  AUTH_CLIENT_ID: eoapi
+  AUTH_REDIRECT_URI: https://eoapi.develop-v2.eoepca.org/studio/
+  PARTNER_NAME: "EOEPCA+"
+  PARTNER_LOGO_URL: https://eoapi.develop-v2.eoepca.org/manager/meta/icon-192.png
+  ENABLE_NARRATIVE_EXPORT: "false"
+  MAPTILER_KEY: ""

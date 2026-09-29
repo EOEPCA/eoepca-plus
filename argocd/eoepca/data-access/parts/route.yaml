@@ -44,31 +44,33 @@ spec:
     - name: cors
       enable: true
 
-  - name: studio-redirect
-    backends:
-    - serviceName: eoapi-openeo-studio
-      servicePort: 80
-    match:
-      hosts:
-      - eoapi.develop-v2.eoepca.org
-      paths:
-      - /studio
-    plugins:
-    - name: redirect
-      enable: true
-      config:
-        uri: /studio/
-  # No proxy-rewrite: the studio container strips the /studio prefix itself.
-  - name: studio-route
-    backends:
-    - serviceName: eoapi-openeo-studio
-      servicePort: 80
-    match:
-      hosts:
-      - eoapi.develop-v2.eoepca.org
-      paths:
-      - /studio/
-      - /studio/*
+  # openeo-studio is temporarily disabled. Re-enable together with the
+  # openeo-studio source in app-data-access-core.yaml.
+  # - name: studio-redirect
+  #   backends:
+  #   - serviceName: eoapi-openeo-studio
+  #     servicePort: 80
+  #   match:
+  #     hosts:
+  #     - eoapi.develop-v2.eoepca.org
+  #     paths:
+  #     - /studio
+  #   plugins:
+  #   - name: redirect
+  #     enable: true
+  #     config:
+  #       uri: /studio/
+  # # No proxy-rewrite: the studio container strips the /studio prefix itself.
+  # - name: studio-route
+  #   backends:
+  #   - serviceName: eoapi-openeo-studio
+  #     servicePort: 80
+  #   match:
+  #     hosts:
+  #     - eoapi.develop-v2.eoepca.org
+  #     paths:
+  #     - /studio/
+  #     - /studio/*
 
   - name: browser-redirect
     backends:

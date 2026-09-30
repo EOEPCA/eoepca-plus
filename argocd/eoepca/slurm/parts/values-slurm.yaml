@@ -24,7 +24,57 @@ jwtKey:
     name: slurm-auth-jwt
     key: jwt_hs256.key
 
+# Keycloak tokens (RS256) for the REST API. slurmctld verifies them against the
+# public keys (JWKS) of the EOEPCA realm. The ConfigMap is not in Git: the
+# CronJob `slurm-jwks-refresh` creates it and keeps it current, because the
+# realm keys change when the realm is imported again. The operator keeps
+# `jwt_key=` next to `jwks=`, so its own HS256 tokens keep working.
+# Slurm takes the user name from the claim `sun` (its default). Only the client
+# `slurm-cli` writes that claim, from the admin-only user attribute `slurm_user`
+# (see iam.yaml). Tokens of other clients carry no `sun` and are refused.
+jwksKeys:
+  enabled: true
+  configMapRef:
+    name: slurm-auth-jwks
+    key: jwks.json
+
 controller:
+  slurmctld:
+    image:
+      repository: ghcr.io/slinkyproject/slurmctld
+      tag: 26.05.4-ubuntu26.04    # exact build; the chart default 26.05-ubuntu26.04 moves
+    # slurmctld resolves the user name from the token to a POSIX account.
+    # The accounts come from the ConfigMap `slurm-nss` (image entries plus the
+    # Slurm users). slurmd and slurmrestd need no entry: with
+    # AuthInfo=use_client_ids the credential carries uid and gid to the node.
+    volumeMounts:
+      - name: slurm-nss
+        mountPath: /etc/passwd
+        subPath: passwd
+        readOnly: true
+      - name: slurm-nss
+        mountPath: /etc/group
+        subPath: group
+        readOnly: true
+  # The `reconfigure` sidecar polls /etc/slurm and runs `scontrol reconfigure`
+  # on any change. This picks up new realm keys from the CronJob
+  # `slurm-jwks-refresh` without a restart. It also applies other slurm.conf
+  # changes in-place instead of restarting the pods. Changes that slurm.conf(5)
+  # marks as needing a daemon restart (e.g. TCP listening settings) then take
+  # effect only on the next restart of slurmctld.
+  inplaceReconfigure: true
+  reconfigure:
+    image:
+      repository: ghcr.io/slinkyproject/slurmctld
+      tag: 26.05.4-ubuntu26.04
+  podSpec:
+    volumes:
+      - name: slurm-nss
+        configMap:
+          name: slurm-nss
+  extraConfMap:
+    # A token for a user that resolves to uid 0 must not start jobs.
+    DisableRootJobs: "YES"
   persistence:
     enabled: true
     # NFS-backed. SchedMD advises against NFS for StateSaveLocation; both
@@ -36,6 +86,12 @@ controller:
     resources:
       requests:
         storage: 4Gi
+
+restapi:
+  slurmrestd:
+    image:
+      repository: ghcr.io/slinkyproject/slurmrestd
+      tag: 26.05.4-ubuntu26.04
 
 # One NodeSet in the default scaling mode (StatefulSet, fixed replica count).
 # Alternative: `scalingMode: DaemonSet` places one slurmd pod per worker and
@@ -49,6 +105,9 @@ nodesets:
   slinky:               # a map keyed by NodeSet name, not a list
     replicas: 1
     slurmd:
+      image:
+        repository: ghcr.io/slinkyproject/slurmd
+        tag: 26.05.4-ubuntu26.04
       resources:
         requests:
           cpu: 4

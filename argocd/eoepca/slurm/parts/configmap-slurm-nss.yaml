@@ -9,6 +9,8 @@
 # the files, they are read verbatim). The name must match the Keycloak user
 # attribute `slurm_user` (iam.yaml), which the client `slurm-cli` puts into the
 # token claim `sun`. Home is /tmp because the workers have no home directories.
+# zoo-poll is the account of the ZOO polling client (zoo-dru-slurm/parts/iam.yaml,
+# fixed claim sun=zoo-poll): it reads job states and has no login shell.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -38,6 +40,7 @@ data:
     sssd:x:100:101:SSSD system user:/var/lib/sss:/usr/sbin/nologin
     slurm-test-1:x:3101:3101:Slurm test user 1:/tmp:/bin/bash
     slurm-test-2:x:3102:3102:Slurm test user 2:/tmp:/bin/bash
+    zoo-poll:x:3199:3199:Job state reader for ZOO (zoo-dru-slurm):/nonexistent:/usr/sbin/nologin
   group: |
     root:x:0:
     daemon:x:1:
@@ -81,3 +84,4 @@ data:
     sssd:x:101:
     slurm-test-1:x:3101:
     slurm-test-2:x:3102:
+    zoo-poll:x:3199:

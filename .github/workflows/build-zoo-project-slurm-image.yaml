@@ -1,0 +1,61 @@
+name: Build and Push zoo-project-slurm Image to GHCR
+
+# Builds images/zoo-project-slurm (ZOO-Project DRU with the Slurm runner) and pushes it
+# to ghcr.io/eoepca/eoepca-plus/zoo-project-slurm. The tag comes from
+# images/zoo-project-slurm/VERSION, so that argocd/eoepca/zoo-dru-slurm/parts/values-zoo.yaml
+# can reference an exact tag. A pull request builds the image but does not push it.
+
+on:
+  push:
+    branches:
+      - deploy-develop
+    paths:
+      - 'images/zoo-project-slurm/**'
+      - '.github/workflows/build-zoo-project-slurm-image.yaml'
+  pull_request:
+    branches:
+      - deploy-develop
+    paths:
+      - 'images/zoo-project-slurm/**'
+      - '.github/workflows/build-zoo-project-slurm-image.yaml'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: eoepca/eoepca-plus/zoo-project-slurm
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        run: echo "tag=$(tr -d '[:space:]' < images/zoo-project-slurm/VERSION)" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: images/zoo-project-slurm
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.tag }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Summary
+        run: |
+          echo "## zoo-project-slurm image" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Image**: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.tag }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Pushed**: ${{ github.event_name != 'pull_request' }}" >> "$GITHUB_STEP_SUMMARY"

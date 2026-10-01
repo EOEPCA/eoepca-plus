@@ -1,0 +1,105 @@
+# ZOO-Project DRU that runs CWL Application Packages as Slurm jobs on the cluster in
+# argocd/eoepca/slurm, through the Slurm REST API, under the POSIX account of the
+# requesting user. Same layout as zoo-dru-std; differences are commented.
+
+# The chart binds its processing service account to this ClusterRole. The default
+# cluster-admin is needed by the Calrissian runner, which creates namespaces. The Slurm
+# runner creates no Kubernetes objects, so the read-only role is enough. It also stops the
+# chart's dismiss fallback for Calrissian from deleting namespaces.
+clusterAdminRoleName: view
+
+# Service template with the Slurm runner, pinned to a tag (the chart passes the value to
+# "git clone -b").
+cookiecutter:
+  templateUrl: https://github.com/Vorkosik/zoo-slurm.git
+  templateBranch: v0.1.0
+
+zoo:
+  openapi:
+    enabled: true
+zoofpm:
+  image:
+    repository: ghcr.io/eoepca/eoepca-plus/zoo-project-slurm
+    tag: dru-19f3c4ee-slurm.0.1.0
+zookernel:
+  env:
+    ZOO_OUTPUT_FORMAT: "stac-collection"
+  image:
+    repository: ghcr.io/eoepca/eoepca-plus/zoo-project-slurm
+    tag: dru-19f3c4ee-slurm.0.1.0
+
+customConfig:
+  main:
+    # Stage-out to the requesting user's workspace bucket (as zoo-dru-std).
+    eoepca: |-
+      domain=develop-v2.eoepca.org
+      workspace_url=https://workspace-api.develop-v2.eoepca.org
+      workspace_prefix=ws
+      workspace_catalog_register=false
+    # Site profile of the Slurm cluster. The runner caps the job resources at these limits
+    # and never takes account, partition or limits from the execute request.
+    # work_root: per-user directory without a shared parent (/tmp is the home directory of
+    # the Slurm users, see slurm/parts/configmap-slurm-nss.yaml).
+    # minimum_uid: jobs are submitted on hold and cancelled if Slurm maps the user to a
+    # uid below this value (system and service accounts).
+    slurm_site: |-
+      name=eoepca-develop
+      rest_url=http://slurm-restapi.slurm.svc.cluster.local:6820
+      api_version=v0.0.45
+      default_partition=all
+      max_cpus_per_task=4
+      max_memory_mb=8192
+      default_time_limit_min=60
+      max_time_limit_min=720
+      work_root=/tmp/zoo-{user}
+      cwl_engine=cwltool
+      cwl_engine_args=--singularity
+      minimum_uid=1000
+    # Runner for the dismiss of a job (DELETE /jobs/{id}). Read by a runDismiss that
+    # dispatches to the runner; the chart's own runDismiss only knows the WES and
+    # Calrissian runners, so a dismiss does not yet cancel the Slurm job.
+    runner: |-
+      class=zoo_slurm_runner.SlurmRestRunner
+
+workflow:
+  defaultMaxRam: "1024"
+  defaultMaxCores: "2"
+  # Values are rendered unquoted by the chart; numbers need inner quotes.
+  inputs:
+    SLURM_TOKEN_URL: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/protocol/openid-connect/token
+    SLURM_TOKEN_CLIENT_ID: zoo-slurm-runner
+    SLURM_POLL_CLIENT_ID: zoo-slurm-poller
+    SLURM_MONITOR_INTERVAL: "'30'"
+  # SLURM_TOKEN_CLIENT_SECRET and SLURM_POLL_CLIENT_SECRET (iam-secret-propagation.yaml).
+  extraEnvFrom:
+    - secretRef:
+        name: zoo-slurm-runner-env
+  nodeSelector: {}
+  storageClass: managed-nfs-storage-retain
+
+ingress:
+  enabled: false
+  hosturl: https://zooslurm.develop-v2.eoepca.org
+
+persistence:
+  procServicesStorageClass: managed-nfs-storage-retain
+  storageClass: managed-nfs-storage-retain
+  tmpStorageClass: managed-nfs-storage
+postgresql:
+  persistence:
+    storageClass: managed-nfs-storage-retain
+rabbitmq:
+  persistence:
+    storageClass: managed-nfs-storage-retain
+
+iam:
+  enabled: true
+  openIdConnectUrl: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration
+  realm: eoepca
+  issuer: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
+  audience: account
+
+documentation:
+  enabled: true
+webui:
+  enabled: false

@@ -17,8 +17,8 @@ spec:
       releaseName: qdrant-operator
       valuesObject:
         image:
-          repository: ghcr.io/myinstep/qdrant-operator
-          tag: main
+          repository: ghcr.io/qdrant-operator/qdrant-operator
+          tag: 0.0.3
           pullPolicy: IfNotPresent
         metrics:
           enabled: false

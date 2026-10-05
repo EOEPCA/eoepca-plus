@@ -6,7 +6,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "12"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  package: xpkg.upbound.io/vshn/provider-minio:v0.4.4
+  package: xpkg.upbound.io/vshn/provider-minio:v0.4.5
   runtimeConfigRef:
     name: provider-minio
 ---
@@ -18,7 +18,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "12"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  package: xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v1.0.0
+  package: xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v1.3.1
   runtimeConfigRef:
     name: provider-kubernetes
 ---

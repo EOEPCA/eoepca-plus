@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-pipeline
-      targetRevision: 2.2.1
+      targetRevision: 2.2.2
       helm:
         releaseName: workspace-pipeline
         values: |
@@ -28,12 +28,16 @@ spec:
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
             iam:
               realm: eoepca
+              namespace: iam
+              issuerURL: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
+              internalURL: http://iam-core-keycloak-operator-service.iam.svc.cluster.local:8080/realms/eoepca
               extraAudiences:
                 - workspace-api
             ingress:
+              enabled: true
               class: apisix
               domain: lab.develop-v2.eoepca.org
-              secret: wildcard-tls
+              secret: workspace-tls
             storage:
               endpoint: https://minio.develop-v2.eoepca.org
               forcePathStyle: true
@@ -67,13 +71,9 @@ spec:
               type: none
             defaults:
               quota:
-                memory: ""
                 storage: 8Gi
                 budget: x-large
               security:
-                policy: ""
-                kubernetesAccess: ""
-                kubernetesRole: ""
                 externalEgress: true
             database: 
               gateway:

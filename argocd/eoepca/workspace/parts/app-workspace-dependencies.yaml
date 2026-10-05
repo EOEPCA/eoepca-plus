@@ -9,11 +9,6 @@ spec:
   project: eoepca
   sources:
     - repoURL: ghcr.io/eoepca/workspace
-      chart: workspace-dependencies-csi-rclone
-      targetRevision: 2.2.1
-      helm:
-        releaseName: workspace-dependencies-csi-rclone
-    - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-dependencies-educates
       targetRevision: 2.2.1
       helm:

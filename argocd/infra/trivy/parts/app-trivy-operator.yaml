@@ -130,27 +130,6 @@ spec:
             import rego.v1
             default ignore = true
 
-          ignorePolicy.workspace.csi-rclone-nodeplugin: |
-            package trivy
-            import rego.v1
-
-            default ignore = false
-
-            # CSI needs to be privileged (and is not an output of EOEPCA anyway)
-            ignore if {
-                input.ID == "KSV-0017"
-            }
-
-            # Needs local FS access
-            ignore if {
-                input.ID == "KSV-0023"
-            }
-
-            # CSI needs SYS_ADMIN cap
-            ignore if {
-                input.ID == "KSV-0005"
-            }
-
           ignorePolicy.workspace.secrets-manager-.: |
             package trivy
             import rego.v1

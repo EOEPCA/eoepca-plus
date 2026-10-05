@@ -66,7 +66,9 @@ spec:
             - name: extra-trivy-config
               mountPath: /extra-trivy-config
         trivy:
-          severity: UNKNOWN,MEDIUM,HIGH,CRITICAL
+          # Keep vulnerability report objects small enough for the Kubernetes
+          # API and focus the operational report on actionable findings.
+          severity: HIGH,CRITICAL
           ignoreUnfixed: false
           timeout: 15m0s
           server:

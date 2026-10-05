@@ -218,13 +218,13 @@
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Available Trivy image, configuration, exposed-secret, and namespaced RBAC findings grouped by severity for the selected namespace. The values count finding occurrences, not unique vulnerability IDs or affected resources. Use the freshness and coverage panels to decide whether the totals are complete enough to trust.",
+      "description": "Available Trivy findings grouped by severity for the selected namespace. Image findings include Critical and High because those are the configured vulnerability scan severities. Configuration, exposed-secret, and namespaced RBAC findings also include Medium. The values count finding occurrences, not unique vulnerability IDs or affected resources. Use the freshness and coverage panels to decide whether the totals are complete enough to trust.",
       "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
       "gridPos": {"h": 9, "w": 24, "x": 0, "y": 33},
       "id": 21,
       "options": {"displayMode": "gradient", "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true}, "maxVizHeight": 300, "minVizHeight": 16, "minVizWidth": 8, "namePlacement": "auto", "orientation": "horizontal", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "showUnfilled": true, "sizing": "auto", "valueMode": "color"},
       "targets": [
-        {"editorMode": "code", "expr": "sum by (severity) (trivy_image_vulnerabilities{namespace=~\"$namespace\",severity=~\"Critical|High|Medium\"})", "instant": true, "legendFormat": "Images / {{severity}}", "range": false, "refId": "A"},
+        {"editorMode": "code", "expr": "sum by (severity) (trivy_image_vulnerabilities{namespace=~\"$namespace\",severity=~\"Critical|High\"})", "instant": true, "legendFormat": "Images / {{severity}}", "range": false, "refId": "A"},
         {"editorMode": "code", "expr": "sum by (severity) (trivy_resource_configaudits{namespace=~\"$namespace\",severity=~\"Critical|High|Medium\"})", "instant": true, "legendFormat": "Configuration / {{severity}}", "range": false, "refId": "B"},
         {"editorMode": "code", "expr": "sum by (severity) (trivy_image_exposedsecrets{namespace=~\"$namespace\",severity=~\"Critical|High|Medium\"})", "instant": true, "legendFormat": "Secrets / {{severity}}", "range": false, "refId": "C"},
         {"editorMode": "code", "expr": "sum by (severity) (trivy_role_rbacassessments{namespace=~\"$namespace\",severity=~\"Critical|High|Medium\"})", "instant": true, "legendFormat": "Role RBAC / {{severity}}", "range": false, "refId": "D"}

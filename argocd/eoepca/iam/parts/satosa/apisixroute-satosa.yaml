@@ -1,0 +1,23 @@
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: satosa-route
+  namespace: iam
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: apisix
+  http:
+    - backends:
+        - serviceName: iam-satosa
+          servicePort: 8080
+      match:
+        # Note: https://hub.docker.com/_/satosa#base_url says: "SATOSA MUST be hosted at the root of the website."
+        hosts:
+          - iam-satosa.develop-v2.eoepca.org
+#          - develop-v2.eoepca.org/iam/proxy
+        paths:
+          - /
+          - /*
+#          - /iam/proxy
+      name: satosa

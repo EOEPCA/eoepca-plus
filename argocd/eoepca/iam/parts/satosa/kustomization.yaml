@@ -1,0 +1,8 @@
+
+resources:
+  - apisixroute-satosa.yaml
+  - cert-satosa.yaml
+  - cm-satosa-config.yaml
+  - service-satosa.yaml
+  - ss-satosa-cdb.yaml
+  - statefulset-satosa.yaml

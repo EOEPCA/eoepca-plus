@@ -1,0 +1,28 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: satosa-cert
+  namespace: iam
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+spec:
+  secretName: satosa-cert
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  isCA: false
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 4096
+  usages:
+    - server auth
+    - client auth
+    - digital signature
+  dnsNames:
+    - "develop-v2.eoepca.org"
+    - "iam-satosa.develop-v2.eoepca.org"
+  issuerRef:
+    # must stay dns-01: this host is routed by apisix, not nginx, so an
+    # http-01 challenge via the nginx issuer 404s
+    name: letsencrypt-dns-prod
+    kind: ClusterIssuer

@@ -1,0 +1,293 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: satosa-config
+  namespace: iam
+data:
+  internal_attributes.yaml: |
+    attributes:
+      address:
+        openid:
+          - address.street_address
+        orcid:
+          - address
+        saml:
+          - postaladdress
+      displayname:
+        openid:
+          - nickname
+        orcid:
+          - displayname
+        github:
+          - login
+        saml:
+          - displayName
+      edupersontargetedid:
+        facebook:
+          - id
+        linkedin:
+          - id
+        orcid:
+          - edupersontargetedid
+        github:
+          - id
+        openid:
+          - sub
+        saml:
+          - eduPersonTargetedID
+      givenname:
+        facebook:
+          - first_name
+        linkedin:
+          - email-address
+        orcid:
+          - givenname
+        openid:
+          - given_name
+        saml:
+          - givenName
+      mail:
+        facebook:
+          - email
+        linkedin:
+          - email-address
+        orcid:
+          - mail
+        github:
+          - email
+        openid:
+          - email
+        saml:
+          - email
+          - emailAddress
+          - mail
+      name:
+        facebook:
+          - name
+        orcid:
+          - name
+        github:
+          - name
+        openid:
+          - name
+        saml:
+          - cn
+      surname:
+        facebook:
+          - last_name
+        linkedin:
+          - lastName
+        orcid:
+          - surname
+        openid:
+          - family_name
+        saml:
+          - sn
+          - surname
+  oidc_frontend.yaml: |
+    module: satosa.frontends.openid_connect.OpenIDConnectFrontend
+    name: OIDC
+    config:
+      signing_key_path: frontend.key
+      signing_key_id: frontend.key1
+
+      # Where to store clients.
+      #
+      # If client_db_uri is set, the database connection is used.
+      # Otherwise, if client_db_path is set, the JSON file is used.
+      # By default, an in-memory dictionary is used.
+    #  client_db_uri: mongodb://db.example.com
+      client_db_path: cdb.json
+
+      # if not specified, it is randomly generated on every startup
+    #  sub_hash_salt: randomSALTvalue
+
+      provider:
+        client_registration_supported: No #Yes
+        response_types_supported: ["code", "id_token token"]
+        subject_types_supported: ["pairwise"]
+        scopes_supported: ["openid", "email"]
+    #    extra_scopes:
+    #      foo_scope:
+    #      - bar_claim
+    #      - baz_claim
+        id_token_lifetime: 3600
+    #    extra_id_token_claims:
+    #      foo_client:
+    #        - bar_claim
+    #        - baz_claim
+  proxy_conf.yaml: |
+    BASE: https://iam-satosa.develop-v2.eoepca.org #example.com
+
+    COOKIE_STATE_NAME: "SATOSA_STATE"
+    CONTEXT_STATE_DELETE: yes
+    STATE_ENCRYPTION_KEY: "asdASD123"
+
+    cookies_samesite_compat:
+      - ["SATOSA_STATE", "SATOSA_STATE_LEGACY"]
+
+    INTERNAL_ATTRIBUTES: "internal_attributes.yaml"
+
+    BACKEND_MODULES:
+      - "saml2_backend.yaml"
+    #  - "oidc_backend.yaml"
+
+    FRONTEND_MODULES:
+    #  - "saml2_frontend.yaml"
+      - "oidc_frontend.yaml"
+
+    #MICRO_SERVICES:
+    #  - "static_attributes.yaml"
+
+    LOGGING:
+      version: 1
+      formatters:
+        simple:
+          format: "[%(asctime)s] [%(levelname)s] [%(name)s.%(funcName)s] %(message)s"
+      handlers:
+        stdout:
+          class: logging.StreamHandler
+          stream: "ext://sys.stdout"
+          level: DEBUG
+          formatter: simple
+        syslog:
+          class: logging.handlers.SysLogHandler
+          address: "/dev/log"
+          level: DEBUG
+          formatter: simple
+        debug_file:
+          class: logging.FileHandler
+          filename: satosa-debug.log
+          encoding: utf8
+          level: DEBUG
+          formatter: simple
+        error_file:
+          class: logging.FileHandler
+          filename: satosa-error.log
+          encoding: utf8
+          level: ERROR
+          formatter: simple
+        info_file:
+          class: logging.handlers.RotatingFileHandler
+          filename: satosa-info.log
+          encoding: utf8
+          maxBytes: 10485760 # 10MB
+          backupCount: 20
+          level: INFO
+          formatter: simple
+      loggers:
+        satosa:
+          level: DEBUG
+        saml2:
+          level: DEBUG
+        oidcendpoint:
+          level: DEBUG
+        pyop:
+          level: DEBUG
+        oic:
+          level: DEBUG
+      root:
+        level: DEBUG
+        handlers:
+          - stdout
+  saml2_backend.yaml: |
+    module: satosa.backends.saml2.SAMLBackend
+    name: Saml2
+    config:
+    #  idp_blacklist_file: /path/to/blacklist.json
+
+      acr_mapping:
+        "": "urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified"
+    #    "https://accounts.google.com": "http://eidas.europa.eu/LoA/low"
+
+      # disco_srv must be defined if there is more than one IdP in the metadata specified above
+    #  disco_srv: http://disco.example.com
+      disco_srv: https://wayf.aai.dfn.de/DFN-AAI-Test/wayf
+
+      entityid_endpoint: true
+      mirror_force_authn: no
+      memorize_idp: no
+      use_memorized_idp_when_force_authn: no
+      send_requester_id: no
+      enable_metadata_reload: no
+      acs_selection_strategy: prefer_matching_host
+
+      sp_config:
+        name: "EOEPCA+ Develop-V2 Environment"
+        description: "EOEPCA+ Development and Reference Environment V2 (direct integration)"
+        key_file: backend.key
+        cert_file: backend.crt
+        organization: {display_name: DLR, name: DLR, url: 'http://www.dlr.de'}
+        contact_person:
+        - {contact_type: technical, email_address: 'mailto:eoc-ums-support@dlr.de', given_name: Technical}
+        - {contact_type: support, email_address: 'mailto:eoc-ums-helpdesk@dlr.de', given_name: Support}
+        - {contact_type: other, email_address: 'mailto:eoc-ums-security@dlr.de', given_name: Security, extension_attributes: {'xmlns:remd': 'http://refeds.org/metadata', 'remd:contactType': 'http://refeds.org/metadata/contactType/security'}}
+
+        metadata:
+    #      local: [dfn-aai-test-metadata.xml]
+    #      remote:
+    #        - url: https://www.aai.dfn.de/metadata/dfn-aai-test-metadata.xml
+    #          cert: null
+          mdq:
+            - url: http://mdq-test.aai.dfn.de
+    #          disable_ssl_certificate_validation: True
+              check_validity: False
+
+    #      local: [idp.xml]
+    #      local: [frontend.xml]
+
+    #    entityid: https://iam-satosa.develop-v2.eoepca.org/Saml2/proxy_saml2_backend.xml
+        entityid: https://develop-v2.eoepca.org/iam/proxy
+        accepted_time_diff: 60
+        service:
+          sp:
+            ui_info:
+              display_name:
+                - lang: en
+                  text: "EOEPCA+ Develop-V2"
+              description:
+                - lang: en
+                  text: "EOEPCA+ Development and Reference Environment V2 (direct integration)"
+              information_url:
+                - lang: en
+                  text: "https://eoepca.org/eoepcaplus/"
+              privacy_statement_url:
+                - lang: en
+                  text: "http://sp.privacy.url/" # TBD
+              keywords:
+                - lang: en
+                  text: ["EOEPCA", "SP-EN"]
+              logo:
+                text: "https://eoepca.org/static_portal/website/img/eoepca_logo_no_bg-80px.c024f37fa262.png"
+                width: "406"
+                height: "80"
+            authn_requests_signed: false #true
+            want_response_signed: false #true
+            want_assertions_or_response_signed: true
+            allow_unsolicited: true
+            endpoints:
+              assertion_consumer_service:
+              - [https://iam-satosa.develop-v2.eoepca.org/Saml2/acs/post, 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST']
+              discovery_response:
+              - [https://iam-satosa.develop-v2.eoepca.org/Saml2/disco, 'urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol']
+
+            # name_id_format: a list of strings to set the <NameIDFormat> element in SP metadata
+            # name_id_policy_format: a string to set the Format attribute in the NameIDPolicy element
+            # of the authentication request
+            # name_id_format_allow_create: sets the AllowCreate attribute in the NameIDPolicy element
+            # of the authentication request
+            name_id_format_allow_create: true
+  static_attributes.yaml: |
+    module: satosa.micro_services.attribute_modifications.AddStaticAttributes
+    name: AddAttributes
+    config:
+        static_attributes:
+            organisation: EOEPCA+
+    #        schachomeorganization: eoepca.org
+    #        schachomeorganizationtype:
+    #        - "urn:schac:homeOrganizationType:eu:higherEducationInstitution"
+    #        - "urn:schac:homeOrganizationType:eu:educationInstitution"
+            organizationname: EOEPCA+
+    #        noreduorgacronym: EO
+    #        countryname: UK
+    #        friendlycountryname: United Kingdom

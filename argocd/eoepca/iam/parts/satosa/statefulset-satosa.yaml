@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: iam-satosa
+  namespace: iam
+spec:
+  serviceName: satosa-service
+  selector:
+    matchLabels:
+      app: iam-satosa
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: iam-satosa
+    spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: iam-satosa
+          image: satosa:8
+          volumeMounts:
+            - name: data
+              mountPath: /etc/satosa
+            - name: satosa-config
+              mountPath: /etc/satosa/proxy_conf.yaml
+              subPath: proxy_conf.yaml
+            - name: satosa-config
+              mountPath: /etc/satosa/saml2_backend.yaml
+              subPath: saml2_backend.yaml
+            - name: satosa-config
+              mountPath: /etc/satosa/oidc_frontend.yaml
+              subPath: oidc_frontend.yaml
+            - name: satosa-config
+              mountPath: /etc/satosa/internal_attributes.yaml
+              subPath: internal_attributes.yaml
+            - name: satosa-config
+              mountPath: /etc/satosa/static_attributes.yaml
+              subPath: static_attributes.yaml
+            - name: satosa-cdb
+              mountPath: /etc/satosa/cdb.json
+              subPath: cdb.json
+            - name: satosa-cert
+              mountPath: /etc/satosa/backend.crt
+              subPath: tls.crt
+            - name: satosa-cert
+              mountPath: /etc/satosa/backend.key
+              subPath: tls.key
+      volumes:
+        - name: satosa-config
+          configMap:
+            name: satosa-config
+        - name: satosa-cdb
+          secret:
+            secretName: satosa-cdb
+        - name: satosa-cert
+          secret:
+            secretName: satosa-cert
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: managed-nfs-storage-retain
+        volumeMode: Filesystem

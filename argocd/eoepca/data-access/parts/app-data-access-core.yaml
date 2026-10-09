@@ -12,7 +12,7 @@ spec:
 
     - repoURL: https://developmentseed.org/eoapi-k8s/
       chart: eoapi
-      targetRevision: 0.16.3
+      targetRevision: 0.17.2
       helm:
         releaseName: eoapi
         valueFiles:
@@ -88,7 +88,7 @@ spec:
     # studio-redirect / studio-route entries in route.yaml.
     # - repoURL: https://github.com/developmentseed/openeo-studio
     #   path: charts/openeo-studio
-    #   targetRevision: v1.0.0
+    #   targetRevision: v1.0.1
     #   helm:
     #     releaseName: eoapi-openeo-studio
     #     valueFiles:

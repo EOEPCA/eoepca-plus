@@ -27,13 +27,13 @@ spec:
           proxyEnv:
             eodagUrl: http://eodag-data-proxy-eodag-data-proxy-chart-control-plane:8000
             authIssuerUrl: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
-            authAudience: eodag-proxy
-            authJwksUrl: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration
+            authAudience: data-proxy
+            authJwksUrl: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/protocol/openid-connect/certs
+            opaUrl: http://data-proxy-opa:8181/v1/data/stac/collections/authorize/allow
 
           opa:
             # disabled: chart 0.1.0 hardcodes "opa run --config", current opa images need "--config-file"
             enabled: false
-            configMap: opa-config
 
           ingress:
             enabled: false # APISIX

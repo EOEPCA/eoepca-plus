@@ -90,7 +90,7 @@ kubectl create secret generic opa-credentials \
    - Run `opa build -b ./opa/bundle` locally.
 
 2. OPA does not refresh bundle
-   - Check sidecar logs: `kubectl logs -n data-proxy <pod> -c opa | grep -i bundle`.
+   - Check OPA logs: `kubectl logs -n data-proxy deploy/data-proxy-opa | grep -i bundle`.
    - Verify `GITHUB_TOKEN` is present in namespace `data-proxy`.
 
 3. Bundle push issues

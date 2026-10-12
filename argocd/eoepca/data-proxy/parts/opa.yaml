@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-proxy-opa
+  labels:
+    app.kubernetes.io/name: data-proxy-opa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: data-proxy-opa
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: data-proxy-opa
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: opa
+          image: openpolicyagent/opa:1.14.1
+          args:
+            - run
+            - --server
+            - --addr=:8181
+            - --log-level=info
+            - --config-file=/config/config.yaml
+          ports:
+            - name: http
+              containerPort: 8181
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health?bundles
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - name: opa-config
+              mountPath: /config
+              readOnly: true
+            # the OCI bundle downloader stages bundles under /tmp/opa
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: opa-config
+          configMap:
+            name: opa-config
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-proxy-opa
+  labels:
+    app.kubernetes.io/name: data-proxy-opa
+spec:
+  selector:
+    app.kubernetes.io/name: data-proxy-opa
+  ports:
+    - name: http
+      port: 8181
+      targetPort: http
+      protocol: TCP

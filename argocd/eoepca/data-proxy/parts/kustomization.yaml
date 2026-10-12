@@ -4,5 +4,6 @@ resources:
   - stac-api.yaml
   - ss-cs-container-pull.yaml
   - opa-config.yaml
+  - opa.yaml
   - route.yaml
   - iam.yaml

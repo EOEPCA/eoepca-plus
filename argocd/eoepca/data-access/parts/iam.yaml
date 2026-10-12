@@ -134,3 +134,31 @@ spec:
       "included.client.audience": "eoapi"
       "access.token.claim": "true"
       "id.token.claim": "false"
+---
+# Full-path group membership (e.g. /dss/<group>) for the raster runtime's
+# per-group access checks.
+apiVersion: client.keycloak.m.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: eoapi-groups-mapper
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    clientIdRef:
+      name: eoapi
+      policy:
+        resolution: Required
+    realmId: eoepca
+    protocol: openid-connect
+    protocolMapper: oidc-group-membership-mapper
+    name: groups
+    config:
+      "full.path": "true"
+      "claim.name": "groups"
+      "access.token.claim": "true"
+      "id.token.claim": "false"
+      "userinfo.token.claim": "false"
+      "multivalued": "true"

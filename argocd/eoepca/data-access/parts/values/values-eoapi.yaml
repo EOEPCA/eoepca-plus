@@ -64,6 +64,17 @@ raster:
   ingress:
     path: "/raster"
   overrideRootPath: "/"
+  # PoC: EOEPCA raster runtime (titiler-eoepca), a drop-in for titiler-pgstac
+  # that validates bearer tokens and forwards them to the data gateway.
+  image:
+    name: ghcr.io/eoepca/titiler-eoepca-raster  # PLACEHOLDER: image not published yet
+    tag: "0.0.0-poc"                            # PLACEHOLDER
+  # The chart appends --proxy-headers, --forwarded-allow-ips and --root-path.
+  command:
+    - "uvicorn"
+    - "eoepca.raster.app:app"
+    - "--host=$(HOST)"
+    - "--port=$(PORT)"
   settings:
     podSecurityContext:
       runAsNonRoot: true
@@ -86,6 +97,14 @@ raster:
       WEB_CONCURRENCY: "1"
       DB_MIN_CONN_SIZE: "1"
       DB_MAX_CONN_SIZE: "5"
+      # titiler-eoepca: token validation (aud from eoapi-audience-mapper in iam.yaml)
+      EOEPCA_RASTER_OIDC_DISCOVERY_URL: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
+      EOEPCA_RASTER_ALLOWED_JWT_AUDIENCES: "eoapi"
+      STAC_EDITOR_CLIENT_IDS: "eoapi,registration-harvester"
+      STAC_EDITOR_ROLE: "stac_editor"
+      # Responses depend on the caller's token, so never let shared caches keep them
+      TITILER_PGSTAC_API_CACHECONTROL: "private, no-store"
+      EOEPCA_RASTER_EXTERNAL_ENABLED: "false"
     envSecrets:
       - data-access
     resources:

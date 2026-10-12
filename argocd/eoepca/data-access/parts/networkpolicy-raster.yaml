@@ -1,0 +1,60 @@
+# Egress allowlist for the eoAPI raster runtime (titiler-eoepca PoC).
+#
+# Raster reads items from pgSTAC and fetches assets from whatever public host
+# their hrefs name (today AWS S3, e.g. noaa-eri-pds.s3.us-east-1.amazonaws.com),
+# and fetches Keycloak's discovery document and JWKS over the public URL. The
+# CNI is Canal (Calico OSS), which has no FQDN policy, so public HTTPS is
+# allowed by CIDR while private, link-local (cloud metadata) and CGNAT ranges
+# stay blocked. In-cluster traffic is limited to DNS and the database.
+# Only egress is restricted; ingress (APISIX, Prometheus) is unaffected.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: eoapi-raster-egress
+  namespace: data-access
+spec:
+  podSelector:
+    matchLabels:
+      app: eoapi-raster
+      app.kubernetes.io/component: raster
+  policyTypes:
+    - Egress
+  egress:
+    # Cluster DNS
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # pgSTAC database (PGO cluster "default" in infra)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: infra
+          podSelector:
+            matchLabels:
+              postgres-operator.crunchydata.com/cluster: default
+      ports:
+        - protocol: TCP
+          port: 5432
+    # Public HTTPS: asset hosts (object storage) and Keycloak
+    # (develop-v2.eoepca.org/iam/auth)
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8       # includes the service CIDR (10.43.0.0/16)
+              - 172.16.0.0/12    # includes the pod CIDR (172.16.0.0/16)
+              - 192.168.0.0/16   # node network
+              - 169.254.0.0/16   # link-local, cloud metadata
+              - 100.64.0.0/10    # CGNAT
+      ports:
+        - protocol: TCP
+          port: 443

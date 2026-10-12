@@ -158,6 +158,16 @@ spec:
         - ^(/multidim)($|/.*)
         - $2
       enable: true
+    # multidim is not token-aware, so the gateway requires a valid bearer token
+    - name: openid-connect
+      enable: true
+      config:
+        discovery: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
+        realm: eoepca
+        bearer_only: true
+        use_jwks: true
+        client_id: eoapi
+        client_secret: ""  # public client, unused with bearer_only + use_jwks
   - name: raster-redirect
     backends:
     - serviceName: eoapi-raster
@@ -182,6 +192,8 @@ spec:
       paths:
       - /raster/
       - /raster/*
+    # No auth plugin and no header rewriting: the Authorization header must reach
+    # the raster runtime unchanged, which validates it itself.
     plugins:
     - name: proxy-rewrite
       config:

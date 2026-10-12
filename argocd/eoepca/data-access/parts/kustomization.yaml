@@ -4,6 +4,7 @@ resources:
   - storage-geoparquet-exporter.yaml
   - iam.yaml
   - route.yaml
+  - networkpolicy-raster.yaml
   - eso-pgo.yaml
   - deployment-synthetic-api-check.yaml
   - servicemonitor-stac-auth-proxy.yaml

@@ -1,0 +1,32 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: cloudferro-project-0005c1fe950146bc99bc527168df7d6d
+  namespace: workspace
+spec:
+  encryptedData:
+    config: AgCMdnGl4Lt8fRXCVKYFPA9bfRXCBnTP3zjt6Fe4oivDIVtQI2luN3iOBE6HcRccQQ53E+vAs+H8NiqE3EzaUWTJ0hvJCdW1t3pNpkX7pAee5tW5HHX1yuV8ierOXWZPdsalYL/ZBFm+zVLxepixWt1ZRPdzQSE/t6iY4Lbo7//VEB+xM4CnWuY8cFqmUiwUju/ef4aidewzTuWix7TvsLLuKzEd/hUEBF714iS/YMbayoZBfSU6GuB3ZgNUs68oE4YClcRz/hzv2yO+3DlwfKkE/JKCvbQ8iYc2LYuthIPNQ1KtJCdybEwtmFmTQnC7NfVIdQGxXJlpmEqTvesO6gjK7vexhQNvnaW3dlvdaGCzq+0hXyrEVrLylNSggSmgOxJZcciPsYu2K/ik0d4ogbLG3fNDJIHa9gcXRLMF7hhKr0HU3sqpBjP5sZ+kP5aSSnrgKoV/ha7t/KTMlq0zx4rWjpY9BotT8bCDdFNmiRVtXfrvDqc9kTE/zvLRwd8FiTs/9BHEUIUBwMEY/cSDLN/N5Esn2E54RxSHawRFEwejS/X7OMB76Ltbid03qtZL6P3lh19MWm0ZNIqvPemR61gLMI/fRHLkKr/Z+wiGJdWxZpk6JXgkZG5eoswJIjSYwTlVmdYXqqoHsqYtDA6GMfoi6TeL9OAjkK9KBZQIUzpCFvI7gJ6Pb2g2nLJCOHH6qE4mdW1zwKG6rR0YiptsCMQQ0dgrRkG9++fqQHUO/sKkeoK3/sKiOSdIJAAcZXYmB5dVL3+A0wmRUgAuws3+Wt5bIZXTzrHr2MCBbDC5/5rRFgPgjw/LuTaWuXNouLNmek2C5bAdvqqZ+DCO+ehWTshpqoO6n7YbObBAcYI/OldhI6ytvlIsp9brYdeahP5Yj+zfxI3JfuiFEEPWmGzq5YliApaQm72pxJmjomAdny8eIlVAv4yB3ayK3unQGxUMk4b8pOKMMQEwrVXf3qlH7+T2mOPaRlERb5w=
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: provider-storage-cloudferro-iam
+      name: cloudferro-project-0005c1fe950146bc99bc527168df7d6d
+      namespace: workspace
+    type: Opaque
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: cloudferro-project-ac2f3160e4944b93896b789267d2bf2f
+  namespace: workspace
+spec:
+  encryptedData:
+    config: AgCdmKAyZyy2ixvi58JoEIArgUgpZ2v87TmgPvWeScsLvz3jJ7e4jNMPAqAWeOuzcl5ZTjrWc8A5hzKhs/u6X+miFnNvDsUIudAkCSIjSsdksG0gS4HHc7uoy67ze2xZW/urFj75N35ui4ozLS0axNXMa9SfAeKeK7Aj2j5YkigqESjgFtBa8T+WhU7NxsLGZ2ZclDYEE1oBGm6hTngFPu36tS01jRwodpWbDv/5MDmc6UKPTKtwJCc3wDKkfJSZObeW7o11iKKvBIg744ppMZyGznzw0eijs1qC2tk0CHuN1UNyQC5/6jT4zTo/mTT5TI2VxQKSEENkMfnbbUTVupT7t/RfNiNA5t/kLcIbsPZ06zDFZTdU19kDnIRXtRygZNLpDCHSoGYJbJJ6SiMALNuzwjrtf5Lj7gHDPAk5Zw5Idq8s9t+vHH+8Ye7p3BJfehg9KLZoTX8bo1NBML/mS/GyUkogDa+0S/Qu9dRT69QjlFIV/HLX0Kba745568vu3/sbQgekwEokDkVWHYFHErj+xSWFtH3/5/C7uqhxOtPgwQg0DiAxAStuOsuSWnwiXaY4xhAYcdPv5IH1bjGfgy8rso6aL+z/ZV72G5Fw57b4WufEkzih6smK886GKbQJaEAt55R8nYpv2uIVfJFFJU2qH0wgjvPU4bd5shD8FT4dLdar4Y5ZHRw93t9nwwNQ7XgtwXXIn+Vel+OB8Fc6Q10uobi+0BaWFqyE22cHRe4fmjUSwEy4oZ09f7tzBYjNpNVsHXwgHI+xM10bF13sO2jHpP6PWhljt50lzYBeIDCU+zRs3gUZVITaqY3bt3NSeDzNrNh2Kuv3kGGP4+43gNZppvM0fcgDBCWmvayvh8oSmL9dxcT2A9QxgGjh4VZOjts71nT69opUcQBA81czdnPAdK3KCPkDsrmTaTGgVGPkvKaP7GnlQ/XeHMCPiRieKyrc3xioQlAQ1AhEmm2AROT8PbkXdvEQCJM=
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: provider-storage-cloudferro-iam
+      name: cloudferro-project-ac2f3160e4944b93896b789267d2bf2f
+      namespace: workspace
+    type: Opaque

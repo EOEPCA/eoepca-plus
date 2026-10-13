@@ -3,6 +3,9 @@ resources:
   - app-workspace-api.yaml
   - app-workspace-dependencies.yaml
   - app-workspace-pipeline.yaml
+  - provider-storage-cloudferro.yaml
+  - ss-provider-storage-cloudferro.yaml
+  - workspace-default-storage-minio.yaml
   - kyverno-rbac-workspace-apisix.yaml
   - kyverno-annotate-educates-ingresses.yaml
   - route.yaml
@@ -12,6 +15,15 @@ resources:
   - job.yaml
 
 patches:
+  - target:
+      group: bitnami.com
+      kind: SealedSecret
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-wave: "20"
+          argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   - target:
       version: v1
       kind: Secret

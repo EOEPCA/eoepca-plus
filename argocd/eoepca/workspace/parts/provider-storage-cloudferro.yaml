@@ -1,12 +1,12 @@
-# The storage-minio Configuration owns the shared storages.pkg.internal XRD.
-# This manifest adds the provider-storage 0.4.0-rc.2 CloudFerro dependencies
-# and Composition without installing a second Configuration that would claim
-# the same XRD.
+# storage-minio owns the shared Storage XRD. These resources add CloudFerro
+# support without installing a second Configuration for the same XRD.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: provider-kubernetes-cloudferro
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
 rules:
   - apiGroups:
       - ""
@@ -30,6 +30,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: provider-kubernetes-cloudferro
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -44,7 +46,7 @@ kind: EnvironmentConfig
 metadata:
   name: storage-cloudferro
   annotations:
-    argocd.argoproj.io/sync-wave: "20"
+    argocd.argoproj.io/sync-wave: "30"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 data:
   storage:
@@ -62,7 +64,7 @@ metadata:
   labels:
     provider: cloudferro
   annotations:
-    argocd.argoproj.io/sync-wave: "20"
+    argocd.argoproj.io/sync-wave: "30"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   compositeTypeRef:

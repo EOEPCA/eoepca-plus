@@ -80,7 +80,7 @@ spec:
                 memory: 128Mi
               limits:
                 cpu: 500m
-                memory: 512Mi
+                memory: 1Gi
 ---
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig

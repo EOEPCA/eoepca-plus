@@ -1,0 +1,49 @@
+# Select MinIO for workspace Storage resources that do not select a
+# Composition.
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
+metadata:
+  name: workspace-default-storage-minio
+  annotations:
+    argocd.argoproj.io/sync-wave: "40"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  evaluation:
+    admission:
+      enabled: true
+    mutateExisting:
+      enabled: false
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - pkg.internal
+        apiVersions:
+          - v1beta1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - storages
+  matchConditions:
+    - name: workspace-namespace
+      expression: object.metadata.namespace == "workspace"
+    - name: composition-is-omitted
+      expression: >-
+        !has(object.spec.crossplane) ||
+        (!has(object.spec.crossplane.compositionRef) &&
+        !has(object.spec.crossplane.compositionSelector))
+  reinvocationPolicy: Never
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          Object{
+            spec: Object.spec{
+              crossplane: Object.spec.crossplane{
+                compositionSelector: Object.spec.crossplane.compositionSelector{
+                  matchLabels: {"provider": "minio"}
+                }
+              }
+            }
+          }

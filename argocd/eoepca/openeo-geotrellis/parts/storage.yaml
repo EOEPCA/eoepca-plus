@@ -16,7 +16,7 @@ spec:
           {
             "Effect": "Allow",
             "Action": ["s3:ListAllMyBuckets"],
-            "Resource": ["*"]
+            "Resource": ["arn:aws:s3:::*"]
           },
           {
             "Effect": "Allow",

@@ -129,6 +129,9 @@ configMaps:
         capabilities_description="openEO backend based on GeoPyspark stack for EOEPCA+ demo",
         capabilities_deploy_metadata=capabilities_deploy_metadata,
         oidc_providers=oidc_providers,
+        batch_runtime_to_image={
+            "python311": "{{ .Values.image }}:{{ .Values.imageVersion }}",
+        },
         url_signer=UrlSigner(secret="dummy", expiration=7 * 24 * 60 * 60),
     )
   layerCatalog: |
@@ -283,6 +286,10 @@ configMaps:
                 key: EODATA_SECRET_ACCESS_KEY
     {% endblock -%}
 driver:
+  volumeMounts:
+    - mountPath: /opt/openeo/lib/python3.11/site-packages/openeogeotrellis/deploy/sparkapplication.yaml.j2
+      name: openeo-geotrellis-openeo-sparkapplication-custom-batch-config
+      subPath: sparkapplication.yaml.j2
   env:
     KUBE: "true"
     KUBE_OPENEO_API_PORT: "50001"

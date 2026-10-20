@@ -1,0 +1,47 @@
+apiVersion: minio.crossplane.io/v1
+kind: Policy
+metadata:
+  name: openeo-geotrellis-output
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  providerConfigRef:
+    name: provider-minio
+  forProvider:
+    rawPolicy: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": ["s3:ListAllMyBuckets"],
+            "Resource": ["*"]
+          },
+          {
+            "Effect": "Allow",
+            "Action": ["s3:*"],
+            "Resource": [
+              "arn:aws:s3:::openeo-geotrellis-data",
+              "arn:aws:s3:::openeo-geotrellis-data/*"
+            ]
+          }
+        ]
+      }
+---
+apiVersion: minio.crossplane.io/v1
+kind: User
+metadata:
+  name: openeo-geotrellis-output
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  providerConfigRef:
+    name: provider-minio
+  forProvider:
+    policies:
+      - openeo-geotrellis-output
+  writeConnectionSecretToRef:
+    name: openeo-geotrellis-minio-credentials
+    namespace: openeo-geotrellis

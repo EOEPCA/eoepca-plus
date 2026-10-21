@@ -280,7 +280,7 @@ iam: &iam
       # Allowed origin(s). Can be string or comma-separated list:
       #   - string: "*" or "https://example.org" or "https://a.com,https://b.com"
       #   - list: ["https://a.com", "https://b.com"]
-      allowedOrigins: "https://eoapi.develop-v2.eoepca.org,https://editor.openeo.org"
+      allowedOrigins: "https://eoapi.develop-v2.eoepca.org,https://editor.openeo.org,https://editor.develop-v2.eoepca.org,https://eoepca.github.io"
       # Comma-separated list of allowed headers.
       # APISIX constraint: When allowCredentials=true, cannot use "*" for origins, headers, or expose_headers.
       allowedHeaders: "Authorization,Content-Type,Accept,Origin,X-Requested-With"

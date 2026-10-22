@@ -32,6 +32,8 @@ metadata:
   name: datalab-session-cleaner
   namespace: workspace
 spec:
+  # todo: remove suspend
+  suspend: true
   schedule: "0 23 * * 5"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1

@@ -344,8 +344,8 @@ spec:
                     if userinfo["username"] not in ["bob", "earthcode"] and template.id != "simple_ping":
                         raise hu.CheckTemplateIdError(template.id)
 
-                    ## Only bob, alice, eric, and earthcode can access the templates
-                    if userinfo["username"] not in ["bob", "alice", "eric", "earthcode"]:
+                    ## Allow demo users to access templates
+                    if userinfo["username"] not in ["bob", "alice", "eric", "earthcode", "eoepcauser"]:
                         raise hu.CheckTemplateIdError(template.id)
 
 

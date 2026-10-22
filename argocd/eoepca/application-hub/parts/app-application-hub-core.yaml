@@ -92,8 +92,8 @@ spec:
                 mem_limit": "8G"
 
         nodeSelector:
-          key: node-role.kubernetes.io/worker
-          value: \"true\"
+          key: kubernetes.io/os
+          value: linux
 
   destination:
     name: in-cluster

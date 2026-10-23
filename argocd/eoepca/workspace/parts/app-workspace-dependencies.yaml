@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-dependencies-educates
-      targetRevision: 2.2.1
+      targetRevision: 2.2.3
       helm:
         releaseName: workspace-dependencies-educates
         values: |

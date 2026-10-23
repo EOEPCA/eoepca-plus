@@ -30,3 +30,17 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - name: workspaces-https
+      hostname: "*.lab.develop-v2.eoepca.org"
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: workspace-tls
+            namespace: workspace
+      allowedRoutes:
+        namespaces:
+          from: All

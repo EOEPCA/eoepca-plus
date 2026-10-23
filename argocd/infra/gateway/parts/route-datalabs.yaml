@@ -1,0 +1,53 @@
+# Forward Data traffic to Envoy; keep existing session routes and prevent loops.
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: datalab-data
+  namespace: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  ingressClassName: apisix
+  http:
+    - name: datalab-data
+      priority: -10
+      match:
+        hosts:
+          - "*.lab.develop-v2.eoepca.org"
+        paths:
+          - /*
+        exprs:
+          - subject:
+              scope: Header
+              name: X-Datalab-Gateway-Fallback
+            op: NotEqual
+            value: "true"
+      backends:
+        - serviceName: envoy-gateway-eoepca-public-0a36a9e0
+          servicePort: 443
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: envoy-gateway-eoepca-public-0a36a9e0
+  namespace: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ingressClassName: apisix
+  scheme: https
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: datalab-data
+  namespace: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ingressClassName: apisix
+  hosts:
+    - "*.lab.develop-v2.eoepca.org"
+  secret:
+    name: workspace-tls
+    namespace: workspace

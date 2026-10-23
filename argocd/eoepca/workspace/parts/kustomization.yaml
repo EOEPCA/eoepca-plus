@@ -12,6 +12,7 @@ resources:
   - iam.yaml
   - secret.yaml
   - certificate.yaml
+  - referencegrant-gateway-certificate.yaml
   - job.yaml
 
 patches:

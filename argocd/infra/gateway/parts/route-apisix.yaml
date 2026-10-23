@@ -16,7 +16,14 @@ spec:
       name: eoepca-public
       namespace: gateway
   rules:
-    - backendRefs:
+    # Prevent fallback requests from entering the Datalab bridge again.
+    - filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Datalab-Gateway-Fallback
+                value: "true"
+      backendRefs:
         - group: ""
           kind: Service
           name: apisix-gateway

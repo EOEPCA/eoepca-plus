@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-pipeline
-      targetRevision: 2.2.2
+      targetRevision: 2.2.3
       helm:
         releaseName: workspace-pipeline
         values: |
@@ -21,6 +21,7 @@ spec:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
           datalab:
+            package: ghcr.io/versioneer-tech/provider-datalab/educates:0.11.0-rc.1
             annotations:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
@@ -36,10 +37,17 @@ spec:
               extraAudiences:
                 - workspace-api
             ingress:
-              enabled: true
+              enabled: false
               class: apisix
               domain: lab.develop-v2.eoepca.org
               secret: workspace-tls
+            httpRoute:
+              enabled: true
+              enableS3: true
+              parentName: eoepca-public
+              parentNamespace: gateway
+              sectionName: workspaces-https
+              httpSectionName: http
             storage:
               endpoint: https://minio.develop-v2.eoepca.org
               forcePathStyle: true
@@ -52,6 +60,16 @@ spec:
             storageClasses:
               allowed: []
             network:
+              internalEgress:
+                - namespace: iam
+                  podSelector:
+                    matchLabels:
+                      app: keycloak
+                      app.kubernetes.io/instance: iam-core-keycloak-operator
+                      app.kubernetes.io/managed-by: keycloak-operator
+                  ports:
+                    - protocol: TCP
+                      port: 8080
               externalEgressCIDRs:
                 - "0.0.0.0/0"
                 - "::/0"
@@ -69,16 +87,20 @@ spec:
                 files:
                   - image:
                       url: ghcr.io/versioneer-tech/educates-extension-packages/rclone:v1.71.0
-            auth:
-              type: none
             defaults:
+              overallQuota:
+                storage: 100Gi
               quota:
+                memory: 2Gi
                 storage: 8Gi
                 budget: x-large
               security:
+                policy: baseline
+                kubernetesAccess: true
+                kubernetesRole: edit
                 externalEgress: true
-            database: 
-              gateway:
+            database:
+              tlsRoute:
                 parentName: eoepca-public
                 parentNamespace: gateway
                 sectionName: https

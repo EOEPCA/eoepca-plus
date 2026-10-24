@@ -8,20 +8,31 @@ metadata:
     argocd.argoproj.io/sync-wave: "3"
 spec:
   parentRefs:
-    - name: eoepca-public
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: eoepca-public
       namespace: gateway
       sectionName: workspaces-https
   hostnames:
     - "*.lab.develop-v2.eoepca.org"
   rules:
-    - matches:
+    - filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Datalab-Gateway-Fallback
+                value: "true"
+      matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: apisix-gateway
+        - group: ""
+          kind: Service
+          name: apisix-gateway
           namespace: ingress-apisix
           port: 80
+          weight: 1
 ---
 # Permit above HTTPRoute to use the APISIX gateway Service in ingress-apisix.
 apiVersion: gateway.networking.k8s.io/v1beta1
@@ -40,3 +51,58 @@ spec:
     - group: ""
       kind: Service
       name: apisix-gateway
+---
+# Forward Data requests from the public APISIX entry point to Envoy.
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: workspace-data
+  namespace: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  ingressClassName: apisix
+  http:
+    - name: workspace-data
+      priority: -10
+      match:
+        hosts:
+          - "*.lab.develop-v2.eoepca.org"
+        paths:
+          - /*
+        exprs:
+          - subject:
+              scope: Header
+              name: X-Datalab-Gateway-Fallback
+            op: NotEqual
+            value: "true"
+      backends:
+        - serviceName: envoy-gateway-eoepca-public-0a36a9e0
+          servicePort: 443
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixUpstream
+metadata:
+  name: envoy-gateway-eoepca-public-0a36a9e0
+  namespace: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ingressClassName: apisix
+  scheme: https
+---
+# Reuse the workspace wildcard certificate at the public APISIX entry point.
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: workspace-data
+  namespace: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ingressClassName: apisix
+  hosts:
+    - "*.lab.develop-v2.eoepca.org"
+  secret:
+    name: workspace-tls
+    namespace: workspace

@@ -23,6 +23,8 @@ spec:
 
         grafana:
           enabled: true
+          image:
+            tag: "12.4.13"
           defaultDashboardsEnabled: false
           envValueFrom:
             GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET:
@@ -79,12 +81,18 @@ spec:
         alertmanager:
           enabled: true
           alertmanagerSpec:
+            image:
+              tag: v0.32.2
+            version: v0.32.2
             alertmanagerConfigMatcherStrategy:
               type: None
 
         prometheus:
           enabled: true
           prometheusSpec:
+            image:
+              tag: v3.11.3
+            version: v3.11.3
             retention: 30d
             storageSpec:
               volumeClaimTemplate:
@@ -105,6 +113,8 @@ spec:
         # The chart adds CRD discovery permissions when customResourceState is
         # enabled; these extra rules grant read-only access to the selected CRs.
         kube-state-metrics:
+          image:
+            tag: v2.19.1
           metricLabelsAllowlist:
             - namespaces=[training.educates.dev/environment.name,training.educates.dev/session.name]
             - pods=[training.educates.dev/environment.name,training.educates.dev/session.name]

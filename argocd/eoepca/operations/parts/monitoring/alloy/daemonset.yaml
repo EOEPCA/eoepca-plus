@@ -44,7 +44,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: alloy
-          image: grafana/alloy:v1.12.1
+          image: grafana/alloy:v1.12.2
           args:
             - run
             - --server.http.listen-addr=0.0.0.0:12345

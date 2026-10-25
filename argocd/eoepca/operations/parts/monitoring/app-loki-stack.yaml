@@ -17,6 +17,8 @@ spec:
         deploymentMode: SingleBinary
 
         loki:
+          image:
+            tag: "3.6.19"
           auth_enabled: false
           podSecurityContext:
             fsGroup: 10001
@@ -84,6 +86,10 @@ spec:
               mountPath: /var/loki
           persistence:
             enabled: false
+
+        lokiCanary:
+          image:
+            tag: "3.6.19"
 
         read:
           replicas: 0

@@ -10,7 +10,7 @@
             },
             "id": 1,
             "panels": [],
-            "title": "Prometheus Stats",
+            "title": "Prometheus",
             "type": "row"
         },
         {
@@ -208,7 +208,8 @@
                     "expr": "count by (cluster, job, instance, version) (prometheus_build_info{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
                     "format": "table",
                     "instant": true,
-                    "legendFormat": ""
+                    "legendFormat": "",
+                    "refId": "A"
                 },
                 {
                     "datasource": {
@@ -218,10 +219,11 @@
                     "expr": "max by (cluster, job, instance) (time() - process_start_time_seconds{cluster=~\"$cluster\", job=~\"$job\", instance=~\"$instance\"})",
                     "format": "table",
                     "instant": true,
-                    "legendFormat": ""
+                    "legendFormat": "",
+                    "refId": "B"
                 }
             ],
-            "title": "Prometheus Stats",
+            "title": "Instances",
             "type": "table"
         },
         {
@@ -272,13 +274,15 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "sum(rate(prometheus_target_sync_length_seconds_sum{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[5m])) by (cluster, job, scrape_job, instance) * 1e3",
+                    "expr": "sum by (cluster, job, scrape_job, instance) (rate(prometheus_target_sync_length_seconds_sum{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval])) / sum by (cluster, job, scrape_job, instance) (rate(prometheus_target_sync_length_seconds_count{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval])) * 1e3",
                     "format": "time_series",
-                    "legendFormat": "{{cluster}}:{{job}}:{{instance}}:{{scrape_job}}"
+                    "legendFormat": "{{cluster}}:{{job}}:{{instance}}:{{scrape_job}}",
+                    "refId": "A"
                 }
             ],
-            "title": "Target Sync",
-            "type": "timeseries"
+            "title": "Target sync time",
+            "type": "timeseries",
+            "description": "Mean time to update a scrape target group."
         },
         {
             "datasource": {
@@ -321,10 +325,11 @@
                     },
                     "expr": "sum by (cluster, job, instance) (prometheus_sd_discovered_targets{cluster=~\"$cluster\", job=~\"$job\",instance=~\"$instance\"})",
                     "format": "time_series",
-                    "legendFormat": "{{cluster}}:{{job}}:{{instance}}"
+                    "legendFormat": "{{cluster}}:{{job}}:{{instance}}",
+                    "refId": "A"
                 }
             ],
-            "title": "Targets",
+            "title": "Discovered targets",
             "type": "timeseries"
         },
         {
@@ -337,7 +342,7 @@
             },
             "id": 6,
             "panels": [],
-            "title": "Retrieval",
+            "title": "Scraping",
             "type": "row"
         },
         {
@@ -375,13 +380,15 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "rate(prometheus_target_interval_length_seconds_sum{cluster=~\"$cluster\", job=~\"$job\",instance=~\"$instance\"}[5m]) / rate(prometheus_target_interval_length_seconds_count{cluster=~\"$cluster\", job=~\"$job\",instance=~\"$instance\"}[5m]) * 1e3",
+                    "expr": "rate(prometheus_target_interval_length_seconds_sum{cluster=~\"$cluster\", job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]) / rate(prometheus_target_interval_length_seconds_count{cluster=~\"$cluster\", job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]) * 1e3",
                     "format": "time_series",
-                    "legendFormat": "{{cluster}}:{{job}}:{{instance}} {{interval}} configured"
+                    "legendFormat": "{{cluster}}:{{job}}:{{instance}} {{interval}} configured",
+                    "refId": "A"
                 }
             ],
-            "title": "Average Scrape Interval Duration",
-            "type": "timeseries"
+            "title": "Scrape interval",
+            "type": "timeseries",
+            "description": "Actual interval between scrapes. Compare with the configured interval in the legend."
         },
         {
             "datasource": {
@@ -399,7 +406,7 @@
                         }
                     },
                     "min": 0,
-                    "unit": "short"
+                    "unit": "cps"
                 }
             },
             "gridPos": {
@@ -422,49 +429,55 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_exceeded_body_size_limit_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[1m]))",
+                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_exceeded_body_size_limit_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))",
                     "format": "time_series",
-                    "legendFormat": "exceeded body size limit: {{cluster}} {{job}} {{instance}}"
+                    "legendFormat": "exceeded body size limit: {{cluster}} {{job}} {{instance}}",
+                    "refId": "A"
                 },
                 {
                     "datasource": {
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_exceeded_sample_limit_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[1m]))",
+                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_exceeded_sample_limit_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))",
                     "format": "time_series",
-                    "legendFormat": "exceeded sample limit: {{cluster}} {{job}} {{instance}}"
+                    "legendFormat": "exceeded sample limit: {{cluster}} {{job}} {{instance}}",
+                    "refId": "B"
                 },
                 {
                     "datasource": {
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[1m]))",
+                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))",
                     "format": "time_series",
-                    "legendFormat": "duplicate timestamp: {{cluster}} {{job}} {{instance}}"
+                    "legendFormat": "duplicate timestamp: {{cluster}} {{job}} {{instance}}",
+                    "refId": "C"
                 },
                 {
                     "datasource": {
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_sample_out_of_bounds_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[1m]))",
+                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_sample_out_of_bounds_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))",
                     "format": "time_series",
-                    "legendFormat": "out of bounds: {{cluster}} {{job}} {{instance}}"
+                    "legendFormat": "out of bounds: {{cluster}} {{job}} {{instance}}",
+                    "refId": "D"
                 },
                 {
                     "datasource": {
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_sample_out_of_order_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[1m]))",
+                    "expr": "sum by (cluster, job, instance) (rate(prometheus_target_scrapes_sample_out_of_order_total{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}[$__rate_interval]))",
                     "format": "time_series",
-                    "legendFormat": "out of order: {{cluster}} {{job}} {{instance}}"
+                    "legendFormat": "out of order: {{cluster}} {{job}} {{instance}}",
+                    "refId": "E"
                 }
             ],
-            "title": "Scrape failures",
-            "type": "timeseries"
+            "title": "Rejected scrapes and samples",
+            "type": "timeseries",
+            "description": "Scrapes and samples rejected due to limits or timestamp errors, per second."
         },
         {
             "datasource": {
@@ -482,7 +495,7 @@
                         }
                     },
                     "min": 0,
-                    "unit": "short"
+                    "unit": "cps"
                 }
             },
             "gridPos": {
@@ -505,12 +518,13 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "rate(prometheus_tsdb_head_samples_appended_total{cluster=~\"$cluster\", job=~\"$job\",instance=~\"$instance\"}[5m])",
+                    "expr": "rate(prometheus_tsdb_head_samples_appended_total{cluster=~\"$cluster\", job=~\"$job\",instance=~\"$instance\"}[$__rate_interval])",
                     "format": "time_series",
-                    "legendFormat": "{{cluster}} {{job}} {{instance}}"
+                    "legendFormat": "{{cluster}} {{job}} {{instance}}",
+                    "refId": "A"
                 }
             ],
-            "title": "Appended Samples",
+            "title": "Samples ingested",
             "type": "timeseries"
         },
         {
@@ -567,10 +581,11 @@
                     },
                     "expr": "prometheus_tsdb_head_series{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}",
                     "format": "time_series",
-                    "legendFormat": "{{cluster}} {{job}} {{instance}} head series"
+                    "legendFormat": "{{cluster}} {{job}} {{instance}} head series",
+                    "refId": "A"
                 }
             ],
-            "title": "Head Series",
+            "title": "Active series",
             "type": "timeseries"
         },
         {
@@ -614,10 +629,11 @@
                     },
                     "expr": "prometheus_tsdb_head_chunks{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\"}",
                     "format": "time_series",
-                    "legendFormat": "{{cluster}} {{job}} {{instance}} head chunks"
+                    "legendFormat": "{{cluster}} {{job}} {{instance}} head chunks",
+                    "refId": "A"
                 }
             ],
-            "title": "Head Chunks",
+            "title": "Memory chunks",
             "type": "timeseries"
         },
         {
@@ -630,7 +646,7 @@
             },
             "id": 13,
             "panels": [],
-            "title": "Query",
+            "title": "Queries",
             "type": "row"
         },
         {
@@ -649,7 +665,7 @@
                         }
                     },
                     "min": 0,
-                    "unit": "short"
+                    "unit": "reqps"
                 }
             },
             "gridPos": {
@@ -672,12 +688,13 @@
                         "type": "prometheus",
                         "uid": "$datasource"
                     },
-                    "expr": "rate(prometheus_engine_query_duration_seconds_count{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\",slice=\"inner_eval\"}[5m])",
+                    "expr": "rate(prometheus_engine_query_duration_seconds_count{cluster=~\"$cluster\",job=~\"$job\",instance=~\"$instance\",slice=\"inner_eval\"}[$__rate_interval])",
                     "format": "time_series",
-                    "legendFormat": "{{cluster}} {{job}} {{instance}}"
+                    "legendFormat": "{{cluster}} {{job}} {{instance}}",
+                    "refId": "A"
                 }
             ],
-            "title": "Query Rate",
+            "title": "Queries per second",
             "type": "timeseries"
         },
         {
@@ -721,11 +738,13 @@
                     },
                     "expr": "max by (slice) (prometheus_engine_query_duration_seconds{quantile=\"0.9\",cluster=~\"$cluster\", job=~\"$job\",instance=~\"$instance\"}) * 1e3",
                     "format": "time_series",
-                    "legendFormat": "{{slice}}"
+                    "legendFormat": "{{slice}}",
+                    "refId": "A"
                 }
             ],
-            "title": "Stage Duration",
-            "type": "timeseries"
+            "title": "Query stage latency (p90)",
+            "type": "timeseries",
+            "description": "90th percentile for each query stage. Shows the slowest selected instance."
         }
     ],
     "schemaVersion": 39,
@@ -763,7 +782,7 @@
                 },
                 "hide": 2,
                 "includeAll": true,
-                "label": "cluster",
+                "label": "Cluster",
                 "multi": true,
                 "name": "cluster",
                 "query": "label_values(prometheus_build_info{}, cluster)",
@@ -778,7 +797,7 @@
                     "uid": "${datasource}"
                 },
                 "includeAll": true,
-                "label": "job",
+                "label": "Job",
                 "multi": true,
                 "name": "job",
                 "query": "label_values(prometheus_build_info{cluster=~\"$cluster\"}, job)",
@@ -793,7 +812,7 @@
                     "uid": "${datasource}"
                 },
                 "includeAll": true,
-                "label": "instance",
+                "label": "Instance",
                 "multi": true,
                 "name": "instance",
                 "query": "label_values(prometheus_build_info{cluster=~\"$cluster\", job=~\"$job\"}, instance)",

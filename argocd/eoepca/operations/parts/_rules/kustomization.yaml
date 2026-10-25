@@ -3,3 +3,4 @@ resources:
   - kubernetes-audit-rules.yaml
   - security-alerts.yaml
   - stac-alerts.yaml
+  - workspace-metrics.yaml

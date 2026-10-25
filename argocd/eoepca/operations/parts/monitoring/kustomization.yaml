@@ -5,6 +5,7 @@ resources:
   - app-alloy-logs.yaml
   - iam.yaml
   - routes.yaml
+  - workspace-managed-data.yaml
 
 patches:
   - target:

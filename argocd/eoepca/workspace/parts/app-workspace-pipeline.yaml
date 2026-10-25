@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-pipeline
-      targetRevision: 2.2.3
+      targetRevision: 2.2.4
       helm:
         releaseName: workspace-pipeline
         values: |
@@ -21,7 +21,7 @@ spec:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
           datalab:
-            package: ghcr.io/versioneer-tech/provider-datalab/educates:0.11.0-rc.2
+            package: ghcr.io/versioneer-tech/provider-datalab/educates:0.11.0-rc.3
             annotations:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
@@ -60,6 +60,18 @@ spec:
             storageClasses:
               allowed: []
             network:
+              internalIngress:
+                - namespace: operations
+                  podSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: prometheus
+                      prometheus: kube-prometheus-stack-prometheus
+                  targetPodSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: package-r
+                  ports:
+                    - protocol: TCP
+                      port: 8888
               internalEgress:
                 - namespace: iam
                   podSelector:

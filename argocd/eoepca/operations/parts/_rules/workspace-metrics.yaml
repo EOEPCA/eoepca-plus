@@ -1,0 +1,75 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: workspace-metrics
+  namespace: operations
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: workspace.inventory
+      interval: 30s
+      rules:
+        - record: workspace_info
+          expr: |
+            max by (workspace) (
+              workspace_managed_data_info{resource_namespace="workspace"}
+            )
+        - record: workspace_bucket_count
+          expr: |
+            count by (workspace) (
+              max by (workspace, bucket) (
+                workspace_managed_data_bucket_info{resource_namespace="workspace"}
+              )
+            )
+            or on (workspace) (0 * workspace_info)
+        - record: workspace_namespace_info
+          expr: |
+            max by (namespace, workspace, session) (
+              label_replace(
+                label_replace(
+                  kube_namespace_labels{
+                    namespace=~"ws-.*",
+                    label_training_educates_dev_environment_name!=""
+                  },
+                  "workspace", "$1", "label_training_educates_dev_environment_name", "(.+)"
+                ),
+                "session", "$1", "label_training_educates_dev_session_name", "(.*)"
+              )
+            )
+            or on (namespace)
+            max by (namespace, workspace) (
+              label_replace(
+                kube_namespace_created{namespace=~"ws-.*"} > bool 0,
+                "workspace", "$1", "namespace", "(.+)"
+              )
+              and on (workspace) workspace_info
+            )
+        - record: workspace_session_workload_info
+          expr: |
+            max by (namespace, pod, workspace, session) (
+              label_replace(
+                label_replace(
+                  kube_pod_labels{
+                    namespace=~"ws-.*",
+                    label_training_educates_dev_environment_name!="",
+                    label_training_educates_dev_session_name!=""
+                  },
+                  "workspace", "$1", "label_training_educates_dev_environment_name", "(.+)"
+                ),
+                "session", "$1", "label_training_educates_dev_session_name", "(.+)"
+              )
+            )
+            or on (namespace, pod)
+            (
+              max by (namespace, pod) (kube_pod_info{namespace=~"ws-.*"})
+              * on (namespace) group_left (workspace, session)
+              workspace_namespace_info{session!=""}
+            )
+        - record: workspace_session_pod_info
+          expr: |
+            workspace_session_workload_info
+            and on (namespace, pod)
+            max by (namespace, pod) (
+              kube_pod_container_info{namespace=~"ws-.*", container="workshop"}
+            )

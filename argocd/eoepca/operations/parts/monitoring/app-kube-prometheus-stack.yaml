@@ -101,12 +101,22 @@ spec:
         thanosRuler:
           enabled: false
 
-        # Export current security-report state and report freshness.
+        # Export workspace inventory, security-report state, and report age.
         # The chart adds CRD discovery permissions when customResourceState is
         # enabled; these extra rules grant read-only access to the selected CRs.
         kube-state-metrics:
+          metricLabelsAllowlist:
+            - namespaces=[training.educates.dev/environment.name,training.educates.dev/session.name]
+            - pods=[training.educates.dev/environment.name,training.educates.dev/session.name]
           rbac:
             extraRules:
+              - apiGroups:
+                  - pkg.internal
+                resources:
+                  - storages
+                verbs:
+                  - list
+                  - watch
               - apiGroups:
                   - wgpolicyk8s.io
                 resources:
@@ -138,6 +148,30 @@ spec:
               kind: CustomResourceStateMetrics
               spec:
                 resources:
+                  - groupVersionKind:
+                      group: pkg.internal
+                      version: v1beta1
+                      kind: Storage
+                    metricNamePrefix: workspace_managed_data
+                    labelsFromPath:
+                      workspace: [metadata, name]
+                      resource_namespace: [metadata, namespace]
+                    metrics:
+                      - name: info
+                        help: Workspace managed data configuration.
+                        each:
+                          type: Info
+                          info:
+                            labelsFromPath:
+                              backend: [spec, crossplane, compositionRef, name]
+                      - name: bucket_info
+                        help: Bucket declared as managed data for a workspace.
+                        each:
+                          type: Info
+                          info:
+                            path: [spec, buckets]
+                            labelsFromPath:
+                              bucket: [bucketName]
                   - groupVersionKind:
                       group: wgpolicyk8s.io
                       version: v1alpha2
@@ -179,6 +213,7 @@ spec:
                     metricNamePrefix: security_policyexception
                     labelsFromPath:
                       exception: [metadata, name]
+                      exception_namespace: [metadata, namespace]
                       policy: [spec, exceptions, "0", policyName]
                     metrics:
                       - name: match_info

@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": {"type": "grafana", "uid": "-- Grafana --"},
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "name": "Annotations & Alerts",
@@ -18,297 +21,1583 @@
   "links": [],
   "panels": [
     {
-      "datasource": {"type": "grafana", "uid": "-- Grafana --"},
-      "description": "This dashboard shows the latest stored audit state for one or more selected namespaces. In namespaces opted in through the Restricted Pod Security Admission audit label, Kyverno writes policy outcomes to PolicyReports and declared waivers to PolicyExceptions; kube-state-metrics converts these objects to Prometheus metrics. Trivy Operator scans all namespaces and supplies image, secret, configuration, RBAC, and cluster-compliance findings through its reports and Prometheus metrics. Native Kubernetes Pod Security Admission is not included because its metrics do not identify the evaluated namespace. The final row is cluster-wide and ignores the namespace filter.",
-      "gridPos": {"h": 4, "w": 24, "x": 0, "y": 0},
-      "id": 1,
-      "options": {
-        "content": "## Audit evidence for **$namespace**\nIn opted-in namespaces, **Kyverno** PolicyReports and PolicyExceptions → **kube-state-metrics** → **Prometheus**. **Trivy Operator** scans all namespaces and sends image, secret, configuration, RBAC, and cluster-compliance report metrics to **Prometheus**. This is current stored evidence, not enforcement or full history. Check findings, then freshness and coverage. Native PSA is not shown because its metrics have no namespace label; the last row is cluster-wide.",
-        "mode": "markdown"
-      },
-      "pluginVersion": "12.4.2",
-      "title": "How to read this dashboard",
-      "type": "text"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 4},
       "id": 2,
-      "panels": [],
-      "title": "Current compliance state",
-      "type": "row"
+      "type": "row",
+      "title": "Priority / Critical findings",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of failed policy-rule results currently stored by Kyverno for the selected namespace. This is a current snapshot, not a rate or a count of failures over time. One Kubernetes resource can fail several rules and therefore be counted more than once.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 5},
-      "id": 3,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum(security_policyreport_result_info{namespace=~\"$namespace\",result=\"fail\"}) or vector(0)", "instant": true, "legendFormat": "Violations", "range": false, "refId": "A"}],
-      "title": "Current policy violations",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of distinct Kyverno PolicyException objects whose match rules target the selected namespace. An exception is a declared waiver and does not mean that a matching violation currently exists. Use the table below to identify the exception, policy, namespace, and resource kind; inspect the PolicyException object for its complete match rules.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "blue", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 5},
-      "id": 4,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "count(count by (exception, target_namespace) (security_policyexception_match_info{target_namespace=~\"$namespace\"})) or vector(0)", "instant": true, "legendFormat": "Exceptions", "range": false, "refId": "A"}],
-      "title": "Declared exceptions",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of critical vulnerability occurrences in the available Trivy VulnerabilityReports for the selected namespace. The same vulnerability can be counted more than once when it occurs in different images or packages. Treat zero as clean only when report freshness and coverage are also healthy.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 5},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Critical vulnerability occurrences per image and namespace. Repeated workload reports count once. Review affected images below.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "decimals": 0,
+          "noValue": "No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 6,
+        "h": 3
+      },
       "id": 5,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum(trivy_image_vulnerabilities{namespace=~\"$namespace\",severity=\"Critical\"}) or vector(0)", "instant": true, "legendFormat": "Critical", "range": false, "refId": "A"}],
-      "title": "Critical image findings",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of high-severity vulnerability occurrences in the available Trivy VulnerabilityReports for the selected namespace. The value counts findings, not unique vulnerability IDs or affected images. Review report freshness and coverage before using it as the namespace total.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 9},
-      "id": 6,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum(trivy_image_vulnerabilities{namespace=~\"$namespace\",severity=\"High\"}) or vector(0)", "instant": true, "legendFormat": "High", "range": false, "refId": "A"}],
-      "title": "High image findings",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of high or critical exposed-secret findings in the available Trivy reports for the selected namespace. Any non-zero value needs investigation because Trivy found secret-like content in a scanned image. A zero is reliable only when the secret reports are current and coverage is complete.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 9},
-      "id": 7,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum(trivy_image_exposedsecrets{namespace=~\"$namespace\",severity=~\"Critical|High\"}) or vector(0)", "instant": true, "legendFormat": "Secrets", "range": false, "refId": "A"}],
-      "title": "Exposed secrets",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Combined number of high or critical configuration findings and namespaced Role findings for the selected namespace. This counts individual findings rather than affected Kubernetes resources. ClusterRole findings are shown separately in the cluster-wide row because they cannot be assigned to one namespace.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 9},
-      "id": 8,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "(sum(trivy_resource_configaudits{namespace=~\"$namespace\",severity=~\"Critical|High\"}) or vector(0)) + (sum(trivy_role_rbacassessments{namespace=~\"$namespace\",severity=~\"Critical|High\"}) or vector(0))", "instant": true, "legendFormat": "Configuration and Role", "range": false, "refId": "A"}],
-      "title": "Configuration and Role findings",
-      "type": "stat"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 13},
-      "id": 9,
-      "panels": [],
-      "title": "Freshness and coverage",
-      "type": "row"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of stored Kyverno policy-rule results older than 90 minutes. Kyverno normally runs a background scan every hour, and this panel allows another 30 minutes for processing. A non-zero value means the displayed policy state may no longer match the current resources; pass and skip results are included so a clean namespace still has a freshness check.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 14},
-      "id": 10,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum((time() - security_policyreport_result_timestamp_seconds{namespace=~\"$namespace\"}) > bool 5400) or vector(0)", "instant": true, "legendFormat": "Stale", "range": false, "refId": "A"}],
-      "title": "Stale policy results",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of Trivy VulnerabilityReports older than 26 hours for the selected namespace. The configured report lifetime is 24 hours, with a two-hour allowance for scanning and processing. A stale report means the scan evidence is old; it does not add another vulnerability finding.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 14},
-      "id": 11,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum((time() - security_trivy_vulnerabilityreport_updated_timestamp_seconds{namespace=~\"$namespace\"}) > bool 93600) or vector(0)", "instant": true, "legendFormat": "Stale", "range": false, "refId": "A"}],
-      "title": "Stale vulnerability reports",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of Trivy ExposedSecretReports older than 26 hours for the selected namespace. The configured report lifetime is 24 hours, with a two-hour allowance for scanning and processing. A stale report means the secret-scan result is old, not that a secret was found.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 14},
-      "id": 12,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum((time() - security_trivy_exposedsecretreport_updated_timestamp_seconds{namespace=~\"$namespace\"}) > bool 93600) or vector(0)", "instant": true, "legendFormat": "Stale", "range": false, "refId": "A"}],
-      "title": "Stale secret reports",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Current Kyverno PolicyReport results grouped as pass, fail, warning, error, or skip. Each value counts policy-rule results rather than Kubernetes resources. Pass results show that successful evaluations are being stored, while skip results should be compared with the declared exceptions and rule conditions.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": 0}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 18},
-      "id": 13,
-      "options": {"colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum by (result) (security_policyreport_result_info{namespace=~\"$namespace\"}) or vector(0)", "instant": true, "legendFormat": "{{result}}", "range": false, "refId": "A"}],
-      "title": "Current policy outcomes",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of distinct containers currently present in Pods in the selected namespace. Compare this with the number of vulnerability report objects to spot possible scan gaps. The values are not expected to match exactly because Trivy also scans controller templates and CronJobs.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": 0}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 18},
-      "id": 14,
-      "options": {"colorMode": "value", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "count(count by (namespace, pod, container) (kube_pod_container_info{namespace=~\"$namespace\"})) or vector(0)", "instant": true, "legendFormat": "Containers", "range": false, "refId": "A"}],
-      "title": "Active Pod containers",
-      "type": "stat"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of distinct Trivy VulnerabilityReport objects represented in Prometheus for the selected namespace. One report does not always correspond to one active Pod container, so exact equality is not expected. A large gap from the active-container count needs investigation, and zero findings with poor coverage does not mean the namespace is clean.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "blue", "value": 0}]}}, "overrides": []},
-      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 18},
-      "id": 15,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "count(security_trivy_vulnerabilityreport_updated_timestamp_seconds{namespace=~\"$namespace\"}) or vector(0)", "instant": true, "legendFormat": "Reports", "range": false, "refId": "A"}],
-      "title": "Vulnerability report objects",
-      "type": "stat"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 22},
-      "id": 16,
-      "panels": [],
-      "title": "Violations and exceptions",
-      "type": "row"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Detailed list of current failed, warning, error, and skipped results from Kyverno PolicyReports in the selected namespace. Each row identifies the resource, policy, rule, severity, and outcome behind the summary numbers. A skip can be caused by an exception or another rule condition, so compare it with the exception table instead of assuming it is waived.",
-      "fieldConfig": {"defaults": {"custom": {"align": "auto", "cellOptions": {"type": "auto"}, "inspect": false}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 9, "w": 14, "x": 0, "y": 23},
-      "id": 17,
-      "options": {"cellHeight": "sm", "footer": {"countRows": false, "fields": "", "reducer": ["sum"], "show": false}, "showHeader": true},
-      "targets": [{"editorMode": "code", "expr": "security_policyreport_result_info{namespace=~\"$namespace\",result=~\"fail|warn|error|skip\"}", "format": "table", "instant": true, "legendFormat": "__auto", "range": false, "refId": "A"}],
-      "title": "Current non-pass PolicyReport results",
-      "type": "table"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Summary of Kyverno PolicyException match branches that target the selected namespace. One exception can appear in several rows when it contains several match branches. The table shows the exception, policy, namespace, and resource kind, but not every selector; inspect the PolicyException object for its complete rules and remember that declaration does not prove current use.",
-      "fieldConfig": {"defaults": {"custom": {"align": "auto", "cellOptions": {"type": "auto"}, "inspect": false}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}]}}, "overrides": []},
-      "gridPos": {"h": 9, "w": 10, "x": 14, "y": 23},
-      "id": 18,
-      "options": {"cellHeight": "sm", "footer": {"countRows": false, "fields": "", "reducer": ["sum"], "show": false}, "showHeader": true},
-      "targets": [{"editorMode": "code", "expr": "security_policyexception_match_info{target_namespace=~\"$namespace\"}", "format": "table", "instant": true, "legendFormat": "__auto", "range": false, "refId": "A"}],
-      "title": "Declared PolicyExceptions",
-      "type": "table"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 32},
-      "id": 19,
-      "panels": [],
-      "title": "Scanner finding detail",
-      "type": "row"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Available Trivy findings grouped by severity for the selected namespace. Image findings include Critical and High because those are the configured vulnerability scan severities. Configuration, exposed-secret, and namespaced RBAC findings also include Medium. The values count finding occurrences, not unique vulnerability IDs or affected resources. Use the freshness and coverage panels to decide whether the totals are complete enough to trust.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 9, "w": 24, "x": 0, "y": 33},
-      "id": 21,
-      "options": {"displayMode": "gradient", "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true}, "maxVizHeight": 300, "minVizHeight": 16, "minVizWidth": 8, "namePlacement": "auto", "orientation": "horizontal", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "showUnfilled": true, "sizing": "auto", "valueMode": "color"},
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
       "targets": [
-        {"editorMode": "code", "expr": "sum by (severity) (trivy_image_vulnerabilities{namespace=~\"$namespace\",severity=~\"Critical|High\"})", "instant": true, "legendFormat": "Images / {{severity}}", "range": false, "refId": "A"},
-        {"editorMode": "code", "expr": "sum by (severity) (trivy_resource_configaudits{namespace=~\"$namespace\",severity=~\"Critical|High|Medium\"})", "instant": true, "legendFormat": "Configuration / {{severity}}", "range": false, "refId": "B"},
-        {"editorMode": "code", "expr": "sum by (severity) (trivy_image_exposedsecrets{namespace=~\"$namespace\",severity=~\"Critical|High|Medium\"})", "instant": true, "legendFormat": "Secrets / {{severity}}", "range": false, "refId": "C"},
-        {"editorMode": "code", "expr": "sum by (severity) (trivy_role_rbacassessments{namespace=~\"$namespace\",severity=~\"Critical|High|Medium\"})", "instant": true, "legendFormat": "Role RBAC / {{severity}}", "range": false, "refId": "D"}
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(max by (namespace,image_registry,image_repository,image_digest,severity) (trivy_image_vulnerabilities{namespace=~\"$namespace\",severity=~\"Critical\"})) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "time_series",
+          "legendFormat": "Image vulnerabilities"
+        }
       ],
-      "title": "Trivy findings by severity",
-      "type": "bargauge"
+      "title": "Image vulnerabilities",
+      "type": "stat"
     },
     {
-      "collapsed": false,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 42},
-      "id": 22,
-      "panels": [],
-      "title": "Report freshness detail",
-      "type": "row"
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Critical findings in image scans. Confirm each finding and rotate valid credentials. Repeated workload reports count once.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "decimals": 0,
+          "noValue": "No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 1,
+        "w": 6,
+        "h": 3
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(max by (namespace,image_registry,image_repository,image_digest,severity) (trivy_image_exposedsecrets{namespace=~\"$namespace\",severity=~\"Critical\"})) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "time_series",
+          "legendFormat": "Secret findings"
+        }
+      ],
+      "title": "Secret findings",
+      "type": "stat"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Age in hours of every available Trivy report in the selected namespace. Vulnerability and exposed-secret reports should normally remain within their configured lifetime, while configuration and RBAC reports are updated when related resources change. Use the report and resource labels in this table to find the exact object behind a stale summary value; an old event-driven report is context, not automatically a failure.",
-      "fieldConfig": {"defaults": {"custom": {"align": "auto", "cellOptions": {"type": "auto"}, "inspect": false}, "decimals": 1, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 26}]}, "unit": "h"}, "overrides": []},
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 43},
-      "id": 23,
-      "options": {"cellHeight": "sm", "footer": {"countRows": false, "fields": "", "reducer": ["max"], "show": false}, "showHeader": true},
-      "targets": [{"editorMode": "code", "expr": "(time() - {__name__=~\"security_trivy_(vulnerability|configaudit|exposedsecret|rbacassessment)report_updated_timestamp_seconds\",namespace=~\"$namespace\"}) / 3600", "format": "table", "instant": true, "legendFormat": "__auto", "range": false, "refId": "A"}],
-      "title": "Trivy report age by object",
-      "type": "table"
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Critical configuration findings in the selected namespaces. Review the affected resources before changing settings.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "decimals": 0,
+          "noValue": "No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 6,
+        "h": 3
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(trivy_resource_configaudits{namespace=~\"$namespace\",severity=\"Critical\"}) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "time_series",
+          "legendFormat": "Workload configuration"
+        }
+      ],
+      "title": "Workload configuration",
+      "type": "stat"
     },
     {
-      "collapsed": false,
-      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 51},
-      "id": 24,
-      "panels": [],
-      "title": "Cluster-wide compliance (namespace filter does not apply)",
-      "type": "row"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of failed checks in each Trivy ClusterComplianceReport, grouped by compliance profile title. This shows failed CIS, NSA, or Pod Security controls across the whole cluster, not the number of failing namespaces or resources. These reports are cluster-scoped, so the namespace filter does not apply.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 52},
-      "id": 25,
-      "options": {"displayMode": "gradient", "legend": {"calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true}, "maxVizHeight": 300, "minVizHeight": 16, "minVizWidth": 8, "namePlacement": "auto", "orientation": "horizontal", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "showUnfilled": true, "sizing": "auto", "valueMode": "color"},
-      "targets": [{"editorMode": "code", "expr": "sum by (title) (trivy_cluster_compliance{status=\"Fail\"})", "instant": true, "legendFormat": "{{title}}", "range": false, "refId": "A"}],
-      "title": "Failed cluster compliance controls",
-      "type": "bargauge"
-    },
-    {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Number of critical RBAC finding occurrences in Trivy ClusterRbacAssessmentReports. This is not the number of ClusterRoles because one ClusterRole can produce several findings. ClusterRoles are cluster-scoped, so the namespace filter does not apply.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}, "overrides": []},
-      "gridPos": {"h": 8, "w": 6, "x": 12, "y": 52},
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Critical ClusterRole findings across the cluster. The namespace filter does not apply. Review permissions below.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "decimals": 0,
+          "noValue": "No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 1,
+        "w": 6,
+        "h": 3
+      },
       "id": 26,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "sum(trivy_clusterrole_clusterrbacassessments{severity=\"Critical\"}) or vector(0)", "instant": true, "legendFormat": "Critical", "range": false, "refId": "A"}],
-      "title": "Critical ClusterRole findings",
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(trivy_clusterrole_clusterrbacassessments{severity=\"Critical\"}) or vector(0)",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "time_series",
+          "legendFormat": "Cluster access"
+        }
+      ],
+      "title": "Cluster access",
       "type": "stat"
     },
     {
-      "datasource": {"type": "prometheus", "uid": "prometheus"},
-      "description": "Age in hours of the oldest Trivy ClusterComplianceReport. Reports are scheduled every six hours: green is at most seven hours old, orange indicates one delayed or missed update, and red indicates more than two expected cycles without an update. An old value, or No data, indicates a scanner or reporting problem rather than an additional compliance failure.",
-      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "decimals": 1, "mappings": [], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 7}, {"color": "red", "value": 13}]}, "unit": "h"}, "overrides": []},
-      "gridPos": {"h": 8, "w": 6, "x": 18, "y": 52},
-      "id": 27,
-      "options": {"colorMode": "background", "graphMode": "none", "justifyMode": "auto", "orientation": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto", "wideLayout": true},
-      "targets": [{"editorMode": "code", "expr": "max(time() - security_trivy_clustercompliancereport_updated_timestamp_seconds) / 3600", "instant": true, "legendFormat": "Oldest", "range": false, "refId": "A"}],
-      "title": "Oldest cluster report age",
-      "type": "stat"
+      "id": 28,
+      "type": "row",
+      "title": "Operations / Secrets and access",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "High and Critical findings per image and namespace. These are image-scan findings, not live Kubernetes Secret scans. Confirm the finding, rotate valid credentials, then remove them from the image.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "Critical": {
+                        "color": "red",
+                        "text": "Critical"
+                      },
+                      "High": {
+                        "color": "orange",
+                        "text": "High"
+                      },
+                      "Medium": {
+                        "color": "yellow",
+                        "text": "Medium"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 12,
+        "h": 6
+      },
+      "id": 29,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Severity",
+            "desc": false
+          },
+          {
+            "displayName": "Findings",
+            "desc": true
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max by (namespace,image_registry,image_repository,image_digest,severity) (trivy_image_exposedsecrets{namespace=~\"$namespace\",severity=~\"Critical|High\"}) > 0",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "title": "Image secret findings",
+      "type": "table",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "resource_kind": "Kind",
+              "resource_name": "Resource",
+              "name": "Report",
+              "image_registry": "Registry",
+              "image_repository": "Image",
+              "image_tag": "Tag",
+              "image_digest": "Digest",
+              "severity": "Severity",
+              "Value": "Findings"
+            },
+            "indexByName": {
+              "severity": 0,
+              "namespace": 1,
+              "image_registry": 2,
+              "image_repository": 3,
+              "image_digest": 4,
+              "Value": 5
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Severity",
+                "desc": false
+              },
+              {
+                "field": "Findings",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "High and Critical Role and ClusterRole findings. ClusterRoles apply to all namespaces; their namespace is blank. Review the report and reduce permissions where possible.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "Critical": {
+                        "color": "red",
+                        "text": "Critical"
+                      },
+                      "High": {
+                        "color": "orange",
+                        "text": "High"
+                      },
+                      "Medium": {
+                        "color": "yellow",
+                        "text": "Medium"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 5,
+        "w": 12,
+        "h": 6
+      },
+      "id": 30,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Severity",
+            "desc": false
+          },
+          {
+            "displayName": "Findings",
+            "desc": true
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max by (namespace,resource_kind,resource_name,name,severity) (trivy_role_rbacassessments{namespace=~\"$namespace\",severity=~\"Critical|High\"}) > 0 or max by (resource_kind,resource_name,name,severity) (trivy_clusterrole_clusterrbacassessments{severity=~\"Critical|High\"}) > 0",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "title": "Access findings",
+      "type": "table",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "resource_kind": "Kind",
+              "resource_name": "Resource",
+              "name": "Report",
+              "image_registry": "Registry",
+              "image_repository": "Image",
+              "image_tag": "Tag",
+              "image_digest": "Digest",
+              "severity": "Severity",
+              "Value": "Findings"
+            },
+            "indexByName": {
+              "severity": 0,
+              "namespace": 1,
+              "resource_kind": 2,
+              "resource_name": 3,
+              "name": 4,
+              "Value": 5
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Severity",
+                "desc": false
+              },
+              {
+                "field": "Findings",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "type": "row",
+      "title": "Development / Image fixes",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 11,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "High and Critical vulnerability occurrences per image and namespace. Repeated workload reports count once. These scans cover deployed images. Review the vulnerability report, update the image, then rebuild and deploy.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "Critical": {
+                        "color": "red",
+                        "text": "Critical"
+                      },
+                      "High": {
+                        "color": "orange",
+                        "text": "High"
+                      },
+                      "Medium": {
+                        "color": "yellow",
+                        "text": "Medium"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 6
+      },
+      "id": 21,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Severity",
+            "desc": false
+          },
+          {
+            "displayName": "Findings",
+            "desc": true
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max by (namespace,image_registry,image_repository,image_digest,severity) (trivy_image_vulnerabilities{namespace=~\"$namespace\",severity=~\"Critical|High\"}) > 0",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "title": "Images to update",
+      "type": "table",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "resource_kind": "Kind",
+              "resource_name": "Resource",
+              "name": "Report",
+              "image_registry": "Registry",
+              "image_repository": "Image",
+              "image_tag": "Tag",
+              "image_digest": "Digest",
+              "severity": "Severity",
+              "Value": "Findings"
+            },
+            "indexByName": {
+              "severity": 0,
+              "namespace": 1,
+              "image_registry": 2,
+              "image_repository": 3,
+              "image_digest": 4,
+              "Value": 5
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Severity",
+                "desc": false
+              },
+              {
+                "field": "Findings",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "type": "row",
+      "title": "Deployment / Policies and configuration",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Failed rules and evaluation errors for the selected namespaces. Fix the resource or inspect the policy error. Exceptions and skipped results are in the review section.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "Critical": {
+                        "color": "red",
+                        "text": "Critical"
+                      },
+                      "High": {
+                        "color": "orange",
+                        "text": "High"
+                      },
+                      "Medium": {
+                        "color": "yellow",
+                        "text": "Medium"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 19,
+        "w": 12,
+        "h": 6
+      },
+      "id": 17,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Severity",
+            "desc": false
+          },
+          {
+            "displayName": "Findings",
+            "desc": true
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max by (namespace,resource_kind,resource_name,policy,rule,result,severity) (security_policyreport_result_info{namespace=~\"$namespace\",result=~\"fail|error|warn\"})",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "title": "Policy actions",
+      "type": "table",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "resource_kind": "Kind",
+              "resource_name": "Resource",
+              "name": "Report",
+              "image_registry": "Registry",
+              "image_repository": "Image",
+              "image_tag": "Tag",
+              "image_digest": "Digest",
+              "severity": "Severity",
+              "Value": "Results"
+            },
+            "indexByName": {
+              "result": 0,
+              "severity": 1,
+              "namespace": 2,
+              "resource_kind": 3,
+              "resource_name": 4,
+              "policy": 5,
+              "rule": 6,
+              "Value": 7
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Severity",
+                "desc": false
+              },
+              {
+                "field": "Findings",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "High and Critical findings per resource. Review its configuration audit report and change the deployment manifest. Report names remain visible when a resource name is missing.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Severity"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "Critical": {
+                        "color": "red",
+                        "text": "Critical"
+                      },
+                      "High": {
+                        "color": "orange",
+                        "text": "High"
+                      },
+                      "Medium": {
+                        "color": "yellow",
+                        "text": "Medium"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 19,
+        "w": 12,
+        "h": 6
+      },
+      "id": 31,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Severity",
+            "desc": false
+          },
+          {
+            "displayName": "Findings",
+            "desc": true
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max by (namespace,resource_kind,resource_name,name,severity) (trivy_resource_configaudits{namespace=~\"$namespace\",severity=~\"Critical|High\"}) > 0",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "title": "Configuration findings",
+      "type": "table",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "resource_kind": "Kind",
+              "resource_name": "Resource",
+              "name": "Report",
+              "image_registry": "Registry",
+              "image_repository": "Image",
+              "image_tag": "Tag",
+              "image_digest": "Digest",
+              "severity": "Severity",
+              "Value": "Findings"
+            },
+            "indexByName": {
+              "severity": 0,
+              "namespace": 1,
+              "resource_kind": 2,
+              "resource_name": 3,
+              "name": 4,
+              "Value": 5
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Severity",
+                "desc": false
+              },
+              {
+                "field": "Findings",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "type": "row",
+      "title": "Review / Scan health, exceptions and cluster checks",
+      "collapsed": true,
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 1
+      },
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Check these counts before accepting zero findings. Reports over 26 hours need review. A collection error includes a missing scrape target. Report counts do not measure workload coverage. Cluster reports cover all namespaces and run every six hours; review reports over 13 hours.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1
+                  }
+                ]
+              },
+              "decimals": 0,
+              "noValue": "No data"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 26,
+            "w": 8,
+            "h": 7
+          },
+          "id": 32,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "value_and_name",
+            "wideLayout": true
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum((time() - security_trivy_vulnerabilityreport_updated_timestamp_seconds{namespace=~\"$namespace\"}) > bool 93600) or vector(0)",
+              "instant": true,
+              "range": false,
+              "refId": "A",
+              "format": "time_series",
+              "legendFormat": "Image reports over 26 h"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum((time() - security_trivy_exposedsecretreport_updated_timestamp_seconds{namespace=~\"$namespace\"}) > bool 93600) or vector(0)",
+              "instant": true,
+              "range": false,
+              "refId": "B",
+              "format": "time_series",
+              "legendFormat": "Secret reports over 26 h"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "(sum(up{job=\"trivy-operator\"} == bool 0) or vector(1)) + (sum(up{job=\"kube-state-metrics\"} == bool 0) or vector(1))",
+              "instant": true,
+              "range": false,
+              "refId": "C",
+              "format": "time_series",
+              "legendFormat": "Collection errors"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "sum((time() - security_trivy_clustercompliancereport_updated_timestamp_seconds) > bool 46800) or vector(0)",
+              "instant": true,
+              "range": false,
+              "refId": "D",
+              "format": "time_series",
+              "legendFormat": "Cluster reports over 13 h"
+            }
+          ],
+          "title": "Scan checks",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Report age in hours. Image and secret reports should update within 26 hours. Configuration and access reports update on resource changes. Some access reports have no timestamp.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "decimals": 1,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "h"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "x": 8,
+            "y": 26,
+            "w": 16,
+            "h": 7
+          },
+          "id": 23,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "max"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "targets": [
+            {
+              "editorMode": "code",
+              "expr": "(time() - max by (namespace,resource_kind,resource_name,report,scan) (label_replace({__name__=~\"security_trivy_(vulnerability|configaudit|exposedsecret|rbacassessment)report_updated_timestamp_seconds\",namespace=~\"$namespace\"}, \"scan\", \"$1\", \"__name__\", \"security_trivy_(.*)report_updated_timestamp_seconds\"))) / 3600",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "range": false,
+              "refId": "A"
+            }
+          ],
+          "title": "Scan report age",
+          "type": "table",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "renameByName": {
+                  "namespace": "Namespace",
+                  "resource_kind": "Kind",
+                  "resource_name": "Resource",
+                  "report": "Report",
+                  "scan": "Scan",
+                  "Value": "Age"
+                },
+                "indexByName": {
+                  "scan": 0,
+                  "namespace": 1,
+                  "resource_kind": 2,
+                  "resource_name": 3,
+                  "report": 4,
+                  "Value": 5
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "sort": [
+                  {
+                    "field": "Age",
+                    "desc": true
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Declared exception rules. A declaration can have several matches and may not be in use. Review whether each exception is still required.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Severity"
+                },
+                "properties": [
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "type": "color-text"
+                    }
+                  },
+                  {
+                    "id": "mappings",
+                    "value": [
+                      {
+                        "type": "value",
+                        "options": {
+                          "Critical": {
+                            "color": "red",
+                            "text": "Critical"
+                          },
+                          "High": {
+                            "color": "orange",
+                            "text": "High"
+                          },
+                          "Medium": {
+                            "color": "yellow",
+                            "text": "Medium"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "x": 0,
+            "y": 33,
+            "w": 12,
+            "h": 6
+          },
+          "id": 18,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "editorMode": "code",
+              "expr": "max by (exception_namespace,exception,target_namespace,policy,resource_kind) (security_policyexception_match_info{target_namespace=~\"$namespace\"})",
+              "instant": true,
+              "range": false,
+              "refId": "A",
+              "format": "table"
+            }
+          ],
+          "title": "Policy exceptions",
+          "type": "table",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true
+                },
+                "renameByName": {
+                  "namespace": "Namespace",
+                  "resource_kind": "Kind",
+                  "resource_name": "Resource",
+                  "name": "Report",
+                  "image_registry": "Registry",
+                  "image_repository": "Image",
+                  "image_tag": "Tag",
+                  "image_digest": "Digest",
+                  "severity": "Severity",
+                  "Value": "Matches",
+                  "exception_namespace": "Exception namespace",
+                  "exception": "Exception",
+                  "target_namespace": "Target namespace"
+                },
+                "indexByName": {
+                  "exception_namespace": 0,
+                  "exception": 1,
+                  "target_namespace": 2,
+                  "policy": 3,
+                  "resource_kind": 4,
+                  "Value": 5
+                }
+              }
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Failed controls by profile across the cluster. The namespace filter does not apply. Review the compliance report before changing cluster settings.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "orange",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "x": 12,
+            "y": 33,
+            "w": 12,
+            "h": 6
+          },
+          "id": 25,
+          "options": {
+            "displayMode": "gradient",
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
+          },
+          "targets": [
+            {
+              "editorMode": "code",
+              "expr": "sum by (title) (trivy_cluster_compliance{status=\"Fail\"})",
+              "instant": true,
+              "legendFormat": "{{title}}",
+              "range": false,
+              "refId": "A"
+            }
+          ],
+          "title": "Cluster controls",
+          "type": "bargauge"
+        }
+      ]
     }
   ],
   "refresh": "30s",
   "schemaVersion": 41,
-  "tags": ["compliance"],
+  "tags": [
+    "compliance"
+  ],
   "templating": {
     "list": [
       {
         "allValue": ".*",
-        "current": {"selected": false, "text": "data-access", "value": "data-access"},
-        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
         "definition": "label_values(kube_namespace_created, namespace)",
         "includeAll": true,
         "label": "Namespace",
         "multi": true,
         "name": "namespace",
         "options": [],
-        "query": {"query": "label_values(kube_namespace_created, namespace)", "refId": "StandardVariableQuery"},
+        "query": {
+          "query": "label_values(kube_namespace_created, namespace)",
+          "refId": "StandardVariableQuery"
+        },
         "refresh": 1,
         "regex": "",
         "sort": 1,
@@ -316,10 +1605,15 @@
       }
     ]
   },
-  "time": {"from": "now-24h", "to": "now"},
-  "timepicker": {"hidden": true},
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true
+  },
   "timezone": "browser",
-  "title": "EOEPCA / Security Compliance by Namespace",
+  "title": "EOEPCA / Security Compliance",
   "uid": "eoepca-security-compliance-namespace",
   "version": 1,
   "weekStart": ""

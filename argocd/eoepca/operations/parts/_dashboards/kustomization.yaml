@@ -48,3 +48,11 @@ configMapGenerator:
         grafana_dashboard: "1"
     files:
       - stac-slo.json
+  - name: workspaces-overview
+    options:
+      labels:
+        eoepca/dashboard-category: workspaces
+        grafana_dashboard: "1"
+        app.kubernetes.io/managed-by: manual
+    files:
+      - workspaces-overview.json

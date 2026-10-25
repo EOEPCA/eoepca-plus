@@ -1,0 +1,1212 @@
+{
+  "uid": "eoepca-workspaces-review",
+  "title": "EOEPCA / Workspaces",
+  "description": "Workspace sessions, resource use, buckets, and managed data activity.",
+  "tags": [
+    "eoepca",
+    "workspaces"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 41,
+  "version": 1,
+  "editable": true,
+  "refresh": "30s",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "workspace",
+        "label": "Workspace",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "query_result(workspace_info)",
+        "query": {
+          "query": "query_result(workspace_info)",
+          "refId": "StandardVariableQuery"
+        },
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "refresh": 2,
+        "sort": 1,
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [],
+        "regex": "/workspace=\"([^\"]+)\"/"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Workspaces",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count(workspace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Running workspace sessions",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "description": "Counts each named session once while its runtime pod is running.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(count by(workspace) (max by(workspace,session) (workspace_session_pod_info{workspace=~\"${workspace:regex}\"} * on(namespace,pod) group_left() max by(namespace,pod) (kube_pod_status_phase{phase=\"Running\"} == 1))) or on(workspace) (0 * workspace_info{workspace=~\"${workspace:regex}\"}))",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Buckets",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "description": "Owned buckets declared by each workspace. Shared buckets are excluded.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(workspace_bucket_count{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "title": "CPU use",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "cores",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum by(workspace) (sum by(namespace) (rate(container_cpu_usage_seconds_total{namespace=~\"ws-.*\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",container!=\"\",container!=\"POD\"}[$__rate_interval])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"} @ end()))",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Memory use",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum by(workspace) (sum by(namespace) (container_memory_working_set_bytes{namespace=~\"ws-.*\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",container!=\"\",container!=\"POD\"}) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"} @ end()))",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "title": "Requested PVC storage",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "description": "PVC requests. Used space is not yet measured for each workspace.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum by(workspace) (sum by(namespace) (max by(namespace,persistentvolumeclaim) (kube_persistentvolumeclaim_resource_requests_storage_bytes{namespace=~\"ws-.*\"})) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"}))",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 7,
+      "title": "Workspaces",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 8
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Running sessions"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Buckets"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "cores"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Requested PVC storage"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "workspace_info{workspace=~\"${workspace:regex}\"}",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count by(workspace) (max by(workspace,session) (workspace_session_pod_info{workspace=~\"${workspace:regex}\"} * on(namespace,pod) group_left() max by(namespace,pod) (kube_pod_status_phase{phase=\"Running\"} == 1))) or on(workspace) (0 * workspace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "workspace_bucket_count{workspace=~\"${workspace:regex}\"}",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(sum by(workspace) (sum by(namespace) (rate(container_cpu_usage_seconds_total{namespace=~\"ws-.*\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",container!=\"\",container!=\"POD\"}[$__rate_interval])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"} @ end())) or on(workspace) ((0 * workspace_info{workspace=~\"${workspace:regex}\"}) unless on(workspace) (sum by(workspace) (max by(namespace,pod) (kube_pod_status_phase{namespace=~\"ws-.*\",phase=\"Running\"} == 1) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})))",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(sum by(workspace) (sum by(namespace) (container_memory_working_set_bytes{namespace=~\"ws-.*\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",container!=\"\",container!=\"POD\"}) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"} @ end())) or on(workspace) ((0 * workspace_info{workspace=~\"${workspace:regex}\"}) unless on(workspace) (sum by(workspace) (max by(namespace,pod) (kube_pod_status_phase{namespace=~\"ws-.*\",phase=\"Running\"} == 1) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})))",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(sum by(workspace) (sum by(namespace) (max by(namespace,persistentvolumeclaim) (kube_persistentvolumeclaim_resource_requests_storage_bytes{namespace=~\"ws-.*\"})) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})) or on(workspace) (0 * workspace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "workspace",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "^(workspace|session|session_key|Value #[A-Z])$"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {
+              "workspace": 0,
+              "Value #B": 1,
+              "Value #C": 2,
+              "Value #D": 3,
+              "Value #E": 4,
+              "Value #F": 5
+            },
+            "renameByName": {
+              "workspace": "Workspace",
+              "session": "Session",
+              "Value #B": "Running sessions",
+              "Value #C": "Buckets",
+              "Value #D": "CPU",
+              "Value #E": "Memory",
+              "Value #F": "Requested PVC storage"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "CPU by workspace",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 12,
+        "h": 7
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "cores",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by(workspace) (sum by(namespace) (rate(container_cpu_usage_seconds_total{namespace=~\"ws-.*\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",container!=\"\",container!=\"POD\"}[$__rate_interval])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"} @ end())",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "Memory by workspace",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 12,
+        "w": 12,
+        "h": 7
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by(workspace) (sum by(namespace) (container_memory_working_set_bytes{namespace=~\"ws-.*\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",container!=\"\",container!=\"POD\"}) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"} @ end())",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "title": "Running workspace sessions",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 19,
+        "w": 24,
+        "h": 7
+      },
+      "description": "Includes each session’s runtime, registry, control plane, and workloads. Shared services count once in workspace totals.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "cores"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "label_join((max by(workspace,session) (workspace_session_pod_info{workspace=~\"${workspace:regex}\"} * on(namespace,pod) group_left() max by(namespace,pod) (kube_pod_status_phase{phase=\"Running\"} == 1))), \"session_key\", \" / \", \"workspace\", \"session\")",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "label_join((sum by(workspace,session) (sum by(namespace,pod) (rate(container_cpu_usage_seconds_total{namespace=~\"ws-.*\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",container!=\"\",container!=\"POD\"}[$__rate_interval])) * on(namespace,pod) group_left(workspace,session) workspace_session_workload_info{workspace=~\"${workspace:regex}\"}) and on(workspace,session) (max by(workspace,session) (workspace_session_pod_info{workspace=~\"${workspace:regex}\"} * on(namespace,pod) group_left() max by(namespace,pod) (kube_pod_status_phase{phase=\"Running\"} == 1)))), \"session_key\", \" / \", \"workspace\", \"session\")",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "label_join((sum by(workspace,session) (sum by(namespace,pod) (container_memory_working_set_bytes{namespace=~\"ws-.*\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",container!=\"\",container!=\"POD\"}) * on(namespace,pod) group_left(workspace,session) workspace_session_workload_info{workspace=~\"${workspace:regex}\"}) and on(workspace,session) (max by(workspace,session) (workspace_session_pod_info{workspace=~\"${workspace:regex}\"} * on(namespace,pod) group_left() max by(namespace,pod) (kube_pod_status_phase{phase=\"Running\"} == 1)))), \"session_key\", \" / \", \"workspace\", \"session\")",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "session_key",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "^(workspace|session|session_key|Value #[A-Z])$"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "session_key": true,
+              "Value #A": true
+            },
+            "indexByName": {
+              "workspace": 0,
+              "session": 1,
+              "Value #B": 2,
+              "Value #C": 3
+            },
+            "renameByName": {
+              "workspace": "Workspace",
+              "session": "Session",
+              "Value #B": "CPU",
+              "Value #C": "Memory"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Workspace managed data",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 26,
+        "w": 24,
+        "h": 8
+      },
+      "description": "Estimated activity over the selected period. VFS bytes measure transfers; stored bytes and S3 request counts are not yet available.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Requests"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Presign successes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Presign failures"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "VFS transferred"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Metrics"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Metrics"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "0": {
+                        "text": "Unavailable",
+                        "color": "red"
+                      },
+                      "1": {
+                        "text": "Collected",
+                        "color": "green"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "noValue",
+                "value": "Not collected"
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "workspace_info{workspace=~\"${workspace:regex}\"}",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by(workspace) (sum by(namespace) (increase(package_r_http_requests_total{namespace=~\"ws-.*\",route!=\"/health\"}[$__range])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by(workspace) (sum by(namespace) (increase(package_r_presign_requests_total{namespace=~\"ws-.*\",result=\"success\"}[$__range])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by(workspace) (sum by(namespace) (increase(package_r_presign_requests_total{namespace=~\"ws-.*\",result=\"failure\"}[$__range])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by(workspace) (sum by(namespace) (increase(rclone_bytes_transferred_total{namespace=~\"ws-.*\"}[$__range])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "min by(workspace) (min by(namespace) (up{job=\"operations/workspace-managed-data\"}) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": true,
+          "range": false,
+          "format": "table",
+          "legendFormat": "{{workspace}}"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      },
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "workspace",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "^(workspace|session|session_key|Value #[A-Z])$"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #A": true
+            },
+            "indexByName": {
+              "workspace": 0,
+              "Value #B": 1,
+              "Value #C": 2,
+              "Value #D": 3,
+              "Value #E": 4,
+              "Value #F": 5
+            },
+            "renameByName": {
+              "workspace": "Workspace",
+              "session": "Session",
+              "Value #B": "Requests",
+              "Value #C": "Presign successes",
+              "Value #D": "Presign failures",
+              "Value #E": "VFS transferred",
+              "Value #F": "Metrics"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Presign requests",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 24,
+        "h": 7
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "noValue": "—",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by(workspace) (sum by(namespace) (rate(package_r_presign_requests_total{namespace=~\"ws-.*\",result=\"success\"}[$__rate_interval])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "legendFormat": "{{workspace}} / success"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by(workspace) (sum by(namespace) (rate(package_r_presign_requests_total{namespace=~\"ws-.*\",result=\"failure\"}[$__rate_interval])) * on(namespace) group_left(workspace) workspace_namespace_info{workspace=~\"${workspace:regex}\"})",
+          "instant": false,
+          "range": true,
+          "format": "time_series",
+          "legendFormat": "{{workspace}} / failure"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    }
+  ]
+}

@@ -6,55 +6,32 @@ metadata:
 data:
   internal_attributes.yaml: |
     attributes:
-      address:
-        openid:
-          - address.street_address
-        orcid:
-          - address
-        saml:
-          - postaladdress
-      displayname:
-        openid:
-          - nickname
-        orcid:
-          - displayname
-        github:
-          - login
-        saml:
-          - displayName
-      edupersontargetedid:
-        facebook:
-          - id
-        linkedin:
-          - id
-        orcid:
-          - edupersontargetedid
-        github:
-          - id
+    #  address:
+    #    openid:
+    #      - address.street_address
+    #    saml:
+    #      - postaladdress
+    #  displayname:
+    #    openid:
+    #      - nickname
+    #    saml:
+    #      - displayName
+      eduPersonPrincipalName:
         openid:
           - sub
         saml:
-          - eduPersonTargetedID
+          - eduPersonPrincipalName
+    #  edupersontargetedid:
+    #    openid:
+    #      - sub
+    #    saml:
+    #      - eduPersonTargetedID
       givenname:
-        facebook:
-          - first_name
-        linkedin:
-          - email-address
-        orcid:
-          - givenname
         openid:
           - given_name
         saml:
           - givenName
       mail:
-        facebook:
-          - email
-        linkedin:
-          - email-address
-        orcid:
-          - mail
-        github:
-          - email
         openid:
           - email
         saml:
@@ -62,28 +39,21 @@ data:
           - emailAddress
           - mail
       name:
-        facebook:
-          - name
-        orcid:
-          - name
-        github:
-          - name
         openid:
           - name
         saml:
           - cn
       surname:
-        facebook:
-          - last_name
-        linkedin:
-          - lastName
-        orcid:
-          - surname
         openid:
           - family_name
         saml:
           - sn
           - surname
+      eduPersonAffiliation:
+        openid:
+          - eduPersonAffiliation
+        saml:
+          - eduPersonAffiliation
   oidc_frontend.yaml: |
     module: satosa.frontends.openid_connect.OpenIDConnectFrontend
     name: OIDC

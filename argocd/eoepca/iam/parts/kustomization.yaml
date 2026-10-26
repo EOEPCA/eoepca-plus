@@ -21,6 +21,7 @@ resources:
   - ss-opa-route.yaml
   - ss-keycloak-admin.yaml
   - ss-eoepca-realm.yaml
+  - satosa/
 
 patches:
   - target:

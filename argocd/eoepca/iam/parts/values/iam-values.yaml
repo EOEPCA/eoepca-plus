@@ -94,6 +94,10 @@ iam: &iam
             secret:
               name: eoepca-realm
               key: github_client_secret
+          satosa_client_secret:
+            secret:
+              name: satosa-cdb
+              key: client_secret
         placeholders: *placeholders # TODO: Remove after Helm chart update
 #          eoiam_client_secret:
 #            secret:
@@ -136,7 +140,6 @@ iam: &iam
 #              {
 #                "alias": "eoiam",
 #                "displayName": "ESA EO IAM",
-#                "internalId": "b5c95e2a-5ad1-4578-ac99-d922bdda584b",
 #                "providerId": "oidc",
 #                "enabled": true,
 #                "updateProfileFirstLoginMode": "on",
@@ -194,7 +197,50 @@ iam: &iam
                 syncMode: "FORCE"
                 clientSecret: "${github_client_secret}"
                 caseSensitiveOriginalUsername: "false"
-#            identityProviderMappers: [
+            - alias: "satosa"
+              displayName: "DFN-AAI/eduGAIN"
+              providerId: "oidc"
+              enabled: true
+              trustEmail: false
+              storeToken: false
+              addReadTokenRoleOnCreate: false
+              linkOnly: false
+              hideOnLogin: false
+              config:
+                tokenUrl: "https://iam-satosa.develop-v2.eoepca.org/OIDC/token"
+                acceptsPromptNoneForwardFromClient: "false"
+                jwksUrl: "https://iam-satosa.develop-v2.eoepca.org/OIDC/jwks"
+                isAccessTokenJWT: "false"
+                showInAccountConsole: "ALWAYS"
+                filteredByClaim: "false"
+                jwtAuthorizationGrantEnabled: "false"
+                backchannelSupported: "false"
+                caseSensitiveOriginalUsername: "false"
+                issuer: "https://iam-satosa.develop-v2.eoepca.org"
+                loginHint: "false"
+                clientAuthMethod: "client_secret_basic"
+                syncMode: "FORCE"
+                supportsClientAssertions: "false"
+                clientSecret: "${satosa_client_secret}"
+                requiresShortStateParameter: "false"
+                allowedClockSkew: "0"
+                defaultScope: "openid profile email edu_person"
+                userInfoUrl: "https://iam-satosa.develop-v2.eoepca.org/OIDC/userinfo"
+                validateSignature: "true"
+                clientId: "iam-keycloak"
+                uiLocales: "false"
+                disableNonce: "false"
+                useJwksUrl: "true"
+                sendClientIdOnLogout: "false"
+                pkceEnabled: "false"
+                metadataDescriptorUrl: "https://iam-satosa.develop-v2.eoepca.org/.well-known/openid-configuration"
+                authorizationUrl: "https://iam-satosa.develop-v2.eoepca.org/Saml2/OIDC/authorization"
+                disableUserInfo: "false"
+                sendIdTokenOnLogout: "true"
+                passMaxAge: "false"
+                disableTypeClaimCheck: "false"
+
+              #            identityProviderMappers: [
 #              {
 #                "id": "acc5183d-7cca-4124-89b6-51e04929ef42",
 #                "name": "given_name",

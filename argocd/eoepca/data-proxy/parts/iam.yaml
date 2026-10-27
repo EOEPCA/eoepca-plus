@@ -48,3 +48,5 @@ spec:
       "included.client.audience": "data-proxy"
       "access.token.claim": "true"
       "id.token.claim": "false"
+      "introspection.token.claim": "true"
+      "userinfo.token.claim": "false"

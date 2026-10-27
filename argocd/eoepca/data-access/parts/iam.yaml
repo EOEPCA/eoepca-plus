@@ -134,3 +134,5 @@ spec:
       "included.client.audience": "eoapi"
       "access.token.claim": "true"
       "id.token.claim": "false"
+      "introspection.token.claim": "true"
+      "userinfo.token.claim": "false"

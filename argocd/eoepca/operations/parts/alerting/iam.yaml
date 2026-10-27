@@ -110,3 +110,4 @@ spec:
       "claim.name": "groups"
       "jsonType.label": "String"
       "usermodel.clientRoleMapping.clientId": "alerting"
+      "introspection.token.claim": "true"

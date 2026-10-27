@@ -64,6 +64,8 @@ spec:
       included.client.audience: workspace-api
       access.token.claim: "true"
       id.token.claim: "false"
+      introspection.token.claim: "true"
+      userinfo.token.claim: "false"
 ---
 apiVersion: client.keycloak.m.crossplane.io/v1alpha1
 kind: ProtocolMapper
@@ -90,6 +92,7 @@ spec:
       id.token.claim: "true"
       userinfo.token.claim: "true"
       multivalued: "true"
+      introspection.token.claim: "true"
 ---
 apiVersion: group.keycloak.m.crossplane.io/v1alpha1
 kind: Group

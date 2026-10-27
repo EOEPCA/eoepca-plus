@@ -148,6 +148,7 @@ spec:
       "claim.name": "roles"
       "jsonType.label": "String"
       "usermodel.clientRoleMapping.clientId": "application-quality"
+      "introspection.token.claim": "true"
 ---
 apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: Client
@@ -205,3 +206,4 @@ spec:
       "claim.name": "roles"
       "jsonType.label": "String"
       "usermodel.clientRoleMapping.clientId": "application-quality"
+      "introspection.token.claim": "true"

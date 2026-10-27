@@ -54,6 +54,8 @@ data:
           - eduPersonAffiliation
         saml:
           - eduPersonAffiliation
+    #user_id_from_attrs:
+    #  - eduPersonPrincipalName # already mapped above
   oidc_frontend.yaml: |
     module: satosa.frontends.openid_connect.OpenIDConnectFrontend
     name: OIDC
@@ -76,11 +78,11 @@ data:
         client_registration_supported: No #Yes
         response_types_supported: ["code", "id_token token"]
         subject_types_supported: ["pairwise"]
-        scopes_supported: ["openid", "email"]
-    #    extra_scopes:
-    #      foo_scope:
-    #      - bar_claim
-    #      - baz_claim
+        scopes_supported: ["openid", "email", "edu_person"]
+        extra_scopes:
+          edu_person:
+        #    - eduPersonPrincipalName # already mapped to sub
+            - eduPersonAffiliation
         id_token_lifetime: 3600
     #    extra_id_token_claims:
     #      foo_client:

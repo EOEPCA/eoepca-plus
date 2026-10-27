@@ -110,6 +110,9 @@ spec:
               type: RuntimeDefault
           containers:
           - name: package-runtime
+            args:
+              - --max-reconcile-rate=3 # default: 10
+              - --max-concurrent-reconciles=1 # default: 1
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:

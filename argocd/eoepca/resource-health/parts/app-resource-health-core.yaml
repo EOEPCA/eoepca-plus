@@ -424,6 +424,9 @@ spec:
                         )
 
           web:
+            image:
+              repository: docker.io/eoepca/resourcehealth_web
+              tag: "2.0.1-4fa318e"
             environmentFixed:
               - name: NEXT_PUBLIC_RELOGIN_URL
                 value: https://resource-health.develop-v2.eoepca.org/login

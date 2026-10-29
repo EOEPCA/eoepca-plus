@@ -10,9 +10,9 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - repoURL: oci://ghcr.io/open-eo/charts/sparkapplication
+    - repoURL: https://artifactory.vgt.vito.be/artifactory/helm-charts
       chart: sparkapplication
-      targetRevision: 1.7.0
+      targetRevision: 1.2.0
       helm:
         releaseName: openeo-geotrellis-openeo
         valueFiles:

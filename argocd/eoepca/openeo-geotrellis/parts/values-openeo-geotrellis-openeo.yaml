@@ -270,6 +270,16 @@ configMaps:
               secretKeyRef:
                 name: openeo-geotrellis-minio-credentials
                 key: AWS_SECRET_ACCESS_KEY
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: openeo-geotrellis-minio-credentials
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: openeo-geotrellis-minio-credentials
+                key: AWS_SECRET_ACCESS_KEY
           - name: EODATA_S3_ENDPOINT
             value: https://eodata.cloudferro.com
           - name: EODATA_ACCESS_KEY_ID

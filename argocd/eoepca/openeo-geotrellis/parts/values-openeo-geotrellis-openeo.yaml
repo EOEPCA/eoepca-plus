@@ -310,12 +310,22 @@ driver:
         secretKeyRef:
           name: openeo-geotrellis-minio-credentials
           key: AWS_ACCESS_KEY_ID
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: openeo-geotrellis-minio-credentials
+          key: AWS_ACCESS_KEY_ID
     - name: EODATA_SECRET_ACCESS_KEY
       valueFrom:
         secretKeyRef:
           name: openeo-geotrellis-eodata-credentials
           key: EODATA_SECRET_ACCESS_KEY
     - name: SWIFT_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openeo-geotrellis-minio-credentials
+          key: AWS_SECRET_ACCESS_KEY
+    - name: AWS_SECRET_ACCESS_KEY
       valueFrom:
         secretKeyRef:
           name: openeo-geotrellis-minio-credentials

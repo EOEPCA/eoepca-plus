@@ -336,6 +336,17 @@ driver:
 executor:
   env:
     PYTHONPATH: $PYTHONPATH:/opt/openeo/lib/python3.11/site-packages/
+  extraEnv:
+    - name: AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: openeo-geotrellis-minio-credentials
+          key: AWS_ACCESS_KEY_ID
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openeo-geotrellis-minio-credentials
+          key: AWS_SECRET_ACCESS_KEY
 existingConfigMaps: false
 fileDependencies:
   - local:///opt/layercatalog.json

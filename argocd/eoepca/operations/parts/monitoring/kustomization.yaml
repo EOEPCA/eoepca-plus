@@ -6,6 +6,7 @@ resources:
   - iam.yaml
   - routes.yaml
   - workspace-managed-data.yaml
+  - crossplane-metrics.yaml
 
 patches:
   - target:

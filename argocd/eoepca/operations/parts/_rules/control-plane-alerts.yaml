@@ -1,0 +1,134 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: control-plane-alerts
+  namespace: operations
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: control-plane.metrics
+      interval: 30s
+      rules:
+        - record: control_plane:apiserver_requests:rate5m
+          expr: sum(rate(apiserver_request_total{job="apiserver"}[5m]))
+        - record: control_plane:apiserver_requests:baseline1h
+          expr: avg_over_time(control_plane:apiserver_requests:rate5m[1h] offset 10m)
+        - record: control_plane:etcd_requests:rate5m
+          expr: sum(rate(etcd_request_duration_seconds_count{job="apiserver"}[5m]))
+        - record: control_plane:etcd_request_errors:rate5m
+          expr: sum(rate(etcd_request_errors_total{job="apiserver"}[5m]))
+        - record: control_plane:etcd_request_duration_seconds:p99
+          expr: |
+            histogram_quantile(0.99,
+              sum by (le, operation) (
+                rate(etcd_request_duration_seconds_bucket{job="apiserver"}[5m])
+              )
+            )
+    - name: control-plane.alerts
+      rules:
+        - alert: KubeAPIRequestSpike
+          expr: |
+            (control_plane:apiserver_requests:rate5m > 150)
+            and
+            (control_plane:apiserver_requests:rate5m
+              > 2 * clamp_min(control_plane:apiserver_requests:baseline1h, 25))
+          for: 5m
+          labels:
+            severity: warning
+            cluster: eoepca-demo
+            service: kubernetes-control-plane
+            component: kube-apiserver
+          annotations:
+            summary: Kubernetes API traffic is above its recent baseline.
+            description: >-
+              Traffic is {{ $value | printf "%.0f" }} requests/sec and exceeds
+              twice the earlier hourly baseline. Compare API resources and
+              measured controller calls on the dashboard. The baseline needs
+              ten minutes of recording history after initial deployment.
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-control-plane
+        - alert: KubeAPIServerUnavailable
+          expr: (max(up{job="apiserver"}) == 0) or absent(up{job="apiserver"})
+          for: 2m
+          labels:
+            severity: critical
+            cluster: eoepca-demo
+            service: kubernetes-control-plane
+            component: kube-apiserver
+          annotations:
+            summary: Prometheus cannot scrape the Kubernetes API server.
+            description: Check API availability, the scrape target, and the control-plane node.
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-control-plane
+        - alert: KubeAPIServerErrors
+          expr: |
+            (
+              sum(rate(apiserver_request_total{job="apiserver",code=~"5.."}[5m]))
+              / clamp_min(control_plane:apiserver_requests:rate5m, 1)
+            ) > 0.01
+            and
+            sum(rate(apiserver_request_total{job="apiserver",code=~"5.."}[5m])) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+            cluster: eoepca-demo
+            service: kubernetes-control-plane
+            component: kube-apiserver
+          annotations:
+            summary: Kubernetes API requests return sustained server errors.
+            description: More than 1% of requests return 5xx responses, with at least 0.1 errors/sec.
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-control-plane
+        - alert: EtcdRequestLatencyHigh
+          expr: |
+            (control_plane:etcd_request_duration_seconds:p99{operation=~"get|update"} > 1)
+            and
+            (control_plane:etcd_request_duration_seconds:p99{operation=~"get|update"} <= 5)
+            and on (operation)
+            sum by (operation) (
+              rate(etcd_request_duration_seconds_count{job="apiserver",operation=~"get|update"}[5m])
+            ) > 1
+          for: 5m
+          labels:
+            severity: warning
+            cluster: eoepca-demo
+            service: kubernetes-control-plane
+            component: etcd
+          annotations:
+            summary: Etcd {{ $labels.operation }} latency exceeds one second.
+            description: >-
+              The API server observes p99 latency of {{ $value | humanizeDuration }}.
+              Compare controller load and node disk write time. This measures
+              backend request latency, not direct etcd disk sync time.
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-control-plane
+        - alert: EtcdRequestLatencyCritical
+          expr: |
+            (control_plane:etcd_request_duration_seconds:p99{operation=~"get|update"} > 5)
+            and on (operation)
+            sum by (operation) (
+              rate(etcd_request_duration_seconds_count{job="apiserver",operation=~"get|update"}[5m])
+            ) > 1
+          for: 2m
+          labels:
+            severity: critical
+            cluster: eoepca-demo
+            service: kubernetes-control-plane
+            component: etcd
+          annotations:
+            summary: Etcd {{ $labels.operation }} latency exceeds five seconds.
+            description: >-
+              The API server observes p99 latency of {{ $value | humanizeDuration }}.
+              Controllers can lose their leader leases during a prolonged stall.
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-control-plane
+        - alert: EtcdRequestErrors
+          expr: control_plane:etcd_request_errors:rate5m > 0.1
+          for: 5m
+          labels:
+            severity: warning
+            cluster: eoepca-demo
+            service: kubernetes-control-plane
+            component: etcd
+          annotations:
+            summary: Kubernetes API backend requests to etcd are failing.
+            description: The API server reports {{ $value | printf "%.2f" }} backend errors/sec.
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-control-plane

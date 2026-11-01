@@ -28,20 +28,23 @@ while [ ! -S "${SACKD_SOCKET}" ]; do
   sleep 2
 done
 
-while true; do
-  available_nodes="$(sinfo \
+check_once() {
+  if ! available_nodes="$(sinfo \
     --noheader \
     --partition="${PARTITION}" \
     --states=idle,mix,alloc \
-    --format='%N')"
+    --format='%N')"; then
+    log "Could not query partition ${PARTITION}"
+    return 1
+  fi
 
   if [ -z "${available_nodes}" ]; then
     log "No schedulable nodes found in partition ${PARTITION}"
-    exit 1
+    return 1
   fi
 
   log "Schedulable nodes: ${available_nodes}"
-  worker_hostname="$(srun \
+  if ! worker_hostname="$(srun \
     --partition="${PARTITION}" \
     --nodes=1 \
     --ntasks=1 \
@@ -49,14 +52,25 @@ while true; do
     --mem=64M \
     --immediate=30 \
     --time=00:01:00 \
-    hostname)"
+    hostname)"; then
+    log "The synthetic Slurm job failed"
+    return 1
+  fi
 
   if [ -z "${worker_hostname}" ]; then
     log "The synthetic Slurm job returned no worker hostname"
-    exit 1
+    return 1
   fi
 
-  touch "${HEALTH_FILE}"
-  log "Synthetic Slurm job succeeded on ${worker_hostname}; sleeping ${SLEEP_SECONDS}s"
+  log "Synthetic Slurm job succeeded on ${worker_hostname}"
+}
+
+while true; do
+  if check_once; then
+    touch "${HEALTH_FILE}"
+  else
+    rm -f "${HEALTH_FILE}"
+  fi
+  log "Next synthetic Slurm check in ${SLEEP_SECONDS}s"
   sleep "${SLEEP_SECONDS}"
 done

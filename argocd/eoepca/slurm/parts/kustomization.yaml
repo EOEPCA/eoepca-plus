@@ -6,7 +6,6 @@ resources:
 
 configMapGenerator:
   - name: synthetic-slurm-check-script
-    options:
-      disableNameSuffixHash: true
+    namespace: slurm
     files:
       - check-slurm.sh=synthetic-slurm-check/check-slurm.sh

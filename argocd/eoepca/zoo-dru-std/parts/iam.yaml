@@ -34,6 +34,7 @@ spec:
       - policyEnforcementMode: ENFORCING
         decisionStrategy: UNANIMOUS
         keepDefaults: true
+        allowRemoteResourceManagement: true
 ---
 apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
 kind: Client

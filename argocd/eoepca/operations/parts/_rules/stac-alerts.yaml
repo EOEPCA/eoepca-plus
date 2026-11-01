@@ -67,6 +67,7 @@ spec:
               )
             ) / 0.01
           labels:
+            http_method: GET
             namespace: ingress-apisix
           record: stac_app_latency_500ms_burn_rate_1h
         # Measure upstream POST budget burn over 1h.
@@ -79,6 +80,7 @@ spec:
               )
             ) / 0.01
           labels:
+            http_method: POST
             namespace: ingress-apisix
           record: stac_app_latency_500ms_burn_rate_1h
         # Measure upstream GET budget burn over 6h.
@@ -91,6 +93,7 @@ spec:
               )
             ) / 0.01
           labels:
+            http_method: GET
             namespace: ingress-apisix
           record: stac_app_latency_500ms_burn_rate_6h
         # Measure upstream POST budget burn over 6h.
@@ -103,6 +106,7 @@ spec:
               )
             ) / 0.01
           labels:
+            http_method: POST
             namespace: ingress-apisix
           record: stac_app_latency_500ms_burn_rate_6h
         # Measure gateway GET budget burn over 1h.
@@ -115,6 +119,7 @@ spec:
               )
             ) / 0.01
           labels:
+            http_method: GET
             namespace: ingress-apisix
           record: stac_gateway_latency_500ms_burn_rate_1h
         # Measure gateway POST budget burn over 1h.
@@ -127,6 +132,7 @@ spec:
               )
             ) / 0.01
           labels:
+            http_method: POST
             namespace: ingress-apisix
           record: stac_gateway_latency_500ms_burn_rate_1h
         # Measure gateway GET budget burn over 6h.
@@ -139,6 +145,7 @@ spec:
               )
             ) / 0.01
           labels:
+            http_method: GET
             namespace: ingress-apisix
           record: stac_gateway_latency_500ms_burn_rate_6h
         # Measure gateway POST budget burn over 6h.
@@ -151,6 +158,7 @@ spec:
               )
             ) / 0.01
           labels:
+            http_method: POST
             namespace: ingress-apisix
           record: stac_gateway_latency_500ms_burn_rate_6h
         # Average query execution time across eoapi statements.

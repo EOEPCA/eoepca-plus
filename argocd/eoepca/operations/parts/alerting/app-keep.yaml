@@ -16,6 +16,44 @@ spec:
       releaseName: keep
       valuesObject:
         backend:
+          replicaCount: 1
+          autoscaling:
+            enabled: false
+          waitForDatabase:
+            enabled: false
+          podSecurityContext:
+            fsGroup: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+          env:
+          - name: DATABASE_CONNECTION_STRING
+            value: mysql+pymysql://root@keep-database:3306/keep
+          - name: AUTH_TYPE
+            value: OAUTH2PROXY
+          - name: KEEP_OAUTH2_PROXY_USER_HEADER
+            value: x-forwarded-email
+          - name: KEEP_OAUTH2_PROXY_ROLE_HEADER
+            value: x-forwarded-groups
+          - name: KEEP_OAUTH2_PROXY_AUTO_CREATE_USER
+            value: "true"
+          - name: KEEP_OAUTH2_PROXY_ADMIN_ROLES
+            value: keep_admin
+          - name: KEEP_OAUTH2_PROXY_NOC_ROLES
+            value: keep_noc
+          - name: KEEP_OAUTH2_PROXY_WEBHOOK_ROLES
+            value: keep_webhook
+          envFromSecret: keep-auth-secrets
           # The chart adds provision checksums only when this map is not empty.
           podAnnotations:
             workflows: alerts
@@ -121,46 +159,6 @@ spec:
                           alert.fingerprint }}'>Open alert in Keep</a>"}
                 consts:
                   keep_url: *keep-url
-      values: |
-        backend:
-          replicaCount: 1
-          autoscaling:
-            enabled: false
-          waitForDatabase:
-            enabled: false
-          podSecurityContext:
-            fsGroup: 1000
-            runAsGroup: 1000
-            runAsNonRoot: true
-            runAsUser: 1000
-            seccompProfile:
-              type: RuntimeDefault
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsGroup: 1000
-            runAsNonRoot: true
-            runAsUser: 1000
-          env:
-          - name: DATABASE_CONNECTION_STRING
-            value: mysql+pymysql://root@keep-database:3306/keep
-          - name: AUTH_TYPE
-            value: OAUTH2PROXY
-          - name: KEEP_OAUTH2_PROXY_USER_HEADER
-            value: x-forwarded-email
-          - name: KEEP_OAUTH2_PROXY_ROLE_HEADER
-            value: x-forwarded-groups
-          - name: KEEP_OAUTH2_PROXY_AUTO_CREATE_USER
-            value: "true"
-          - name: KEEP_OAUTH2_PROXY_ADMIN_ROLES
-            value: keep_admin
-          - name: KEEP_OAUTH2_PROXY_NOC_ROLES
-            value: keep_noc
-          - name: KEEP_OAUTH2_PROXY_WEBHOOK_ROLES
-            value: keep_webhook
-          envFromSecret: keep-auth-secrets
         frontend:
           podSecurityContext:
             fsGroup: 65533

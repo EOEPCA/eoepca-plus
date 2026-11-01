@@ -68,7 +68,8 @@ spec:
           - name: package-runtime
             args:
             - --enable-watches
-            - --poll=1m
+            - --poll=5m
+            - --max-reconcile-rate=10
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:

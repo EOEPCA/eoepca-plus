@@ -85,7 +85,7 @@
             ],
             "title": "CPU requests / capacity",
             "type": "stat",
-            "description": "Requests and limits use allocatable node capacity. Values above 100% show overcommit."
+            "description": "Requests and limits as a share of allocatable capacity. Above 100% means overcommit."
         },
         {
             "datasource": {
@@ -122,7 +122,7 @@
             ],
             "title": "CPU limits / capacity",
             "type": "stat",
-            "description": "Requests and limits use allocatable node capacity. Values above 100% show overcommit."
+            "description": "Requests and limits as a share of allocatable capacity. Above 100% means overcommit."
         },
         {
             "datasource": {
@@ -195,7 +195,7 @@
             ],
             "title": "Memory requests / capacity",
             "type": "stat",
-            "description": "Requests and limits use allocatable node capacity. Values above 100% show overcommit."
+            "description": "Requests and limits as a share of allocatable capacity. Above 100% means overcommit."
         },
         {
             "datasource": {
@@ -232,7 +232,7 @@
             ],
             "title": "Memory limits / capacity",
             "type": "stat",
-            "description": "Requests and limits use allocatable node capacity. Values above 100% show overcommit."
+            "description": "Requests and limits as a share of allocatable capacity. Above 100% means overcommit."
         },
         {
             "datasource": {
@@ -517,7 +517,7 @@
             ],
             "title": "Memory by namespace",
             "type": "timeseries",
-            "description": "Container memory working set, including recently used cache."
+            "description": "Memory working set, including recently used cache."
         },
         {
             "datasource": {
@@ -715,7 +715,7 @@
                 }
             ],
             "type": "table",
-            "description": "Container memory working set, including recently used cache."
+            "description": "Memory working set, including recently used cache."
         },
         {
             "datasource": {
@@ -1093,7 +1093,7 @@
             ],
             "title": "Disk operations",
             "type": "timeseries",
-            "description": "Container filesystem I/O. Does not measure NFS data use or remote object storage traffic."
+            "description": "Container filesystem I/O; excludes remote NFS and object storage traffic."
         },
         {
             "datasource": {
@@ -1146,7 +1146,7 @@
             ],
             "title": "Disk throughput",
             "type": "timeseries",
-            "description": "Container filesystem I/O. Does not measure NFS data use or remote object storage traffic."
+            "description": "Container filesystem I/O; excludes remote NFS and object storage traffic."
         },
         {
             "datasource": {
@@ -1317,7 +1317,7 @@
                 }
             ],
             "type": "table",
-            "description": "Container filesystem I/O. Does not measure NFS data use or remote object storage traffic."
+            "description": "Container filesystem I/O; excludes remote NFS and object storage traffic."
         }
     ],
     "refresh": "10s",
@@ -1362,5 +1362,8 @@
     },
     "timezone": "utc",
     "title": "Kubernetes / Cluster",
-    "uid": "efa86fd1d0c121a26444b636a3f509a8"
+    "uid": "efa86fd1d0c121a26444b636a3f509a8",
+    "annotations": {
+        "list": []
+    }
 }

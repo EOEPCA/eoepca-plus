@@ -6,7 +6,7 @@ set -euo pipefail
 umask 077
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-WORK_DIR="$(mktemp -d /tmp/xyz-cloudferro-secrets.XXXXXX)"
+WORK_DIR="$(mktemp -d /tmp/cloudferro-secrets.XXXXXX)"
 
 EXPECTED_SECRET_COUNT=2
 KUBERNETES_NAMESPACE=workspace

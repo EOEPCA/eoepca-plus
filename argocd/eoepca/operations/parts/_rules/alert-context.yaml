@@ -1,0 +1,114 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: alert-context
+  namespace: operations
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: alert.context
+      interval: 30s
+      rules:
+        # Save API traffic, latency and controller activity.
+        - record: operations:alert_context
+          expr: >-
+            label_replace(control_plane:apiserver_requests:rate5m, "signal", "api_requests", "", "") or label_replace(control_plane:apiserver_requests:baseline1h,
+            "signal", "api_baseline", "", "") or label_replace(control_plane:etcd_request_duration_seconds:p99{operation=~"get|update"},
+            "signal", "etcd_p99", "", "") or label_replace(topk(5, sum by(resource,verb) (rate(apiserver_request_total{job="apiserver",resource!=""}[5m]))),
+            "signal", "resources", "", "") or label_replace(topk(5, sum by(component) (rate(rest_client_requests_total{job="crossplane-metrics"}[5m]))),
+            "signal", "crossplane", "", "") or label_replace(topk(5, sum by(job) (rate(kyverno_client_queries_total[5m]))),
+            "signal", "kyverno", "", "")
+          labels:
+            dashboard: control-plane
+        # Count public STAC requests at the gateway.
+        - record: operations:alert_context
+          expr: >-
+            sum(rate(apisix_http_status{route="data-access_stac_stac-route"}[5m]))
+          labels:
+            layer: ingress
+            signal: requests_per_second
+            dashboard: stac
+        # Count public STAC server errors per second.
+        - record: operations:alert_context
+          expr: >-
+            sum(rate(apisix_http_status{route="data-access_stac_stac-route",code=~"5.."}[5m])) or (0 * sum(rate(apisix_http_status{route="data-access_stac_stac-route"}[5m])))
+          labels:
+            layer: ingress
+            signal: server_errors_per_second
+            dashboard: stac
+        # Record gateway request, upstream and processing p99.
+        - record: operations:alert_context
+          expr: >-
+            histogram_quantile(0.99, sum by (le, type) (rate(apisix_http_latency_bucket{route="data-access_stac_stac-route",type=~"request|upstream|apisix"}[5m])))
+          labels:
+            layer: ingress
+            signal: latency_p99_ms
+            dashboard: stac
+        # Count requests handled by the auth proxy.
+        - record: operations:alert_context
+          expr: >-
+            sum(rate(http_requests_total{namespace="data-access",job="eoapi-stac-auth-proxy"}[5m]))
+          labels:
+            layer: auth-proxy
+            signal: requests_per_second
+            dashboard: stac
+        # Count server errors from the auth proxy.
+        - record: operations:alert_context
+          expr: >-
+            sum(rate(http_requests_total{namespace="data-access",job="eoapi-stac-auth-proxy",status="5xx"}[5m]))
+            or (0 * sum(rate(http_requests_total{namespace="data-access",job="eoapi-stac-auth-proxy"}[5m])))
+          labels:
+            layer: auth-proxy
+            signal: server_errors_per_second
+            dashboard: stac
+        # Measure auth proxy request p99 in milliseconds.
+        - record: operations:alert_context
+          expr: >-
+            1000 * histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket{namespace="data-access",job="eoapi-stac-auth-proxy"}[5m])))
+          labels:
+            layer: auth-proxy
+            signal: latency_p99_ms
+            dashboard: stac
+        # Count requests handled by the STAC API.
+        - record: operations:alert_context
+          expr: >-
+            sum(rate(http_requests_total{namespace="data-access",job="eoapi-stac"}[5m]))
+          labels:
+            layer: stac-api
+            signal: requests_per_second
+            dashboard: stac
+        # Count STAC API server errors per second.
+        - record: operations:alert_context
+          expr: >-
+            sum(rate(http_requests_total{namespace="data-access",job="eoapi-stac",status="5xx"}[5m])) or (0
+            * sum(rate(http_requests_total{namespace="data-access",job="eoapi-stac"}[5m])))
+          labels:
+            layer: stac-api
+            signal: server_errors_per_second
+            dashboard: stac
+        # Measure STAC API request p99 in milliseconds.
+        - record: operations:alert_context
+          expr: >-
+            1000 * histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket{namespace="data-access",job="eoapi-stac"}[5m])))
+          labels:
+            layer: stac-api
+            signal: latency_p99_ms
+            dashboard: stac
+        # Save public GET and POST budget burn.
+        - record: operations:alert_context
+          expr: >-
+            label_replace(label_replace({__name__=~"stac_(get|post)_latency_500ms_burn_rate_(1h|6h)"}, "window",
+            "$1", "__name__", "stac_.*_latency_500ms_burn_rate_(.*)"), "method", "$1", "__name__", "stac_(.*)_latency_500ms_burn_rate_.*")
+          labels:
+            layer: ingress
+            signal: latency_budget_burn
+            dashboard: stac
+        # Record mean query time across eoapi queries.
+        - record: operations:alert_context
+          expr: >-
+            stac_db_mean_latency_ms
+          labels:
+            layer: database
+            signal: mean_query_latency_ms
+            dashboard: stac

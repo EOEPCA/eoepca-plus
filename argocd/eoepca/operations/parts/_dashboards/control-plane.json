@@ -40,7 +40,7 @@
           "type": "loki",
           "uid": "loki"
         },
-        "expr": "{cluster=\"eoepca-demo\",namespace=\"operations\",container=\"keep\"} | json | event_type=\"keep_control_plane_event\"",
+        "expr": "{namespace=\"operations\",container=\"keep\"} | json | (event_type=\"keep_alert_event\" and dashboard_uid=\"${__dashboard.uid}\") or event_type=\"keep_control_plane_event\"",
         "titleFormat": "{{alertname}}: {{status}}",
         "textFormat": "{{text}}",
         "tagKeys": "alertname,status",
@@ -82,7 +82,7 @@
         "defaults": {
           "unit": "reqps",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           }
@@ -135,7 +135,7 @@
         "defaults": {
           "unit": "reqps",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           }
@@ -188,7 +188,7 @@
         "defaults": {
           "unit": "s",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "thresholds"
           },
@@ -284,7 +284,7 @@
         "defaults": {
           "unit": "reqps",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           },
@@ -384,7 +384,7 @@
           "sort": "desc"
         }
       },
-      "description": "Spike alert: above the threshold for 5m. The baseline needs 10m of history."
+      "description": "Alert: above the spike threshold for five minutes. Baseline needs ten minutes of data."
     },
     {
       "id": 14,
@@ -419,7 +419,7 @@
         "defaults": {
           "unit": "s",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           },
@@ -490,7 +490,7 @@
           "sort": "desc"
         }
       },
-      "description": "API-to-etcd p99. Alerts: >1s for 5m or >5s for 2m, with more than 1 operation/sec."
+      "description": "Warning above 1s for 5m; critical above 5s for 2m. Both require over one operation/sec."
     },
     {
       "id": 12,
@@ -525,7 +525,7 @@
         "defaults": {
           "unit": "reqps",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           },
@@ -563,7 +563,7 @@
           }
         }
       ],
-      "description": "Requests received by the API server, grouped by resource."
+      "description": "API requests grouped by resource."
     },
     {
       "id": 16,
@@ -611,7 +611,7 @@
         "defaults": {
           "unit": "reqps",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           },
@@ -671,7 +671,7 @@
         "defaults": {
           "unit": "s",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           },
@@ -697,7 +697,7 @@
           "sort": "desc"
         }
       },
-      "description": "Mean node disk write latency; direct etcd fsync metrics are not collected."
+      "description": "Mean write time per node disk."
     },
     {
       "id": 21,
@@ -732,7 +732,7 @@
         "defaults": {
           "unit": "reqps",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           },
@@ -758,7 +758,7 @@
           "sort": "desc"
         }
       },
-      "description": "Client-go request counters from the core and providers."
+      "description": "Requests from Crossplane core and provider controllers."
     },
     {
       "id": 17,
@@ -793,7 +793,7 @@
         "defaults": {
           "unit": "reqps",
           "min": 0,
-          "noValue": "\u2014",
+          "noValue": "—",
           "color": {
             "mode": "palette-classic"
           },
@@ -832,7 +832,7 @@
           "sort": "desc"
         }
       },
-      "description": "Client request counters by controller. Includes discovery and permission checks."
+      "description": "Requests by Kyverno controller, including discovery and permission checks."
     }
   ],
   "links": [

@@ -226,7 +226,7 @@
             ],
             "title": "CPU throttling",
             "type": "timeseries",
-            "description": "Share of CPU periods that were throttled. Check CPU limits if work is slow."
+            "description": "CPU periods that were throttled, as a percentage."
         },
         {
             "datasource": {
@@ -479,7 +479,7 @@
             ],
             "title": "Memory use",
             "type": "timeseries",
-            "description": "Container memory working set, including recently used cache."
+            "description": "Memory working set, including recently used cache."
         },
         {
             "datasource": {
@@ -1187,5 +1187,8 @@
     },
     "timezone": "utc",
     "title": "Kubernetes / Pods",
-    "uid": "6581e46e4e5c7ba40a07646395ef7b23"
+    "uid": "6581e46e4e5c7ba40a07646395ef7b23",
+    "annotations": {
+        "list": []
+    }
 }

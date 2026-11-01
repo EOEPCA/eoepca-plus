@@ -23,7 +23,7 @@
     {
       "id": 2,
       "type": "row",
-      "title": "Priority / Critical findings",
+      "title": "Critical findings",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -38,7 +38,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Critical vulnerability occurrences per image and namespace. Repeated workload reports count once. Review affected images below.",
+      "description": "Critical vulnerabilities per image and namespace. Duplicate workload reports count once.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -108,7 +108,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Critical findings in image scans. Confirm each finding and rotate valid credentials. Repeated workload reports count once.",
+      "description": "Critical secret findings from image scans. Duplicate workload reports count once.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -178,7 +178,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Critical configuration findings in the selected namespaces. Review the affected resources before changing settings.",
+      "description": "Critical configuration findings in the selected namespaces.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -248,7 +248,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Critical ClusterRole findings across the cluster. The namespace filter does not apply. Review permissions below.",
+      "description": "Critical ClusterRole findings across all namespaces.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -316,7 +316,7 @@
     {
       "id": 28,
       "type": "row",
-      "title": "Operations / Secrets and access",
+      "title": "Secrets and access",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -331,7 +331,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "High and Critical findings per image and namespace. These are image-scan findings, not live Kubernetes Secret scans. Confirm the finding, rotate valid credentials, then remove them from the image.",
+      "description": "High and Critical secrets found in images. Rotate valid credentials and remove them from the image.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -488,7 +488,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "High and Critical Role and ClusterRole findings. ClusterRoles apply to all namespaces; their namespace is blank. Review the report and reduce permissions where possible.",
+      "description": "High and Critical Role and ClusterRole findings. ClusterRoles span all namespaces and have a blank namespace.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -643,7 +643,7 @@
     {
       "id": 19,
       "type": "row",
-      "title": "Development / Image fixes",
+      "title": "Image fixes",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -658,7 +658,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "High and Critical vulnerability occurrences per image and namespace. Repeated workload reports count once. These scans cover deployed images. Review the vulnerability report, update the image, then rebuild and deploy.",
+      "description": "High and Critical vulnerabilities per deployed image and namespace. Duplicate workload reports count once.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -813,7 +813,7 @@
     {
       "id": 16,
       "type": "row",
-      "title": "Deployment / Policies and configuration",
+      "title": "Policies and configuration",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -828,7 +828,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Failed rules and evaluation errors for the selected namespaces. Fix the resource or inspect the policy error. Exceptions and skipped results are in the review section.",
+      "description": "Failed policy rules and evaluation errors. Exceptions and skipped results are in the review section.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -987,7 +987,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "High and Critical findings per resource. Review its configuration audit report and change the deployment manifest. Report names remain visible when a resource name is missing.",
+      "description": "High and Critical findings per resource. Open its configuration audit report for details.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1142,7 +1142,7 @@
     {
       "id": 9,
       "type": "row",
-      "title": "Review / Scan health, exceptions and cluster checks",
+      "title": "Scan health, exceptions and cluster checks",
       "collapsed": true,
       "gridPos": {
         "x": 0,
@@ -1613,7 +1613,7 @@
     "hidden": true
   },
   "timezone": "browser",
-  "title": "EOEPCA / Security Compliance",
+  "title": "Security / Compliance",
   "uid": "eoepca-security-compliance-namespace",
   "version": 1,
   "weekStart": ""

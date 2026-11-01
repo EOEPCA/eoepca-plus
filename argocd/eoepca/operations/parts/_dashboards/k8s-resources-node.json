@@ -287,7 +287,7 @@
                 }
             ],
             "type": "table",
-            "description": "CPU use, requests, and limits for each pod. Pod names include their namespace."
+            "description": "Pod CPU use, requests and limits. Names include the namespace."
         },
         {
             "datasource": {
@@ -445,7 +445,7 @@
             ],
             "title": "Memory by pod",
             "type": "timeseries",
-            "description": "Container memory working set, including recently used cache."
+            "description": "Memory working set, including recently used cache."
         },
         {
             "datasource": {
@@ -588,7 +588,7 @@
                 }
             ],
             "type": "table",
-            "description": "Memory working set, requests, and limits. RSS and cache support diagnosis."
+            "description": "Memory working set, requests and limits, with RSS and cache."
         }
     ],
     "refresh": "10s",
@@ -646,5 +646,8 @@
     },
     "timezone": "utc",
     "title": "Kubernetes / Nodes",
-    "uid": "200ac8fdbfbb74b39aff88118e4d1c2c"
+    "uid": "200ac8fdbfbb74b39aff88118e4d1c2c",
+    "annotations": {
+        "list": []
+    }
 }

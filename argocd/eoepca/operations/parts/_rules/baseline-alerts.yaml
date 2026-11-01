@@ -11,12 +11,14 @@ spec:
   groups:
     - name: baseline.monitoring
       rules:
+        # Keep one alert firing to check delivery.
         - alert: Watchdog
           expr: vector(1)
           labels:
             severity: none
           annotations:
-            summary: Watchdog alert for the monitoring pipeline.
+            summary: Alert delivery check is running.
+        # Report scrape groups with over 10% failures.
         - alert: PrometheusTargetMissing
           expr: |
             100 * (
@@ -28,24 +30,24 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: A Prometheus target has been missing for 15 minutes.
+            summary: More than 10% of scrape targets are down.
+        # Ignore idle histogram samples during ingestion checks.
         - alert: PrometheusNotIngestingSamples
-          # Prometheus 3 exports a zero-valued native-histogram series alongside
-          # the actively increasing float series. Missing labels also satisfy a
-          # negative matcher, so this remains compatible with older releases.
           expr: rate(prometheus_tsdb_head_samples_appended_total{type!="histogram"}[5m]) < 1
           for: 15m
           labels:
             severity: warning
           annotations:
-            summary: Prometheus is ingesting unusually few samples.
+            summary: Prometheus is ingesting fewer than one sample/sec.
+        # Report rules that fail during evaluation.
         - alert: PrometheusRuleFailures
           expr: increase(prometheus_rule_evaluation_failures_total[15m]) > 0
           for: 5m
           labels:
             severity: warning
           annotations:
-            summary: Prometheus rule evaluation is failing.
+            summary: Prometheus cannot evaluate a rule.
+        # Report clients with over 1% server errors.
         - alert: KubeClientErrors
           expr: |
             (
@@ -57,16 +59,18 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: Kubernetes client requests are returning too many 5xx responses.
+            summary: Kubernetes clients return more than 1% server errors.
     - name: baseline.nodes
       rules:
+        # Report node exporters unreachable for ten minutes.
         - alert: NodeDown
           expr: up{job=~".*node-exporter.*"} == 0
           for: 10m
           labels:
             severity: critical
           annotations:
-            summary: A node exporter target is down.
+            summary: Node exporter is unreachable.
+        # Warn about filesystems with under 10% free.
         - alert: NodeFilesystemAlmostOutOfSpace
           expr: |
             (
@@ -89,7 +93,8 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: A node filesystem has less than 10% free space remaining.
+            summary: Node filesystem has less than 10% free space.
+        # Warn when free inodes fall below 10%.
         - alert: NodeFilesystemFilesFillingUp
           expr: |
             (
@@ -112,33 +117,35 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: A node filesystem has less than 10% free inodes remaining.
+            summary: Node filesystem has less than 10% free inodes.
+        # Report nodes running short of available memory.
         - alert: NodeMemoryPressure
           expr: kube_node_status_condition{condition="MemoryPressure", status="true"} == 1
           for: 10m
           labels:
             severity: warning
           annotations:
-            summary: A node is reporting memory pressure.
+            summary: Node reports memory pressure.
+        # Report nodes under Kubernetes disk pressure.
         - alert: NodeDiskPressure
           expr: kube_node_status_condition{condition="DiskPressure", status="true"} == 1
           for: 10m
           labels:
             severity: warning
           annotations:
-            summary: A node is reporting disk pressure.
+            summary: Node reports disk pressure.
     - name: baseline.workloads
       rules:
+        # Report containers stuck in repeated restart backoff.
         - alert: KubePodCrashLooping
           expr: max_over_time(kube_pod_container_status_waiting_reason{reason="CrashLoopBackOff"}[15m]) >= 1
           for: 5m
           labels:
             severity: warning
           annotations:
-            summary: A pod is crash looping.
+            summary: Container keeps entering restart backoff.
+        # Check active pods; completed Jobs stay unready.
         - alert: KubePodNotReady
-          # Terminal Job Pods report Ready=false after successful completion.
-          # Keep the alert on active Pod phases only.
           expr: |
             (kube_pod_status_ready{condition="false"} == 1)
             and on (namespace, pod)
@@ -149,24 +156,25 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: An active pod has not been ready for 15 minutes.
+            summary: Active pod has been unready for 15 minutes.
+        # Report deployments below their requested replica count.
         - alert: KubeDeploymentReplicasMismatch
           expr: kube_deployment_spec_replicas > kube_deployment_status_replicas_available
           for: 15m
           labels:
             severity: warning
           annotations:
-            summary: A deployment does not have the expected number of available replicas.
+            summary: Deployment has fewer available replicas than requested.
+        # Report StatefulSets below their requested replica count.
         - alert: KubeStatefulSetReplicasMismatch
           expr: kube_statefulset_replicas > kube_statefulset_status_replicas_ready
           for: 15m
           labels:
             severity: warning
           annotations:
-            summary: A StatefulSet does not have the expected number of ready replicas.
+            summary: StatefulSet has fewer ready replicas than requested.
+        # Ignore old Jobs with retained failure conditions.
         - alert: KubeJobFailed
-          # Retained failed Jobs keep their failure condition indefinitely.
-          # Alert only for a terminal failure on a Job created in the last day.
           expr: |
             (kube_job_failed{condition="true"} == 1)
             and on (namespace, job_name)
@@ -175,16 +183,18 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: A recently created Kubernetes Job has failed.
+            summary: Job created in the last day has failed.
+        # Report containers restarting repeatedly within one hour.
         - alert: ContainerRestartHigh
           expr: increase(kube_pod_container_status_restarts_total[1h]) > 3
           for: 15m
           labels:
             severity: warning
           annotations:
-            summary: A container is restarting frequently.
+            summary: Container restarted more than three times in one hour.
     - name: baseline.storage
       rules:
+        # Warn about volumes with under 15% free.
         - alert: PersistentVolumeUsageHigh
           expr: |
             (
@@ -196,7 +206,8 @@ spec:
           labels:
             severity: warning
           annotations:
-            summary: A persistent volume has less than 15% free space remaining.
+            summary: Persistent volume has less than 15% free space.
+        # Warn about volumes with under 5% free.
         - alert: PersistentVolumeAlmostFull
           expr: |
             (
@@ -208,11 +219,11 @@ spec:
           labels:
             severity: critical
           annotations:
-            summary: A persistent volume has less than 5% free space remaining.
+            summary: Persistent volume has less than 5% free space.
     - name: baseline.postgres
       rules:
+        # Warn before the connection limit is reached.
         - alert: PostgresConnectionsHigh
-          # Warn before max_connections (100) is exhausted; budget is in postgrescluster.yaml.
           expr: |
             (
               ccp_connection_stats_total{namespace="infra"}
@@ -224,6 +235,4 @@ spec:
             severity: warning
           annotations:
             summary: >-
-              PostgreSQL connection utilisation is above 80 % for 10 minutes
-              ({{ $value | humanizePercentage }} used).  Check for connection
-              leaks or unexpected traffic spikes.
+              PostgreSQL connections at {{ $value | humanizePercentage }} (threshold: 80%).

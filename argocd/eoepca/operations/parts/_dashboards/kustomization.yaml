@@ -51,14 +51,14 @@ configMapGenerator:
   - name: curated-stac-slo
     options:
       labels:
-        eoepca/dashboard-category: eo
+        eoepca/dashboard-category: data-access
         grafana_dashboard: "1"
     files:
       - stac-slo.json
   - name: workspaces-overview
     options:
       labels:
-        eoepca/dashboard-category: workspaces
+        eoepca/dashboard-category: workspace
         grafana_dashboard: "1"
         app.kubernetes.io/managed-by: manual
     files:

@@ -282,7 +282,7 @@
             ],
             "title": "Target sync time",
             "type": "timeseries",
-            "description": "Mean time to update a scrape target group."
+            "description": "Average time to update a scrape target group."
         },
         {
             "datasource": {
@@ -388,7 +388,7 @@
             ],
             "title": "Scrape interval",
             "type": "timeseries",
-            "description": "Actual interval between scrapes. Compare with the configured interval in the legend."
+            "description": "Actual scrape interval; the legend shows the configured interval."
         },
         {
             "datasource": {
@@ -477,7 +477,7 @@
             ],
             "title": "Rejected scrapes and samples",
             "type": "timeseries",
-            "description": "Scrapes and samples rejected due to limits or timestamp errors, per second."
+            "description": "Rejected scrapes and samples per second, including limit and timestamp errors."
         },
         {
             "datasource": {
@@ -744,7 +744,7 @@
             ],
             "title": "Query stage latency (p90)",
             "type": "timeseries",
-            "description": "90th percentile for each query stage. Shows the slowest selected instance."
+            "description": "Query stage p90 for the slowest selected instance."
         }
     ],
     "schemaVersion": 39,
@@ -833,5 +833,9 @@
     },
     "timezone": "utc",
     "title": "Prometheus / Overview",
-    "uid": "9fa0d141-d019-4ad7-8bc5-42196ee308bd"
+    "uid": "9fa0d141-d019-4ad7-8bc5-42196ee308bd",
+    "annotations": {
+        "list": []
+    },
+    "links": []
 }

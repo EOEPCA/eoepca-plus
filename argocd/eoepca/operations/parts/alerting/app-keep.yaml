@@ -14,12 +14,118 @@ spec:
     targetRevision: 0.1.95
     helm:
       releaseName: keep
+      valuesObject:
+        backend:
+          # The chart adds provision checksums only when this map is not empty.
+          podAnnotations:
+            workflows: alerts
+          provision:
+            workflows:
+              # Open Grafana with the incident period already selected.
+              - id: alert-links
+                name: Alert investigation links
+                description: Link an alert to its dashboard and incident period.
+                triggers:
+                  - type: alert
+                    cel: >-
+                      source.contains("prometheus") && has(annotations) && type(annotations) == map && has(annotations.dashboard)
+                      && type(annotations.dashboard) == string && annotations.dashboard.matches("^[a-zA-Z0-9_-]{1,128}$")
+                      && has(annotations.dashboard_url) && type(annotations.dashboard_url) == string && annotations.dashboard_url.matches("^https?://[a-zA-Z0-9.-]+(:[0-9]+)?/d/[a-zA-Z0-9_-]+$")
+                      && name.matches("^[a-zA-Z_:][a-zA-Z0-9_: -]*$")
+                      && fingerprint.matches("^[a-fA-F0-9]{16,64}$") && status == "firing" && has(startsAt) && type(startsAt)
+                      == string
+                    only_on_change: [startsAt]
+                actions:
+                  - name: investigation-links
+                    provider:
+                      type: mock
+                      with:
+                        enrich_alert:
+                          - key: url
+                            value: >-
+                              {{ alert.annotations.dashboard_url }}?from=keep.mul(keep.sub(keep.to_timestamp("{{ alert.startsAt
+                              }}"), 900), 1000)&to=keep.mul(keep.add(keep.to_timestamp("{{ alert.lastReceived }}"),
+                              900), 1000)
+                          - key: keep_url
+                            value: >-
+                              {{ consts.keep_url }}?alertPayloadFingerprint={{ alert.fingerprint }}
+                consts:
+                  keep_url: &keep-url https://alerting.develop-v2.eoepca.org/alerts/feed
+              # Keep the first measurements through repeat notifications and acknowledgement.
+              - id: alert-snapshot
+                name: Alert metrics snapshot
+                description: Save the dashboard context when a new alert fires.
+                triggers:
+                  - type: alert
+                    cel: >-
+                      source.contains("prometheus") && has(annotations) && type(annotations) == map && has(annotations.dashboard)
+                      && type(annotations.dashboard) == string && annotations.dashboard.matches("^[a-zA-Z0-9_-]{1,128}$")
+                      && has(annotations.dashboard_url) && type(annotations.dashboard_url) == string && annotations.dashboard_url.matches("^https?://[a-zA-Z0-9.-]+(:[0-9]+)?/d/[a-zA-Z0-9_-]+$")
+                      && name.matches("^[a-zA-Z_:][a-zA-Z0-9_: -]*$")
+                      && fingerprint.matches("^[a-fA-F0-9]{16,64}$") && status == "firing" && has(startsAt) && type(startsAt)
+                      == string && has(annotations.context_snapshot) && type(annotations.context_snapshot) == string
+                      && annotations.context_snapshot == "true"
+                    only_on_change: [startsAt]
+                actions:
+                  - name: snapshot-state
+                    provider:
+                      type: mock
+                      with:
+                        enrich_alert:
+                          - key: metrics_context
+                            value: unavailable
+                          - key: metrics_context_at
+                            value: '{{ alert.lastReceived }}'
+                  - name: snapshot
+                    on-failure:
+                      retry:
+                        count: 1
+                        interval: 2
+                    provider:
+                      type: http
+                      with:
+                        url: http://kube-prometheus-stack-prometheus.operations.svc.cluster.local:9090/api/v1/query
+                        method: GET
+                        timeout: 3
+                        params:
+                          time: '{{ alert.lastReceived }}'
+                          query: operations:alert_context{dashboard="{{ alert.annotations.dashboard }}"}
+                        enrich_alert:
+                          - key: metrics_context
+                            value: results.body
+              # Send alert changes through Loki to show markers on Grafana charts.
+              # Read the dashboard ID from its URL; no separate ID setting is needed.
+              - id: alert-events
+                name: Alert chart markers
+                description: Write firing and resolved events for the alert dashboard.
+                triggers:
+                  - type: alert
+                    cel: >-
+                      source.contains("prometheus") && has(annotations) && type(annotations) == map && has(annotations.dashboard)
+                      && type(annotations.dashboard) == string && annotations.dashboard.matches("^[a-zA-Z0-9_-]{1,128}$")
+                      && has(annotations.dashboard_url) && type(annotations.dashboard_url) == string && annotations.dashboard_url.matches("^https?://[a-zA-Z0-9.-]+(:[0-9]+)?/d/[a-zA-Z0-9_-]+$")
+                      && name.matches("^[a-zA-Z_:][a-zA-Z0-9_: -]*$")
+                      && fingerprint.matches("^[a-fA-F0-9]{16,64}$") && status in ["firing", "resolved"]
+                    only_on_change: [status]
+                actions:
+                  - name: chart-marker
+                    if: >-
+                      '{{ alert.status }}' in ['firing', 'resolved']
+                    provider:
+                      type: console
+                      with:
+                        message: >-
+                          {"event_type":"keep_alert_event","dashboard_uid":"keep.last(keep.split('{{ alert.annotations.dashboard_url }}', '/'))","alertname":"{{
+                          alert.name }}","status":"{{ alert.status }}","fingerprint":"{{ alert.fingerprint }}","text":"{{
+                          alert.name }}: {{ alert.status }}<br/><a href='{{ consts.keep_url }}?alertPayloadFingerprint={{
+                          alert.fingerprint }}'>Open alert in Keep</a>"}
+                consts:
+                  keep_url: *keep-url
       values: |
         backend:
-          # The chart's built-in BusyBox database-wait init container exposes
-          # no securityContext and violates Restricted Pod Security. Keep's
-          # restart policy handles transient database startup until the chart
-          # exposes a hardened waitForDatabase container configuration.
+          replicaCount: 1
+          autoscaling:
+            enabled: false
           waitForDatabase:
             enabled: false
           podSecurityContext:
@@ -38,6 +144,8 @@ spec:
             runAsNonRoot: true
             runAsUser: 1000
           env:
+          - name: DATABASE_CONNECTION_STRING
+            value: mysql+pymysql://root@keep-database:3306/keep
           - name: AUTH_TYPE
             value: OAUTH2PROXY
           - name: KEEP_OAUTH2_PROXY_USER_HEADER
@@ -101,6 +209,7 @@ spec:
             runAsNonRoot: true
             runAsUser: 1000
         database:
+          enabled: true
           mysql:
             image:
               tag: "26.7.0"

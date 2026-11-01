@@ -1,7 +1,8 @@
 resources:
+  - alert-context.yaml
   - baseline-alerts.yaml
   - control-plane-alerts.yaml
   - kubernetes-audit-rules.yaml
   - security-alerts.yaml
   - stac-alerts.yaml
-  - workspace-metrics.yaml
+  - workspace-recording-rules.yaml

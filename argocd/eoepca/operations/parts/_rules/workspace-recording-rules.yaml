@@ -10,11 +10,13 @@ spec:
     - name: workspace.inventory
       interval: 30s
       rules:
+        # List workspaces that export managed data metrics.
         - record: workspace_info
           expr: |
             max by (workspace) (
               workspace_managed_data_info{resource_namespace="workspace"}
             )
+        # Count owned buckets once for each workspace.
         - record: workspace_bucket_count
           expr: |
             count by (workspace) (
@@ -23,6 +25,7 @@ spec:
               )
             )
             or on (workspace) (0 * workspace_info)
+        # Map workspace and session names onto namespaces.
         - record: workspace_namespace_info
           expr: |
             max by (namespace, workspace, session) (
@@ -45,6 +48,7 @@ spec:
               )
               and on (workspace) workspace_info
             )
+        # Map workload pods to their workspace sessions.
         - record: workspace_session_workload_info
           expr: |
             max by (namespace, pod, workspace, session) (
@@ -66,6 +70,7 @@ spec:
               * on (namespace) group_left (workspace, session)
               workspace_namespace_info{session!=""}
             )
+        # Identify workshop runtime pods for each session.
         - record: workspace_session_pod_info
           expr: |
             workspace_session_workload_info

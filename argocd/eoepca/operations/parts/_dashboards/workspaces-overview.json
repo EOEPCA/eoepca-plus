@@ -1,10 +1,8 @@
 {
   "uid": "eoepca-workspaces-review",
-  "title": "EOEPCA / Workspaces",
-  "description": "Workspace sessions, resource use, buckets, and managed data activity.",
+  "title": "Workspaces",
   "tags": [
-    "eoepca",
-    "workspaces"
+    "workspace"
   ],
   "timezone": "browser",
   "schemaVersion": 41,
@@ -117,7 +115,7 @@
         "w": 4,
         "h": 4
       },
-      "description": "Counts each named session once while its runtime pod is running.",
+      "description": "Each session counts once while its runtime pod is running.",
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -170,7 +168,7 @@
         "w": 4,
         "h": 4
       },
-      "description": "Owned buckets declared by each workspace. Shared buckets are excluded.",
+      "description": "Buckets owned by each workspace; shared buckets are excluded.",
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -329,7 +327,7 @@
         "w": 4,
         "h": 4
       },
-      "description": "PVC requests. Used space is not yet measured for each workspace.",
+      "description": "Requested PVC capacity, not used space.",
       "fieldConfig": {
         "defaults": {
           "unit": "bytes",
@@ -738,7 +736,7 @@
         "w": 24,
         "h": 7
       },
-      "description": "Includes each session’s runtime, registry, control plane, and workloads. Shared services count once in workspace totals.",
+      "description": "CPU and memory include session workloads. Shared services count once in workspace totals.",
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -883,7 +881,7 @@
         "w": 24,
         "h": 8
       },
-      "description": "Estimated activity over the selected period. VFS bytes measure transfers; stored bytes and S3 request counts are not yet available.",
+      "description": "Activity over the selected period. VFS bytes measure transfers, not stored data; S3 request counts are unavailable.",
       "fieldConfig": {
         "defaults": {
           "unit": "short",

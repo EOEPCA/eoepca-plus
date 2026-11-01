@@ -133,6 +133,9 @@ spec:
       - name: grafana-admin
         policy:
           resolution: Required
+      - name: alerting-keep-admin
+        policy:
+          resolution: Required
       - name: eoepca-offline-access
         policy:
           resolution: Required
@@ -185,6 +188,9 @@ spec:
         resolution: Required
     roleIdsRefs:
       - name: grafana-editor
+        policy:
+          resolution: Required
+      - name: alerting-keep-noc
         policy:
           resolution: Required
       - name: eoepca-offline-access

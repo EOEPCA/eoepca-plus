@@ -32,9 +32,11 @@ spec:
       interval: 30s
       scrapeTimeout: 10s
       relabelings:
-        - targetLabel: job
+        - action: replace
+          targetLabel: job
           replacement: crossplane-metrics
-        - targetLabel: component
+        - action: replace
+          targetLabel: component
           replacement: crossplane-core
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -57,8 +59,10 @@ spec:
       interval: 30s
       scrapeTimeout: 10s
       relabelings:
-        - targetLabel: job
+        - action: replace
+          targetLabel: job
           replacement: crossplane-metrics
-        - sourceLabels:
+        - action: replace
+          sourceLabels:
             - __meta_kubernetes_pod_label_pkg_crossplane_io_provider
           targetLabel: component

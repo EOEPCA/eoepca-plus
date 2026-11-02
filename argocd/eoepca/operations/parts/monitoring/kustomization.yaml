@@ -7,6 +7,8 @@ resources:
   - routes.yaml
   - workspace-managed-data.yaml
   - crossplane-metrics.yaml
+  - argocd-metrics.yaml
+  - knative-metrics.yaml
 
 patches:
   - target:

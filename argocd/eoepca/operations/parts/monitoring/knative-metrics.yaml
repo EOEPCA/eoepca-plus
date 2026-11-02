@@ -1,0 +1,37 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: knative
+  namespace: operations
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - knative-serving
+      - knative-eventing
+  selector:
+    # The Kourier gateway uses a separate Envoy metrics path.
+    matchExpressions:
+      - key: app
+        operator: NotIn
+        values:
+          - 3scale-kourier-gateway
+  podMetricsEndpoints:
+    - port: metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      relabelings:
+        - action: replace
+          targetLabel: job
+          replacement: knative-metrics
+        - action: replace
+          sourceLabels:
+            - __meta_kubernetes_pod_label_app
+          regex: (.+)
+          targetLabel: component
+        - action: replace
+          sourceLabels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_component
+          regex: (.+)
+          targetLabel: component

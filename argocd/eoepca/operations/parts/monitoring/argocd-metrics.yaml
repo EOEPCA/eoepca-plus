@@ -1,0 +1,36 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: argocd
+  namespace: operations
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - argocd
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: argocd
+      app.kubernetes.io/part-of: argocd
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - application-controller
+          - applicationset-controller
+          - notifications-controller
+          - repo-server
+          - server
+  podMetricsEndpoints:
+    - port: metrics
+      interval: 30s
+      scrapeTimeout: 10s
+      relabelings:
+        - action: replace
+          targetLabel: job
+          replacement: argocd-metrics
+        - action: replace
+          sourceLabels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_component
+          targetLabel: component

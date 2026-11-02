@@ -2,11 +2,11 @@
   "uid": "eoepca-workspaces-review",
   "title": "Workspaces",
   "tags": [
-    "workspace"
+    "baseline"
   ],
   "timezone": "browser",
   "schemaVersion": 41,
-  "version": 1,
+  "version": 2,
   "editable": true,
   "refresh": "30s",
   "time": {

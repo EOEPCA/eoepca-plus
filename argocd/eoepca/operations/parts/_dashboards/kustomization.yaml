@@ -12,49 +12,56 @@ configMapGenerator:
         eoepca/dashboard-category: baseline
         grafana_dashboard: "1"
     files:
-      - k8s-resources-cluster.json
+      - kubernetes-cluster.json
   - name: curated-k8s-resources-pod
     options:
       labels:
         eoepca/dashboard-category: baseline
         grafana_dashboard: "1"
     files:
-      - k8s-resources-pod.json
+      - kubernetes-pods.json
   - name: curated-k8s-resources-node
     options:
       labels:
         eoepca/dashboard-category: baseline
         grafana_dashboard: "1"
     files:
-      - k8s-resources-node.json
+      - kubernetes-nodes.json
   - name: curated-prometheus-overview
     options:
       labels:
         eoepca/dashboard-category: baseline
         grafana_dashboard: "1"
     files:
-      - prometheus-overview.json
+      - prometheus.json
   - name: curated-control-plane
     options:
       labels:
         eoepca/dashboard-category: baseline
         grafana_dashboard: "1"
     files:
-      - control-plane.json
+      - kubernetes-api-and-etcd.json
+  - name: curated-crossplane
+    options:
+      labels:
+        eoepca/dashboard-category: baseline
+        grafana_dashboard: "1"
+    files:
+      - crossplane-reconciliation.json
   - name: curated-security-compliance
     options:
       labels:
         eoepca/dashboard-category: compliance
         grafana_dashboard: "1"
     files:
-      - security-compliance.json
+      - compliance.json
   - name: curated-stac-slo
     options:
       labels:
         eoepca/dashboard-category: data-access
         grafana_dashboard: "1"
     files:
-      - stac-slo.json
+      - stac.json
   - name: workspaces-overview
     options:
       labels:
@@ -62,4 +69,4 @@ configMapGenerator:
         grafana_dashboard: "1"
         app.kubernetes.io/managed-by: manual
     files:
-      - workspaces-overview.json
+      - workspaces.json

@@ -1,12 +1,12 @@
 {
   "id": null,
   "uid": "eoepca-control-plane",
-  "title": "Kubernetes / API and etcd",
+  "title": "Kubernetes API and etcd",
   "tags": [
     "baseline"
   ],
   "schemaVersion": 41,
-  "version": 5,
+  "version": 6,
   "editable": true,
   "timezone": "browser",
   "refresh": "30s",

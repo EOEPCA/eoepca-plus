@@ -1694,7 +1694,7 @@
   "preload": false,
   "schemaVersion": 42,
   "tags": [
-    "data-access"
+    "baseline"
   ],
   "templating": {
     "list": [
@@ -1719,6 +1719,6 @@
   "timezone": "browser",
   "title": "STAC",
   "uid": "8dfb46c7-7de5-4033-9c67-02439793bef6",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

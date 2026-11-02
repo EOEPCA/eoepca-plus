@@ -1573,7 +1573,7 @@
   "refresh": "30s",
   "schemaVersion": 41,
   "tags": [
-    "compliance"
+    "baseline"
   ],
   "templating": {
     "list": [
@@ -1613,8 +1613,8 @@
     "hidden": true
   },
   "timezone": "browser",
-  "title": "Security / Compliance",
+  "title": "Compliance",
   "uid": "eoepca-security-compliance-namespace",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }

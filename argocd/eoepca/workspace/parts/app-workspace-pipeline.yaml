@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: ghcr.io/eoepca/workspace
       chart: workspace-pipeline
-      targetRevision: 2.2.4
+      targetRevision: 2.3.0
       helm:
         releaseName: workspace-pipeline
         values: |
@@ -21,7 +21,7 @@ spec:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
           datalab:
-            package: ghcr.io/versioneer-tech/provider-datalab/educates:0.11.0-rc.4
+            package: ghcr.io/versioneer-tech/provider-datalab:0.12.0-rc.2
             annotations:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
@@ -50,15 +50,11 @@ spec:
               httpSectionName: http
             storage:
               endpoint: https://minio.develop-v2.eoepca.org
-              forcePathStyle: true
+              forcePathStyle: "true"
               provider: Other
               region: eoepca-demo
               secretNamespace: workspace
               type: s3
-              lifecycle:
-                schedule: ""
-            storageClasses:
-              allowed: []
             network:
               internalIngress:
                 - namespace: operations
@@ -100,30 +96,14 @@ spec:
                   - image:
                       url: ghcr.io/versioneer-tech/educates-extension-packages/rclone:v1.71.0
             defaults:
-              overallQuota:
-                storage: 100Gi
               quota:
-                memory: 2Gi
                 storage: 8Gi
                 budget: x-large
-              security:
-                policy: baseline
-                kubernetesAccess: true
-                kubernetesRole: edit
-                externalEgress: true
             database:
               tlsRoute:
                 parentName: eoepca-public
                 parentNamespace: gateway
                 sectionName: https
-              storageClassName: ""
-              backupStorageClassName: ""
-            mongodb:
-              storageClassName: ""
-            redis:
-              storageClassName: ""
-            qdrant:
-              storageClassName: ""
   destination:
     name: in-cluster
     namespace: workspace

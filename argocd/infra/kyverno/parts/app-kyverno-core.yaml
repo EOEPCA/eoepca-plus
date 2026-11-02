@@ -71,6 +71,10 @@ spec:
           # Do not provision the chart's controller-activity dashboard.
           enabled: false
         features:
+          ttlController:
+            # Limit repeated API discovery and permission checks. New resource
+            # types or permissions can take up to ten minutes to be detected.
+            reconciliationInterval: 10m
           policyExceptions:
             enabled: true
             namespace: kyverno-system

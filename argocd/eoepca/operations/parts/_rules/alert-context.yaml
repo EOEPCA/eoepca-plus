@@ -14,7 +14,7 @@ spec:
         - record: operations:alert_context
           expr: >-
             label_replace(control_plane:apiserver_requests:rate5m, "signal", "api_requests", "", "") or label_replace(control_plane:apiserver_requests:baseline1h,
-            "signal", "api_baseline", "", "") or label_replace(control_plane:etcd_request_duration_seconds:p99{operation=~"get|update"},
+            "signal", "api_baseline", "", "") or label_replace(control_plane:etcd_request_duration_seconds:p99,
             "signal", "etcd_p99", "", "") or label_replace(topk(5, sum by(resource,verb) (rate(apiserver_request_total{job="apiserver",resource!=""}[5m]))),
             "signal", "resources", "", "") or label_replace(topk(5, sum by(component) (rate(rest_client_requests_total{job="crossplane-metrics"}[5m]))),
             "signal", "crossplane", "", "") or label_replace(topk(5, sum by(job) (rate(kyverno_client_queries_total[5m]))),

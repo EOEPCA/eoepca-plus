@@ -32,6 +32,9 @@ spec:
                 rate(etcd_request_duration_seconds_bucket{job="apiserver"}[5m])
               )
             )
+        # Retain the measured latency when an operation exceeds one second.
+        - record: control_plane:etcd_request_duration_seconds:above1s
+          expr: control_plane:etcd_request_duration_seconds:p99 > 1
     - name: control-plane.alerts
       rules:
         - alert: KubeAPIRequestSpike
@@ -89,15 +92,7 @@ spec:
             dashboard_url: *control-plane-dashboard
             context_snapshot: "true"
         - alert: EtcdRequestLatencyHigh
-          expr: |
-            (control_plane:etcd_request_duration_seconds:p99{operation=~"get|update"} > 1)
-            and
-            (control_plane:etcd_request_duration_seconds:p99{operation=~"get|update"} <= 5)
-            and on (operation)
-            sum by (operation) (
-              rate(etcd_request_duration_seconds_count{job="apiserver",operation=~"get|update"}[5m])
-            ) > 1
-          for: 5m
+          expr: control_plane:etcd_request_duration_seconds:above1s > 1
           labels:
             severity: warning
             cluster: eoepca-demo
@@ -106,8 +101,8 @@ spec:
           annotations:
             summary: Etcd {{ $labels.operation }} latency exceeds one second.
             description: >-
-              The API server reports etcd p99 of {{ $value | humanizeDuration }} . Check controller requests and node disk
-              write time.
+              The API server reports etcd p99 of {{ $value | humanizeDuration }} over five minutes. Check controller
+              requests and node disk write time.
             dashboard: control-plane
             dashboard_url: *control-plane-dashboard
             context_snapshot: "true"

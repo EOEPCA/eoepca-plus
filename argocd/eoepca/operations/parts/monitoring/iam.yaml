@@ -141,24 +141,6 @@ spec:
           resolution: Required
 ---
 apiVersion: group.keycloak.m.crossplane.io/v1alpha1
-kind: Memberships
-metadata:
-  name: monitoring-admin-members
-  namespace: iam-management
-spec:
-  providerConfigRef:
-    name: keycloak-provider-config
-    kind: ProviderConfig
-  forProvider:
-    realmId: eoepca
-    groupIdRef:
-      name: monitoring-admin
-      policy:
-        resolution: Required
-    members:
-      - eoepca-admin
----
-apiVersion: group.keycloak.m.crossplane.io/v1alpha1
 kind: Group
 metadata:
   name: monitoring-editor
@@ -196,21 +178,3 @@ spec:
       - name: eoepca-offline-access
         policy:
           resolution: Required
----
-apiVersion: group.keycloak.m.crossplane.io/v1alpha1
-kind: Memberships
-metadata:
-  name: monitoring-editor-members
-  namespace: iam-management
-spec:
-  providerConfigRef:
-    name: keycloak-provider-config
-    kind: ProviderConfig
-  forProvider:
-    realmId: eoepca
-    groupIdRef:
-      name: monitoring-editor
-      policy:
-        resolution: Required
-    members:
-      - eoepcauser

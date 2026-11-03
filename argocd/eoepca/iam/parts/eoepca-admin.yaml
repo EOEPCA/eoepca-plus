@@ -81,3 +81,24 @@ spec:
       - name: eoepca-realm-admin
         policy:
           resolution: Required
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Groups
+metadata:
+  name: eoepca-admin-groups
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: eoepca-admin
+      policy:
+        resolution: Required
+    groupIdsRefs:
+      - name: monitoring-admin
+        policy:
+          resolution: Required
+    exhaustive: false

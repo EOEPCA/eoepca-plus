@@ -40,3 +40,27 @@ spec:
       - name: default-roles-eoepca
         policy:
           resolution: Required
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: Groups
+metadata:
+  name: eoepca-user-groups
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    userIdRef:
+      name: eoepca-user
+      policy:
+        resolution: Required
+    groupIdsRefs:
+      - name: monitoring-editor
+        policy:
+          resolution: Required
+      - name: resource-catalogue-admin
+        policy:
+          resolution: Required
+    exhaustive: false

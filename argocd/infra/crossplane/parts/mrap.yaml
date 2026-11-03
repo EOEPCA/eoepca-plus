@@ -43,6 +43,7 @@ spec:
     - groupmembershipprotocolmappers.openidgroup.keycloak.m.crossplane.io
     - roles.role.keycloak.m.crossplane.io
     - roles.user.keycloak.m.crossplane.io
+    - groups.user.keycloak.m.crossplane.io
     - users.user.keycloak.m.crossplane.io
     - clientauthorizationresources.openidclient.keycloak.m.crossplane.io
     - clientauthorizationpermissions.openidclient.keycloak.m.crossplane.io

@@ -21,7 +21,7 @@ spec:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
           datalab:
-            package: ghcr.io/versioneer-tech/provider-datalab:0.12.0-rc.2
+            package: ghcr.io/versioneer-tech/provider-datalab:0.12.0-rc.1
             annotations:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
@@ -99,6 +99,13 @@ spec:
               quota:
                 storage: 8Gi
                 budget: x-large
+              overallQuota:
+                storage: 30Gi
+            vcluster:
+              storage: 3Gi
+              storageClasses:
+                allowed:
+                  - managed-nfs-storage-retain
             database:
               tlsRoute:
                 parentName: eoepca-public

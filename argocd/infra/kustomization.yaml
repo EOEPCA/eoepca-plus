@@ -14,7 +14,6 @@ resources:
   - apisix
   - pgo
   - mongodb-operator
-  - qdrant-operator
   - redis-operator
   - kyverno
   - gateway

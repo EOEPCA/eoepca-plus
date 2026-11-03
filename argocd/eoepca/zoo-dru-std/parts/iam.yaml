@@ -242,6 +242,10 @@ metadata:
   name: zoo-alice-access
   namespace: iam-management
 spec:
+  managementPolicies:
+    - Create
+    - Observe
+    - Delete
   providerConfigRef:
     name: keycloak-provider-config
     kind: ProviderConfig
@@ -265,6 +269,10 @@ metadata:
   name: zoo-bob-access
   namespace: iam-management
 spec:
+  managementPolicies:
+    - Create
+    - Observe
+    - Delete
   providerConfigRef:
     name: keycloak-provider-config
     kind: ProviderConfig
@@ -288,6 +296,10 @@ metadata:
   name: zoo-eric-access
   namespace: iam-management
 spec:
+  managementPolicies:
+    - Create
+    - Observe
+    - Delete
   providerConfigRef:
     name: keycloak-provider-config
     kind: ProviderConfig
@@ -311,6 +323,10 @@ metadata:
   name: zoo-eoepcauser-access
   namespace: iam-management
 spec:
+  managementPolicies:
+    - Create
+    - Observe
+    - Delete
   providerConfigRef:
     name: keycloak-provider-config
     kind: ProviderConfig
@@ -385,6 +401,10 @@ metadata:
   name: zoo-default-access
   namespace: iam-management
 spec:
+  managementPolicies:
+    - Create
+    - Observe
+    - Delete
   providerConfigRef:
     name: keycloak-provider-config
     kind: ProviderConfig

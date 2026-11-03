@@ -21,7 +21,7 @@ spec:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
           datalab:
-            package: ghcr.io/versioneer-tech/provider-datalab:0.12.0-rc.1
+            package: ghcr.io/versioneer-tech/provider-datalab:0.12.0-rc.2
             annotations:
               argocd.argoproj.io/sync-wave: "100"
               argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
@@ -106,6 +106,14 @@ spec:
               storageClasses:
                 allowed:
                   - managed-nfs-storage-retain
+              backingStore:
+                database:
+                  embedded:
+                    enabled: true
+                    dataSource: "sqlite:///data/state.db?_journal=TRUNCATE&_locking=NORMAL&cache=shared&_busy_timeout=30000&_txlock=immediate&_synchronous=FULL"
+                    extraArgs:
+                      - --datastore-max-open-connections=2
+                      - --datastore-max-idle-connections=1
             database:
               tlsRoute:
                 parentName: eoepca-public

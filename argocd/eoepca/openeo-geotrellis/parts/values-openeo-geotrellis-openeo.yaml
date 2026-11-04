@@ -1,7 +1,7 @@
 ---
 #---
 image: swr.eu-nl.otc.t-systems.com/openeo/openeo-geotrellis-kube-python311
-imageVersion: latest
+imageVersion: "20261104-1363"
 imagePullPolicy: Always
 sparkVersion: 4.0.1
 configMaps:

@@ -15,7 +15,7 @@ spec:
     chart: kyverno
     # Kyverno 1.19 is the final line that supports the (current) legacy policies
     # but already fully support the new CEL policies...
-    targetRevision: 3.9.1
+    targetRevision: 3.9.2
     helm:
       releaseName: kyverno
       values: |
@@ -47,6 +47,10 @@ spec:
             additionalLabels:
               release: kube-prometheus-stack
         cleanupController:
+          # This can generate quite a lot of Kubernetes API requests and was not being used.
+          # It could be re-enabled if it's useful but beware that a low
+          # features.ttlController.reconciliationInterval can increase API traffic.
+          enabled: false
           serviceMonitor:
             enabled: true
             additionalLabels:

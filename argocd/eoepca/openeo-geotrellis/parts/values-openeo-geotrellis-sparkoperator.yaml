@@ -17,6 +17,9 @@ controller:
   resources:
     requests:
       cpu: 200m
+  securityContext:
+    runAsUser: 185
+    runAsGroup: 185
 webhook:
   logEncoder: json
   resources:

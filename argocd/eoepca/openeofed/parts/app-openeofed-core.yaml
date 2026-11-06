@@ -9,7 +9,7 @@ metadata:
 spec:
   project: eoepca
   sources:
-    - repoURL: oci://ghrc.io/open-eo/charts/openeo-aggregator
+    - repoURL: oci://ghcr.io/open-eo/charts/openeo-aggregator
       chart: openeo-aggregator
       targetRevision: 0.1.5
       helm:

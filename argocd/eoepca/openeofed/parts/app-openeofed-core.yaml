@@ -9,7 +9,7 @@ metadata:
 spec:
   project: eoepca
   sources:
-    - repoURL: https://artifactory.vgt.vito.be/artifactory/helm-charts
+    - repoURL: oci://ghrc.io/open-eo/charts/openeo-aggregator
       chart: openeo-aggregator
       targetRevision: 0.1.5
       helm:

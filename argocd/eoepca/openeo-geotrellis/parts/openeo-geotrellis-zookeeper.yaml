@@ -10,7 +10,7 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - repoURL: https://artifactory.vgt.vito.be/artifactory/helm-charts
+    - repoURL: oci://registry-1.docker.io/bitnamicharts/zookeeper
       chart: zookeeper
       targetRevision: 11.1.6
       helm:

@@ -33,15 +33,3 @@ spec:
   package: ghcr.io/crossplane-contrib/provider-keycloak:v2.21.1
   runtimeConfigRef:
     name: provider-keycloak
----
-apiVersion: pkg.crossplane.io/v1
-kind: Provider
-metadata:
-  name: provider-helm
-  annotations:
-    argocd.argoproj.io/sync-wave: "12"
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-spec:
-  package: xpkg.upbound.io/crossplane-contrib/provider-helm:v1.0.0
-  runtimeConfigRef:
-    name: provider-helm

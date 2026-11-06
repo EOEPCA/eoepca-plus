@@ -130,46 +130,6 @@ spec:
 apiVersion: pkg.crossplane.io/v1beta1
 kind: DeploymentRuntimeConfig
 metadata:
-  name: provider-helm
-  annotations:
-    argocd.argoproj.io/sync-wave: "11"
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-spec:
-  deploymentTemplate:
-    metadata:
-      labels:
-        runtime: provider-helm
-    spec:
-      replicas: 1
-      selector:
-        matchLabels:
-          runtime: provider-helm
-      template:
-        metadata:
-          labels:
-            runtime: provider-helm
-        spec:
-          securityContext:
-            seccompProfile:
-              type: RuntimeDefault
-          containers:
-          - name: package-runtime
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop:
-                  - ALL
-            resources:
-              requests:
-                cpu: 100m
-                memory: 128Mi
-              limits:
-                cpu: 500m
-                memory: 512Mi
----
-apiVersion: pkg.crossplane.io/v1beta1
-kind: DeploymentRuntimeConfig
-metadata:
   name: function-environment-configs
   annotations:
     argocd.argoproj.io/sync-wave: "11"

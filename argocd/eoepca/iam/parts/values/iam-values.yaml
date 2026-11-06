@@ -117,6 +117,150 @@ iam: &iam
         # attributes except those covered by the settings above.
         customSettings:
           loginWithEmailAllowed: false
+          # Realm user profile (Keycloak 26 declarative user profile): the Keycloak
+          # default attributes plus `slurm_user`, the POSIX user name for the Slurm
+          # REST API. Only admins can view or edit it. The client `slurm-cli` maps it
+          # to the token claim `sun` (argocd/eoepca/slurm/parts/iam.yaml).
+          # Applied on realm import only; an existing realm needs the attribute added
+          # once in the admin console (Realm settings -> User profile).
+          components:
+            org.keycloak.userprofile.UserProfileProvider:
+              - providerId: declarative-user-profile
+                subComponents: {}
+                config:
+                  kc.user.profile.config:
+                    - |
+                      {
+                        "attributes": [
+                          {
+                            "name": "username",
+                            "displayName": "${username}",
+                            "validations": {
+                              "length": {
+                                "min": 3,
+                                "max": 255
+                              },
+                              "username-prohibited-characters": {},
+                              "up-username-not-idn-homograph": {}
+                            },
+                            "permissions": {
+                              "view": [
+                                "admin",
+                                "user"
+                              ],
+                              "edit": [
+                                "admin",
+                                "user"
+                              ]
+                            },
+                            "multivalued": false
+                          },
+                          {
+                            "name": "email",
+                            "displayName": "${email}",
+                            "validations": {
+                              "email": {},
+                              "length": {
+                                "max": 255
+                              }
+                            },
+                            "required": {
+                              "roles": [
+                                "user"
+                              ]
+                            },
+                            "permissions": {
+                              "view": [
+                                "admin",
+                                "user"
+                              ],
+                              "edit": [
+                                "admin",
+                                "user"
+                              ]
+                            },
+                            "multivalued": false
+                          },
+                          {
+                            "name": "firstName",
+                            "displayName": "${firstName}",
+                            "validations": {
+                              "length": {
+                                "max": 255
+                              },
+                              "person-name-prohibited-characters": {}
+                            },
+                            "required": {
+                              "roles": [
+                                "user"
+                              ]
+                            },
+                            "permissions": {
+                              "view": [
+                                "admin",
+                                "user"
+                              ],
+                              "edit": [
+                                "admin",
+                                "user"
+                              ]
+                            },
+                            "multivalued": false
+                          },
+                          {
+                            "name": "lastName",
+                            "displayName": "${lastName}",
+                            "validations": {
+                              "length": {
+                                "max": 255
+                              },
+                              "person-name-prohibited-characters": {}
+                            },
+                            "required": {
+                              "roles": [
+                                "user"
+                              ]
+                            },
+                            "permissions": {
+                              "view": [
+                                "admin",
+                                "user"
+                              ],
+                              "edit": [
+                                "admin",
+                                "user"
+                              ]
+                            },
+                            "multivalued": false
+                          },
+                          {
+                            "name": "slurm_user",
+                            "displayName": "Slurm user name",
+                            "permissions": {
+                              "view": [
+                                "admin"
+                              ],
+                              "edit": [
+                                "admin"
+                              ]
+                            },
+                            "multivalued": false,
+                            "validations": {
+                              "pattern": {
+                                "pattern": "^[a-z_][a-z0-9_-]{0,31}$",
+                                "error-message": "Must be a POSIX user name"
+                              }
+                            }
+                          }
+                        ],
+                        "groups": [
+                          {
+                            "name": "user-metadata",
+                            "displayHeader": "User metadata",
+                            "displayDescription": "Attributes, which refer to user metadata"
+                          }
+                        ]
+                      }
           # Enable user events and keep them for 30min
           eventsEnabled: true
           eventsExpiration: 1800

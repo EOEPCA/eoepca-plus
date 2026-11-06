@@ -1,8 +1,8 @@
 ---
 image:
-  registry: vito-docker.artifactory.vgt.vito.be
-  repository: spark-operator
-  tag: "v1beta2-2.3.0-4.0.0-json"
+  registry: ghcr.io
+  repository: kubeflow/spark-operator/kubectl
+  tag: "2.5.2"
 hook:
   upgradeCrd: true
   forceConflictsCrd: true

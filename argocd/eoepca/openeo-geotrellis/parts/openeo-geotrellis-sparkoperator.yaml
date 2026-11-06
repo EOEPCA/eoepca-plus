@@ -10,9 +10,9 @@ spec:
   # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
   project: eoepca
   sources:
-    - repoURL: https://artifactory.vgt.vito.be/artifactory/helm-charts
+    - repoURL: https://kubeflow.github.io/spark-operator
       chart: spark-operator
-      targetRevision: 2.3.0-forcecrd-pr
+      targetRevision: 2.5.2
       helm:
         releaseName: openeo-geotrellis-sparkoperator
         valueFiles:

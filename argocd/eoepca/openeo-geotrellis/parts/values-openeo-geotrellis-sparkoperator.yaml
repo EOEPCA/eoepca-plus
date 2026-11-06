@@ -1,7 +1,7 @@
 ---
 image:
   registry: ghcr.io
-  repository: kubeflow/spark-operator/kubectl
+  repository: kubeflow/spark-operator/controller
   tag: "2.5.2"
 hook:
   upgradeCrd: true

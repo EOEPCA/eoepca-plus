@@ -1,5 +1,5 @@
 # Check if kubeseal is installed
-which kubeseal || (curl -sSL https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.27.3/kubeseal-0.27.3-linux-amd64.tar.gz | tar xz && sudo install kubeseal /usr/local/bin/kubeseal)
+which kubeseal || (curl -sSL https://github.com/bitnami/sealed-secrets/releases/download/v0.41.2/kubeseal-0.41.2-linux-amd64.tar.gz | tar xz && sudo install kubeseal /usr/local/bin/kubeseal)
 
 # Create and seal the secret
 kubectl create secret generic dns-api-token \

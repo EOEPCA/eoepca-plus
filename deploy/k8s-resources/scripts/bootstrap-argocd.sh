@@ -28,7 +28,7 @@ fi
 
 echo "=== installing sealed secrets controller ==="
 helm upgrade --install sealed-secrets \
-    https://github.com/bitnami-labs/sealed-secrets/releases/download/helm-v2.16.0/sealed-secrets-2.16.0.tgz \
+    https://github.com/bitnami/sealed-secrets/releases/download/helm-v2.22.0/sealed-secrets-2.22.0.tgz \
     --namespace infra \
     --create-namespace \
     --wait --timeout 3m

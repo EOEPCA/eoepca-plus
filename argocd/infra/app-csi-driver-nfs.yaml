@@ -35,16 +35,16 @@ spec:
           parameters:
             server: 192.168.11.91
             share: /data/dynamic/
-            reclaimPolicy: Delete
-            volumeBindingMode: Immediate
+          reclaimPolicy: Delete
+          volumeBindingMode: Immediate
         - name: nfs-retain
           annotations:
             storageclass.kubernetes.io/is-default-class: "false"
           parameters:
             server: 192.168.11.91
             share: /data/dynamic/
-            reclaimPolicy: Retain
-            volumeBindingMode: Immediate
+          reclaimPolicy: Retain
+          volumeBindingMode: Immediate
   destination:
     name: in-cluster
     namespace: infra

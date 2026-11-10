@@ -3,6 +3,7 @@ resources:
   - namespace-infra.yaml
   - kube-dns-alias.yaml
   - app-sealed-secrets.yaml
+  - app-csi-driver-nfs.yaml
   # ServiceMonitor and PrometheusRule CRDs are consumed by early infrastructure
   # Applications, before the full Operations monitoring stack can start.
   - monitoring-crds
@@ -25,6 +26,16 @@ resources:
 patches:
   # Root application waves express dependencies between independently synced
   # Applications. File order in this kustomization does not control sync order.
+  - target:
+      kind: Application
+      name: ^csi-driver-nfs$
+    patch: |
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: csi-driver-nfs
+        annotations:
+          argocd.argoproj.io/sync-wave: "-50"
   - target:
       kind: Application
       name: ^sealed-secrets$

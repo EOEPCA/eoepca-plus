@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: csi-driver-nfs
+  namespace: argocd
+  labels:
+    eoepca/is-root-app: "true"
+    eoepca/app-name: csi-driver-nfs
+  annotations:
+    argocd.argoproj.io/sync-wave: "-50"
+spec:
+  # Ref. https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/
+  project: eoepca
+  source:
+    repoURL: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+    chart: csi-driver-nfs
+    targetRevision: 4.13.6
+    helm:
+      releaseName: csi-driver-nfs
+      valuesObject:
+        controller:
+          runOnControlPlane: true
+          defaultOnDeletePolicy: archive
+        storageClasses:
+        - name: nfs-delete
+          annotations:
+            storageclass.kubernetes.io/is-default-class: "false"
+          parameters:
+            server: 192.168.11.91
+            share: /data/dynamic/
+            reclaimPolicy: Delete
+            volumeBindingMode: Immediate
+        - name: nfs-retain
+          annotations:
+            storageclass.kubernetes.io/is-default-class: "false"
+          parameters:
+            server: 192.168.11.91
+            share: /data/dynamic/
+            reclaimPolicy: Retain
+            volumeBindingMode: Immediate
+  destination:
+    name: in-cluster
+    namespace: infra
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: true
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+

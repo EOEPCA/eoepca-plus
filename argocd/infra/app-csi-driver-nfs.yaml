@@ -37,6 +37,7 @@ spec:
             share: /data/dynamic/
           reclaimPolicy: Delete
           volumeBindingMode: Immediate
+          allowVolumeExpansion: true
         - name: nfs-retain
           annotations:
             storageclass.kubernetes.io/is-default-class: "false"
@@ -45,6 +46,7 @@ spec:
             share: /data/dynamic/
           reclaimPolicy: Retain
           volumeBindingMode: Immediate
+          allowVolumeExpansion: true
   destination:
     name: in-cluster
     namespace: infra

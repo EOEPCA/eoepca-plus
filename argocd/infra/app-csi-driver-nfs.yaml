@@ -21,6 +21,13 @@ spec:
         controller:
           runOnControlPlane: true
           defaultOnDeletePolicy: archive
+          tolerations:
+          - effect: NoExecute
+            key: CriticalAddonsOnly
+            value: "true"
+          - effect: NoSchedule
+            key: CriticalAddonsOnly
+            value: "true"
         storageClasses:
         - name: nfs-delete
           annotations:

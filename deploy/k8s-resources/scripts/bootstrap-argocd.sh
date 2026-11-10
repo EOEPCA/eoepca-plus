@@ -10,7 +10,7 @@ fi
 DOMAIN="${1:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
 NFS_IP="${2:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
 DNS_API_TOKEN="${3:?Usage: $0 <domain> <nfs-ip> <dns-api-token> [argocd-version]}"
-ARGOCD_VERSION="${4:-9.5.12}"
+ARGOCD_VERSION="${4:-10.2.2}"
 NFS_PROVISIONER_VERSION="4.0.12"
 SEALED_SECRETS_KEY_BACKUP="${SEALED_SECRETS_KEY_BACKUP:-resources/sealed-secrets-keys.yaml}"
 

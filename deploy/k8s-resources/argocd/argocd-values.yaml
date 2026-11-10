@@ -2,12 +2,12 @@ server:
   extensions:
     enabled: true
     extensionList:
-      - name: extension-trivy
+      - name: trivy-insights
         env:
           - name: EXTENSION_URL
-            value: https://github.com/mziyabo/argocd-trivy-extension/releases/download/v0.2.0/extension-trivy.tar
+            value: https://github.com/DeWildeDaan/Argo-Trivy-Insights/releases/download/v1.4.0/extension-trivy-insights.tar.gz
           - name: EXTENSION_CHECKSUM_URL
-            value: https://github.com/mziyabo/argocd-trivy-extension/releases/download/v0.2.0/extension-trivy_checksums.txt
+            value: https://github.com/DeWildeDaan/Argo-Trivy-Insights/releases/download/v1.4.0/extension-trivy-insights_checksums.txt
 
 configs:
   rbac:

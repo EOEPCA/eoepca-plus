@@ -89,7 +89,9 @@ spec:
 EOF
 
 
-echo "=== Installing NFS Provisioner ==="
+echo "=== Installing Old NFS Provisioner ==="
+# This provisioner is no longer maintained. ArgoCD installs csi-driver-nfs and two
+# storageclasses.
 helm repo add nfs-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
 # helm repo update
 
@@ -111,9 +113,6 @@ helm upgrade --install nfs-provisioner-retain nfs-provisioner/nfs-subdir-externa
     --set provisionerName=nfs-storage-retain \
     --version "${NFS_PROVISIONER_VERSION}" \
     --wait --timeout 3m
-
-kubectl patch storageclass managed-nfs-storage-retain \
-    -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
 echo "=== Installing ArgoCD ==="
 helm repo add argo https://argoproj.github.io/argo-helm

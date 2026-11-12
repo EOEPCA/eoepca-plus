@@ -28,5 +28,6 @@ spec:
               local port = tonumber(ctx.var.http_x_forwarded_port)
               if port and port > 9000 then
                 ctx.var.http_x_forwarded_port = tostring(port - 9000)
+                ngx.req.set_header("X-Forwarded-Port", tostring(port - 9000))
               end
             end

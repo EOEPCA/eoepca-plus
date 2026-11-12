@@ -18,7 +18,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "12"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  package: xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v1.3.1
+  package: xpkg.upbound.io/crossplane-contrib/provider-kubernetes:v1.4.1
   runtimeConfigRef:
     name: provider-kubernetes
 ---
@@ -30,6 +30,6 @@ metadata:
     argocd.argoproj.io/sync-wave: "12"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  package: ghcr.io/crossplane-contrib/provider-keycloak:v2.21.1
+  package: ghcr.io/crossplane-contrib/provider-keycloak:v2.24.1
   runtimeConfigRef:
     name: provider-keycloak

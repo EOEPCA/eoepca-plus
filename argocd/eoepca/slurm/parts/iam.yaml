@@ -1,0 +1,114 @@
+# Keycloak objects for access to the Slurm REST API (slurmrestd) with EOEPCA
+# realm tokens.
+#
+# Slurm trusts every token signed by the realm keys (JWKS) and takes the user
+# name from the claim `sun`. It does not check the audience. Therefore only
+# this client may put `sun` into a token, and the value comes from the user
+# attribute `slurm_user`, which only realm admins can set (declared admin-only
+# in the realm user profile, see the IAM building block). A user without the
+# attribute gets a token without `sun`, and Slurm refuses it.
+#
+# Note: Slurm also accepts a claim `username` as user name. No other client in
+# this realm may emit the claims `sun` or `username`.
+apiVersion: openidclient.keycloak.m.crossplane.io/v1alpha1
+kind: Client
+metadata:
+  name: slurm-cli
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    name: slurm-cli
+    clientId: slurm-cli
+    accessType: PUBLIC
+    enabled: true
+    # Login in the browser, token on the command line (OAuth 2.0 device grant).
+    oauth2DeviceAuthorizationGrantEnabled: true
+    # Password grant for scripted tests with the test users below.
+    directAccessGrantsEnabled: true
+    standardFlowEnabled: false
+    implicitFlowEnabled: false
+    serviceAccountsEnabled: false
+    fullScopeAllowed: false
+---
+apiVersion: client.keycloak.m.crossplane.io/v1alpha1
+kind: ProtocolMapper
+metadata:
+  name: slurm-cli-slurm-user-name
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    clientIdRef:
+      name: slurm-cli
+      policy:
+        resolution: Required
+    realmId: eoepca
+    protocol: openid-connect
+    protocolMapper: oidc-usermodel-attribute-mapper
+    name: slurm-user-name
+    config:
+      "user.attribute": "slurm_user"
+      "claim.name": "sun"
+      "jsonType.label": "String"
+      "access.token.claim": "true"
+      "id.token.claim": "true"
+      "userinfo.token.claim": "false"
+      "introspection.token.claim": "true"
+      "multivalued": "false"
+---
+# Test users. `slurm_user` must match an account in configmap-slurm-nss.yaml.
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: slurm-test-1
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    username: slurm-test-1
+    firstName: Slurm
+    lastName: Test1
+    email: slurm-test-1@example.com
+    emailVerified: true
+    enabled: true
+    attributes:
+      slurm_user: slurm-test-1
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: slurm-test-users
+          key: slurm-test-1-password
+---
+apiVersion: user.keycloak.m.crossplane.io/v1alpha1
+kind: User
+metadata:
+  name: slurm-test-2
+  namespace: iam-management
+spec:
+  providerConfigRef:
+    name: keycloak-provider-config
+    kind: ProviderConfig
+  forProvider:
+    realmId: eoepca
+    username: slurm-test-2
+    firstName: Slurm
+    lastName: Test2
+    email: slurm-test-2@example.com
+    emailVerified: true
+    enabled: true
+    attributes:
+      slurm_user: slurm-test-2
+    initialPassword:
+      - temporary: false
+        valueSecretRef:
+          name: slurm-test-users
+          key: slurm-test-2-password

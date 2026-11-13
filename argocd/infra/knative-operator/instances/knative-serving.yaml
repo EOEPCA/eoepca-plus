@@ -8,6 +8,7 @@ spec:
   ingress:
     kourier:
       enabled: true
+      service-type: NodePort
   config:
     domain:
       notifications.develop-v2.eoepca.org: ""

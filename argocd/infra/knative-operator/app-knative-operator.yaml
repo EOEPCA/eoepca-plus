@@ -13,7 +13,7 @@ spec:
   source:
     chart: knative-operator
     repoURL: https://knative.github.io/operator
-    targetRevision: v1.19.5
+    targetRevision: v1.20.2
     helm:
       releaseName: knative-operator
   destination:

@@ -1,0 +1,15 @@
+apiVersion: apiextensions.crossplane.io/v1beta1
+kind: EnvironmentConfig
+metadata:
+  name: storage-minio
+  annotations:
+    argocd.argoproj.io/sync-wave: "80"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+data:
+  storage:
+    endpoint: https://minio.develop-v2.eoepca.org
+    force_path_style: "true"
+    providerConfigName: provider-minio
+    provider: Other
+    region: eoepca-demo
+    type: s3

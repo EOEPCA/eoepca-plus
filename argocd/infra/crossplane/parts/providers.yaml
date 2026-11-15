@@ -33,3 +33,27 @@ spec:
   package: ghcr.io/crossplane-contrib/provider-keycloak:v2.24.1
   runtimeConfigRef:
     name: provider-keycloak
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-openstack
+  annotations:
+    argocd.argoproj.io/sync-wave: "12"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  package: xpkg.upbound.io/crossplane-contrib/provider-openstack:v0.10.0
+  runtimeConfigRef:
+    name: provider-openstack
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-aws-s3
+  annotations:
+    argocd.argoproj.io/sync-wave: "12"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  package: xpkg.upbound.io/upbound/provider-aws-s3:v2.7.2
+  runtimeConfigRef:
+    name: provider-aws-s3

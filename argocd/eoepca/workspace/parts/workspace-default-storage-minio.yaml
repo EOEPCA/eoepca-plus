@@ -1,5 +1,3 @@
-# Select MinIO for workspace Storage resources that do not select a
-# Composition.
 apiVersion: policies.kyverno.io/v1
 kind: MutatingPolicy
 metadata:
@@ -28,17 +26,16 @@ spec:
   matchConditions:
     - name: workspace-namespace
       expression: object.metadata.namespace == "workspace"
-    - name: composition-is-omitted
-      expression: >-
-        !has(object.spec.crossplane) ||
-        (!has(object.spec.crossplane.compositionRef) &&
-        !has(object.spec.crossplane.compositionSelector))
   reinvocationPolicy: Never
   mutations:
     - patchType: ApplyConfiguration
       applyConfiguration:
         expression: >-
-          Object{
+          has(object.spec.crossplane) &&
+          (has(object.spec.crossplane.compositionRef) ||
+           has(object.spec.crossplane.compositionSelector))
+          ? Object{}
+          : Object{
             spec: Object.spec{
               crossplane: Object.spec.crossplane{
                 compositionSelector: Object.spec.crossplane.compositionSelector{
@@ -47,3 +44,23 @@ spec:
               }
             }
           }
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          (has(object.spec.crossplane.compositionRef)
+            ? object.spec.crossplane.compositionRef.name == "storage-minio"
+            : has(object.spec.crossplane.compositionSelector.matchLabels) &&
+              "provider" in object.spec.crossplane.compositionSelector.matchLabels &&
+              object.spec.crossplane.compositionSelector.matchLabels["provider"] == "minio") &&
+          !((has(object.metadata.annotations) &&
+            "storages.pkg.internal/environment" in object.metadata.annotations) ||
+           (has(object.metadata.labels) &&
+            "storages.pkg.internal/environment" in object.metadata.labels))
+          ? Object{
+              metadata: Object.metadata{
+                annotations: {
+                  "storages.pkg.internal/environment": "storage-minio"
+                }
+              }
+            }
+          : Object{}

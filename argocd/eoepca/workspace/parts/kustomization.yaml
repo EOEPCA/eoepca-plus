@@ -8,6 +8,7 @@ resources:
   - kyverno-rbac-cloudferro-projects.yaml
   - kyverno-cloudferro-project-configs.yaml
   - workspace-default-storage-minio.yaml
+  - kyverno-rbac-workspace-storage.yaml
   - kyverno-rbac-workspace-apisix.yaml
   - kyverno-annotate-educates-ingresses.yaml
   - route.yaml

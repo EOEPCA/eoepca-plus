@@ -54,6 +54,7 @@ spec:
               storages.pkg.internal/name: storage-cloudferro-(( variables.projectId ))
           data:
             storage:
+              responseTTL: 5m
               projectId: "(( variables.projectId ))"
               providerConfigName: cloudferro-project-(( variables.projectId ))
               endpoint: https://s3.waw3-2.cloudferro.com

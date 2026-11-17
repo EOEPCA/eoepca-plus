@@ -9,6 +9,7 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 data:
   storage:
+    responseTTL: 5m
     endpoint: https://minio.develop-v2.eoepca.org
     force_path_style: "true"
     providerConfigName: provider-minio

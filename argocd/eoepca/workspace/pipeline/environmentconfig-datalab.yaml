@@ -8,6 +8,8 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "80"
 data:
+  datalab:
+    responseTTL: 5m
   database:
     tlsRoute:
       parentName: eoepca-public

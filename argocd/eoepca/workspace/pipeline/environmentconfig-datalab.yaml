@@ -1,7 +1,9 @@
 apiVersion: apiextensions.crossplane.io/v1beta1
 kind: EnvironmentConfig
 metadata:
-  name: datalab
+  name: datalab-educates
+  labels:
+    storages.pkg.internal/name: datalab-educates
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "80"
@@ -79,8 +81,6 @@ data:
   storage:
     endpoint: https://minio.develop-v2.eoepca.org
     forcePathStyle: "true"
-    # Older Storages select this shared environment.
-    force_path_style: "true"
     provider: Other
     region: eoepca-demo
     secretNamespace: workspace

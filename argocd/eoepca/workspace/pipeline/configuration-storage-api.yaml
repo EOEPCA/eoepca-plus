@@ -6,4 +6,5 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "90"
 spec:
-  package: ghcr.io/versioneer-tech/provider-storage/api:0.5.0-rc.1
+  package: ghcr.io/versioneer-tech/provider-storage/api:0.5.0
+  skipDependencyResolution: true

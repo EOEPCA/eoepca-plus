@@ -44,23 +44,3 @@ spec:
               }
             }
           }
-    - patchType: ApplyConfiguration
-      applyConfiguration:
-        expression: >-
-          (has(object.spec.crossplane.compositionRef)
-            ? object.spec.crossplane.compositionRef.name == "storage-minio"
-            : has(object.spec.crossplane.compositionSelector.matchLabels) &&
-              "provider" in object.spec.crossplane.compositionSelector.matchLabels &&
-              object.spec.crossplane.compositionSelector.matchLabels["provider"] == "minio") &&
-          !((has(object.metadata.annotations) &&
-            "storages.pkg.internal/environment" in object.metadata.annotations) ||
-           (has(object.metadata.labels) &&
-            "storages.pkg.internal/environment" in object.metadata.labels))
-          ? Object{
-              metadata: Object.metadata{
-                annotations: {
-                  "storages.pkg.internal/environment": "storage-minio"
-                }
-              }
-            }
-          : Object{}

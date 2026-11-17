@@ -50,6 +50,8 @@ spec:
           kind: EnvironmentConfig
           metadata:
             name: storage-cloudferro-(( variables.projectId ))
+            labels:
+              storages.pkg.internal/name: storage-cloudferro-(( variables.projectId ))
           data:
             storage:
               projectId: "(( variables.projectId ))"

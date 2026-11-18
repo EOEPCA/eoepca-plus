@@ -4,7 +4,7 @@ metadata:
   name: knative-eventing
   namespace: knative-eventing
 spec:
-  version: "1.21"
+  version: "1.20"
   deployments:
     # default 200m is too tight for a single-replica webhook serving admission
     # for the whole cluster; was getting throttled past its liveness probe and crashlooping

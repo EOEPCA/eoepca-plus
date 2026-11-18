@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - configuration-storage-api.yaml
+  - configuration-storage-minio.yaml
+  - configuration-storage-cloudferro.yaml
+  - configuration-datalab.yaml
+  - environmentconfig-datalab.yaml
+  - environmentconfig-storage-minio.yaml

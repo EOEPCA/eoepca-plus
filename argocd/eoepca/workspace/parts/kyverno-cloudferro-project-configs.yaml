@@ -1,0 +1,65 @@
+apiVersion: policies.kyverno.io/v1
+kind: GeneratingPolicy
+metadata:
+  name: cloudferro-project-configs
+  annotations:
+    argocd.argoproj.io/sync-wave: "30"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  evaluation:
+    generateExisting:
+      enabled: true
+    # Keep project configuration during Secret or policy replacement.
+    synchronize:
+      enabled: false
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [bitnami.com]
+        apiVersions: [v1alpha1]
+        operations: [CREATE, UPDATE]
+        resources: [sealedsecrets]
+        scope: Namespaced
+  matchConditions:
+    - name: storage-namespace
+      expression: object.metadata.namespace == "workspace"
+    - name: project-secret
+      expression: object.metadata.name.matches("^cloudferro-project-[0-9a-f]{32}$")
+    - name: provider-credentials
+      expression: has(object.spec.encryptedData) && "config" in object.spec.encryptedData
+  variables:
+    - name: projectId
+      expression: object.metadata.name.substring(19)
+  generate:
+    - template:
+        interpolate: cel
+        value: |
+          apiVersion: openstack.m.crossplane.io/v1beta1
+          kind: ProviderConfig
+          metadata:
+            name: cloudferro-project-(( variables.projectId ))
+            namespace: (( object.metadata.namespace ))
+          spec:
+            credentials:
+              source: Secret
+              secretRef:
+                name: (( object.metadata.name ))
+                namespace: (( object.metadata.namespace ))
+                key: config
+          ---
+          apiVersion: apiextensions.crossplane.io/v1beta1
+          kind: EnvironmentConfig
+          metadata:
+            name: storage-cloudferro-(( variables.projectId ))
+            labels:
+              storages.pkg.internal/name: storage-cloudferro-(( variables.projectId ))
+          data:
+            storage:
+              responseTTL: 5m
+              projectId: "(( variables.projectId ))"
+              providerConfigName: cloudferro-project-(( variables.projectId ))
+              endpoint: https://s3.waw3-2.cloudferro.com
+              force_path_style: "true"
+              provider: Other
+              region: WAW3-2
+              s3Region: RegionOne
+              type: s3

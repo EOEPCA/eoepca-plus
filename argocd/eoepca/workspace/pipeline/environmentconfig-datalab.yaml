@@ -1,0 +1,102 @@
+apiVersion: apiextensions.crossplane.io/v1beta1
+kind: EnvironmentConfig
+metadata:
+  name: datalab-educates
+  labels:
+    storages.pkg.internal/name: datalab-educates
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "80"
+data:
+  datalab:
+    responseTTL: 5m
+  database:
+    tlsRoute:
+      parentName: eoepca-public
+      parentNamespace: gateway
+      sectionName: https
+  defaults:
+    overallQuota:
+      storage: 30Gi
+    quota:
+      budget: x-large
+      storage: 8Gi
+  httpRoute:
+    enableS3: true
+    enabled: true
+    httpSectionName: http
+    parentName: eoepca-public
+    parentNamespace: gateway
+    sectionName: workspaces-https
+  iam:
+    extraAudiences:
+      - workspace-api
+    internalURL: http://iam-core-keycloak-operator-service.iam.svc.cluster.local:8080/realms/eoepca
+    issuerURL: https://develop-v2.eoepca.org/iam/auth/realms/eoepca
+    namespace: iam
+    realm: eoepca
+  ingress:
+    class: apisix
+    domain: lab.develop-v2.eoepca.org
+    enabled: false
+    secret: workspace-tls
+  network:
+    blacklistIPs:
+      - 169.254.169.254/32
+    externalEgressCIDRs:
+      - 0.0.0.0/0
+      - ::/0
+    internalEgress:
+      - namespace: iam
+        podSelector:
+          matchLabels:
+            app: keycloak
+            app.kubernetes.io/instance: iam-core-keycloak-operator
+            app.kubernetes.io/managed-by: keycloak-operator
+        ports:
+          - port: 8080
+            protocol: TCP
+    internalIngress:
+      - namespace: operations
+        podSelector:
+          matchLabels:
+            app.kubernetes.io/name: prometheus
+            prometheus: kube-prometheus-stack-prometheus
+        ports:
+          - port: 8888
+            protocol: TCP
+        targetPodSelector:
+          matchLabels:
+            app.kubernetes.io/name: package-r
+    podCIDRs:
+      - 10.42.0.0/16
+    serviceCIDR: 10.43.0.0/16
+  packages:
+    - files:
+        - image:
+            url: ghcr.io/versioneer-tech/educates-extension-packages/awscli:v2.29.0
+      name: awscli
+    - files:
+        - image:
+            url: ghcr.io/versioneer-tech/educates-extension-packages/rclone:v1.71.0
+      name: rclone
+  storage:
+    endpoint: https://minio.develop-v2.eoepca.org
+    forcePathStyle: "true"
+    provider: Other
+    region: eoepca-demo
+    secretNamespace: workspace
+    type: s3
+  vcluster:
+    backingStore:
+      database:
+        embedded:
+          dataSource: sqlite:///data/state.db?_journal=TRUNCATE&_locking=NORMAL&cache=shared&_busy_timeout=30000&_txlock=immediate&_synchronous=FULL
+          enabled: true
+          extraArgs:
+            - --datastore-max-open-connections=2
+            - --datastore-max-idle-connections=1
+    storage: 3Gi
+    storageClasses:
+      allowed:
+        - managed-nfs-storage-retain

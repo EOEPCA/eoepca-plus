@@ -1,0 +1,10 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Configuration
+metadata:
+  name: storage-api
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "90"
+spec:
+  package: ghcr.io/versioneer-tech/provider-storage/api:0.5.1
+  skipDependencyResolution: true

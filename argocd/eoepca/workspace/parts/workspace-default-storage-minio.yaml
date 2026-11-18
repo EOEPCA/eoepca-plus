@@ -1,5 +1,3 @@
-# Select MinIO for workspace Storage resources that do not select a
-# Composition.
 apiVersion: policies.kyverno.io/v1
 kind: MutatingPolicy
 metadata:
@@ -28,17 +26,16 @@ spec:
   matchConditions:
     - name: workspace-namespace
       expression: object.metadata.namespace == "workspace"
-    - name: composition-is-omitted
-      expression: >-
-        !has(object.spec.crossplane) ||
-        (!has(object.spec.crossplane.compositionRef) &&
-        !has(object.spec.crossplane.compositionSelector))
   reinvocationPolicy: Never
   mutations:
     - patchType: ApplyConfiguration
       applyConfiguration:
         expression: >-
-          Object{
+          has(object.spec.crossplane) &&
+          (has(object.spec.crossplane.compositionRef) ||
+           has(object.spec.crossplane.compositionSelector))
+          ? Object{}
+          : Object{
             spec: Object.spec{
               crossplane: Object.spec.crossplane{
                 compositionSelector: Object.spec.crossplane.compositionSelector{

@@ -25,6 +25,8 @@ spec:
               type: RuntimeDefault
           containers:
           - name: package-runtime
+            # This provider logs user credentials at Info level.
+            args: [--log-level=-1, operator]
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
@@ -225,3 +227,71 @@ spec:
               capabilities:
                 drop:
                   - ALL
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: provider-openstack
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: provider-openstack
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: provider-openstack
+      template:
+        metadata:
+          labels:
+            runtime: provider-openstack
+        spec:
+          containers:
+            - name: package-runtime
+              args:
+                - --poll=1m
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: provider-aws-s3
+  annotations:
+    argocd.argoproj.io/sync-wave: "11"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  deploymentTemplate:
+    metadata:
+      labels:
+        runtime: provider-aws-s3
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          runtime: provider-aws-s3
+      template:
+        metadata:
+          labels:
+            runtime: provider-aws-s3
+        spec:
+          containers:
+            - name: package-runtime
+              args:
+                - --poll=1m
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi

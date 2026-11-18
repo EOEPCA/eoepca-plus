@@ -6,4 +6,4 @@ metadata:
     # Matches the labels the knative-operator's KnativeEventing reconciler
     # stamps onto this namespace, so it doesn't perpetually show OutOfSync.
     app.kubernetes.io/name: knative-eventing
-    app.kubernetes.io/version: 1.18.1
+    app.kubernetes.io/version: 1.19.8

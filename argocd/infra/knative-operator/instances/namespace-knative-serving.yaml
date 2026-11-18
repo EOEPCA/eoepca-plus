@@ -7,5 +7,5 @@ metadata:
     # stamps onto this namespace, so it doesn't perpetually show OutOfSync.
     app.kubernetes.io/component: net-kourier
     app.kubernetes.io/name: knative-serving
-    app.kubernetes.io/version: 1.18.0
+    app.kubernetes.io/version: 1.19.9
     networking.knative.dev/ingress-provider: kourier

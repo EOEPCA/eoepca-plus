@@ -33,7 +33,7 @@ spec:
         # sackd supplies the local auth socket used by the Slurm client. This
         # follows the configless client pattern used by Slinky's LoginSet.
         - name: sackd
-          image: ghcr.io/slinkyproject/sackd:26.05-ubuntu26.04
+          image: ghcr.io/slinkyproject/sackd:26.05.4-ubuntu26.04
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
@@ -77,7 +77,7 @@ spec:
             - name: tmp
               mountPath: /tmp
         - name: checker
-          image: ghcr.io/slinkyproject/sackd:26.05-ubuntu26.04
+          image: ghcr.io/slinkyproject/sackd:26.05.4-ubuntu26.04
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh

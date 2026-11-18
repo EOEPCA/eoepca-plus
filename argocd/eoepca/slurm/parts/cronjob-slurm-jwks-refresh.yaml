@@ -1,0 +1,119 @@
+# Keeps ConfigMap `slurm-auth-jwks` (public signing keys of the EOEPCA realm)
+# current. The ConfigMap is not in Git: the realm keys change whenever the
+# realm is imported again, e.g. on a cluster rebuild. Until the first run has
+# created it, the slurmctld pod waits in ContainerCreating (at most one
+# schedule interval).
+#
+# The job needs no Slurm credentials. slurmctld picks up a changed file
+# through the operator's `reconfigure` sidecar
+# (`controller.inplaceReconfigure: true` in values-slurm.yaml).
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: slurm-jwks-refresh
+  namespace: slurm
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: slurm-jwks-refresh
+  namespace: slurm
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["slurm-auth-jwks"]
+    verbs: ["get", "patch", "update"]
+  # Server-side apply of a missing object is a create, which cannot be limited
+  # to one name.
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: slurm-jwks-refresh
+  namespace: slurm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: slurm-jwks-refresh
+subjects:
+  - kind: ServiceAccount
+    name: slurm-jwks-refresh
+    namespace: slurm
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: slurm-jwks-refresh
+  namespace: slurm
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 300
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: slurm-jwks-refresh
+        spec:
+          serviceAccountName: slurm-jwks-refresh
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: refresh
+              # The sackd image is used for its tools (curl, python3, kubectl),
+              # not for Slurm. Same build as the other Slurm images.
+              image: ghcr.io/slinkyproject/sackd:26.05.4-ubuntu26.04
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - /opt/slurm-jwks-refresh/refresh-jwks.sh
+              env:
+                - name: JWKS_URL
+                  value: https://develop-v2.eoepca.org/iam/auth/realms/eoepca/protocol/openid-connect/certs
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                # kubectl writes its discovery cache below $HOME; the root file
+                # system is read-only.
+                - name: HOME
+                  value: /tmp
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                readOnlyRootFilesystem: true
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
+              volumeMounts:
+                - name: slurm-jwks-refresh-script
+                  mountPath: /opt/slurm-jwks-refresh/refresh-jwks.sh
+                  subPath: refresh-jwks.sh
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: slurm-jwks-refresh-script
+              configMap:
+                name: slurm-jwks-refresh-script
+                defaultMode: 0755
+            - name: tmp
+              emptyDir: {}

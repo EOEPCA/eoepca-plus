@@ -3,7 +3,7 @@ kind: EnvironmentConfig
 metadata:
   name: datalab-educates
   labels:
-    storages.pkg.internal/name: datalab-educates
+    datalabs.pkg.internal/name: datalab-educates
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "80"

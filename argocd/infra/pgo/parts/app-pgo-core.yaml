@@ -9,7 +9,7 @@ spec:
   project: eoepca
   source:
     repoURL: 'registry.developers.crunchydata.com/crunchydata'
-    targetRevision: 6.0.1
+    targetRevision: 6.0.3
     path: 'pgo'
     chart: pgo
     helm:

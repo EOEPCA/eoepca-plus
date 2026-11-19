@@ -14,7 +14,7 @@ spec:
   source:
     repoURL: ghcr.io/slinkyproject/charts
     chart: slurm-operator-crds
-    targetRevision: "1.2.0"
+    targetRevision: "1.2.4"
   destination:
     name: in-cluster
     namespace: slinky

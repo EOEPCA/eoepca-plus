@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: ghcr.io/slinkyproject/charts
     chart: slurm-operator
-    targetRevision: "1.2.0"
+    targetRevision: "1.2.4"
     helm:
       releaseName: slurm-operator
       valuesObject:

@@ -18,9 +18,9 @@ spec:
         fullnameOverride: workspace-api
         service:
           port: 8181
-        # image:
-        #   tag: 2.3.0
-        #   pullPolicy: Always
+        image:
+          tag: 2.3.1
+          pullPolicy: Always
         podSecurityContext:
           runAsNonRoot: true
           runAsUser: 1000

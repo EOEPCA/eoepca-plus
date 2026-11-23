@@ -93,3 +93,9 @@ ingress-controller:
 #      defaultIngressClass: true
     provider:
       type: apisix-standalone
+  deployment:
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 3000
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false

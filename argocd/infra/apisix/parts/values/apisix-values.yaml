@@ -93,5 +93,3 @@ ingress-controller:
 #      defaultIngressClass: true
     provider:
       type: apisix-standalone
-  gatewayProxy:
-    createDefault: true

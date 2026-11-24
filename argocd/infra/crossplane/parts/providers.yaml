@@ -30,7 +30,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "12"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  package: ghcr.io/crossplane-contrib/provider-keycloak:v2.24.1
+  package: ghcr.io/crossplane-contrib/provider-keycloak:v3.0.2
   runtimeConfigRef:
     name: provider-keycloak
 ---

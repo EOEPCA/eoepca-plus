@@ -3,6 +3,7 @@ resources:
   # The APISIX subchart bundles its CRDs together with Gateway API CRDs. Keep
   # only the APISIX CRDs here; Envoy Gateway is the sole Gateway API CRD owner.
   - app-apisix-crds.yaml
+  - apisix-admin-credentials-ss.yaml
   - app-apisix-core.yaml
   - apisixtls-apx-all.yaml
   - apisixtls-apx-main.yaml

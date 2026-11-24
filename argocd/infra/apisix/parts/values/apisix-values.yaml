@@ -57,6 +57,10 @@ apisix:
   prometheus:
     enabled: true
 
+  admin:
+    credentials:
+      secretName: apisix-admin-credentials
+
 etcd:
   # Etcd is not needed in standalone mode.
   enabled: false

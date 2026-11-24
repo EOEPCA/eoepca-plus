@@ -20,11 +20,6 @@ spec:
   destination:
     name: in-cluster
     namespace: ingress-apisix
-  ignoreDifferences:
-    - kind: Secret
-      name: apisix-admin-credentials
-      jsonPointers:
-        - /data
   syncPolicy:
     automated:
       prune: true

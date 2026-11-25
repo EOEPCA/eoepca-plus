@@ -16,6 +16,13 @@ spec:
       values: |
         provider:
           defaultActivations: {}
+        resourcesCrossplane:
+          requests:
+            cpu: 100m
+            memory: 1Gi
+          limits:
+            cpu: 500m
+            memory: 2Gi
         securityContextCrossplane:
           allowPrivilegeEscalation: false
           capabilities:

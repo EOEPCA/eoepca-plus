@@ -75,49 +75,57 @@ spec:
           expr: |
             (
               node_filesystem_avail_bytes{
-                fstype!~"tmpfs|overlay|nsfs|squashfs",
+                fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",
                 mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"
               }
               /
               node_filesystem_size_bytes{
-                fstype!~"tmpfs|overlay|nsfs|squashfs",
+                fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",
                 mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"
               }
             ) < 0.10
             and
             node_filesystem_readonly{
-              fstype!~"tmpfs|overlay|nsfs|squashfs",
+              fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",
               mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"
             } == 0
           for: 15m
           labels:
             severity: warning
+            service: persistent-storage
           annotations:
             summary: Node filesystem has less than 10% free space.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: "true"
         # Warn when free inodes fall below 10%.
         - alert: NodeFilesystemFilesFillingUp
           expr: |
             (
               node_filesystem_files_free{
-                fstype!~"tmpfs|overlay|nsfs|squashfs",
+                fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",
                 mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"
               }
               /
               node_filesystem_files{
-                fstype!~"tmpfs|overlay|nsfs|squashfs",
+                fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",
                 mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"
               }
             ) < 0.10
             and
             node_filesystem_readonly{
-              fstype!~"tmpfs|overlay|nsfs|squashfs",
+              fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",
               mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"
             } == 0
           for: 15m
           labels:
             severity: warning
+            service: persistent-storage
           annotations:
             summary: Node filesystem has less than 10% free inodes.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: "true"
         # Report nodes running short of available memory.
         - alert: NodeMemoryPressure
           expr: kube_node_status_condition{condition="MemoryPressure", status="true"} == 1
@@ -192,34 +200,6 @@ spec:
             severity: warning
           annotations:
             summary: Container restarted more than three times in one hour.
-    - name: baseline.storage
-      rules:
-        # Warn about volumes with under 15% free.
-        - alert: PersistentVolumeUsageHigh
-          expr: |
-            (
-              kubelet_volume_stats_available_bytes
-              /
-              kubelet_volume_stats_capacity_bytes
-            ) < 0.15
-          for: 15m
-          labels:
-            severity: warning
-          annotations:
-            summary: Persistent volume has less than 15% free space.
-        # Warn about volumes with under 5% free.
-        - alert: PersistentVolumeAlmostFull
-          expr: |
-            (
-              kubelet_volume_stats_available_bytes
-              /
-              kubelet_volume_stats_capacity_bytes
-            ) < 0.05
-          for: 15m
-          labels:
-            severity: critical
-          annotations:
-            summary: Persistent volume has less than 5% free space.
     - name: baseline.postgres
       rules:
         # Warn before the connection limit is reached.

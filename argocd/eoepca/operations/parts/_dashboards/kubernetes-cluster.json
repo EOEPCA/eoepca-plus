@@ -1,18 +1,6 @@
 {
   "editable": true,
-  "links": [
-    {
-      "asDropdown": true,
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "baseline"
-      ],
-      "targetBlank": false,
-      "title": "Kubernetes",
-      "type": "dashboards"
-    }
-  ],
+  "links": [],
   "panels": [
     {
       "datasource": {
@@ -308,23 +296,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Namespace"
-            },
-            "properties": [
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "title": "Drill down to pods",
-                    "url": "/d/6581e46e4e5c7ba40a07646395ef7b23/k8s-resources-pod?${datasource:queryparam}&var-cluster=$cluster&var-namespace=${__data.fields.Namespace}"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Pods"
             },
             "properties": [
@@ -571,23 +542,6 @@
               {
                 "id": "unit",
                 "value": "bytes"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Namespace"
-            },
-            "properties": [
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "title": "Drill down to pods",
-                    "url": "/d/6581e46e4e5c7ba40a07646395ef7b23/k8s-resources-pod?${datasource:queryparam}&var-cluster=$cluster&var-namespace=${__data.fields.Namespace}"
-                  }
-                ]
               }
             ]
           }
@@ -1178,23 +1132,6 @@
                 "value": "bps"
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Namespace"
-            },
-            "properties": [
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "title": "Drill down to pods",
-                    "url": "/d/6581e46e4e5c7ba40a07646395ef7b23/k8s-resources-pod?${datasource:queryparam}&var-cluster=$cluster&var-namespace=${__data.fields.Namespace}"
-                  }
-                ]
-              }
-            ]
           }
         ]
       },
@@ -1366,5 +1303,5 @@
   "annotations": {
     "list": []
   },
-  "version": 1
+  "version": 2
 }

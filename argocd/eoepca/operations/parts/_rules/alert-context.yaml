@@ -10,6 +10,69 @@ spec:
     - name: alert.context
       interval: 30s
       rules:
+        - record: operations:alert_context
+          expr: volumesnapshot:monitoring_state
+          labels:
+            dashboard: volumes
+            signal: snapshot_monitoring_state
+        - record: operations:alert_context
+          expr: |-
+            sum by (driver, status) (
+              label_replace(volumesnapshot:ready, "status", "ready", "", "")
+              or label_replace(volumesnapshot:pending, "status", "pending", "", "")
+              or label_replace(volumesnapshot:error, "status", "error", "", "")
+              or label_replace(volumesnapshot:deleting, "status", "deleting", "", "")
+            ) and on() volumesnapshot:inventory_available
+          labels:
+            dashboard: volumes
+            signal: snapshot_count
+        - record: operations:alert_context
+          expr: topk(5, volumesnapshot:pending_age_seconds) and on() volumesnapshot:inventory_available
+          labels:
+            dashboard: volumes
+            signal: snapshot_pending_age_seconds
+        - record: operations:alert_context
+          expr: >-
+            topk(5, 1 - (node_filesystem_avail_bytes{fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"} / node_filesystem_size_bytes{fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"}))
+          labels:
+            dashboard: volumes
+            signal: node_filesystem_used_ratio
+        - record: operations:alert_context
+          expr: >-
+            bottomk(5, node_filesystem_files_free{fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"} / (node_filesystem_files{fstype=~"ext[234]|xfs|btrfs|zfs|bcachefs|vfat",mountpoint!~"/run.*|/var/lib/kubelet/pods/.+"} > 0))
+          labels:
+            dashboard: volumes
+            signal: node_inodes_free_ratio
+        - record: operations:alert_context
+          expr: >-
+            topk(5, (1 - nfs:free_ratio) or ((1 - volume:free_ratio) unless on(namespace,persistentvolumeclaim) volume:nfs_claim_info))
+          labels:
+            dashboard: volumes
+            signal: filesystem_used_ratio
+        - record: operations:alert_context
+          expr: >-
+            bottomk(5, nfs:available_bytes or (volume:available_bytes unless on(namespace,persistentvolumeclaim) volume:nfs_claim_info))
+          labels:
+            dashboard: volumes
+            signal: available_bytes
+        - record: operations:alert_context
+          expr: >-
+            bottomk(5, nfs:seconds_until_full or (volume:seconds_until_full unless on(namespace,persistentvolumeclaim) volume:nfs_claim_info))
+          labels:
+            dashboard: volumes
+            signal: seconds_until_full
+        - record: operations:alert_context
+          expr: >-
+            bottomk(5, nfs:inodes_free_ratio or (volume:inodes_free_ratio unless on(namespace,persistentvolumeclaim) volume:nfs_claim_info))
+          labels:
+            dashboard: volumes
+            signal: inodes_free_ratio
+        - record: operations:alert_context
+          expr: >-
+            sum(volume:stats_missing) or vector(0)
+          labels:
+            dashboard: volumes
+            signal: mounted_claims_without_metrics
         # Save API traffic, latency and controller activity.
         - record: operations:alert_context
           expr: >-

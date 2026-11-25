@@ -109,17 +109,28 @@ spec:
         thanosRuler:
           enabled: false
 
-        # Export workspace inventory, security-report state, and report age.
+        # Export workspace, snapshot, and security-report state.
         # The chart adds CRD discovery permissions when customResourceState is
         # enabled; these extra rules grant read-only access to the selected CRs.
         kube-state-metrics:
           image:
             tag: v2.19.1
+          selfMonitor:
+            enabled: true
           metricLabelsAllowlist:
             - namespaces=[training.educates.dev/environment.name,training.educates.dev/session.name]
             - pods=[training.educates.dev/environment.name,training.educates.dev/session.name]
           rbac:
             extraRules:
+              - apiGroups:
+                  - snapshot.storage.k8s.io
+                resources:
+                  - volumesnapshots
+                  - volumesnapshotcontents
+                  - volumesnapshotclasses
+                verbs:
+                  - list
+                  - watch
               - apiGroups:
                   - pkg.internal
                 resources:
@@ -158,6 +169,89 @@ spec:
               kind: CustomResourceStateMetrics
               spec:
                 resources:
+                  - groupVersionKind:
+                      group: snapshot.storage.k8s.io
+                      version: v1
+                      kind: VolumeSnapshot
+                    metricNamePrefix: volume_snapshot
+                    labelsFromPath:
+                      namespace: [metadata, namespace]
+                      volumesnapshot: [metadata, name]
+                      snapshot_uid: [metadata, uid]
+                    metrics:
+                      - name: info
+                        help: Volume snapshot request and source.
+                        each:
+                          type: Info
+                          info:
+                            labelsFromPath:
+                              snapshot_uid: [metadata, uid]
+                              snapshotclass: [spec, volumeSnapshotClassName]
+                              persistentvolumeclaim: [spec, source, persistentVolumeClaimName]
+                              volumesnapshotcontent: [status, boundVolumeSnapshotContentName]
+                      - name: ready_to_use
+                        help: Whether the snapshot is ready for restoration.
+                        errorLogV: 10
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [status, readyToUse]
+                      - name: created_timestamp_seconds
+                        help: Time when the snapshot request was created.
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [metadata, creationTimestamp]
+                      - name: error_timestamp_seconds
+                        help: Time of the current snapshot creation error.
+                        errorLogV: 10
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [status, error, time]
+                      - name: deletion_timestamp_seconds
+                        help: Time when deletion of the snapshot request started.
+                        errorLogV: 10
+                        each:
+                          type: Gauge
+                          gauge:
+                            path: [metadata, deletionTimestamp]
+                  - groupVersionKind:
+                      group: snapshot.storage.k8s.io
+                      version: v1
+                      kind: VolumeSnapshotContent
+                    metricNamePrefix: volume_snapshot_content
+                    labelsFromPath:
+                      volumesnapshotcontent: [metadata, name]
+                    metrics:
+                      - name: info
+                        help: Backend snapshot driver, class, retention, and request reference.
+                        each:
+                          type: Info
+                          info:
+                            labelsFromPath:
+                              driver: [spec, driver]
+                              snapshotclass: [spec, volumeSnapshotClassName]
+                              deletionpolicy: [spec, deletionPolicy]
+                              namespace: [spec, volumeSnapshotRef, namespace]
+                              volumesnapshot: [spec, volumeSnapshotRef, name]
+                              snapshot_uid: [spec, volumeSnapshotRef, uid]
+                  - groupVersionKind:
+                      group: snapshot.storage.k8s.io
+                      version: v1
+                      kind: VolumeSnapshotClass
+                    metricNamePrefix: volume_snapshot_class
+                    labelsFromPath:
+                      snapshotclass: [metadata, name]
+                    metrics:
+                      - name: info
+                        help: Snapshot class driver and deletion policy.
+                        each:
+                          type: Info
+                          info:
+                            labelsFromPath:
+                              driver: [driver]
+                              deletionpolicy: [deletionPolicy]
                   - groupVersionKind:
                       group: pkg.internal
                       version: v1beta1

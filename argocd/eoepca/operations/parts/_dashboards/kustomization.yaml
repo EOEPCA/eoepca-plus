@@ -48,6 +48,13 @@ configMapGenerator:
         grafana_dashboard: "1"
     files:
       - crossplane-reconciliation.json
+  - name: curated-volumes
+    options:
+      labels:
+        eoepca/dashboard-category: baseline
+        grafana_dashboard: "1"
+    files:
+      - volumes.json
   - name: curated-security-compliance
     options:
       labels:

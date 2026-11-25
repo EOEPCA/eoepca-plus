@@ -1,0 +1,1355 @@
+{
+  "id": null,
+  "uid": "eoepca-volumes",
+  "title": "Kubernetes Volumes",
+  "tags": [
+    "baseline"
+  ],
+  "schemaVersion": 41,
+  "version": 9,
+  "editable": true,
+  "timezone": "browser",
+  "refresh": "1m",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "Keep events",
+        "enable": true,
+        "hide": false,
+        "iconColor": "blue",
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
+        "expr": "{namespace=\"operations\",container=\"keep\"} | json | event_type=\"keep_alert_event\" | dashboard_uid=\"${__dashboard.uid}\"",
+        "titleFormat": "{{alertname}}: {{status}}",
+        "textFormat": "{{text}}",
+        "tagKeys": "alertname,status",
+        "maxLines": 100
+      }
+    ]
+  },
+  "links": [
+    {
+      "title": "Alerts in Keep",
+      "type": "link",
+      "icon": "external link",
+      "url": "https://alerting.develop-v2.eoepca.org/alerts/feed",
+      "targetBlank": true,
+      "includeVars": false,
+      "keepTime": false,
+      "asDropdown": false,
+      "tags": []
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Prometheus",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {
+          "selected": true,
+          "text": "Prometheus",
+          "value": "prometheus"
+        }
+      },
+      {
+        "name": "namespace",
+        "label": "Volume namespace",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "query_result(count by(namespace) (volume:info and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\"))))",
+        "query": {
+          "query": "query_result(count by(namespace) (volume:info and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\"))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [],
+        "regex": "/namespace=\"([^\"]+)\"/"
+      },
+      {
+        "name": "storageclass",
+        "label": "Volume storage class",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "query_result(count by(storageclass) (volume:info{namespace=~\"${namespace:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\"))))",
+        "query": {
+          "query": "query_result(count by(storageclass) (volume:info{namespace=~\"${namespace:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\"))))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [],
+        "regex": "/storageclass=\"([^\"]+)\"/"
+      },
+      {
+        "name": "snapshot_namespace",
+        "label": "Snapshot namespace",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "query_result(count by(namespace) (volumesnapshot:info or volumesnapshot:content_info))",
+        "query": {
+          "query": "query_result(count by(namespace) (volumesnapshot:info or volumesnapshot:content_info))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [],
+        "regex": "/namespace=\"([^\"]+)\"/"
+      },
+      {
+        "name": "snapshot_driver",
+        "label": "Snapshot driver",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "query_result(count by(driver) (volumesnapshot:info{namespace=~\"${snapshot_namespace:regex}\"} or volumesnapshot:content_info{namespace=~\"${snapshot_namespace:regex}\"} or volumesnapshot:class_info))",
+        "query": {
+          "query": "query_result(count by(driver) (volumesnapshot:info{namespace=~\"${snapshot_namespace:regex}\"} or volumesnapshot:content_info{namespace=~\"${snapshot_namespace:regex}\"} or volumesnapshot:class_info))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [],
+        "regex": "/driver=\"([^\"]+)\"/"
+      },
+      {
+        "name": "snapshot_class",
+        "label": "Snapshot class",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "definition": "query_result(count by(snapshotclass) (volumesnapshot:info{namespace=~\"${snapshot_namespace:regex}\",driver=~\"${snapshot_driver:regex}\"} or volumesnapshot:content_info{namespace=~\"${snapshot_namespace:regex}\",driver=~\"${snapshot_driver:regex}\"} or volumesnapshot:class_info{driver=~\"${snapshot_driver:regex}\"}))",
+        "query": {
+          "query": "query_result(count by(snapshotclass) (volumesnapshot:info{namespace=~\"${snapshot_namespace:regex}\",driver=~\"${snapshot_driver:regex}\"} or volumesnapshot:content_info{namespace=~\"${snapshot_namespace:regex}\",driver=~\"${snapshot_driver:regex}\"} or volumesnapshot:class_info{driver=~\"${snapshot_driver:regex}\"}))",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": [],
+        "regex": "/snapshotclass=\"([^\"]+)\"/"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 5,
+      "title": "Storage alerts firing",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "description": "",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count(ALERTS{alertstate=\"firing\",service=\"persistent-storage\"}) or vector(0)",
+          "legendFormat": "{{namespace}} / {{persistentvolumeclaim}}",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Volumes at least 85% full",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "description": "Local and block-storage PVCs in the selected namespaces and storage classes. Shared NFS is shown in the overview below.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "count((volume:free_ratio * on(namespace,persistentvolumeclaim) group_left(storageclass) (volume:info{namespace=~\"${namespace:regex}\",storageclass=~\"${storageclass:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\")))) < 0.15) or vector(0)",
+          "legendFormat": "{{namespace}} / {{persistentvolumeclaim}}",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Volumes without capacity metrics",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "description": "Mounted local or block volumes with no capacity metrics. Their capacity alerts cannot run until collection works.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "sum(sum by(namespace) (volume:stats_missing * on(namespace,persistentvolumeclaim) group_left(storageclass) (volume:info{namespace=~\"${namespace:regex}\",storageclass=~\"${storageclass:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\")))) or on(namespace) (0 * count by(namespace) ((volume:info{namespace=~\"${namespace:regex}\",storageclass=~\"${storageclass:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\")))))) or vector(0)",
+          "legendFormat": "{{namespace}} / {{persistentvolumeclaim}}",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 52,
+      "title": "Snapshots needing attention",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "description": "Current creation errors, requests pending for more than 30 minutes, and deletions older than one hour.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(count(volumesnapshot:attention_required{namespace=~\"${snapshot_namespace:regex}\",driver=~\"${snapshot_driver:regex}\",snapshotclass=~\"${snapshot_class:regex}\"}) or (0 * volumesnapshot:inventory_available)) and on() volumesnapshot:inventory_available",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 30,
+      "title": "Volume capacity — local and block storage",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 31,
+      "title": "Most used volume filesystems",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 12,
+        "h": 6
+      },
+      "description": "The five most used volume filesystems in the selected namespaces and storage classes.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "topk(5, 1 - (volume:free_ratio * on(namespace,persistentvolumeclaim) group_left(storageclass) (volume:info{namespace=~\"${namespace:regex}\",storageclass=~\"${storageclass:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\")))))",
+          "legendFormat": "{{namespace}} / {{persistentvolumeclaim}}",
+          "instant": false,
+          "range": true,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 5,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "title": "Volumes with the least free space",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 5,
+        "w": 12,
+        "h": 6
+      },
+      "description": "Free space available to each volume. Shared and virtual filesystem backends are excluded.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "bottomk(5, volume:available_bytes * on(namespace,persistentvolumeclaim) group_left(storageclass) (volume:info{namespace=~\"${namespace:regex}\",storageclass=~\"${storageclass:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\"))))",
+          "legendFormat": "{{namespace}} / {{persistentvolumeclaim}}",
+          "instant": false,
+          "range": true,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 5,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 34,
+      "title": "Volumes expected to fill first",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 11,
+        "w": 12,
+        "h": 6
+      },
+      "description": "Estimated time to full from six hours of free-space samples. No estimate is shown for stable or growing free space, or incomplete history.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "bottomk(5, volume:seconds_until_full * on(namespace,persistentvolumeclaim) group_left(storageclass) (volume:info{namespace=~\"${namespace:regex}\",storageclass=~\"${storageclass:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\"))))",
+          "legendFormat": "{{namespace}} / {{persistentvolumeclaim}}",
+          "instant": false,
+          "range": true,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dtdurations",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 5,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 35,
+      "title": "Volumes with the fewest free inodes",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 11,
+        "w": 12,
+        "h": 6
+      },
+      "description": "Free inode fraction. Filesystems can run out of inodes before they run out of bytes.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "bottomk(5, volume:inodes_free_ratio * on(namespace,persistentvolumeclaim) group_left(storageclass) (volume:info{namespace=~\"${namespace:regex}\",storageclass=~\"${storageclass:regex}\"} and on(volumename) max by(volumename) (label_replace(kube_persistentvolume_info{nfs_server=\"\",csi_driver!~\"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*\"}, \"volumename\", \"$1\", \"persistentvolume\", \"(.+)\"))))",
+          "legendFormat": "{{namespace}} / {{persistentvolumeclaim}}",
+          "instant": false,
+          "range": true,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 5,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "title": "Node filesystems — all nodes",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 13,
+      "title": "Node filesystem usage",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 8,
+        "h": 6
+      },
+      "description": "The five node filesystems with the highest disk use. Network and virtual filesystem mounts are excluded.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "topk(5, 1 - (node_filesystem_avail_bytes{fstype=~\"ext[234]|xfs|btrfs|zfs|bcachefs|vfat\",mountpoint!~\"/run.*|/var/lib/kubelet/pods/.+\"} / node_filesystem_size_bytes{fstype=~\"ext[234]|xfs|btrfs|zfs|bcachefs|vfat\",mountpoint!~\"/run.*|/var/lib/kubelet/pods/.+\"}))",
+          "legendFormat": "{{instance}} {{mountpoint}}",
+          "instant": false,
+          "range": true,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 5,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 38,
+      "title": "Node filesystems expected to fill first",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 18,
+        "w": 8,
+        "h": 6
+      },
+      "description": "Estimate from six hours of free-space samples, with at least five hours of data. No estimate is shown for stable or growing free space.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "bottomk(5, (node_filesystem_avail_bytes{fstype=~\"ext[234]|xfs|btrfs|zfs|bcachefs|vfat\",mountpoint!~\"/run.*|/var/lib/kubelet/pods/.+\"} / -(deriv((node_filesystem_avail_bytes{fstype=~\"ext[234]|xfs|btrfs|zfs|bcachefs|vfat\",mountpoint!~\"/run.*|/var/lib/kubelet/pods/.+\"})[6h:1m]))) and (deriv((node_filesystem_avail_bytes{fstype=~\"ext[234]|xfs|btrfs|zfs|bcachefs|vfat\",mountpoint!~\"/run.*|/var/lib/kubelet/pods/.+\"})[6h:1m]) < 0) and (count_over_time((node_filesystem_avail_bytes{fstype=~\"ext[234]|xfs|btrfs|zfs|bcachefs|vfat\",mountpoint!~\"/run.*|/var/lib/kubelet/pods/.+\"})[6h:1m]) >= 300))",
+          "legendFormat": "{{instance}} {{mountpoint}}",
+          "instant": false,
+          "range": true,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dtdurations",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 5,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 37,
+      "title": "Node filesystems with the fewest free inodes",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 18,
+        "w": 8,
+        "h": 6
+      },
+      "description": "Local disk filesystems only. NFS and FUSE mounts are excluded.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "bottomk(5, node_filesystem_files_free{fstype=~\"ext[234]|xfs|btrfs|zfs|bcachefs|vfat\",mountpoint!~\"/run.*|/var/lib/kubelet/pods/.+\"} / (node_filesystem_files{fstype=~\"ext[234]|xfs|btrfs|zfs|bcachefs|vfat\",mountpoint!~\"/run.*|/var/lib/kubelet/pods/.+\"} > 0))",
+          "legendFormat": "{{instance}} {{mountpoint}}",
+          "instant": false,
+          "range": true,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 5,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "title": "Shared NFS overview — all namespaces",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 6,
+      "title": "Shared NFS capacity and growth",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 4
+      },
+      "description": "One summary per NFS server and shared storage area. Values apply to the shared filesystem, not to individual PVCs.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "label_join(nfs:capacity_bytes, \"filesystem\", \":\", \"nfs_server\", \"nfs_share\")",
+          "legendFormat": "{{nfs_server}}:{{nfs_share}}",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "label_join(nfs:used_bytes, \"filesystem\", \":\", \"nfs_server\", \"nfs_share\")",
+          "legendFormat": "{{nfs_server}}:{{nfs_share}}",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "label_join(nfs:available_bytes, \"filesystem\", \":\", \"nfs_server\", \"nfs_share\")",
+          "legendFormat": "{{nfs_server}}:{{nfs_share}}",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "label_join(clamp_min(-nfs:available_bytes:deriv6h,0)*86400, \"filesystem\", \":\", \"nfs_server\", \"nfs_share\")",
+          "legendFormat": "{{nfs_server}}:{{nfs_share}}",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Capacity"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Used"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Available"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Growth per day"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "filesystem",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "^(filesystem|Value #[A-D])$"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "filesystem": "NFS server / storage area",
+              "Value #A": "Capacity",
+              "Value #B": "Used",
+              "Value #C": "Available",
+              "Value #D": "Growth per day"
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    },
+    {
+      "id": 40,
+      "title": "Volume snapshots",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 29,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 41,
+      "title": "Snapshot monitoring",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 30,
+        "w": 8,
+        "h": 4
+      },
+      "description": "Collection health across the cluster. No snapshot API data means support has not been confirmed. Snapshot state does not report physical storage use.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "volumesnapshot:monitoring_state",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Unavailable",
+                  "color": "red"
+                },
+                "1": {
+                  "text": "No snapshot API data",
+                  "color": "yellow"
+                },
+                "2": {
+                  "text": "Collecting",
+                  "color": "green"
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 42,
+      "title": "Snapshots ready to restore",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 30,
+        "w": 8,
+        "h": 4
+      },
+      "description": "Snapshots that are ready for restoration in the selected snapshot namespaces, drivers and classes.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(count(volumesnapshot:ready{namespace=~\"${snapshot_namespace:regex}\",driver=~\"${snapshot_driver:regex}\",snapshotclass=~\"${snapshot_class:regex}\"}) or (0 * volumesnapshot:inventory_available)) and on() volumesnapshot:inventory_available",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 46,
+      "title": "Longest pending snapshot",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 30,
+        "w": 8,
+        "h": 4
+      },
+      "description": "Age of the oldest pending request. The creation-stalled alert starts after 30 minutes, with a further 15-minute delay.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(max(volumesnapshot:pending_age_seconds{namespace=~\"${snapshot_namespace:regex}\",driver=~\"${snapshot_driver:regex}\",snapshotclass=~\"${snapshot_class:regex}\"}) or (0 * volumesnapshot:inventory_available)) and on() volumesnapshot:inventory_available",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "No pending snapshots"
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto"
+      }
+    },
+    {
+      "id": 53,
+      "title": "Snapshots needing attention",
+      "type": "table",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 24,
+        "h": 5
+      },
+      "description": "Only creation errors, requests pending for more than 30 minutes, and deletions older than one hour. Age starts at request creation, or at deletion for a delete operation.",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "expr": "volumesnapshot:attention_required{namespace=~\"${snapshot_namespace:regex}\",driver=~\"${snapshot_driver:regex}\",snapshotclass=~\"${snapshot_class:regex}\"} and on() volumesnapshot:inventory_available",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "format": "table"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unavailable",
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Age"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              }
+            ]
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "^(namespace|volumesnapshot|driver|issue|Value)$"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "namespace": 0,
+              "volumesnapshot": 1,
+              "driver": 2,
+              "issue": 3,
+              "Value": 4
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "volumesnapshot": "Snapshot",
+              "driver": "Driver",
+              "issue": "Needs attention",
+              "Value": "Age"
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        }
+      }
+    }
+  ]
+}

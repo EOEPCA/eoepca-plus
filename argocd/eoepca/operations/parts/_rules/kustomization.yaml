@@ -5,4 +5,6 @@ resources:
   - kubernetes-audit-rules.yaml
   - security-alerts.yaml
   - stac-alerts.yaml
+  - volume-alerts.yaml
+  - volume-snapshot-alerts.yaml
   - workspace-recording-rules.yaml

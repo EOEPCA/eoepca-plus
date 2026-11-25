@@ -1,0 +1,120 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: volume-snapshot-alerts
+  namespace: operations
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: volume-snapshot.metrics
+      interval: 1m
+      rules:
+        # Custom-resource list/watch errors have one shared KSM resource label.
+        # Any such error makes snapshot coverage uncertain until it clears.
+        - record: volumesnapshot:collector_healthy
+          expr: |-
+            (min(up{job="kube-state-metrics"}) or vector(0))
+            * (min(kube_state_metrics_last_config_reload_successful{job="kube-state-metrics",type="customresourceconfig"}) or vector(0))
+            * ((sum(increase({__name__=~"kube_state_metrics_(list|watch)_total",job="kube-state-metrics",resource="*unstructured.Unstructured",result="error"}[10m])) or vector(0)) == bool 0)
+        # An empty inventory alone cannot prove that the snapshot API exists.
+        - record: volumesnapshot:inventory_available
+          expr: |-
+            (volumesnapshot:collector_healthy == 1) and on() (
+              (sum(apiserver_request_total{job="apiserver",group="snapshot.storage.k8s.io",version="v1",resource="volumesnapshots",verb=~"LIST|WATCH",code=~"2.."}) or vector(0))
+              + (count(volume_snapshot_info) or vector(0))
+              + (count(volume_snapshot_content_info) or vector(0))
+              + (count(volume_snapshot_class_info) or vector(0)) > 0)
+        - record: volumesnapshot:monitoring_state
+          expr: volumesnapshot:collector_healthy + (volumesnapshot:inventory_available or vector(0))
+        - record: volumesnapshot:class_info
+          expr: max by (snapshotclass, driver, deletionpolicy) (volume_snapshot_class_info)
+        - record: volumesnapshot:content_info
+          expr: |-
+            label_replace(
+              max by (volumesnapshotcontent, namespace, volumesnapshot, snapshot_uid, snapshotclass, driver, deletionpolicy) (volume_snapshot_content_info),
+              "snapshotclass", "(none)", "snapshotclass", "^$")
+        # Use content metadata first so retained snapshots do not need a PVC.
+        - record: volumesnapshot:info
+          expr: |-
+            label_replace(label_replace(
+              (
+                max by (namespace, volumesnapshot, snapshot_uid, snapshotclass, volumesnapshotcontent, persistentvolumeclaim) (volume_snapshot_info)
+                * on (volumesnapshotcontent) group_left (driver)
+                max by (volumesnapshotcontent, driver) (volumesnapshot:content_info)
+              )
+              or on (namespace, volumesnapshot, snapshot_uid)
+              (
+                max by (namespace, volumesnapshot, snapshot_uid, snapshotclass, volumesnapshotcontent, persistentvolumeclaim) (volume_snapshot_info)
+                * on (snapshotclass) group_left (driver)
+                max by (snapshotclass, driver) (volumesnapshot:class_info)
+              )
+              or on (namespace, volumesnapshot, snapshot_uid)
+              max by (namespace, volumesnapshot, snapshot_uid, snapshotclass, volumesnapshotcontent, persistentvolumeclaim) (volume_snapshot_info),
+              "driver", "unknown", "driver", "^$"),
+              "snapshotclass", "(none)", "snapshotclass", "^$")
+        - record: volumesnapshot:deleting
+          expr: |-
+            volumesnapshot:info and on (namespace, volumesnapshot, snapshot_uid)
+            (volume_snapshot_deletion_timestamp_seconds > 0)
+        - record: volumesnapshot:error
+          expr: |-
+            (volumesnapshot:info and on (namespace, volumesnapshot, snapshot_uid)
+            (volume_snapshot_error_timestamp_seconds > 0))
+            unless on (namespace, volumesnapshot, snapshot_uid) volumesnapshot:deleting
+        - record: volumesnapshot:ready
+          expr: |-
+            (volumesnapshot:info and on (namespace, volumesnapshot, snapshot_uid)
+            (volume_snapshot_ready_to_use == 1))
+            unless on (namespace, volumesnapshot, snapshot_uid) (volumesnapshot:error or volumesnapshot:deleting)
+        - record: volumesnapshot:pending
+          expr: |-
+            volumesnapshot:info unless on (namespace, volumesnapshot, snapshot_uid)
+            (volumesnapshot:ready or volumesnapshot:error or volumesnapshot:deleting)
+        - record: volumesnapshot:pending_age_seconds
+          expr: |-
+            clamp_min(time() - max by (namespace, volumesnapshot, snapshot_uid) (volume_snapshot_created_timestamp_seconds), 0)
+            * on (namespace, volumesnapshot, snapshot_uid) group_left (driver, snapshotclass) volumesnapshot:pending
+        - record: volumesnapshot:deletion_age_seconds
+          expr: |-
+            clamp_min(time() - max by (namespace, volumesnapshot, snapshot_uid) (volume_snapshot_deletion_timestamp_seconds), 0)
+            * on (namespace, volumesnapshot, snapshot_uid) group_left (driver, snapshotclass) volumesnapshot:deleting
+        - record: volumesnapshot:attention_required
+          expr: |-
+            label_replace(
+              volumesnapshot:error * on (namespace, volumesnapshot, snapshot_uid) group_left ()
+              clamp_min(time() - max by (namespace, volumesnapshot, snapshot_uid) (volume_snapshot_created_timestamp_seconds), 0),
+              "issue", "Creation error", "", "")
+            or label_replace(volumesnapshot:pending_age_seconds > 1800, "issue", "Pending >30 min", "", "")
+            or label_replace(volumesnapshot:deletion_age_seconds > 3600, "issue", "Deleting >1 hour", "", "")
+    - name: volume-snapshot.alerts
+      rules:
+        - alert: VolumeSnapshotMonitoringUnavailable
+          expr: volumesnapshot:collector_healthy == 0
+          for: 15m
+          labels:
+            severity: warning
+            service: persistent-storage
+          annotations:
+            summary: Volume snapshot monitoring is unavailable.
+            description: >-
+              Check both kube-state-metrics scrape endpoints, custom-resource configuration, and list/watch errors.
+              Errors for other custom resources also make snapshot coverage uncertain. Missing data is not proof that no snapshots exist.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: VolumeSnapshotNeedsAttention
+          expr: volumesnapshot:attention_required and on() volumesnapshot:inventory_available
+          for: 15m
+          labels:
+            severity: warning
+            service: persistent-storage
+          annotations:
+            summary: Snapshot {{ $labels.namespace }}/{{ $labels.volumesnapshot }} needs attention ({{ $labels.issue }}).
+            description: >-
+              A creation error, creation pending for more than 30 minutes, or deletion active for more than one hour
+              has persisted for a further 15 minutes. Check status, events, the CSI controller, and backend capacity.
+              Large archive-based snapshots can need longer; adjust the thresholds for the cluster.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'

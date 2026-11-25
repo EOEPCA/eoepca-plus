@@ -1,18 +1,6 @@
 {
   "editable": true,
-  "links": [
-    {
-      "asDropdown": true,
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "baseline"
-      ],
-      "targetBlank": false,
-      "title": "Kubernetes",
-      "type": "dashboards"
-    }
-  ],
+  "links": [],
   "panels": [
     {
       "datasource": {
@@ -650,5 +638,5 @@
   "annotations": {
     "list": []
   },
-  "version": 1
+  "version": 2
 }

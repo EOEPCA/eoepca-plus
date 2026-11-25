@@ -1,0 +1,310 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: volume-alerts
+  namespace: operations
+  labels:
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: volume.metrics
+      interval: 1m
+      rules:
+        - record: volume:claim_info
+          expr: max by (namespace, persistentvolumeclaim, storageclass, volumename) (kube_persistentvolumeclaim_info)
+        # CSI driver names need an explicit exclusion list; unknown drivers need review.
+        - record: volume:info
+          expr: |-
+            volume:claim_info * on (volumename) group_left ()
+            max by (volumename) (
+              label_replace(kube_persistentvolume_info{nfs_server="",csi_driver!~"(?i).*(nfs|rclone|s3|smb|cifs|fuse|gcs|blob|cephfs|gluster).*"},
+                "volumename", "$1", "persistentvolume", "(.+)")
+            )
+        - record: volume:capacity_bytes
+          expr: >-
+            (max by (namespace, persistentvolumeclaim) (kubelet_volume_stats_capacity_bytes) > 0) and on (namespace,
+            persistentvolumeclaim) volume:info
+        - record: volume:available_bytes
+          expr: >-
+            (min by (namespace, persistentvolumeclaim) (kubelet_volume_stats_available_bytes)) and on (namespace,
+            persistentvolumeclaim) volume:info
+        - record: volume:free_ratio
+          expr: volume:available_bytes / volume:capacity_bytes
+        - record: volume:inodes_free_ratio
+          expr: |-
+            (min by (namespace, persistentvolumeclaim) (kubelet_volume_stats_inodes_free)
+            /
+            (max by (namespace, persistentvolumeclaim) (kubelet_volume_stats_inodes) > 0)) and on (namespace, persistentvolumeclaim) volume:info
+        - record: volume:available_bytes:deriv6h
+          expr: >-
+            (deriv((min by (namespace, persistentvolumeclaim) (kubelet_volume_stats_available_bytes))[6h:1m])) and
+            on (namespace, persistentvolumeclaim) volume:info
+        - record: volume:seconds_until_full
+          expr: |
+            (volume:available_bytes / -volume:available_bytes:deriv6h)
+            and on (namespace, persistentvolumeclaim) (volume:available_bytes:deriv6h < 0)
+            and on (namespace, persistentvolumeclaim) (count_over_time((min by (namespace, persistentvolumeclaim) (kubelet_volume_stats_available_bytes))[6h:1m]) >= 300)
+        - record: volume:mounted
+          expr: |-
+            (max by (namespace, persistentvolumeclaim) (
+              kube_pod_spec_volumes_persistentvolumeclaims_info
+              * on (namespace, pod) group_left ()
+              max by (namespace, pod) (kube_pod_status_phase{phase="Running"} == 1)
+            )) and on (namespace, persistentvolumeclaim) volume:info
+        - record: volume:stats_missing
+          expr: volume:mounted unless on (namespace, persistentvolumeclaim) volume:capacity_bytes
+        # NFS capacity is checked once per shared storage area.
+        - record: volume:nfs_claim_info
+          expr: |-
+            volume:claim_info * on (volumename) group_left (nfs_server, nfs_share) (
+              max by (volumename, nfs_server, nfs_share) (
+                label_replace(label_replace(kube_persistentvolume_info{nfs_server!=""},
+                  "nfs_share", "$1", "nfs_path", "(.+)/[^/]+"),
+                  "volumename", "$1", "persistentvolume", "(.+)")
+                or
+                label_replace(label_replace(label_replace(kube_persistentvolume_info{csi_driver="nfs.csi.k8s.io"},
+                  "nfs_server", "$1", "csi_volume_handle", "([^#]+)#.*"),
+                  "nfs_share", "/$1", "csi_volume_handle", "[^#]+#([^#]+)#.*"),
+                  "volumename", "$1", "persistentvolume", "(.+)")
+              )
+            )
+        - record: nfs:capacity_bytes
+          expr: >-
+            max by (nfs_server, nfs_share) ((max by (namespace, persistentvolumeclaim) (kubelet_volume_stats_capacity_bytes)
+            > 0) * on (namespace, persistentvolumeclaim) group_left (nfs_server, nfs_share) volume:nfs_claim_info)
+        - record: nfs:available_bytes
+          expr: >-
+            min by (nfs_server, nfs_share) ((min by (namespace, persistentvolumeclaim) (kubelet_volume_stats_available_bytes))
+            * on (namespace, persistentvolumeclaim) group_left (nfs_server, nfs_share) volume:nfs_claim_info)
+        - record: nfs:used_bytes
+          expr: >-
+            max by (nfs_server, nfs_share) ((max by (namespace, persistentvolumeclaim) (kubelet_volume_stats_used_bytes))
+            * on (namespace, persistentvolumeclaim) group_left (nfs_server, nfs_share) volume:nfs_claim_info)
+        - record: nfs:available_bytes:deriv6h
+          expr: >-
+            min by (nfs_server, nfs_share) ((deriv((min by (namespace, persistentvolumeclaim) (kubelet_volume_stats_available_bytes))[6h:1m]))
+            * on (namespace, persistentvolumeclaim) group_left (nfs_server, nfs_share) volume:nfs_claim_info)
+        - record: nfs:seconds_until_full
+          expr: |-
+            (nfs:available_bytes / -nfs:available_bytes:deriv6h)
+            and on (nfs_server, nfs_share) (nfs:available_bytes:deriv6h < 0)
+            and on (nfs_server, nfs_share) (
+              max by (nfs_server, nfs_share) (
+                count_over_time((min by (namespace, persistentvolumeclaim) (kubelet_volume_stats_available_bytes))[6h:1m])
+                * on (namespace, persistentvolumeclaim) group_left (nfs_server, nfs_share) volume:nfs_claim_info
+              ) >= 300
+            )
+        - record: nfs:inodes_free_ratio
+          expr: >-
+            min by (nfs_server, nfs_share) ((min by (namespace, persistentvolumeclaim) (kubelet_volume_stats_inodes_free)
+            / (max by (namespace, persistentvolumeclaim) (kubelet_volume_stats_inodes) > 0)) * on (namespace, persistentvolumeclaim)
+            group_left (nfs_server, nfs_share) volume:nfs_claim_info)
+        - record: nfs:free_ratio
+          expr: nfs:available_bytes / nfs:capacity_bytes
+    - name: volume.alerts
+      rules:
+        - alert: PersistentVolumeUsageHigh
+          expr: volume:free_ratio < 0.15
+          for: 15m
+          labels:
+            severity: warning
+            service: persistent-storage
+          annotations:
+            summary: Volume filesystem for {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} has less
+              than 15% free.
+            description: >-
+              Check free space, growth and inode use on the volume dashboard. For shared NFS, filesystem capacity
+              can apply to the export rather than the PVC request.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: PersistentVolumeAlmostFull
+          expr: volume:free_ratio < 0.05
+          for: 15m
+          labels:
+            severity: critical
+            service: persistent-storage
+          annotations:
+            summary: Volume filesystem for {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} has less
+              than 5% free.
+            description: >-
+              Check free space, growth and inode use on the volume dashboard. For shared NFS, filesystem capacity
+              can apply to the export rather than the PVC request.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: PersistentVolumeFillingUp
+          expr: (volume:seconds_until_full < 86400) and on (namespace, persistentvolumeclaim) (volume:free_ratio
+            < 0.40)
+          for: 30m
+          labels:
+            severity: warning
+            service: persistent-storage
+          annotations:
+            summary: Volume filesystem for {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} may fill
+              within 24 hours.
+            description: >-
+              The estimate uses the free-space trend over six hours. It requires at least five hours of samples
+              and less than 40% free space. Check the dashboard before you extend storage or remove data.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: PersistentVolumeFillingUpSoon
+          expr: (volume:seconds_until_full < 14400) and on (namespace, persistentvolumeclaim) (volume:free_ratio
+            < 0.20)
+          for: 15m
+          labels:
+            severity: critical
+            service: persistent-storage
+          annotations:
+            summary: Volume filesystem for {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} may fill
+              within four hours.
+            description: >-
+              The estimate uses the free-space trend over six hours. It requires at least five hours of samples
+              and less than 20% free space. Check the filesystem before it runs out of space.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: PersistentVolumeInodesLow
+          expr: volume:inodes_free_ratio < 0.10
+          for: 15m
+          labels:
+            severity: warning
+            service: persistent-storage
+          annotations:
+            summary: >-
+              Volume filesystem for {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} has less than 10%
+              free inodes.
+            description: Many small files can exhaust inodes while byte capacity is still available.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: PersistentVolumeInodesAlmostFull
+          expr: volume:inodes_free_ratio < 0.03
+          for: 15m
+          labels:
+            severity: critical
+            service: persistent-storage
+          annotations:
+            summary: >-
+              Volume filesystem for {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} has less than 3%
+              free inodes.
+            description: Check the filesystem before it cannot create more files.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: PersistentVolumeStatsMissing
+          expr: volume:stats_missing
+          for: 30m
+          labels:
+            severity: warning
+            service: persistent-storage
+          annotations:
+            summary: Mounted claim {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} has no capacity metrics.
+            description: >-
+              A running Pod uses this claim, but kubelet exports no valid filesystem capacity. Usage and growth
+              alerts cannot cover this claim. Check the volume driver and kubelet scrape.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: SharedNFSUsageHigh
+          expr: nfs:free_ratio < 0.15
+          for: 15m
+          labels:
+            severity: warning
+            service: persistent-storage
+            storage_type: nfs
+          annotations:
+            summary: Shared NFS filesystem {{ $labels.nfs_server }}:{{ $labels.nfs_share }} has less than 15% free
+              space.
+            description: >-
+              This filesystem serves multiple PVCs. Check the shared NFS capacity and growth on the volume dashboard.
+              PVC storage requests are not directory quotas. Forecasts use a six-hour trend with at least five hours
+              of samples.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: SharedNFSAlmostFull
+          expr: nfs:free_ratio < 0.05
+          for: 15m
+          labels:
+            severity: critical
+            service: persistent-storage
+            storage_type: nfs
+          annotations:
+            summary: Shared NFS filesystem {{ $labels.nfs_server }}:{{ $labels.nfs_share }} has less than 5% free
+              space.
+            description: >-
+              This filesystem serves multiple PVCs. Check the shared NFS capacity and growth on the volume dashboard.
+              PVC storage requests are not directory quotas. Forecasts use a six-hour trend with at least five hours
+              of samples.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: SharedNFSFillingUp
+          expr: (nfs:seconds_until_full < 86400) and on (nfs_server, nfs_share) (nfs:free_ratio < 0.40)
+          for: 30m
+          labels:
+            severity: warning
+            service: persistent-storage
+            storage_type: nfs
+          annotations:
+            summary: Shared NFS filesystem {{ $labels.nfs_server }}:{{ $labels.nfs_share }} may fill within 24 hours.
+            description: >-
+              This filesystem serves multiple PVCs. Check the shared NFS capacity and growth on the volume dashboard.
+              PVC storage requests are not directory quotas. Forecasts use a six-hour trend with at least five hours
+              of samples.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: SharedNFSFillingUpSoon
+          expr: (nfs:seconds_until_full < 14400) and on (nfs_server, nfs_share) (nfs:free_ratio < 0.20)
+          for: 15m
+          labels:
+            severity: critical
+            service: persistent-storage
+            storage_type: nfs
+          annotations:
+            summary: Shared NFS filesystem {{ $labels.nfs_server }}:{{ $labels.nfs_share }} may fill within four
+              hours.
+            description: >-
+              This filesystem serves multiple PVCs. Check the shared NFS capacity and growth on the volume dashboard.
+              PVC storage requests are not directory quotas. Forecasts use a six-hour trend with at least five hours
+              of samples.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: SharedNFSInodesLow
+          expr: nfs:inodes_free_ratio < 0.10
+          for: 15m
+          labels:
+            severity: warning
+            service: persistent-storage
+            storage_type: nfs
+          annotations:
+            summary: Shared NFS filesystem {{ $labels.nfs_server }}:{{ $labels.nfs_share }} has less than 10% free
+              inodes.
+            description: >-
+              This filesystem serves multiple PVCs. Check the shared NFS capacity and growth on the volume dashboard.
+              PVC storage requests are not directory quotas. Forecasts use a six-hour trend with at least five hours
+              of samples.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'
+        - alert: SharedNFSInodesAlmostFull
+          expr: nfs:inodes_free_ratio < 0.03
+          for: 15m
+          labels:
+            severity: critical
+            service: persistent-storage
+            storage_type: nfs
+          annotations:
+            summary: Shared NFS filesystem {{ $labels.nfs_server }}:{{ $labels.nfs_share }} has less than 3% free
+              inodes.
+            description: >-
+              This filesystem serves multiple PVCs. Check the shared NFS capacity and growth on the volume dashboard.
+              PVC storage requests are not directory quotas. Forecasts use a six-hour trend with at least five hours
+              of samples.
+            dashboard: volumes
+            dashboard_url: https://monitoring.develop-v2.eoepca.org/d/eoepca-volumes
+            context_snapshot: 'true'

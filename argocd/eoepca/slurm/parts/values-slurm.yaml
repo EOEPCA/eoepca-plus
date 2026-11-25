@@ -75,6 +75,11 @@ controller:
   extraConfMap:
     # A token for a user that resolves to uid 0 must not start jobs.
     DisableRootJobs: "YES"
+    # The operator sets a node DOWN while its pod restarts (e.g. after an
+    # image change). With the default ReturnToService=0 the node then stays
+    # DOWN until an admin resumes it. 2: a DOWN node returns to service once
+    # its slurmd registers with a valid configuration.
+    ReturnToService: "2"
   persistence:
     enabled: true
     # NFS-backed. SchedMD advises against NFS for StateSaveLocation; both

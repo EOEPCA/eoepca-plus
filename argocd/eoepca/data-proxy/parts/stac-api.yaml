@@ -12,11 +12,12 @@ spec:
   project: eoepca
   sources:
     - repoURL: https://github.com/CS-SI/stac-fastapi-eodag.git
-      targetRevision: stac-fastapi-eodag-0.7.0
+      targetRevision: stac-fastapi-eodag-0.8.0
       path: helm/stac-fastapi-eodag
       helm:
         releaseName: eodag-stac-api
         values: |
+          keepOriginUrl: true
           extraEnvVars:
             - name: DOWNLOAD_BASE_URL
               value: https://eodag-proxy.develop-v2.eoepca.org/

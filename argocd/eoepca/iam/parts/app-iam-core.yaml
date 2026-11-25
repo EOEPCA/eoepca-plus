@@ -22,6 +22,12 @@ spec:
     name: in-cluster
     namespace: iam
   ignoreDifferences:
+    - group: client.keycloak.m.crossplane.io
+      kind: ProtocolMapper
+      name: iam-core-opa-client-audience
+      namespace: iam-management
+      jsonPointers:
+        - /spec/forProvider/config/introspection.token.claim
     - group: ""
       kind: Secret
       name: keycloak-provider

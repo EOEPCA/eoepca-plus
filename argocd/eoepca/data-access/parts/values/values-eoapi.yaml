@@ -54,6 +54,11 @@ pgstacBootstrap:
 
 raster:
   enabled: true
+  backend: stacapi
+  stacapi:
+    envVars:
+      # Tiles may be user-specific: never cache them in shared caches
+      TITILER_STACAPI_API_CACHECONTROL: "private, no-store"
   metrics:
     enabled: true
     serviceMonitor:
@@ -242,8 +247,6 @@ stac-auth-proxy:
   securityContext:
     seccompProfile:
       type: RuntimeDefault
-  image:
-    tag: "v1.2.0"
   # Custom filters for STAC collections/items filtering
   service:
     port: 8080

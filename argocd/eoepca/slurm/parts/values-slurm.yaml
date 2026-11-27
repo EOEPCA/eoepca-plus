@@ -110,9 +110,13 @@ nodesets:
   slinky:               # a map keyed by NodeSet name, not a list
     replicas: 1
     slurmd:
+      # Slinky slurmd plus Apptainer and cwltool, built from images/slurmd-cwl
+      # by .github/workflows/build-slurmd-cwl-image.yaml. The tag is the
+      # content of images/slurmd-cwl/VERSION. Its first part must match the
+      # Slurm build of the other components.
       image:
-        repository: ghcr.io/slinkyproject/slurmd
-        tag: 26.05.4-ubuntu26.04
+        repository: ghcr.io/eoepca/eoepca-plus/slurmd-cwl
+        tag: 26.05.4-ubuntu26.04-cwl.1
       resources:
         requests:
           cpu: 4

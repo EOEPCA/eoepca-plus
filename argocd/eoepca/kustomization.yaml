@@ -9,6 +9,7 @@ resources:
   # - zoo-dru
   - zoo-dru-wes
   - zoo-dru-std
+  - zoo-dru-slurm
   - zoo-dru-keda
   - workspace
   - mlops
@@ -122,7 +123,7 @@ patches:
           argocd.argoproj.io/sync-wave: "31"
   - target:
       kind: Application
-      name: ^(openeofed|registration-harvester|zoo-project-dru|zoo-project-dru-keda|zoo-project-dru-std|zoo-project-dru-wes)$
+      name: ^(openeofed|registration-harvester|zoo-project-dru|zoo-project-dru-keda|zoo-project-dru-slurm|zoo-project-dru-std|zoo-project-dru-wes)$
     patch: |
       apiVersion: argoproj.io/v1alpha1
       kind: Application

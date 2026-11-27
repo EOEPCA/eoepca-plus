@@ -1,0 +1,90 @@
+# API gateway route for ZOO with the Slurm runner. Unlike zoo-dru-std there is no open
+# route: ZOO does not check that the user in the path (/{user}/ogc-api/...) is the user in
+# the token, and a job runs under the POSIX account of the token's user. The per-user check
+# is the authz-keycloak plugin with the UMA resources of iam.yaml.
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: zoo-route
+  namespace: zooslurm
+spec:
+  ingressClassName: apisix
+  http:
+    # Open access to the OpenAPI document and the landing page only
+    - name: zooslurm-docs
+      match:
+        hosts:
+          - zooslurm.develop-v2.eoepca.org
+        paths:
+          - /ogc-api
+          - /ogc-api/
+          - /ogc-api/api*
+          - /swagger-ui*
+          - /ogc-api/conformance*
+      backends:
+        - serviceName: zoo-project-dru-slurm-service
+          servicePort: 80
+      plugins:
+        - name: cors
+          enable: true
+    # Authorized access to the ZOO API
+    - name: zooslurm-protected
+      match:
+        hosts:
+          - zooslurm.develop-v2.eoepca.org
+        paths:
+          - /*
+      backends:
+        - serviceName: zoo-project-dru-slurm-service
+          servicePort: 80
+      plugins:
+        # Authn - expect JWT in `Authorization: Bearer` header, no browser login
+        - name: openid-connect
+          enable: true
+          secretRef: zoo-slurm-iam-client-credentials
+          config:
+            discovery: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/openid-configuration"
+            realm: eoepca
+            use_jwks: true
+            bearer_only: true
+            set_access_token_header: true
+            access_token_in_authorization_header: true
+        # Authz - per-user paths (UMA resources in iam.yaml)
+        - name: authz-keycloak
+          enable: true
+          secretRef: zoo-slurm-iam-client-credentials
+          config:
+            discovery: "https://develop-v2.eoepca.org/iam/auth/realms/eoepca/.well-known/uma2-configuration"
+            lazy_load_paths: true
+            ssl_verify: false
+        - name: cors
+          enable: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: zooslurm-tls
+spec:
+  dnsNames:
+    - zooslurm.develop-v2.eoepca.org
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns-prod
+  secretName: zooslurm-tls
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: zooslurm
+spec:
+  ingressClassName: apisix
+  hosts:
+    - zooslurm.develop-v2.eoepca.org
+  secret:
+    name: zooslurm-tls
+    namespace: zooslurm
